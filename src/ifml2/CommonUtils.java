@@ -9,7 +9,7 @@ public class CommonUtils
 
     public static String getSamplesDirectory()
     {
-        return getCurrentDirectory() + CommonConstants.SAMPLES_DIRECTORY;
+        return getCurrentDirectory() + CommonConstants.GAMES_DIRECTORY;
     }
 
     public static String getLibrariesDirectory()
