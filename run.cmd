@@ -1,0 +1,1 @@
+java -Dlog4j.configuration=file:log4j.xml -jar out\artifacts\ifml2\ifml2.jar

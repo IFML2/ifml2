@@ -1,0 +1,950 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ifml2:library xmlns:ifml2="http://toysoft.narod.ru/IFML2Schema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="http://toysoft.narod.ru/IFML2Schema ../../Schemes/IFML2Schema.xsd " name="Глаголы">
+    <ifml2:attribute-definitions>
+        <ifml2:attribute-definition name="частьПейзажа"
+                                    description="Определяет, пропускать ли упоминание предмета при описании локации."/>
+        <ifml2:attribute-definition name="недоступен"
+                                    description="Определяет возможность взятия и манипуляции с предметом."/>
+        <ifml2:attribute-definition name="съедобен" description="Определяет, может ли предмет быть съеден."/>
+        <ifml2:attribute-definition name="жидкий"
+                                    description="Определяет, может ли предмет быть налит, вылит или выпит."/>
+        <ifml2:attribute-definition name="горючий" description="Определяет, может ли предмет гореть."/>
+        <ifml2:attribute-definition name="хрупкий" description="Определяет, может ли предмет быть сломан или разбит."/>
+        <ifml2:attribute-definition name="читаемый" description="Определяет, может ли предмет быть прочитан."/>
+        <ifml2:attribute-definition name="контейнер" description="Определяет, может ли предмет быть там размещен."/>
+        <ifml2:attribute-definition name="прикреплён" description="Определяет, прикреплён ли предмет к чему-либо, чтобы его откреплять (отрезать)."/>
+    </ifml2:attribute-definitions>
+
+    <ifml2:role-definitions>
+        <ifml2:role-definition name="поверхность" description="Означает, что предмет является поверхностью и может держать на себе предметы.">
+            <ifml2:properties>
+                <ifml2:property name="предметыСверху" description="Контейнер с предметами, лежащими на поверхности." type="collection"/>
+            </ifml2:properties>
+        </ifml2:role-definition>
+    </ifml2:role-definitions>
+
+    <ifml2:actions>
+        <ifml2:action name="осмотреться" description="Осмотреться вокруг (выдаёт описание текущей локации)">
+            <ifml2:templates>
+                <ifml2:template>
+                    <ifml2:literalElement position="1">
+                        <ifml2:synonym>осмотреться</ifml2:synonym>
+                        <ifml2:synonym>осм</ifml2:synonym>
+                    </ifml2:literalElement>
+                </ifml2:template>
+            </ifml2:templates>
+            <ifml2:procedureCall procedure="ОписатьТекущуюЛокацию"/>
+        </ifml2:action>
+        <ifml2:action name="осмотреть" description="Осмотреть предмет">
+            <ifml2:templates>
+                <ifml2:template>
+                    <ifml2:literalElement position="1">
+                        <ifml2:synonym>осмотреть</ifml2:synonym>
+                        <ifml2:synonym>осм</ifml2:synonym>
+                        <ifml2:synonym>исследовать</ifml2:synonym>
+                    </ifml2:literalElement>
+                    <ifml2:objectElement position="2" case="vp" parameter="предмет"/>
+                </ifml2:template>
+            </ifml2:templates>
+            <ifml2:procedureCall procedure="Описать"/>
+        </ifml2:action>
+        <ifml2:action name="идти на север" description="Переходит в локацию на севере">
+            <ifml2:templates>
+                <ifml2:template>
+                    <ifml2:literalElement position="1">
+                        <ifml2:synonym>идти на север</ifml2:synonym>
+                        <ifml2:synonym>север</ifml2:synonym>
+                        <ifml2:synonym>с</ifml2:synonym>
+                    </ifml2:literalElement>
+                </ifml2:template>
+            </ifml2:templates>
+            <ifml2:procedureCall procedure="ПерейтиНаСевер"/>
+        </ifml2:action>
+        <ifml2:action name="идти на юг" description="Переходит в локацию на юге">
+            <ifml2:templates>
+                <ifml2:template>
+                    <ifml2:literalElement position="1">
+                        <ifml2:synonym>идти на юг</ifml2:synonym>
+                        <ifml2:synonym>юг</ifml2:synonym>
+                        <ifml2:synonym>ю</ifml2:synonym>
+                    </ifml2:literalElement>
+                </ifml2:template>
+            </ifml2:templates>
+            <ifml2:procedureCall procedure="ПерейтиНаЮг"/>
+        </ifml2:action>
+        <ifml2:action name="идти на восток" description="Переходит в локацию на востоке">
+            <ifml2:templates>
+                <ifml2:template>
+                    <ifml2:literalElement position="1">
+                        <ifml2:synonym>идти на восток</ifml2:synonym>
+                        <ifml2:synonym>восток</ifml2:synonym>
+                        <ifml2:synonym>в</ifml2:synonym>
+                    </ifml2:literalElement>
+                </ifml2:template>
+            </ifml2:templates>
+            <ifml2:procedureCall procedure="ПерейтиНаВосток"/>
+        </ifml2:action>
+        <ifml2:action name="идти на запад" description="Переходит в локацию на запад">
+            <ifml2:templates>
+                <ifml2:template>
+                    <ifml2:literalElement position="1">
+                        <ifml2:synonym>идти на запад</ifml2:synonym>
+                        <ifml2:synonym>запад</ifml2:synonym>
+                        <ifml2:synonym>з</ifml2:synonym>
+                    </ifml2:literalElement>
+                </ifml2:template>
+            </ifml2:templates>
+            <ifml2:procedureCall procedure="ПерейтиНаЗапад"/>
+        </ifml2:action>
+        <ifml2:action name="идти вниз" description="Переходит в локацию вниз">
+            <ifml2:templates>
+                <ifml2:template>
+                    <ifml2:literalElement position="1">
+                        <ifml2:synonym>идти вниз</ifml2:synonym>
+                        <ifml2:synonym>спуститься вниз</ifml2:synonym>
+                        <ifml2:synonym>спуститься</ifml2:synonym>
+                        <ifml2:synonym>вниз</ifml2:synonym>
+                        <ifml2:synonym>вн</ifml2:synonym>
+                    </ifml2:literalElement>
+                </ifml2:template>
+            </ifml2:templates>
+            <ifml2:procedureCall procedure="ПерейтиВниз"/>
+        </ifml2:action>
+        <ifml2:action name="идти наверх" description="Переходит в локацию наверх">
+            <ifml2:templates>
+                <ifml2:template>
+                    <ifml2:literalElement position="1">
+                        <ifml2:synonym>идти наверх</ifml2:synonym>
+                        <ifml2:synonym>подняться наверх</ifml2:synonym>
+                        <ifml2:synonym>подняться</ifml2:synonym>
+                        <ifml2:synonym>наверх</ifml2:synonym>
+                        <ifml2:synonym>вверх</ifml2:synonym>
+                        <ifml2:synonym>вв</ifml2:synonym>
+                    </ifml2:literalElement>
+                </ifml2:template>
+            </ifml2:templates>
+            <ifml2:procedureCall procedure="ПерейтиНаверх"/>
+        </ifml2:action>
+        <ifml2:action name="инвентарий" description="Выдать инвентарий">
+            <ifml2:templates>
+                <ifml2:template>
+                    <ifml2:literalElement position="1">
+                        <ifml2:synonym>инвентарий</ifml2:synonym>
+                        <ifml2:synonym>инвентарь</ifml2:synonym>
+                        <ifml2:synonym>инв</ifml2:synonym>
+                        <ifml2:synonym>и</ifml2:synonym>
+                    </ifml2:literalElement>
+                </ifml2:template>
+            </ifml2:templates>
+            <ifml2:procedureCall procedure="ПоказатьИнвентарь"/>
+        </ifml2:action>
+
+        <ifml2:action name="взять" description="Взять предмет">
+            <ifml2:templates>
+                <ifml2:template>
+                    <ifml2:literalElement position="1">
+                        <ifml2:synonym>взять</ifml2:synonym>
+                        <ifml2:synonym>схватить</ifml2:synonym>
+                        <ifml2:synonym>поднять</ifml2:synonym>
+                        <ifml2:synonym>достать</ifml2:synonym>
+                    </ifml2:literalElement>
+                    <ifml2:objectElement position="2" case="vp" parameter="предмет"/>
+                </ifml2:template>
+            </ifml2:templates>
+            <ifml2:restrictions>
+                <ifml2:restriction condition="предмет.недоступен">
+                    <ifml2:reaction>
+                        <ifml2:showMessage position="1" type="expression"
+                                           message="'В этих условиях, либо из этого положения, либо в данный момент взять и что-либо сделать с(о) ' + предмет.тп + ' невозможно.'"/>
+                    </ifml2:reaction>
+                </ifml2:restriction>
+                <ifml2:restriction condition="предмет.частьПейзажа">
+                    <ifml2:reaction>
+                        <ifml2:showMessage position="1" type="expression" beginWithCap="true"
+                                           message="предмет.вп + ' взять невозможно ни при каких условиях.'"/>
+                    </ifml2:reaction>
+                </ifml2:restriction>
+            </ifml2:restrictions>
+            <ifml2:procedureCall procedure="ВзятьПредмет"/>
+        </ifml2:action>
+
+        <ifml2:action name="взять всё">
+            <ifml2:templates>
+                <ifml2:template>
+                    <ifml2:literalElement position="1">
+                        <ifml2:synonym>взять</ifml2:synonym>
+                        <ifml2:synonym>схватить</ifml2:synonym>
+                        <ifml2:synonym>поднять</ifml2:synonym>
+                        <ifml2:synonym>достать</ifml2:synonym>
+                    </ifml2:literalElement>
+                    <ifml2:literalElement position="2">
+                        <ifml2:synonym>всё</ifml2:synonym>
+                    </ifml2:literalElement>
+                </ifml2:template>
+            </ifml2:templates>
+            <ifml2:procedureCall procedure="ВзятьВсё"/>
+        </ifml2:action>
+
+        <ifml2:action name="выбросить" description="Выбросить предмет">
+            <ifml2:templates>
+                <ifml2:template>
+                    <ifml2:literalElement position="1">
+                        <ifml2:synonym>бросить</ifml2:synonym>
+                        <ifml2:synonym>выбросить</ifml2:synonym>
+                        <ifml2:synonym>кинуть</ifml2:synonym>
+                    </ifml2:literalElement>
+                    <ifml2:objectElement position="2" case="vp" parameter="предмет"/>
+                </ifml2:template>
+            </ifml2:templates>
+            <ifml2:procedureCall procedure="ВыброситьПредмет"/>
+        </ifml2:action>
+        <ifml2:action name="сесть" description="Сесть">
+            <ifml2:templates>
+                <ifml2:template>
+                    <ifml2:literalElement position="1">
+                        <ifml2:synonym>сидеть</ifml2:synonym>
+                        <ifml2:synonym>сесть</ifml2:synonym>
+                        <ifml2:synonym>присесть</ifml2:synonym>
+                    </ifml2:literalElement>
+                </ifml2:template>
+            </ifml2:templates>
+            <ifml2:procedureCall procedure="Сесть"/>
+        </ifml2:action>
+        <ifml2:action name="курить" description="Курить">
+            <ifml2:templates>
+                <ifml2:template>
+                    <ifml2:literalElement position="1">
+                        <ifml2:synonym>курить</ifml2:synonym>
+                        <ifml2:synonym>закурить</ifml2:synonym>
+                        <ifml2:synonym>перекур</ifml2:synonym>
+                        <ifml2:synonym>курить</ifml2:synonym>
+                    </ifml2:literalElement>
+                </ifml2:template>
+            </ifml2:templates>
+            <ifml2:procedureCall procedure="Курить"/>
+        </ifml2:action>
+        <ifml2:action name="думать" description="Думать">
+            <ifml2:templates>
+                <ifml2:template>
+                    <ifml2:literalElement position="1">
+                        <ifml2:synonym>думать</ifml2:synonym>
+                        <ifml2:synonym>подумать</ifml2:synonym>
+                        <ifml2:synonym>задуматься</ifml2:synonym>
+                    </ifml2:literalElement>
+                </ifml2:template>
+            </ifml2:templates>
+            <ifml2:procedureCall procedure="Думать"/>
+        </ifml2:action>
+        <ifml2:action name="свистеть" description="Свистеть">
+            <ifml2:templates>
+                <ifml2:template>
+                    <ifml2:literalElement position="1">
+                        <ifml2:synonym>свистнуть</ifml2:synonym>
+                        <ifml2:synonym>свистеть</ifml2:synonym>
+                        <ifml2:synonym>засвистеть</ifml2:synonym>
+                    </ifml2:literalElement>
+                </ifml2:template>
+            </ifml2:templates>
+            <ifml2:procedureCall procedure="Свистеть"/>
+        </ifml2:action>
+        <ifml2:action name="лежать" description="Лечь">
+            <ifml2:templates>
+                <ifml2:template>
+                    <ifml2:literalElement position="1">
+                        <ifml2:synonym>лежать</ifml2:synonym>
+                        <ifml2:synonym>лечь</ifml2:synonym>
+                        <ifml2:synonym>прилечь</ifml2:synonym>
+                    </ifml2:literalElement>
+                </ifml2:template>
+            </ifml2:templates>
+            <ifml2:procedureCall procedure="Лечь"/>
+        </ifml2:action>
+        <ifml2:action name="петь" description="Петь">
+            <ifml2:templates>
+                <ifml2:template>
+                    <ifml2:literalElement position="1">
+                        <ifml2:synonym>петь</ifml2:synonym>
+                        <ifml2:synonym>спеть</ifml2:synonym>
+                        <ifml2:synonym>запеть</ifml2:synonym>
+                    </ifml2:literalElement>
+                </ifml2:template>
+            </ifml2:templates>
+            <ifml2:procedureCall procedure="Петь"/>
+        </ifml2:action>
+        <ifml2:action name="ползти" description="Ползти">
+            <ifml2:templates>
+                <ifml2:template>
+                    <ifml2:literalElement position="1">
+                        <ifml2:synonym>ползти</ifml2:synonym>
+                        <ifml2:synonym>ползи</ifml2:synonym>
+                        <ifml2:synonym>ползать</ifml2:synonym>
+                    </ifml2:literalElement>
+                </ifml2:template>
+            </ifml2:templates>
+            <ifml2:procedureCall procedure="Ползти"/>
+        </ifml2:action>
+        <ifml2:action name="кричать" description="Кричать">
+            <ifml2:templates>
+                <ifml2:template>
+                    <ifml2:literalElement position="1">
+                        <ifml2:synonym>кричать</ifml2:synonym>
+                        <ifml2:synonym>закричать</ifml2:synonym>
+                        <ifml2:synonym>крикнуть</ifml2:synonym>
+                    </ifml2:literalElement>
+                </ifml2:template>
+            </ifml2:templates>
+            <ifml2:procedureCall procedure="Кричать"/>
+        </ifml2:action>
+        <ifml2:action name="лететь" description="Лететь">
+            <ifml2:templates>
+                <ifml2:template>
+                    <ifml2:literalElement position="1">
+                        <ifml2:synonym>лететь</ifml2:synonym>
+                        <ifml2:synonym>полететь</ifml2:synonym>
+                        <ifml2:synonym>летать</ifml2:synonym>
+                    </ifml2:literalElement>
+                </ifml2:template>
+            </ifml2:templates>
+            <ifml2:procedureCall procedure="Лететь"/>
+        </ifml2:action>
+        <ifml2:action name="плевать" description="Плевать">
+            <ifml2:templates>
+                <ifml2:template>
+                    <ifml2:literalElement position="1">
+                        <ifml2:synonym>плевать</ifml2:synonym>
+                        <ifml2:synonym>плюнуть</ifml2:synonym>
+                        <ifml2:synonym>наплевать</ifml2:synonym>
+                    </ifml2:literalElement>
+                </ifml2:template>
+            </ifml2:templates>
+            <ifml2:procedureCall procedure="Плевать"/>
+        </ifml2:action>
+        <ifml2:action name="прыгать" description="Прыгать">
+            <ifml2:templates>
+                <ifml2:template>
+                    <ifml2:literalElement position="1">
+                        <ifml2:synonym>прыгать</ifml2:synonym>
+                        <ifml2:synonym>запрыгать</ifml2:synonym>
+                        <ifml2:synonym>прыгнуть</ifml2:synonym>
+                        <ifml2:synonym>подпрыгнуть</ifml2:synonym>
+                    </ifml2:literalElement>
+                </ifml2:template>
+            </ifml2:templates>
+            <ifml2:procedureCall procedure="Прыгать"/>
+        </ifml2:action>
+        <ifml2:action name="чесать" description="Чесать">
+            <ifml2:templates>
+                <ifml2:template>
+                    <ifml2:literalElement position="1">
+                        <ifml2:synonym>чесать</ifml2:synonym>
+                        <ifml2:synonym>чесаться</ifml2:synonym>
+                        <ifml2:synonym>почесаться</ifml2:synonym>
+                        <ifml2:synonym>почесать</ifml2:synonym>
+                    </ifml2:literalElement>
+                </ifml2:template>
+            </ifml2:templates>
+            <ifml2:procedureCall procedure="Чесать"/>
+        </ifml2:action>
+        <ifml2:action name="трогать [что]" description="Трогать предмет">
+            <ifml2:templates>
+                <ifml2:template>
+                    <ifml2:literalElement position="1">
+                        <ifml2:synonym>трогать</ifml2:synonym>
+                        <ifml2:synonym>потрогать</ifml2:synonym>
+                    </ifml2:literalElement>
+                    <ifml2:objectElement position="2" case="vp" parameter="предмет"/>
+                </ifml2:template>
+            </ifml2:templates>
+            <ifml2:procedureCall procedure="ТрогатьПредмет"/>
+        </ifml2:action>
+        <ifml2:action name="пинать [что]" description="Пинать предмет">
+            <ifml2:templates>
+                <ifml2:template>
+                    <ifml2:literalElement position="1">
+                        <ifml2:synonym>пинать</ifml2:synonym>
+                        <ifml2:synonym>пнуть</ifml2:synonym>
+                    </ifml2:literalElement>
+                    <ifml2:objectElement position="2" case="vp" parameter="предмет"/>
+                </ifml2:template>
+            </ifml2:templates>
+            <ifml2:procedureCall procedure="ПинатьПредмет"/>
+        </ifml2:action>
+        <ifml2:action name="слушать" description="Слушать">
+            <ifml2:templates>
+                <ifml2:template>
+                    <ifml2:literalElement position="1">
+                        <ifml2:synonym>слушать</ifml2:synonym>
+                        <ifml2:synonym>прислушаться</ifml2:synonym>
+                        <ifml2:synonym>навострить уши</ifml2:synonym>
+                    </ifml2:literalElement>
+                </ifml2:template>
+            </ifml2:templates>
+            <ifml2:procedureCall procedure="Слушать"/>
+        </ifml2:action>
+        <ifml2:action name="танцевать" description="Танцевать">
+            <ifml2:templates>
+                <ifml2:template>
+                    <ifml2:literalElement position="1">
+                        <ifml2:synonym>танцевать</ifml2:synonym>
+                        <ifml2:synonym>плясать</ifml2:synonym>
+                        <ifml2:synonym>сплясать</ifml2:synonym>
+                        <ifml2:synonym>станцевать</ifml2:synonym>
+                    </ifml2:literalElement>
+                </ifml2:template>
+            </ifml2:templates>
+            <ifml2:procedureCall procedure="Танцевать"/>
+        </ifml2:action>
+        <ifml2:action name="молиться" description="Молиться">
+            <ifml2:templates>
+                <ifml2:template>
+                    <ifml2:literalElement position="1">
+                        <ifml2:synonym>молиться</ifml2:synonym>
+                        <ifml2:synonym>помолиться</ifml2:synonym>
+                        <ifml2:synonym>молить бога</ifml2:synonym>
+                    </ifml2:literalElement>
+                </ifml2:template>
+            </ifml2:templates>
+            <ifml2:procedureCall procedure="Молиться"/>
+        </ifml2:action>
+        <ifml2:action name="спать" description="Спать">
+            <ifml2:templates>
+                <ifml2:template>
+                    <ifml2:literalElement position="1">
+                        <ifml2:synonym>спать</ifml2:synonym>
+                        <ifml2:synonym>поспать</ifml2:synonym>
+                        <ifml2:synonym>заснуть</ifml2:synonym>
+                        <ifml2:synonym>уснуть</ifml2:synonym>
+                        <ifml2:synonym>вздремнуть</ifml2:synonym>
+                        <ifml2:synonym>дремать</ifml2:synonym>
+                    </ifml2:literalElement>
+                </ifml2:template>
+            </ifml2:templates>
+            <ifml2:procedureCall procedure="Спать"/>
+        </ifml2:action>
+        <ifml2:action name="нюхать [что]" description="Нюхать предмет">
+            <ifml2:templates>
+                <ifml2:template>
+                    <ifml2:literalElement position="1">
+                        <ifml2:synonym>нюхать</ifml2:synonym>
+                        <ifml2:synonym>понюхать</ifml2:synonym>
+                    </ifml2:literalElement>
+                    <ifml2:objectElement position="2" case="vp" parameter="предмет"/>
+                </ifml2:template>
+            </ifml2:templates>
+            <ifml2:procedureCall procedure="НюхатьПредмет"/>
+        </ifml2:action>
+        <ifml2:action name="выпить [что]" description="Выпить предмет">
+            <ifml2:templates>
+                <ifml2:template>
+                    <ifml2:literalElement position="1">
+                        <ifml2:synonym>выпить</ifml2:synonym>
+                        <ifml2:synonym>пить</ifml2:synonym>
+                    </ifml2:literalElement>
+                    <ifml2:objectElement position="2" case="vp" parameter="предмет"/>
+                </ifml2:template>
+            </ifml2:templates>
+            <ifml2:procedureCall procedure="ВыпитьПредмет"/>
+        </ifml2:action>
+        <ifml2:action name="съесть [что]" description="Съесть предмет">
+            <ifml2:templates>
+                <ifml2:template>
+                    <ifml2:literalElement position="1">
+                        <ifml2:synonym>съесть</ifml2:synonym>
+                        <ifml2:synonym>есть</ifml2:synonym>
+                        <ifml2:synonym>сожрать</ifml2:synonym>
+                        <ifml2:synonym>жрать</ifml2:synonym>
+                    </ifml2:literalElement>
+                    <ifml2:objectElement position="2" case="vp" parameter="предмет"/>
+                </ifml2:template>
+            </ifml2:templates>
+            <ifml2:procedureCall procedure="СъестьПредмет"/>
+        </ifml2:action>
+
+        <ifml2:action name="зажечь [что]" description="Зажечь предмет">
+            <ifml2:templates>
+                <ifml2:template>
+                    <ifml2:literalElement position="1">
+                        <ifml2:synonym>жечь</ifml2:synonym>
+                        <ifml2:synonym>зажечь</ifml2:synonym>
+                        <ifml2:synonym>поджечь</ifml2:synonym>
+                        <ifml2:synonym>запалить</ifml2:synonym>
+                    </ifml2:literalElement>
+                    <ifml2:objectElement position="2" case="vp" parameter="предмет"/>
+                </ifml2:template>
+            </ifml2:templates>
+            <ifml2:restrictions>
+                <ifml2:restriction condition="предмет.недоступен">
+                    <ifml2:reaction>
+                        <ifml2:showMessage position="1" type="expression"
+                                           message="'В этих условиях, либо из этого положения, либо в данный момент взять и что-либо сделать с(о) ' + предмет.тп + ' невозможно.'"/>
+                    </ifml2:reaction>
+                </ifml2:restriction>
+                <ifml2:restriction condition="не предмет.горючий">
+                    <ifml2:reaction>
+                        <ifml2:showMessage position="1" type="text" message="Не горит."/>
+                    </ifml2:reaction>
+                </ifml2:restriction>
+            </ifml2:restrictions>
+            <ifml2:procedureCall procedure="ЗажечьПредмет"/>
+        </ifml2:action>
+
+        <ifml2:action name="сломать [что]" description="Сломать предмет">
+            <ifml2:templates>
+                <ifml2:template>
+                    <ifml2:literalElement position="1">
+                        <ifml2:synonym>сломать</ifml2:synonym>
+                        <ifml2:synonym>поломать</ifml2:synonym>
+                        <ifml2:synonym>разбить</ifml2:synonym>
+                        <ifml2:synonym>раздолбать</ifml2:synonym>
+                    </ifml2:literalElement>
+                    <ifml2:objectElement position="2" case="vp" parameter="предмет"/>
+                </ifml2:template>
+            </ifml2:templates>
+            <ifml2:procedureCall procedure="СломатьПредмет"/>
+        </ifml2:action>
+        <ifml2:action name="читать [что]" description="Читать предмет">
+            <ifml2:templates>
+                <ifml2:template>
+                    <ifml2:literalElement position="1">
+                        <ifml2:synonym>читать</ifml2:synonym>
+                        <ifml2:synonym>прочитать</ifml2:synonym>
+                        <ifml2:synonym>прочесть</ifml2:synonym>
+                    </ifml2:literalElement>
+                    <ifml2:objectElement position="2" case="vp" parameter="предмет"/>
+                </ifml2:template>
+            </ifml2:templates>
+            <ifml2:procedureCall procedure="ЧитатьПредмет"/>
+        </ifml2:action>
+        <ifml2:action name="пробовать [что]" description="Пробовать предмет">
+            <ifml2:templates>
+                <ifml2:template>
+                    <ifml2:literalElement position="1">
+                        <ifml2:synonym>пробовать</ifml2:synonym>
+                        <ifml2:synonym>попробовать</ifml2:synonym>
+                        <ifml2:synonym>пытаться</ifml2:synonym>
+                        <ifml2:synonym>попытаться</ifml2:synonym>
+                    </ifml2:literalElement>
+                    <ifml2:objectElement position="2" case="vp" parameter="предмет"/>
+                </ifml2:template>
+            </ifml2:templates>
+            <ifml2:procedureCall procedure="ПробоватьПредмет"/>
+        </ifml2:action>
+        <ifml2:action name="положить [что во что]">
+            <ifml2:templates>
+                <ifml2:template>
+                    <ifml2:literalElement position="1">
+                        <ifml2:synonym>положить</ifml2:synonym>
+                        <ifml2:synonym>поставить</ifml2:synonym>
+                        <ifml2:synonym>поместить</ifml2:synonym>
+                        <ifml2:synonym>водрузить</ifml2:synonym>
+                    </ifml2:literalElement>
+                    <ifml2:objectElement position="2" case="vp" parameter="чтоПоложить"/>
+                    <ifml2:literalElement position="3" parameter="предлог">
+                        <ifml2:synonym>во</ifml2:synonym>
+                        <ifml2:synonym>в</ifml2:synonym>
+                        <ifml2:synonym>на</ifml2:synonym>
+                    </ifml2:literalElement>
+                    <ifml2:objectElement position="4" case="vp" parameter="кудаПоложить"/>
+                </ifml2:template>
+            </ifml2:templates>
+            <ifml2:procedureCall procedure="ПоложитьВ"/>
+        </ifml2:action>
+    </ifml2:actions>
+    <ifml2:procedures>
+        <ifml2:procedure name="ОписатьТекущуюЛокацию" inheritsSystemProcedure="showLocName">
+            <ifml2:procedureBody>
+                <!--ifml2:showLocName position="1" location="ТекущаяЛокация"/-->
+                <ifml2:showMessage position="1" type="expression" message="ТекущаяЛокация.Имя"/>
+                <ifml2:showMessage position="2" type="expression" message="ТекущаяЛокация.Описание"/>
+                <ifml2:loop position="3" collection="ТекущаяЛокация.Предметы" element="предмет"
+                            condition="не предмет.частьПейзажа">
+                    <ifml2:alone>
+                        <ifml2:showMessage position="1" type="expression" message="'Здесь же ' + предмет.имя + '.'"
+                                           carriageReturn="true"/>
+                    </ifml2:alone>
+                    <ifml2:first>
+                        <ifml2:showMessage position="1" type="expression" message="'Здесь же ' + предмет.имя"
+                                           carriageReturn="false"/>
+                    </ifml2:first>
+                    <ifml2:next>
+                        <ifml2:showMessage position="1" type="expression" message="', ' + предмет.имя"
+                                           carriageReturn="false"/>
+                    </ifml2:next>
+                    <ifml2:last>
+                        <ifml2:showMessage position="1" type="expression" message="' и ' + предмет.имя + '.'"
+                                           carriageReturn="true"/>
+                    </ifml2:last>
+                </ifml2:loop>
+            </ifml2:procedureBody>
+        </ifml2:procedure>
+        <ifml2:procedure name="Описать">
+            <ifml2:parameters>
+                <ifml2:parameter name="предмет"/>
+            </ifml2:parameters>
+            <ifml2:procedureBody>
+                <ifml2:showItemDesc position="1" item="предмет"/>
+            </ifml2:procedureBody>
+        </ifml2:procedure>
+        <ifml2:procedure name="ПерейтиНаСевер">
+            <ifml2:procedureBody>
+                <ifml2:goToLoc position="1" location="ТекущаяЛокация.Север"/>
+            </ifml2:procedureBody>
+        </ifml2:procedure>
+        <ifml2:procedure name="ПерейтиНаЮг">
+            <ifml2:procedureBody>
+                <ifml2:goToLoc position="1" location="ТекущаяЛокация.Юг"/>
+            </ifml2:procedureBody>
+        </ifml2:procedure>
+        <ifml2:procedure name="ПерейтиНаВосток">
+            <ifml2:procedureBody>
+                <ifml2:goToLoc position="1" location="ТекущаяЛокация.Восток"/>
+            </ifml2:procedureBody>
+        </ifml2:procedure>
+        <ifml2:procedure name="ПерейтиНаЗапад">
+            <ifml2:procedureBody>
+                <ifml2:goToLoc position="1" location="ТекущаяЛокация.Запад"/>
+            </ifml2:procedureBody>
+        </ifml2:procedure>
+        <ifml2:procedure name="ПерейтиНаверх">
+            <ifml2:procedureBody>
+                <ifml2:goToLoc position="1" location="ТекущаяЛокация.Верх"/>
+            </ifml2:procedureBody>
+        </ifml2:procedure>
+        <ifml2:procedure name="ПерейтиВниз">
+            <ifml2:procedureBody>
+                <ifml2:goToLoc position="1" location="ТекущаяЛокация.Низ"/>
+            </ifml2:procedureBody>
+        </ifml2:procedure>
+        <ifml2:procedure name="ПоказатьИнвентарь">
+            <ifml2:procedureBody>
+                <!--ifml2:showInventory position="1"/-->
+                <ifml2:loop position="2" collection="Инвентарий" element="предмет">
+                    <ifml2:empty>
+                        <ifml2:showMessage position="1" type="text" message="А у Вас ничего нет."/>
+                    </ifml2:empty>
+                    <ifml2:alone>
+                        <ifml2:showMessage position="1" type="expression"
+                                           message="'У Вас при себе ' + предмет.имя + '.'" carriageReturn="true"/>
+                    </ifml2:alone>
+                    <ifml2:first>
+                        <ifml2:showMessage position="1" type="expression" message="'У Вас при себе ' + предмет.имя"
+                                           carriageReturn="false"/>
+                    </ifml2:first>
+                    <ifml2:next>
+                        <ifml2:showMessage position="1" type="expression" message="', ' + предмет.имя"
+                                           carriageReturn="false"/>
+                    </ifml2:next>
+                    <ifml2:last>
+                        <ifml2:showMessage position="1" type="expression" message="' и ' + предмет.имя + '.'"
+                                           carriageReturn="true"/>
+                    </ifml2:last>
+                </ifml2:loop>
+            </ifml2:procedureBody>
+        </ifml2:procedure>
+
+        <ifml2:procedure name="ВзятьПредмет">
+            <ifml2:parameters>
+                <ifml2:parameter name="предмет"/>
+            </ifml2:parameters>
+            <ifml2:procedureBody>
+                <ifml2:getItem position="1" item="предмет"/>
+            </ifml2:procedureBody>
+        </ifml2:procedure>
+        
+        <ifml2:procedure name="ВзятьВсё">
+            <ifml2:procedureBody>
+                <ifml2:loop position="1" collection="ТекущаяЛокация.Предметы" element="предмет" condition="не предмет.частьПейзажа и не предмет.недоступен">
+                    <ifml2:empty>
+                        <ifml2:showMessage position="1" type="text" message="Тут нечего брать."/>
+                    </ifml2:empty>
+                    <ifml2:next>
+                        <ifml2:getItem position="1" item="предмет"/>
+                    </ifml2:next>
+                </ifml2:loop>
+            </ifml2:procedureBody>
+        </ifml2:procedure>
+
+        <ifml2:procedure name="ВыброситьПредмет">
+            <ifml2:parameters>
+                <ifml2:parameter name="предмет"/>
+            </ifml2:parameters>
+            <ifml2:procedureBody>
+                <ifml2:dropItem position="1" item="предмет"/>
+            </ifml2:procedureBody>
+        </ifml2:procedure>
+
+        <ifml2:procedure name="Сесть">
+            <ifml2:procedureVariables>
+                <ifml2:procedureVariable name="счётчик" initialValue="1"/>
+            </ifml2:procedureVariables>
+            <ifml2:procedureBody>
+                <ifml2:showMessage position="1" type="text"
+                                   message="Сижу на нарах, как король на именинах, &#xD;&#xA;И пайку серого мечтаю получить."/>
+                <!--ifml2:showMessage position="2" type="expression" message="'Счётчик = ' + счётчик"/-->
+                <ifml2:if position="3" condition="счётчик = 1">
+                    <ifml2:then>
+                        <!--ifml2:showMessage position="1" type="text" message="Cчётчик = 1!"/-->
+                    </ifml2:then>
+                </ifml2:if>
+                <ifml2:var position="4" name="счётчик" value="счётчик + 1"/>
+                <!--ifml2:showMessage position="5" type="expression" message="'Счётчик = ' + счётчик"/-->
+                <ifml2:var position="6" name="локальная" value="2"/>
+                <ifml2:var position="7" name="локальная" value="локальная + 1"/>
+                <!--ifml2:showMessage position="8" type="expression" message="'Локальная = ' + локальная"/-->
+            </ifml2:procedureBody>
+        </ifml2:procedure>
+        <ifml2:procedure name="Курить">
+            <ifml2:procedureBody>
+                <ifml2:showMessage position="1" type="text"
+                                   message="Минздрав предупреждает - Курение опасно для Вашего здоровья."/>
+            </ifml2:procedureBody>
+        </ifml2:procedure>
+        <ifml2:procedure name="Думать">
+            <ifml2:procedureBody>
+                <ifml2:showMessage position="1" type="text"
+                                   message="Ничего в голову не лезет, разве что: - Направо пойдешь - женатому быть, налево пойдешь - богатому быть, прямо - пойдешь - убитому быть. Вот где-то еще коня можно потерять. Только камня с надписью никакого нет. И где тут лево, где право не понять."/>
+            </ifml2:procedureBody>
+        </ifml2:procedure>
+        <ifml2:procedure name="Свистеть">
+            <ifml2:procedureBody>
+                <ifml2:showMessage position="1" type="text" message="Не свисти - денег не будет."/>
+            </ifml2:procedureBody>
+        </ifml2:procedure>
+        <ifml2:procedure name="Лечь">
+            <ifml2:procedureBody>
+                <ifml2:showMessage position="1" type="text" message="Я на солнышке лежу, я на солнышко гляжу."/>
+            </ifml2:procedureBody>
+        </ifml2:procedure>
+        <ifml2:procedure name="Петь">
+            <ifml2:procedureBody>
+                <ifml2:showMessage position="1" type="text"
+                                   message="Мама, мама, что я буду делать? Ку.&#xD;&#xA;Мама, мама, как я буду жить? Ыыыыы!&#xD;&#xA;Ы-ку, ы-ку, ы-ку, ы-ку, ы-ку, ы-ку, ыыыы."/>
+            </ifml2:procedureBody>
+        </ifml2:procedure>
+        <ifml2:procedure name="Ползти">
+            <ifml2:procedureBody>
+                <ifml2:showMessage position="1" type="text" message="Рожденный летать ползать не желает."/>
+            </ifml2:procedureBody>
+        </ifml2:procedure>
+        <ifml2:procedure name="Кричать">
+            <ifml2:procedureBody>
+                <ifml2:showMessage position="1" type="text" message="А-а-а-а-а!!!"/>
+            </ifml2:procedureBody>
+        </ifml2:procedure>
+        <ifml2:procedure name="Лететь">
+            <ifml2:procedureBody>
+                <ifml2:showMessage position="1" type="text"
+                                   message="Дивлюсь я на небо,&#xD;&#xA;та й думку гадаю:&#xD;&#xA;Чому я не сокіл, &#xD;&#xA;чому не літаю,&#xD;&#xA;Чому мені, Боже, &#xD;&#xA;ти крилець не дав?&#xD;&#xA;Я б землю покинув &#xD;&#xA;і в небо злітав."/>
+            </ifml2:procedureBody>
+        </ifml2:procedure>
+        <ifml2:procedure name="Плевать">
+            <ifml2:procedureBody>
+                <ifml2:showMessage position="1" type="text" message="Это не эстетично и не гигиенично."/>
+            </ifml2:procedureBody>
+        </ifml2:procedure>
+        <ifml2:procedure name="Прыгать">
+            <ifml2:procedureBody>
+                <ifml2:showMessage position="1" type="text"
+                                   message="Прыг-скок, утром на лужок, &#xD;&#xA;Прыг-скок, выскочил сверчок &#xD;&#xA;А вслед, тоже прыг да скок, &#xD;&#xA;Из тёмной норки выбежал сурок."/>
+            </ifml2:procedureBody>
+        </ifml2:procedure>
+        <ifml2:procedure name="Чесать">
+            <ifml2:procedureBody>
+                <ifml2:showMessage position="1" type="text"
+                                   message="Чешем кудри, чешет русы&#xD;&#xA;Частым гребнем-гребешком."/>
+            </ifml2:procedureBody>
+        </ifml2:procedure>
+        <ifml2:procedure name="ПинатьПредмет">
+            <ifml2:procedureBody>
+                <ifml2:showMessage position="1" type="expression"
+                                   message="'Вы пнули ' + предмет.вп + ', но, как говорил великий и мудрый Ким Ир Сен, если в гневе пнешь камень, то только ноге больно.'"/>
+            </ifml2:procedureBody>
+        </ifml2:procedure>
+        <ifml2:procedure name="Слушать">
+            <ifml2:procedureBody>
+                <ifml2:showMessage position="1" type="text" message="Не слышны в саду даже шорохи,..."/>
+            </ifml2:procedureBody>
+        </ifml2:procedure>
+        <ifml2:procedure name="Танцевать">
+            <ifml2:procedureBody>
+                <ifml2:showMessage position="1" type="text"
+                                   message="Ну что тебя&#xD;&#xA;Так тянет танцевать?&#xD;&#xA;Мне не понять,&#xD;&#xA;Мне не понять,&#xD;&#xA;Тебя мне не понять.&#xD;&#xA;Когда в тебя&#xD;&#xA;Вселился этот бес?&#xD;&#xA;И до, ре, ми,&#xD;&#xA;Фа, соль, ля, си&#xD;&#xA;И фа-диез."/>
+            </ifml2:procedureBody>
+        </ifml2:procedure>
+        <ifml2:procedure name="Молиться">
+            <ifml2:procedureBody>
+                <ifml2:showMessage position="1" type="text"
+                                   message="Отче наш, Иже еси на Небесех!&#xD;&#xA;Да святится имя Твое, &#xD;&#xA;да приидет Царствие Твое,&#xD;&#xA;да будет воля Твоя, яко на Небеси и на земли.&#xD;&#xA;Хлеб наш насущный даждь нам днесь; &#xD;&#xA;и остави нам долги наша, якоже и мы оставляем должником нашим; &#xD;&#xA;и не введи нас во искушение,&#xD;&#xA;но избави нас от лукавого, &#xD;&#xA;Яко Твое есть Царство, и сила, и слава во веки. Аминь."/>
+            </ifml2:procedureBody>
+        </ifml2:procedure>
+        <ifml2:procedure name="Спать">
+            <ifml2:procedureBody>
+                <ifml2:showMessage position="1" type="text"
+                                   message="Дай мне этот день, дай мне эту ночь, Дай мне хоть один шанс. Ты не уснешь, пока я рядом."/>
+            </ifml2:procedureBody>
+        </ifml2:procedure>
+        <ifml2:procedure name="ТрогатьПредмет">
+            <ifml2:procedureBody>
+                <ifml2:showMessage position="1" type="expression"
+                                   message="'Вы потрогали ' + предмет.вп + '. Этот предмет на ошуп такой, каким и должнен быть.'"/>
+            </ifml2:procedureBody>
+        </ifml2:procedure>
+        <ifml2:procedure name="НюхатьПредмет">
+            <ifml2:procedureBody>
+                <ifml2:showMessage position="1" type="expression"
+                                   message="'Вы понюхали ' + предмет.вп + '. Запах такой, каким и должен быть.'"/>
+            </ifml2:procedureBody>
+        </ifml2:procedure>
+
+        <ifml2:procedure name="ЗажечьПредмет">
+            <ifml2:parameters>
+                <ifml2:parameter name="предмет"/>
+            </ifml2:parameters>
+            <ifml2:procedureBody>
+                <ifml2:showMessage position="1" type="expression" message="'Вы зажгли ' + предмет.вп + '.'"/>
+            </ifml2:procedureBody>
+        </ifml2:procedure>
+
+        <ifml2:procedure name="ВыпитьПредмет">
+            <ifml2:parameters>
+                <ifml2:parameter name="предмет"/>
+            </ifml2:parameters>
+            <ifml2:procedureBody>
+                <ifml2:if position="1" condition="предмет.недоступен">
+                    <ifml2:then>
+                        <ifml2:showMessage position="1" type="text" beginWithCap="true"
+                                           message="Это невозможно. Предмет недоступен."/>
+                    </ifml2:then>
+                    <ifml2:else>
+                        <ifml2:if position="1" condition="предмет.жидкий">
+                            <ifml2:then>
+                                <ifml2:showMessage position="1" type="expression" beginWithCap="true"
+                                                   message="'Вы выпили ' + предмет.вп + '.'"/>
+                            </ifml2:then>
+                            <ifml2:else>
+                                <ifml2:showMessage position="1" type="expression"
+                                                   message="'Это невозможно.' + предмет.вп + ' не пьют.'"/>
+                            </ifml2:else>
+                        </ifml2:if>
+                    </ifml2:else>
+                </ifml2:if>
+            </ifml2:procedureBody>
+        </ifml2:procedure>
+        <ifml2:procedure name="СъестьПредмет">
+            <ifml2:parameters>
+                <ifml2:parameter name="предмет"/>
+            </ifml2:parameters>
+            <ifml2:procedureBody>
+                <ifml2:if position="1" condition="предмет.недоступен">
+                    <ifml2:then>
+                        <ifml2:showMessage position="1" type="expression"
+                                           message="Это невозможно. Предмет недоступен."/>
+                    </ifml2:then>
+                    <ifml2:else>
+                        <ifml2:if position="1" condition="предмет.съедобен">
+                            <ifml2:then>
+                                <ifml2:showMessage position="1" type="expression" beginWithCap="true"
+                                                   message="'Вы съели ' + предмет.вп + '.'"/>
+                            </ifml2:then>
+                            <ifml2:else>
+                                <ifml2:showMessage position="1" type="text"
+                                                   message="Это съесть невозможно?"/>
+                            </ifml2:else>
+                        </ifml2:if>
+                    </ifml2:else>
+                </ifml2:if>
+            </ifml2:procedureBody>
+        </ifml2:procedure>
+        <ifml2:procedure name="СломатьПредмет">
+            <ifml2:parameters>
+                <ifml2:parameter name="предмет"/>
+            </ifml2:parameters>
+            <ifml2:procedureBody>
+                <ifml2:if position="1" condition="предмет.недоступен">
+                    <ifml2:then>
+                        <ifml2:showMessage position="1" type="text" beginWithCap="true"
+                                           message="Это невозможно. Предмет недоступен."/>
+                    </ifml2:then>
+                    <ifml2:else>
+                        <ifml2:if position="1" condition="предмет.хрупкий">
+                            <ifml2:then>
+                                <ifml2:showMessage position="1" type="expression" beginWithCap="true"
+                                                   message="'Вы раздолбали ' + предмет.вп + '.'"/>
+                            </ifml2:then>
+                            <ifml2:else>
+                                <ifml2:showMessage position="1" type="text"
+                                                   message="Это сломать невозможно?"/>
+                            </ifml2:else>
+                        </ifml2:if>
+                    </ifml2:else>
+                </ifml2:if>
+            </ifml2:procedureBody>
+        </ifml2:procedure>
+        <ifml2:procedure name="ЧитатьПредмет">
+            <ifml2:parameters>
+                <ifml2:parameter name="предмет"/>
+            </ifml2:parameters>
+            <ifml2:procedureBody>
+                <ifml2:if position="1" condition="предмет.недоступен">
+                    <ifml2:then>
+                        <ifml2:showMessage position="1" type="text" message="Это невозможно. Предмет недоступен."/>
+                    </ifml2:then>
+                    <ifml2:else>
+                        <ifml2:if position="1" condition="предмет.читаемый">
+                            <ifml2:then>
+                                <ifml2:showMessage position="1" type="expression" message="'Вы прочли ' + предмет.вп + '.'"/>
+                            </ifml2:then>
+                            <ifml2:else>
+                                <ifml2:showMessage position="1" type="expression"
+                                                   message="'На ' + предмет.пп + ' ничего не написано.'"/>
+                            </ifml2:else>
+                        </ifml2:if>
+                    </ifml2:else>
+                </ifml2:if>
+            </ifml2:procedureBody>
+        </ifml2:procedure>
+        <ifml2:procedure name="ПробоватьПредмет">
+            <ifml2:parameters>
+                <ifml2:parameter name="предмет"/>
+            </ifml2:parameters>
+            <ifml2:procedureBody>
+                <ifml2:if position="1" condition="предмет.недоступен">
+                    <ifml2:then>
+                        <ifml2:showMessage position="1" type="text" beginWithCap="true"
+                                           message="Это невозможно. Предмет недоступен."/>
+                    </ifml2:then>
+                    <ifml2:else>
+                        <ifml2:showMessage position="1" type="text"
+                                           message="Конечно, попытка не пытка, но чего пробовать-то? Смелее. Решили что-то сделать, делайте. Вдруг, прокатит?"/>
+                    </ifml2:else>
+                </ifml2:if>
+            </ifml2:procedureBody>
+        </ifml2:procedure>
+        <ifml2:procedure name="ПоложитьВ">
+            <ifml2:parameters>
+                <ifml2:parameter name="чтоПоложить"/>
+                <ifml2:parameter name="предлог"/>
+                <ifml2:parameter name="кудаПоложить"/>
+            </ifml2:parameters>
+            <ifml2:procedureBody>
+                <ifml2:if position="1" condition="чтоПоложить.недоступен">
+                    <ifml2:then>
+                        <ifml2:showMessage position="1" type="text" message="Это невозможно. Предмет недоступен."/>
+                    </ifml2:then>
+                    <ifml2:else>
+                        <ifml2:if position="1" condition="кудаПоложить.контейнер">
+                            <ifml2:then>
+                                <ifml2:showMessage position="1" type="expression"
+                                                   message="'Вы положили ' + чтоПоложить.вп + ' ' + предлог + ' ' + кудаПоложить.вп + '.'"/>
+                            </ifml2:then>
+                            <ifml2:else>
+                                <ifml2:showMessage position="1" type="text" message="Вы не можете туда это положить."/>
+                            </ifml2:else>
+                        </ifml2:if>
+                    </ifml2:else>
+                </ifml2:if>
+            </ifml2:procedureBody>
+        </ifml2:procedure>
+    </ifml2:procedures>
+</ifml2:library>

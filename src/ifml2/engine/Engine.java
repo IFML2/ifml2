@@ -1,0 +1,349 @@
+package ifml2.engine;
+
+import ifml2.IFML2Exception;
+import ifml2.SystemIdentifiers;
+import ifml2.interfaces.Interface;
+import ifml2.om.*;
+import ifml2.parser.FormalElement;
+import ifml2.parser.Parser;
+import ifml2.vm.ExpressionCalculator;
+import ifml2.vm.IFML2VMException;
+import ifml2.vm.RunningContext;
+import ifml2.vm.VirtualMachine;
+import ifml2.vm.instructions.SetVarInstruction;
+import ifml2.vm.values.BooleanValue;
+import ifml2.vm.values.CollectionValue;
+import ifml2.vm.values.ObjectValue;
+import ifml2.vm.values.Value;
+
+import java.io.File;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+
+public class Engine
+{
+    private Interface gameInterface = null;
+	private Story story = null;
+	private final Parser parser = new Parser(this);
+	private final VirtualMachine virtualMachine = new VirtualMachine();
+
+    private final HashMap<String, Value> systemVariables = new HashMap<String, Value>();
+    public final HashMap<String, Value> globalVariables = new HashMap<String, Value>();
+
+	private ArrayList<Item> inventory = new ArrayList<Item>();
+
+	public Engine(Interface gameInterface)
+	{
+        this.setGameInterface(gameInterface);
+        virtualMachine.setEngine(this);
+	}
+
+	public void loadStory(String storyFile) throws IFML2Exception
+	{
+		if(! new File(storyFile).exists())
+		{
+			throw new IFML2Exception("Файл истории не найден");
+		}
+
+		//TODO validate xml
+
+        OMManager.LoadStoryResult loadStoryResult = OMManager.loadStoryFromXmlFile(storyFile, true);
+        setStory(loadStoryResult.getStory());
+        setInventory(loadStoryResult.getInventory());
+	}
+
+	public void outText(String text)
+	{
+		getGameInterface().outputText(text);
+	}
+
+	public void outTextLn(String text)
+	{
+		outText(text + "\n");
+	}
+
+    public void outTextLn(String text, Object ... arguments)
+    {
+        outTextLn(MessageFormat.format(text, arguments));
+    }
+
+	public void initGame() throws IFML2Exception
+    {
+		if(story == null)
+		{
+			throw new IFML2Exception("История не загружена.");
+		}
+
+		if(story.getLocations().isEmpty())
+		{
+			throw new IFML2Exception("Локаций нет");
+		}
+        
+        // load global vars
+        globalVariables.clear();
+        for(SetVarInstruction varInstruction : story.getStoryOptions().getVars())
+        {
+            Value value = ExpressionCalculator.calculate(new RunningContext(virtualMachine), varInstruction.getValue());
+            globalVariables.put(varInstruction.getName(), value);
+        }
+
+		// show initial info
+        StoryOptions.StoryDescription storyDescription = getStory().getStoryOptions().getStoryDescription();
+        outTextLn(storyDescription.getName() != null ? storyDescription.getName() : "<Без имени>");
+        outTextLn("**********");
+        outTextLn(storyDescription.getDescription() != null ? storyDescription.getDescription() : "<Без описания>");
+        outTextLn(String.format("ВЕРСИЯ: %s", storyDescription.getVersion() != null ? storyDescription.getVersion() : "<Без версии>"));
+        outTextLn(String.format("АВТОР: %s", storyDescription.getAuthor() != null ? storyDescription.getAuthor() : "<Без автора>"));
+        outTextLn("**********\n");
+
+        if(story.getStartProcedure() != null)
+        {
+            try
+            {
+                virtualMachine.runProcedure(getStory().getStartProcedure());
+            }
+            catch (IFML2Exception e)
+            {
+                outTextLn(e.getMessage());
+            }
+        }
+
+        if(story.getStartLocation() != null)
+        {
+            setCurrentLocation(getStory().getStartLocation());
+        }
+        else
+        {
+            setCurrentLocation(getStory().getAnyLocation());
+        }
+
+		if(story.IsShowStartLocDesc())
+        {
+            // show first location description
+            virtualMachine.showLocName(getCurrentLocation());
+        }
+	}
+
+    public boolean executeGamerCommand(String gamerCommand)
+    {
+        if("помощь".equalsIgnoreCase(gamerCommand) || "помоги".equalsIgnoreCase(gamerCommand) ||
+                "помогите".equalsIgnoreCase(gamerCommand) || "help".equalsIgnoreCase(gamerCommand) ||
+                "info".equalsIgnoreCase(gamerCommand))
+        {
+            outTextLn("Попробуйте одну из команд: " + getStory().getAllActions());
+            return true;
+        }
+
+        String trimmedCommand = gamerCommand.trim();
+        if(trimmedCommand.length() > 0 && trimmedCommand.charAt(0) == '?')
+        {
+            String expression = trimmedCommand.substring(1);
+            try
+            {
+                Value value = ExpressionCalculator.calculate(new RunningContext(virtualMachine), expression);
+                outTextLn(MessageFormat.format("[ОТЛАДКА] ({0}) {1}", value.getClass().getSimpleName(), value));
+            }
+            catch (IFML2Exception e)
+            {
+                outTextLn("[ОТЛАДКА] Ошибка при вычислении выражения: " + e.getMessage());
+            }
+            return true;
+        }
+
+        Parser.ParseResult parseResult;
+        try
+        {
+            parseResult = getParser().parse(trimmedCommand);
+
+            // check restrictions
+            for(Restriction restriction : parseResult.getAction().getRestrictions())
+            {
+                try
+                {
+                    RunningContext runningContext = new RunningContext(parseResult.getFormalElements(), virtualMachine);
+                    Value isRestricted = ExpressionCalculator.calculate(runningContext, restriction.getCondition());
+                    if(!(isRestricted instanceof BooleanValue))
+                    {
+                        throw new IFML2Exception("Выражение (%s) условия ограничения действия \"%s\" не логического типа.", restriction.getCondition(), parseResult.getAction());
+                    }
+                    if(((BooleanValue)isRestricted).getValue()) // if condition is true, run reaction
+                    {
+                        virtualMachine.runInstructionList(restriction.getReaction(), runningContext, false);
+                        return true;
+                    }
+                }
+                catch (IFML2Exception e)
+                {
+                    throw new IFML2Exception(e, "{0}\n  при вычислении ограничения \"{1}\" действия \"{2}\"", e.getMessage(), restriction.getCondition(), parseResult.getAction());
+                }
+            }
+
+            // check hooks & run procedure
+            
+            ArrayList<Hook> firingHooks = new ArrayList<Hook>();
+            Hook insteadHook = null;
+            
+            mainLoop:
+            for (FormalElement formalElement : parseResult.getFormalElements())
+            {
+                if (FormalElement.FormalElementTypeEnum.OBJECT.equals(formalElement.type) && formalElement.getObject() instanceof Item)
+                {
+                    Item item = (Item) formalElement.object;
+                    for (Hook hook : item.hooks)
+                    {
+                        if (parseResult.action.equals(hook.getAction()) && formalElement.parameterName.equalsIgnoreCase(hook.objectElement))
+                        {
+                            // if INSTEAD - remove all other hooks and take only this one
+                            if(Hook.HookTypeEnum.INSTEAD.equals(hook.type))
+                            {
+                                insteadHook = hook;
+                                break mainLoop;
+                            }
+                            else
+                            {
+                                firingHooks.add(hook);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // if there is INSTEAD hook then fire it and finish
+            if(insteadHook != null)
+            {
+                virtualMachine.runHook(insteadHook, parseResult.formalElements);
+            }
+            else
+            {
+                // sort BEFORE, INSTEAD, AFTER
+                Collections.sort(firingHooks, new Comparator<Hook>()
+                {
+                    @Override
+                    public int compare(Hook o1, Hook o2)
+                    {
+                        return o1.type.sortValue - o2.type.sortValue;
+                    }
+                });
+
+                boolean isActionFired = false;
+                
+                for(Hook hook : firingHooks)
+                {
+                    // if it's BEFORE - fire it
+                    if(Hook.HookTypeEnum.BEFORE.equals(hook.type))
+                    {
+                        virtualMachine.runHook(hook, parseResult.formalElements);
+                    }
+                    else if (Hook.HookTypeEnum.AFTER.equals(hook.type))
+                    {
+                        // if it's AFTER but action isn't fired yet - fire action ...
+                        if(!isActionFired)
+                        {
+                            virtualMachine.runProcedure(parseResult.action.procedureCall.getProcedure(), parseResult.formalElements);
+                            isActionFired = true;
+                        }
+                        // ... and fire AFTER hook
+                        virtualMachine.runHook(hook, parseResult.formalElements);
+                    }
+                }
+
+                // action hasn't been fired yet - fire it
+                if(!isActionFired)
+                {
+                    virtualMachine.runProcedure(parseResult.getAction(), parseResult.getFormalElements());
+                }
+            }
+        }
+        catch (IFML2VMException e)
+        {
+            outTextLn("[Ошибка!] " + e.getMessage());
+        }
+        catch (IFML2Exception e)
+        {
+            outTextLn(e.getMessage());
+        }
+
+        return true;
+    }
+
+    Interface getGameInterface()
+    {
+        return gameInterface;
+    }
+
+    void setGameInterface(Interface gameInterface)
+    {
+        this.gameInterface = gameInterface;
+    }
+
+    public Story getStory()
+    {
+        return story;
+    }
+
+    void setStory(Story story)
+    {
+        this.story = story;
+        getParser().setStory(story);
+    }
+
+    Parser getParser()
+    {
+        return parser;
+    }
+
+    public Location getCurrentLocation()
+    {
+        return (Location) ((ObjectValue) systemVariables.get(SystemIdentifiers.CURRENT_LOCATION_SYSTEM_VARIABLE.toLowerCase())).value;
+    }
+
+    public void setCurrentLocation(Location currentLocation)
+    {
+        systemVariables.put(SystemIdentifiers.CURRENT_LOCATION_SYSTEM_VARIABLE.toLowerCase(), new ObjectValue(currentLocation));
+    }
+
+    public ArrayList<Item> getInventory()
+    {
+        return inventory;
+    }
+
+    public Value resolveSymbol(String symbol) throws IFML2VMException
+    {
+        String loweredSymbol = symbol.toLowerCase();
+
+        if("инвентарий".equalsIgnoreCase(loweredSymbol))
+        {
+            return new CollectionValue(getInventory());
+        }
+
+        if("куча".equalsIgnoreCase(loweredSymbol))
+        {
+            return new CollectionValue(new ArrayList<String>(story.getObjectsHeap().keySet()));
+        }
+
+        if("словарь".equalsIgnoreCase(loweredSymbol))
+        {
+            return new CollectionValue(new ArrayList<Word>(story.getDictionary().values()));
+        }
+
+        if(systemVariables.containsKey(loweredSymbol))
+        {
+            return systemVariables.get(loweredSymbol);
+        }
+
+        if(getStory().getObjectsHeap().containsKey(loweredSymbol))
+        {
+            return new ObjectValue(getStory().getObjectsHeap().get(loweredSymbol));
+        }
+
+        throw new IFML2VMException("Неизвестный идентификатор \"{0}\"", symbol);
+    }
+
+    void setInventory(ArrayList<Item> inventory)
+    {
+        this.inventory = inventory;
+    }
+}

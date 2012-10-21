@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<story xmlns="http://toysoft.narod.ru/IFML2Schema">
+    <storyOptions>
+        <startLocationOption showStartLocDesc="true" location="КЗападуОтДома"/>
+        <startProcedureOption/>
+        <storyDescription name="Zork порт" author="realsonic" description="Портированный Zork под ЯРИЛ 2.0"
+                          version="0.0.1 (в разработке)"/>
+    </storyOptions>
+    <libraries>
+        <library>standard/verbs.xml</library>
+    </libraries>
+    <dictionary>
+        <word>
+            <ip>ящик</ip>
+            <rp>ящика</rp>
+            <dp>ящику</dp>
+            <vp>ящик</vp>
+            <tp>ящиком</tp>
+            <pp>ящике</pp>
+        </word>
+    </dictionary>
+    <locations>
+        <location name="К западу от дома" id="КЗападуОтДома">
+            <attributes/>
+            <description>Вы стоите на площадке к западу от белого дома с белой заколоченной парадной дверью.</description>
+        </location>
+    </locations>
+    <items>
+        <item name="небольшой почтовый ящик" id="ПочтовыйЯщик">
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>КЗападуОтДома</location>
+                </locations>
+            </startingPosition>
+            <words mainWord="ящик">
+                <word>ящик</word>
+            </words>
+            <attributes>
+                <attribute>зафиксирован</attribute>
+            </attributes>
+            <description/>
+        </item>
+    </items>
+    <actions/>
+    <procedures/>
+</story>
