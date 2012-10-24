@@ -74,9 +74,9 @@ public class OMManager
                 throw new IFML2Exception("Ошибка при загрузке истории: ", (Object[]) validationEventCollector.getEvents());
             }
 
-            System.out.println("before unmarshall");
+            LOG.debug("before unmarshall");
             story = (Story) unmarshaller.unmarshal(file);
-            System.out.println("after unmarshall");
+            LOG.debug("after unmarshall");
 
             story.setObjectsHeap(ifmlObjectsHeap);
 
@@ -216,7 +216,7 @@ public class OMManager
     public static Library loadLibrary(String libPath) throws IFML2Exception
 	{
         //logs
-        System.out.println("LOAD library " + libPath);
+        LOG.debug("LOAD library " + libPath);
 
         Library library;
 
@@ -248,7 +248,7 @@ public class OMManager
 		}
 
         //logs
-        System.out.println("LOADING END");
+        LOG.debug("LOADING END");
 
 		return library;
 	}
@@ -318,7 +318,7 @@ public class OMManager
             }
 
             //logs
-            System.out.println(String.format("binding %s -> %s (%s)", s, o.getClass().getName(), o));
+            LOG.debug(String.format("binding \"%s\" -> %s (%s)", s, o.getClass().getName(), o));
         }
 
         @Override
@@ -326,35 +326,33 @@ public class OMManager
         {
             return new Callable<Object>()
             {
-                @Override
                 public Object call() throws Exception
                 {
                     //logs
-                    //todo LOG4J!!!
-                    LOG.debug(String.format("? resolve %s for %s", s, aClass));
-                    //System.out.println(String.format("? resolve %s for %s", s, aClass));
+                    LOG.debug(String.format("Trying to resolve \"%s\" for %s", s, aClass));
 
                     if(bindings.containsKey(s))
                     {
-                        System.out.println(String.format("   => binding %s", bindings.get(s)));
+                        LOG.debug(String.format("   => binding \"%s\"", bindings.get(s)));
                         return bindings.get(s);
                     }
                     else
                     {
-                        System.out.println("  trying to find in libs:");
+                        LOG.debug("  not found in bindings, trying to find in libs:");
                         // try to find key in libraries
                         if(story != null)
                         {
                             for (Library library : story.getLibraries())
                             {
-                                System.out.println("  - lib " + library.getName() + ", class is " + aClass);
+                                LOG.debug(String.format("  - searching in lib %s, class is %s", library.getName(), aClass));
 
                                 if(aClass == Attribute.class || aClass == Object.class) //todo: remove Object after JAXB fix
                                 {
-                                    System.out.println(String.format("  => searchnig Attribute %s", s));
+                                    LOG.debug(String.format("  => searching Attribute %s", s));
                                     Attribute attribute = library.getAttributeByName(s);
                                     if(attribute != null)
                                     {
+                                        LOG.debug(String.format("    - found Attribute: %s", attribute));
                                         return attribute;
                                     }
                                     /*todo из-за приходящего Object вместо нормального Attribute мы не сможем проверить,
@@ -366,7 +364,7 @@ public class OMManager
                             }
                         }
                     }
-                    System.out.println("  -> NOT FOUND");
+                    LOG.debug("  -> Binding NOT FOUND");
                     return null;
                 }
             };
