@@ -26,6 +26,7 @@ public class OMManager
      */
     public static LoadStoryResult loadStoryFromXmlFile(String xmlFile, final boolean toInitItemsStartLoc) throws IFML2Exception
     {
+        LOG.debug(String.format("loadStoryFromXmlFile(xmlFile = \"%s\", toInitItemsStartLoc = %s) :: begin", xmlFile,  toInitItemsStartLoc));
         final Story story;
         final ArrayList<Item> inventory = new ArrayList<Item>();
 
@@ -65,6 +66,7 @@ public class OMManager
             });
 
 	        File file = new File(xmlFile);
+            LOG.debug(String.format("loadStoryFromXmlFile :: File object for path \"%s\" created", file.getAbsolutePath()));
 
             ValidationEventCollector validationEventCollector = new ValidationEventCollector();
             unmarshaller.setEventHandler(validationEventCollector);
@@ -74,9 +76,9 @@ public class OMManager
                 throw new IFML2Exception("Ошибка при загрузке истории: ", (Object[]) validationEventCollector.getEvents());
             }
 
-            LOG.debug("before unmarshall");
+            LOG.debug("loadStoryFromXmlFile :: before unmarshal");
             story = (Story) unmarshaller.unmarshal(file);
-            LOG.debug("after unmarshall");
+            LOG.debug("loadStoryFromXmlFile :: after unmarshal");
 
             story.setObjectsHeap(ifmlObjectsHeap);
 
@@ -86,6 +88,8 @@ public class OMManager
             }
             assignLibRefs(story);
             assignLinksWordsToObjects(story);
+
+            LOG.debug("loadStoryFromXmlFile :: End");
 		}
 		catch (JAXBException e)
         {
@@ -215,8 +219,7 @@ public class OMManager
 
     public static Library loadLibrary(String libPath) throws IFML2Exception
 	{
-        //logs
-        LOG.debug("LOAD library " + libPath);
+        LOG.debug(String.format("loadLibrary(libPath = \"%s\")" , libPath));
 
         Library library;
 
@@ -229,17 +232,22 @@ public class OMManager
             // TODO: загрузка стандартных и прочих либ
 
 	        String realRelativePath = "libs/" + libPath; // for JAR should be from root: "/libs/:
+            LOG.debug(String.format("loadLibrary :: realRelativePath = \"%s\"", realRelativePath));
 
             //--Loading from JAR--Reader reader = new BufferedReader(new InputStreamReader(OMManager.class.getResourceAsStream(realRelativePath), "UTF-8"));
 
             File file = new File(realRelativePath);
+            LOG.debug(String.format("loadLibrary :: File object for path \"%s\" created", file.getAbsolutePath()));
 
 	        if(!file.exists())
 	        {
-	        	throw new IFML2Exception("Файл " + file.getAbsolutePath() + " библиотеки не найдена");
+                LOG.error(String.format("loadLibrary :: Library file \"%s\" isn't found!", file.getAbsolutePath()));
+                throw new IFML2Exception(String.format("Файл \"%s\" библиотеки не найдена", file.getAbsolutePath()));
 	        }
-	        
-	        library = (Library) unmarshaller.unmarshal(file);
+
+            LOG.debug(String.format("loadLibrary :: before unmarshal"));
+            library = (Library) unmarshaller.unmarshal(file);
+            LOG.debug(String.format("loadLibrary :: after unmarshal"));
             library.path = libPath;
 		}
 		catch (JAXBException e)
@@ -247,8 +255,7 @@ public class OMManager
 			throw new IFML2Exception(e);
 		}
 
-        //logs
-        LOG.debug("LOADING END");
+        LOG.debug(String.format("loadLibrary :: End"));
 
 		return library;
 	}
@@ -301,6 +308,7 @@ public class OMManager
         @Override
         public void startDocument(ValidationEventHandler validationEventHandler) throws SAXException
         {
+            LOG.debug("startDocument()");
             super.startDocument(validationEventHandler);
             bindings.clear();
             story = null;
@@ -309,6 +317,8 @@ public class OMManager
         @Override
         public void bind(String s, Object o) throws SAXException
         {
+            LOG.debug(String.format("bind(s = \"%s\", o = \"%s\")", s, o));
+
             bindings.put(s, o);
 
             // save link to story
@@ -316,43 +326,41 @@ public class OMManager
             {
                 story = (Story) o;
             }
-
-            //logs
-            LOG.debug(String.format("binding \"%s\" -> %s (%s)", s, o.getClass().getName(), o));
         }
 
         @Override
         public Callable<?> resolve(final String s, final Class aClass) throws SAXException
         {
+            LOG.debug(String.format("resolve(s = \"%s\", aClass = \"%s\")", s, aClass));
+
             return new Callable<Object>()
             {
                 public Object call() throws Exception
                 {
-                    //logs
-                    LOG.debug(String.format("Trying to resolve \"%s\" for %s", s, aClass));
+                    LOG.debug(String.format("call() :: Trying to resolve \"%s\" for \"%s\" class", s, aClass));
 
                     if(bindings.containsKey(s))
                     {
-                        LOG.debug(String.format("   => binding \"%s\"", bindings.get(s)));
+                        LOG.debug(String.format("call() ::    => binding \"%s\"", bindings.get(s)));
                         return bindings.get(s);
                     }
                     else
                     {
-                        LOG.debug("  not found in bindings, trying to find in libs:");
+                        LOG.debug("call() ::   not found in bindings, trying to find in libs: ...");
                         // try to find key in libraries
                         if(story != null)
                         {
                             for (Library library : story.getLibraries())
                             {
-                                LOG.debug(String.format("  - searching in lib %s, class is %s", library.getName(), aClass));
+                                LOG.debug(String.format("call() ::   - searching in lib %s, class is %s", library.getName(), aClass));
 
                                 if(aClass == Attribute.class || aClass == Object.class) //todo: remove Object after JAXB fix
                                 {
-                                    LOG.debug(String.format("  => searching Attribute %s", s));
+                                    LOG.debug(String.format("call() ::   => searching Attribute %s", s));
                                     Attribute attribute = library.getAttributeByName(s);
                                     if(attribute != null)
                                     {
-                                        LOG.debug(String.format("    - found Attribute: %s", attribute));
+                                        LOG.debug(String.format("call() ::     - found Attribute: %s", attribute));
                                         return attribute;
                                     }
                                     /*todo из-за приходящего Object вместо нормального Attribute мы не сможем проверить,
@@ -364,7 +372,7 @@ public class OMManager
                             }
                         }
                     }
-                    LOG.debug("  -> Binding NOT FOUND");
+                    LOG.debug("call() ::   -> Binding NOT FOUND");
                     return null;
                 }
             };

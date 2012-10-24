@@ -12,7 +12,7 @@
         <param name="File" value="IFML2.log"/>
         <param name="Append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d %p %C{1} [%t] %m%n"/>
+            <param name="ConversionPattern" value="%d [%t] %-5p %c %m%n"/>
         </layout>
     </appender>
     <!--Корневой logger-->
