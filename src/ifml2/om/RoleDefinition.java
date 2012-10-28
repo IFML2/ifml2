@@ -1,5 +1,7 @@
 package ifml2.om;
 
+import ca.odell.glazedlists.BasicEventList;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -15,5 +17,5 @@ class RoleDefinition
 
     @XmlElementWrapper(name = "properties")
     @XmlElement(name = "property")
-    public List<PropertyDefinition> propertyDefinitions;
+    public List<PropertyDefinition> propertyDefinitions = new BasicEventList<PropertyDefinition>();
 }

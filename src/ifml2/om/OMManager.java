@@ -68,7 +68,15 @@ public class OMManager
 	        File file = new File(xmlFile);
             LOG.debug(String.format("loadStoryFromXmlFile :: File object for path \"%s\" created", file.getAbsolutePath()));
 
-            ValidationEventCollector validationEventCollector = new ValidationEventCollector();
+            ValidationEventCollector validationEventCollector = new ValidationEventCollector()
+            {
+                @Override
+                public boolean handleEvent(ValidationEvent event)
+                {
+                    //return super.handleEvent(event);    //To change body of overridden methods use File | Settings | File Templates.
+                    return false;
+                }
+            };
             unmarshaller.setEventHandler(validationEventCollector);
 
             if(validationEventCollector.getEvents().length > 0)
@@ -248,7 +256,7 @@ public class OMManager
             LOG.debug(String.format("loadLibrary :: before unmarshal"));
             library = (Library) unmarshaller.unmarshal(file);
             LOG.debug(String.format("loadLibrary :: after unmarshal"));
-            library.path = libPath;
+            library.setPath(libPath);
 		}
 		catch (JAXBException e)
 		{
@@ -302,7 +310,7 @@ public class OMManager
 
     private static class IFMLIDResolver extends IDResolver
     {
-        private HashMap<String, Object> bindings = new HashMap<String, Object>();
+        private final HashMap<String, Object> bindings = new HashMap<String, Object>();
         private Story story;
 
         @Override
@@ -381,6 +389,7 @@ public class OMManager
         @Override
         public void endDocument() throws SAXException
         {
+            LOG.debug("endDocument()");
             super.endDocument();
         }
     }

@@ -2,7 +2,8 @@ package ifml2;
 
 import javax.swing.*;
 import java.awt.*;
-import java.text.MessageFormat;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 public class GUIUtils
 {
@@ -23,6 +24,8 @@ public class GUIUtils
 
     public static void showErrorMessage(Component parentComponent, Throwable exception)
     {
-        JOptionPane.showMessageDialog(parentComponent, MessageFormat.format("{0}\nпо причине:\n{1}", exception.getMessage(), exception.getCause()), "Произошла ошибка!", JOptionPane.ERROR_MESSAGE);
+        StringWriter stringWriter = new StringWriter();
+        exception.printStackTrace(new PrintWriter(stringWriter));
+        JOptionPane.showMessageDialog(parentComponent, stringWriter.toString(), "Произошла ошибка!", JOptionPane.ERROR_MESSAGE);
     }
 }

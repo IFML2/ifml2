@@ -15,7 +15,7 @@ public class Action
 
     @XmlElementWrapper(name = "restrictions")
     @XmlElement(name = "restriction")
-    public final EventList<Restriction> restrictions = new BasicEventList<Restriction>();
+    private final EventList<Restriction> restrictions = new BasicEventList<Restriction>();
 
     public EventList<Restriction> getRestrictions()
     {

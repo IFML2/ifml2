@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<story xmlns="http://toysoft.narod.ru/IFML2Schema">
+<story xmlns="http://toysoft.narod.ru/IFML2Schema" id="Zork">
     <storyOptions>
         <startLocationOption showStartLocDesc="true" location="КЗападуОтДома"/>
         <startProcedureOption/>
@@ -37,7 +37,7 @@
                 <word>ящик</word>
             </words>
             <attributes>
-                <attribute>зафиксирован</attribute>
+                <attribute>недоступен</attribute>
             </attributes>
             <description/>
         </item>

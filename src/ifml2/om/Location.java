@@ -53,6 +53,7 @@ public class Location extends IFMLObject
      * @param item item to check
      * @return True if location contains item and false otherwise.
      */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean contains(Item item)
 	{
 		return items.contains(item);

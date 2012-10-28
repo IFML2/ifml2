@@ -17,7 +17,7 @@
     </appender>
     <!--Корневой logger-->
     <root>
-        <priority value="debug"/>
+        <priority value="trace"/>
         <appender-ref ref="rollingFile"/>
         <!--appender-ref ref="console" /-->
     </root>

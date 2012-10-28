@@ -18,7 +18,7 @@
             <element minOccurs="0" maxOccurs="1" name="actions" type="ifml2:actionsType"/>
             <element minOccurs="0" maxOccurs="1" name="procedures" type="ifml2:proceduresType"/>
         </all>
-        <attribute name="id" type="string"/>
+        <attribute name="id" type="string" use="required"/>
     </complexType>
 
     <element name="story" type="ifml2:storyType">
@@ -542,7 +542,7 @@
             <element name="startLocationOption" type="ifml2:startLocationOptionType"/>
             <element name="startProcedureOption" type="ifml2:startProcedureOptionType"/>
             <element name="storyDescription" type="ifml2:storyDescriptionType"/>
-            <element name="globalVars" type="ifml2:varsType"/>
+            <element name="globalVars" type="ifml2:varsType" minOccurs="0"/>
         </all>
     </complexType>
 

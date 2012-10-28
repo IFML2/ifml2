@@ -1,5 +1,5 @@
 <component name="ArtifactManager">
-  <artifact build-on-make="true" name="ifml2">
+  <artifact name="ifml2">
     <output-path>$PROJECT_DIR$/out/artifacts/ifml2</output-path>
     <root id="root">
       <element id="archive" name="ifml2.jar">
@@ -8,8 +8,8 @@
         </element>
         <element id="module-output" name="ifml2" />
       </element>
-      <element id="file-copy" path="$PROJECT_DIR$/lib/apache-log4j-1.2.17/log4j-1.2.17.jar" />
       <element id="library" level="project" name="GlazedLists" />
+      <element id="file-copy" path="$PROJECT_DIR$/lib/apache-log4j-1.2.17/log4j-1.2.17.jar" />
     </root>
   </artifact>
 </component>

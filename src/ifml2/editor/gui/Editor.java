@@ -10,6 +10,7 @@ import ifml2.om.Location;
 import ifml2.om.OMManager;
 import ifml2.om.Story;
 import ifml2.players.guiplayer.GUIPlayer;
+import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -52,6 +53,7 @@ public class Editor extends JFrame
     private static final String STORY_MENU_NAME = "История";
     private static final String OPEN_STORY_ACTION_NAME = "Открыть...";
     private static final String EDIT_LOCATION_ACTION_NAME = "Редактировать...";
+    private static final Logger LOG = Logger.getLogger(Editor.class);
 
     public Editor()
     {
@@ -204,6 +206,7 @@ public class Editor extends JFrame
                 }
                 catch (IFML2Exception e)
                 {
+                    LOG.error("Error while loading story!", e);
                     ifml2.GUIUtils.showErrorMessage(frame, e);
                 }
                 finally

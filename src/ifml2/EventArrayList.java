@@ -9,7 +9,7 @@ import java.util.Collection;
 public class EventArrayList<T> extends ArrayList<T>
 {
     @XmlTransient
-    private ArrayList<ChangeListener> changeListeners = new ArrayList<ChangeListener>();
+    private final ArrayList<ChangeListener> changeListeners = new ArrayList<ChangeListener>();
     public void addChangeListener(ChangeListener listener) { changeListeners.add(listener); }
     public void removeChangeListener(ChangeListener listener) { changeListeners.remove(listener); }
     private void fireChangeEvent(ChangeEvent event)

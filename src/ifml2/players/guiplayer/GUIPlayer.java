@@ -6,12 +6,15 @@ import ifml2.GUIUtils;
 import ifml2.engine.Engine;
 import ifml2.engine.EngineVersion;
 import ifml2.interfaces.GUIInterface;
+import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,6 +32,7 @@ public class GUIPlayer extends JFrame
     private final ArrayList<String> commandHistory = new ArrayList<String>();
     private ListIterator<String> historyIterator = commandHistory.listIterator();
     private String storyFile;
+    private static final Logger LOG = Logger.getLogger(GUIPlayer.class);
 
     private void initEngine()
     {
@@ -113,8 +117,11 @@ public class GUIPlayer extends JFrame
         }
         catch (Throwable e)
         {
-            guiInterface.outputText("Произошла ошибка типа {0}: {1}\n{2}", e.getClass(), e.getMessage(), Arrays.toString(e.getStackTrace()));
             e.printStackTrace();
+            LOG.error("Error while loading story!", e);
+            StringWriter stringWriter = new StringWriter();
+            e.printStackTrace(new PrintWriter(stringWriter));
+            guiInterface.outputText("\nПроизошла ошибка: {0}", stringWriter.toString());
         }
     }
 
