@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<updateDescriptor baseUrl="">
+  <entry targetMediaFileId="37" updatableVersionMin="" updatableVersionMax="" fileName="ЯРИЛ_2_0_windows_P9_with_java6_20121105.exe" newVersion="P9" newMediaFileId="37" fileSize="18361856" bundledJre="windows-x86-1.6.0_37" archive="false">
+    <comment language="ru" />
+    <comment language="en" />
+  </entry>
+</updateDescriptor>
+
