@@ -227,7 +227,7 @@ public class ItemEditor extends JDialog
 
         item.startingPosition.inventory = itemInInventoryCheck.isSelected();
         item.startingPosition.locations.clear();
-        for(Object object : itemInLocationsList.getSelectedValuesList())
+        for(Object object : itemInLocationsList.getSelectedValues())
         {
             item.startingPosition.locations.add((Location)object);
         }

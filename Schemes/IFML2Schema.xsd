@@ -44,12 +44,12 @@
     </complexType>
 
     <complexType name="objectType">
-        <sequence>
+        <all>
             <element name="description" type="string" minOccurs="0" maxOccurs="1"/>
             <element name="attributes" type="ifml2:attributesType" minOccurs="0" maxOccurs="1"/>
             <element name="words" type="ifml2:wordsLinksType" minOccurs="0" maxOccurs="1"/>
             <element name="roles" type="ifml2:rolesLinksType" minOccurs="0" maxOccurs="1"/>
-        </sequence>
+        </all>
         <attribute name="id" type="ID" use="required"/>
         <attribute name="name" type="string" use="required"/>
     </complexType>
@@ -62,7 +62,7 @@
     </complexType>
     
     <complexType name="rolesLinksType">
-        <sequence minOccurs="1" maxOccurs="unbounded">
+        <sequence minOccurs="0" maxOccurs="unbounded">
             <element name="role" type="ifml2:roleLinkType"/>
         </sequence>
     </complexType>

@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Class-Path: glazedlists_java15-1.9-20110828.184933-10.jar log4j-1.2.17
+Class-Path: log4j-1.2.17.jar glazedlists_java15-1.9-20110828.184933-10
  .jar
 Main-Class: ifml2.Launcher
 

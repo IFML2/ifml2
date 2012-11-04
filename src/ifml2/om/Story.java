@@ -23,7 +23,7 @@ public class Story
 {
     @XmlAttribute(name = "id")
     @XmlID
-    private String id;
+    private String id = "story";
 
     @XmlElement(name = "storyOptions")
     public final StoryOptions storyOptions = new StoryOptions();
@@ -34,8 +34,7 @@ public class Story
     }
 
     @XmlJavaTypeAdapter(value=UsedLibrariesAdapter.class)
-	public final EventList<Library> libraries = new BasicEventList<Library>();
-
+	private EventList<Library> libraries = new BasicEventList<Library>();
     public EventList<Library> getLibraries()
     {
         return libraries;
@@ -90,7 +89,6 @@ public class Story
     /**
      * objectsHeap holds all game object - locations and items
      */
-    @XmlTransient
     private HashMap<String, IFMLObject> objectsHeap = new HashMap<String, IFMLObject>(); // todo subscribe objectsHeap to locations and items updates
 
     public HashMap<String, IFMLObject> getObjectsHeap()
@@ -98,6 +96,7 @@ public class Story
         return objectsHeap;
     }
 
+    @XmlTransient
     public void setObjectsHeap(HashMap<String, IFMLObject> objectsHeap)
     {
         this.objectsHeap = objectsHeap;

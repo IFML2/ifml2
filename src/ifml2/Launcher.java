@@ -4,8 +4,7 @@ import ifml2.editor.gui.Editor;
 import ifml2.players.guiplayer.GUIPlayer;
 import org.apache.log4j.Logger;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.util.Map;
 
 public class Launcher
 {
@@ -17,9 +16,15 @@ public class Launcher
     public static void main(String[] args)
     {
         // log system properties
-        StringWriter stringWriter = new StringWriter();
-        System.getProperties().list(new PrintWriter(stringWriter));
-        LOG.debug(String.format("System properties:\n%s", stringWriter.toString()));
+//        StringWriter stringWriter = new StringWriter();
+//        System.getProperties().list(new PrintWriter(stringWriter));
+//        LOG.debug(String.format("System properties:\n%s", stringWriter.toString()));
+
+        LOG.debug("System properties:");
+        for(Map.Entry<Object, Object > entry: System.getProperties().entrySet())
+        {
+            LOG.debug(String.format("%s = %s", entry.getKey(), entry.getValue()));
+        }
 
         if(args.length > 0 && "player".equalsIgnoreCase(args[0]))
         {

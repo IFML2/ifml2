@@ -119,9 +119,10 @@ public class GUIPlayer extends JFrame
         {
             e.printStackTrace();
             LOG.error("Error while loading story!", e);
-            StringWriter stringWriter = new StringWriter();
-            e.printStackTrace(new PrintWriter(stringWriter));
-            guiInterface.outputText("\nПроизошла ошибка: {0}", stringWriter.toString());
+            String extendedStackTrace = CommonUtils.getExtendedStackTrace(e);
+//            StringWriter stringWriter = new StringWriter();
+//            e.printStackTrace(new PrintWriter(stringWriter));
+            guiInterface.outputText("\nПроизошла ошибка: {0}", extendedStackTrace /*stringWriter.toString()*/);
         }
     }
 

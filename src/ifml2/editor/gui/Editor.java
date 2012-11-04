@@ -462,7 +462,7 @@ public class Editor extends JFrame
         public void actionPerformed(ActionEvent e)
         {
             UsedLibsEditor usedLibsEditor = new UsedLibsEditor();
-            usedLibsEditor.setAllData(story.libraries);
+            usedLibsEditor.setAllData(story.getLibraries());
             usedLibsEditor.setVisible(true);
         }
     }

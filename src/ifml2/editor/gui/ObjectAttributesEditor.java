@@ -84,7 +84,7 @@ public class ObjectAttributesEditor extends JDialog
         Vector<Vector<Object>> data = new Vector<Vector<Object>>();
         //TODO: iterate through story attributes
         // iterate through libs attributes
-        for(Library library : story.libraries)
+        for(Library library : story.getLibraries())
         {
             for(Attribute attribute : library.attributes)
             {

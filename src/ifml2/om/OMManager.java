@@ -79,14 +79,14 @@ public class OMManager
             };
             unmarshaller.setEventHandler(validationEventCollector);
 
-            if(validationEventCollector.getEvents().length > 0)
-            {
-                throw new IFML2Exception("Ошибка при загрузке истории: ", (Object[]) validationEventCollector.getEvents());
-            }
-
             LOG.debug("loadStoryFromXmlFile :: before unmarshal");
             story = (Story) unmarshaller.unmarshal(file);
             LOG.debug("loadStoryFromXmlFile :: after unmarshal");
+
+/*            if(validationEventCollector.getEvents().length > 0)
+            {
+                throw new IFML2Exception("Ошибка при загрузке истории: ", (Object[]) validationEventCollector.getEvents());
+            }*/
 
             story.setObjectsHeap(ifmlObjectsHeap);
 
@@ -253,6 +253,17 @@ public class OMManager
                 throw new IFML2Exception(String.format("Файл \"%s\" библиотеки не найдена", file.getAbsolutePath()));
 	        }
 
+            ValidationEventCollector validationEventCollector = new ValidationEventCollector()
+            {
+                @Override
+                public boolean handleEvent(ValidationEvent event)
+                {
+                    //return super.handleEvent(event);    //To change body of overridden methods use File | Settings | File Templates.
+                    return false;
+                }
+            };
+            unmarshaller.setEventHandler(validationEventCollector);
+
             LOG.debug(String.format("loadLibrary :: before unmarshal"));
             library = (Library) unmarshaller.unmarshal(file);
             LOG.debug(String.format("loadLibrary :: after unmarshal"));
@@ -312,6 +323,7 @@ public class OMManager
     {
         private final HashMap<String, Object> bindings = new HashMap<String, Object>();
         private Story story;
+        private Library library;
 
         @Override
         public void startDocument(ValidationEventHandler validationEventHandler) throws SAXException
@@ -333,6 +345,10 @@ public class OMManager
             if(o instanceof Story)
             {
                 story = (Story) o;
+            }
+            else if(o instanceof Library)
+            {
+                library = (Library) o;
             }
         }
 

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ifml2:library xmlns:ifml2="http://toysoft.narod.ru/IFML2Schema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://toysoft.narod.ru/IFML2Schema ../Schemes/IFML2Schema.xsd " name="Глаголы">
+
+</ifml2:library>
