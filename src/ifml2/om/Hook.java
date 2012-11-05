@@ -1,18 +1,12 @@
 package ifml2.om;
 
-import ifml2.om.xml.xmladapters.ActionRefsAdapter;
-
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlEnumValue;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.bind.annotation.*;
 
 public class Hook
 {
     private Action action;
     @XmlAttribute(name = "action")
-    @XmlJavaTypeAdapter(value = ActionRefsAdapter.class)
+    @XmlIDREF
     public Action getAction()
     {
         return action;

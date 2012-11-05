@@ -6,6 +6,7 @@ import ca.odell.glazedlists.EventList;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlID;
 
 public class Action
 {
@@ -31,6 +32,7 @@ public class Action
 
     private String name;
     @XmlAttribute(name = "name")
+    @XmlID
     public void setName(String name) { this.name = name; }
 
     public String getName() { return name; }

@@ -58,6 +58,11 @@ public class Item extends IFMLObject implements Cloneable
         {
             return locations;
         }
+
+        public boolean getInventory()
+        {
+            return inventory;
+        }
     }
 
     @Override

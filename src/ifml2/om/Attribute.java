@@ -14,19 +14,13 @@ public class Attribute
     private String description;
     public String getDescription() { return description; }
 
-    private Attribute()
+    Attribute()
     {
-    }
-
-    public Attribute(String attributeRef)
-    {
-        this();
-        name = attributeRef;
     }
 
     @Override
     public String toString()
     {
-        return getName();
+        return name;
     }
 }

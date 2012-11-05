@@ -52,7 +52,6 @@ public class IFMLObject implements Cloneable
     public void setDescription(String description) { this.description = description; }
 
     private EventList<Attribute> attributes = new BasicEventList<Attribute>();
-    //@XmlJavaTypeAdapter(value = AttributesAdapter.class)
     @XmlElementWrapper(name = IFML_OBJECT_ATTRIBUTES_ELEMENT)
     @XmlElement(name = IFML_OBJECT_ATTRIBUTE_ELEMENT)
     @XmlIDREF

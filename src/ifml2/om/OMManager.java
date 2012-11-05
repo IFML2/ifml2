@@ -8,6 +8,7 @@ import org.xml.sax.SAXException;
 import javax.xml.bind.*;
 import javax.xml.bind.util.ValidationEventCollector;
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.Callable;
@@ -48,15 +49,12 @@ public class OMManager
                     {
                         IFMLObject ifmlObject = (IFMLObject) target;
                         ifmlObjectsHeap.put(ifmlObject.getId().toLowerCase(), ifmlObject);
-                    }
 
-                    // add item to inventory by starting position
-                    if(target instanceof Item)
-                    {
-                        Item item = (Item) target;
-                        if(toInitItemsStartLoc)
+                        // add item to inventory by starting position
+                        if (toInitItemsStartLoc && ifmlObject instanceof Item)
                         {
-                            if(item.startingPosition.inventory)
+                            Item item = (Item) ifmlObject;
+                            if (item.getStartingPosition().getInventory())
                             {
                                 inventory.add(item); //should it be original items
                             }
@@ -115,7 +113,7 @@ public class OMManager
     {
         for(Item item : story.getItems())
         {
-            for(Location location : item.startingPosition.locations)
+            for(Location location : item.getStartingPosition().getLocations())
             {
                 location.getItems().add(item);
             }
@@ -160,46 +158,7 @@ public class OMManager
 
     private static void assignLibRefs(Story story) throws IFML2Exception
     {
-        //  -- assign refs to attributes --
-
-        //HashMap<String, Attribute> attributes = new HashMap<String, Attribute>();
-
-        //TODO: adding story attributes to common HashMap
-        //attributes.putAll(story.);
-        // ^^^ NEED TO ADD attributes to story file ^^^
-
-        // iterate libs for attribute definitions
-        /*for(Library library : story.getLibraries())
-        {
-            for(Attribute attribute : library.getAttributes())
-            {
-                attributes.put(attribute.getName().toLowerCase(), attribute);
-                //throw new NullPointerException(); // todo test exception throwing to top -- it cames without stacktrace
-                //throw new MarshalException("test marshal exception");
-            }
-        }*/
-
-        // iterate objects for attributes
-        /*for(IFMLObject ifmlObject : story.getObjectsHeap().values())
-        {
-            List<Attribute> fakeAttributes = ifmlObject.getAttributes();
-            for(Attribute fakeAttribute : fakeAttributes)
-            {
-                String loweredAttributeRef = fakeAttribute.getName().toLowerCase();
-                if(attributes.containsKey(loweredAttributeRef))
-                {
-                    fakeAttributes.set(fakeAttributes.indexOf(fakeAttribute), attributes.get(loweredAttributeRef));
-                }
-                else
-                {
-                    throw new IFML2Exception("Признак \"{0}\" в {1} \"{2}\" не объявлен ни в одной из библиотек",
-                            fakeAttribute,
-                            (ifmlObject instanceof Location) ? "локации" : "предмете",
-                            ifmlObject.getName());
-                }
-            }
-        }*/
-
+/*
         // -- assign refs to actions in hooks
         
         HashMap<String, Action> actions = new HashMap<String, Action>();
@@ -227,6 +186,7 @@ public class OMManager
                 }
             }
         }
+*/
     }
 
     public static Library loadLibrary(String libPath) throws IFML2Exception
@@ -325,9 +285,55 @@ public class OMManager
 
     private static class IFMLIDResolver extends IDResolver
     {
-        private final HashMap<String, Object> bindings = new HashMap<String, Object>();
+        private class BindingMap extends HashMap <String, ArrayList<Object>>
+        {
+            void addBinding(String name, Object object)
+            {
+                if(containsKey(name))
+                {
+                    get(name).add(object);
+                }
+                else
+                {
+                    ArrayList<Object> arrayList = new ArrayList<Object>();
+                    arrayList.add(object);
+                    put(name, arrayList);
+                }
+            }
+
+            boolean containsKeyOfClass(String name, Class aClass)
+            {
+                if(containsKey(name))
+                {
+                    for(Object object : get(name))
+                    {
+                        if(object != null && (object.getClass().equals(aClass) || Object.class.equals(aClass))) //todo remove Object after JAXB fix
+                        {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+
+            Object getObjectOfClass(String name, Class aClass)
+            {
+                if(containsKey(name))
+                {
+                    for(Object object : get(name))
+                    {
+                        if(object != null && (object.getClass().equals(aClass) || Object.class.equals(aClass))) //todo remove Object after JAXB fix
+                        {
+                            return object;
+                        }
+                    }
+                }
+                return null;
+            }
+        }
+        private final BindingMap bindings = new BindingMap();
+
         private Story story;
-        private Library library;
 
         @Override
         public void startDocument(ValidationEventHandler validationEventHandler) throws SAXException
@@ -341,36 +347,37 @@ public class OMManager
         @Override
         public void bind(String s, Object o) throws SAXException
         {
-            LOG.debug(String.format("bind(s = \"%s\", o = \"%s\")", s, o));
-
-            bindings.put(s, o);
+            LOG.debug(MessageFormat.format("bind(s = \"{0}\", o = \"{1}\"); class of o is {2}", s, o,
+                    o != null ? o.getClass() : "[o is null!]"));
 
             // save link to story
             if(o instanceof Story)
             {
                 story = (Story) o;
             }
-            else if(o instanceof Library)
+            else
             {
-                library = (Library) o;
+                bindings.addBinding(s, o);
             }
         }
 
         @Override
         public Callable<?> resolve(final String s, final Class aClass) throws SAXException
         {
-            LOG.debug(String.format("resolve(s = \"%s\", aClass = \"%s\")", s, aClass));
+            LOG.debug(MessageFormat.format("resolve(s = \"{0}\", aClass = \"{1}\")", s, aClass));
 
             return new Callable<Object>()
             {
                 public Object call() throws Exception
                 {
-                    LOG.debug(String.format("call() :: Trying to resolve \"%s\" for \"%s\" class", s, aClass));
+                    LOG.debug(MessageFormat.format("call() :: Trying to resolve \"{0}\" for \"{1}\" class", s, aClass));
 
-                    if(bindings.containsKey(s))
+                    if(bindings.containsKeyOfClass(s, aClass))
                     {
-                        LOG.debug(String.format("call() ::    => binding \"%s\"", bindings.get(s)));
-                        return bindings.get(s);
+                        Object object = bindings.getObjectOfClass(s, aClass);
+                        LOG.debug(MessageFormat.format("call() ::    => binding \"{0}\"; class is {1}", object,
+                                object != null ? object.getClass() : "[o is null!]"));
+                        return object;
                     }
                     else
                     {
@@ -380,20 +387,32 @@ public class OMManager
                         {
                             for (Library library : story.getLibraries())
                             {
-                                LOG.debug(String.format("call() ::   - searching in lib %s, class is %s", library.getName(), aClass));
+                                LOG.debug(MessageFormat.format("call() ::   - searching in lib {0}, class is {1}", library.getName(), aClass));
 
+                                // attributes
                                 if(aClass == Attribute.class || aClass == Object.class) //todo: remove Object after JAXB fix
                                 {
-                                    LOG.debug(String.format("call() ::   => searching Attribute %s", s));
+                                    LOG.debug(MessageFormat.format("call() ::   => searching Attribute \"{0}\"", s));
                                     Attribute attribute = library.getAttributeByName(s);
                                     if(attribute != null)
                                     {
-                                        LOG.debug(String.format("call() ::     - found Attribute: %s", attribute));
+                                        LOG.debug(MessageFormat.format("call() ::     - found Attribute: \"{0}\"", attribute));
                                         return attribute;
                                     }
                                     /*todo из-за приходящего Object вместо нормального Attribute мы не сможем проверить,
                                       есть ли такой аттрибут вообще (не понятно, что запрашивает, атрибут или другой объект)
                                       */
+                                }
+                                // actions
+                                else if(aClass == Action.class || aClass == Object.class) //todo: remove Object after JAXB fix
+                                {
+                                    LOG.debug(MessageFormat.format("call() ::   => searching Action \"{0}\"", s));
+                                    Action action = library.getActionByName(s);
+                                    if(action != null)
+                                    {
+                                        LOG.debug(MessageFormat.format("call() ::     - found Action: \"{0}\"", action));
+                                        return action;
+                                    }
                                 }
 
                                 //todo ANOTHER LINKS!

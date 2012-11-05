@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<story xmlns="http://toysoft.narod.ru/IFML2Schema">
+<story xmlns="http://toysoft.narod.ru/IFML2Schema" id="spel">
     <!-- todo Добавить в игру
         + "выдернуть лиану"
     -->
     <storyOptions>
         <startLocationOption showStartLocDesc="false" location="Зал"/>
         <startProcedureOption procedure="ПоказатьПредысторию"/>
-        <storyDescription author="realsonic" version="0.1 альфа от 15.04.2012" description="Приключения спелеолога в пещере (порт standalone-игры)." name="Спелеолог"/>
+        <storyDescription author="realsonic" version="0.1 альфа от 05.11.2012" description="Приключения спелеолога в пещере (порт standalone-игры)." name="Спелеолог"/>
         <globalVars>
             <var position="1" name="СрубилЛиану" value="нет"/>
         </globalVars>
@@ -241,7 +241,7 @@
         </item>
         <item name="старая шахтёрская кирка" id="КиркаПред">
             <attributes/>
-            <description>Старая шахтёрская кирка, но ещё крепкая.</description>
+            <description>Старая, но ещё крепкая шахтёрская кирка.</description>
             <words mainWord="кирка">
                 <word>кирка</word>
             </words>

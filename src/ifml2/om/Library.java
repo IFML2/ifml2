@@ -83,4 +83,19 @@ public class Library
         }
         return null;
     }
+
+    public Action getActionByName(String name)
+    {
+        if(name != null)
+        {
+            for(Action action : actions)
+            {
+                if(name.equalsIgnoreCase(action.getName()))
+                {
+                    return action;
+                }
+            }
+        }
+        return null;
+    }
 }
