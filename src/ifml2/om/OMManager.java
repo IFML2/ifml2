@@ -68,25 +68,29 @@ public class OMManager
 	        File file = new File(xmlFile);
             LOG.debug(String.format("loadStoryFromXmlFile :: File object for path \"%s\" created", file.getAbsolutePath()));
 
+
             ValidationEventCollector validationEventCollector = new ValidationEventCollector()
-            {
+            /*{
+                ///ArrayList<ValidationEvent> events = new ArrayList<ValidationEvent>();
+
                 @Override
                 public boolean handleEvent(ValidationEvent event)
                 {
-                    //return super.handleEvent(event);    //To change body of overridden methods use File | Settings | File Templates.
-                    return false;
+                    //events.add(event);
+                    return super.handleEvent(event);    //To change body of overridden methods use File | Settings | File Templates.
+                    //return false;
                 }
-            };
+            }*/;
             unmarshaller.setEventHandler(validationEventCollector);
 
             LOG.debug("loadStoryFromXmlFile :: before unmarshal");
             story = (Story) unmarshaller.unmarshal(file);
             LOG.debug("loadStoryFromXmlFile :: after unmarshal");
 
-/*            if(validationEventCollector.getEvents().length > 0)
+            if(validationEventCollector.hasEvents())
             {
-                throw new IFML2Exception("Ошибка при загрузке истории: ", (Object[]) validationEventCollector.getEvents());
-            }*/
+                throw new IFML2LoadXmlException(validationEventCollector.getEvents());
+            }
 
             story.setObjectsHeap(ifmlObjectsHeap);
 

@@ -6,18 +6,18 @@ import ifml2.GUIUtils;
 import ifml2.engine.Engine;
 import ifml2.engine.EngineVersion;
 import ifml2.interfaces.GUIInterface;
+import ifml2.om.IFML2LoadXmlException;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
+import javax.xml.bind.ValidationEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.ListIterator;
 
 public class GUIPlayer extends JFrame
@@ -117,12 +117,28 @@ public class GUIPlayer extends JFrame
         }
         catch (Throwable e)
         {
-            e.printStackTrace();
-            LOG.error("Error while loading story!", e);
-            String extendedStackTrace = CommonUtils.getExtendedStackTrace(e);
-//            StringWriter stringWriter = new StringWriter();
-//            e.printStackTrace(new PrintWriter(stringWriter));
-            guiInterface.outputText("\nПроизошла ошибка: {0}", extendedStackTrace /*stringWriter.toString()*/);
+            ReportError(e, "Ошибка при загрузке истории!");
+        }
+    }
+
+    private void ReportError(Throwable exception, String message)
+    {
+        exception.printStackTrace();
+        LOG.error(message, exception);
+        if(exception instanceof IFML2LoadXmlException)
+        {
+            guiInterface.outputText("\nВ файле истории есть ошибки:");
+            for(ValidationEvent validationEvent : ((IFML2LoadXmlException)exception).getEvents())
+            {
+                guiInterface.outputText("\n\"{0}\" at {1},{2}", validationEvent.getMessage(),
+                        validationEvent.getLocator().getLineNumber(), validationEvent.getLocator().getColumnNumber());
+            }
+        }
+        else
+        {
+            StringWriter stringWriter = new StringWriter();
+            exception.printStackTrace(new PrintWriter(stringWriter));
+            guiInterface.outputText("\nПроизошла ошибка: {0}", stringWriter.toString());
         }
     }
 
@@ -153,7 +169,7 @@ public class GUIPlayer extends JFrame
                         
                         if("заново!".equalsIgnoreCase(gamerCommand))
                         {
-                            guiInterface.outputText("Начинаем заново...\n\n");
+                            guiInterface.outputText("Начинаем заново...\n");
                             engine.loadStory(storyFile);
                             engine.initGame();
                             return;
@@ -163,8 +179,9 @@ public class GUIPlayer extends JFrame
                     }
                     catch (Throwable ex)
                     {
-                        logTextArea.append(MessageFormat.format("Системная ошибка: {0}\n{1}", ex.getMessage(), Arrays.toString(ex.getStackTrace())));
-                        ex.printStackTrace();
+                        ReportError(ex, "Ошибка при перезапуске истории!");
+//                        logTextArea.append(MessageFormat.format("Системная ошибка: {0}\n{1}", ex.getMessage(), Arrays.toString(ex.getStackTrace())));
+//                        ex.printStackTrace();
                     }
                 }
 
