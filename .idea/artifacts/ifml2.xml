@@ -10,10 +10,6 @@
       </element>
       <element id="file-copy" path="$PROJECT_DIR$/lib/apache-log4j-1.2.17/log4j-1.2.17.jar" />
       <element id="library" level="project" name="GlazedLists" />
-      <element id="dir-copy" path="$PROJECT_DIR$/Games" />
-      <element id="dir-copy" path="$PROJECT_DIR$/Schemes" />
-      <element id="dir-copy" path="$PROJECT_DIR$/Tests" />
-      <element id="dir-copy" path="$PROJECT_DIR$/libs" />
     </root>
   </artifact>
 </component>
