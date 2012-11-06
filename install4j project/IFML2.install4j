@@ -17,7 +17,7 @@
     <mergedProjects />
     <codeSigning macEnabled="false" macPkcs12File="" windowsEnabled="false" windowsKeySource="pvkAndSpc" windowsPvkFile="" windowsSpcFile="" windowsPkcs12File="" />
   </application>
-  <files keepModificationTimes="false" missingFilesStrategy="warn" globalExcludeSuffixes=".svn" defaultOverwriteMode="4" defaultUninstallMode="0" launcherOverwriteMode="3" defaultFileMode="644" defaultDirMode="755">
+  <files keepModificationTimes="false" missingFilesStrategy="warn" globalExcludeSuffixes=".svn,.git" defaultOverwriteMode="4" defaultUninstallMode="0" launcherOverwriteMode="3" defaultFileMode="644" defaultDirMode="755">
     <filesets>
       <fileset name="Sample games" id="32" customizedId="" />
       <fileset name="Tests" id="86" customizedId="" />
@@ -102,17 +102,18 @@
           <versionLine x="20" y="40" text="version ${compiler:sys.version}" font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
         </text>
       </splashScreen>
-      <java mainClass="ifml2.players.guiplayer.GUIPlayer" vmParameters="" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
+      <java mainClass="ifml2.players.guiplayer.GUIPlayer" vmParameters="-version:&quot;1.6*&quot; -Dlog4j.configuration=file:log4j.xml" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
         <classPath>
           <archive location="IFML2.jar" failOnError="false" />
           <archive location="glazedlists_java15-1.9-20110828.184933-10.jar" failOnError="false" />
+          <archive location="log4j-1.2.17.jar" failOnError="false" />
         </classPath>
         <nativeLibraryDirectories />
       </java>
       <includedFiles />
       <unextractableFiles />
-      <vmOptionsFile mode="content" overwriteMode="2" fileMode="644">
-        <content>-Dlog4j.configuration=file:log4j.xml</content>
+      <vmOptionsFile mode="none" overwriteMode="2" fileMode="644">
+        <content />
       </vmOptionsFile>
       <customScript mode="1" file="">
         <content />
@@ -132,16 +133,17 @@
           <versionLine x="20" y="40" text="version ${compiler:sys.version}" font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
         </text>
       </splashScreen>
-      <java mainClass="ifml2.editor.gui.Editor" vmParameters="" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
+      <java mainClass="ifml2.editor.gui.Editor" vmParameters="-version:&quot;1.6*&quot; -Dlog4j.configuration=file:log4j.xml" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
         <classPath>
           <archive location="IFML2.jar" failOnError="false" />
           <archive location="glazedlists_java15-1.9-20110828.184933-10.jar" failOnError="false" />
+          <archive location="log4j-1.2.17.jar" failOnError="false" />
         </classPath>
         <nativeLibraryDirectories />
       </java>
       <includedFiles />
       <unextractableFiles />
-      <vmOptionsFile mode="content" overwriteMode="2" fileMode="644">
+      <vmOptionsFile mode="none" overwriteMode="2" fileMode="644">
         <content>-Dlog4j.configuration=file:log4j.xml</content>
       </vmOptionsFile>
       <customScript mode="1" file="">
@@ -162,16 +164,17 @@
           <versionLine x="20" y="40" text="version ${compiler:sys.version}" font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
         </text>
       </splashScreen>
-      <java mainClass="ifml2.tests.gui.TestRunner" vmParameters="" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
+      <java mainClass="ifml2.tests.gui.TestRunner" vmParameters="-version:&quot;1.6*&quot; -Dlog4j.configuration=file:log4j.xml" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
         <classPath>
           <archive location="IFML2.jar" failOnError="false" />
           <archive location="glazedlists_java15-1.9-20110828.184933-10.jar" failOnError="false" />
+          <archive location="log4j-1.2.17.jar" failOnError="false" />
         </classPath>
         <nativeLibraryDirectories />
       </java>
       <includedFiles />
       <unextractableFiles />
-      <vmOptionsFile mode="content" overwriteMode="2" fileMode="644">
+      <vmOptionsFile mode="none" overwriteMode="2" fileMode="644">
         <content>-Dlog4j.configuration=file:log4j.xml</content>
       </vmOptionsFile>
       <customScript mode="1" file="">

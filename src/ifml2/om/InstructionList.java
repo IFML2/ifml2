@@ -9,7 +9,7 @@ import java.util.List;
 
 public class InstructionList
 {
-    private final List<Instruction> instructions = new ArrayList<Instruction>();
+    private List<Instruction> instructions = new ArrayList<Instruction>();
     @XmlElements({
             @XmlElement(name = "showLocName", type = ShowLocNameInstruction.class),
             @XmlElement(name = "goToLoc", type = GoToLocInstruction.class),
@@ -22,5 +22,6 @@ public class InstructionList
             @XmlElement(name = "loop", type = LoopInstruction.class),
             @XmlElement(name = "var", type = SetVarInstruction.class)
     })
+    public void setInstructions(List<Instruction> instructions) { this.instructions = instructions; }
     public List<Instruction> getInstructions() { return instructions; }
 }

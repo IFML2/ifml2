@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<story xmlns="http://toysoft.narod.ru/IFML2Schema">
+<story xmlns="http://toysoft.narod.ru/IFML2Schema" id="jar">
     <storyOptions>
         <startLocationOption showStartLocDesc="true" location="Комната"/>
         <startProcedureOption/>
@@ -100,7 +100,7 @@
                 <word>голем</word>
             </words>
             <attributes>
-                <attribute>зафиксирован</attribute>
+                <attribute>недоступен</attribute>
             </attributes>
             <description>Большой и тяжёлый глиняный голем, его ну никак не сдвинуть Вам с места.</description>
         </item>
