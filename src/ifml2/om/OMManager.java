@@ -199,7 +199,7 @@ public class OMManager
 		{
 			JAXBContext context = JAXBContext.newInstance(Library.class);
 	        Unmarshaller unmarshaller = context.createUnmarshaller();
-            unmarshaller.setProperty(IDResolver.class.getName(), new IFMLIDResolver());
+            //unmarshaller.setProperty(IDResolver.class.getName(), new IFMLIDResolver());
 
             // TODO: загрузка стандартных и прочих либ
 
@@ -353,6 +353,7 @@ public class OMManager
             // save link to story
             if(o instanceof Story)
             {
+                LOG.debug(MessageFormat.format("bind() :: parameter Object o is Story, saving: {0}", o));
                 story = (Story) o;
             }
             else
@@ -385,6 +386,8 @@ public class OMManager
                         // try to find key in libraries
                         if(story != null)
                         {
+                            LOG.debug(MessageFormat.format("call() ::    story is not null, trying to get story.getLibraries(). " +
+                                    "getLibraries() returns {0}", story.getLibraries()));
                             for (Library library : story.getLibraries())
                             {
                                 LOG.debug(MessageFormat.format("call() ::   - searching in lib {0}, class is {1}", library.getName(), aClass));
@@ -414,9 +417,17 @@ public class OMManager
                                         return action;
                                     }
                                 }
+                                else
+                                {
+                                    LOG.debug("call() ::     it's nor Attribute, nor Action, nothing to search else");
+                                }
 
                                 //todo ANOTHER LINKS!
                             }
+                        }
+                        else
+                        {
+                            LOG.debug("call() ::    story is null");
                         }
                     }
                     LOG.debug("call() ::   -> Binding NOT FOUND");

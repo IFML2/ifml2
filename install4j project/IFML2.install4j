@@ -102,7 +102,7 @@
           <versionLine x="20" y="40" text="version ${compiler:sys.version}" font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
         </text>
       </splashScreen>
-      <java mainClass="ifml2.players.guiplayer.GUIPlayer" vmParameters="-version:&quot;1.6*&quot; -Dlog4j.configuration=file:log4j.xml" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
+      <java mainClass="ifml2.Launcher" vmParameters="-version:&quot;1.6*&quot; -Dlog4j.configuration=file:log4j.xml" arguments="&quot;player&quot;" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
         <classPath>
           <archive location="IFML2.jar" failOnError="false" />
           <archive location="glazedlists_java15-1.9-20110828.184933-10.jar" failOnError="false" />
@@ -133,7 +133,7 @@
           <versionLine x="20" y="40" text="version ${compiler:sys.version}" font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
         </text>
       </splashScreen>
-      <java mainClass="ifml2.editor.gui.Editor" vmParameters="-version:&quot;1.6*&quot; -Dlog4j.configuration=file:log4j.xml" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
+      <java mainClass="ifml2.Launcher" vmParameters="-version:&quot;1.6*&quot; -Dlog4j.configuration=file:log4j.xml" arguments="&quot;editor&quot;" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
         <classPath>
           <archive location="IFML2.jar" failOnError="false" />
           <archive location="glazedlists_java15-1.9-20110828.184933-10.jar" failOnError="false" />
@@ -186,7 +186,7 @@
       <iconImageFiles />
     </launcher>
   </launchers>
-  <installerGui installerType="1" addOnAppId="" suggestPreviousLocations="true" autoUpdateDescriptorUrl="http://realsonic.narod.ru/ifml2/install/updates.xml" useAutoUpdateBaseUrl="false" autoUpdateBaseUrl="">
+  <installerGui installerType="1" addOnAppId="" suggestPreviousLocations="true" autoUpdateDescriptorUrl="https://dl.dropbox.com/u/87862945/IFML2/updates.xml" useAutoUpdateBaseUrl="false" autoUpdateBaseUrl="">
     <customCode />
     <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
       <commentFiles />
