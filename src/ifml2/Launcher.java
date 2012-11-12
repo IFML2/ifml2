@@ -16,11 +16,6 @@ public class Launcher
      */
     public static void main(String[] args)
     {
-        // log system properties
-//        StringWriter stringWriter = new StringWriter();
-//        System.getProperties().list(new PrintWriter(stringWriter));
-//        LOG.debug(String.format("System properties:\n%s", stringWriter.toString()));
-
         LOG.debug(MessageFormat.format("Launcher.main(args = \"{0}\")", (Object[]) args));
 
         LOG.debug("System properties:");
@@ -33,16 +28,13 @@ public class Launcher
         {
             GUIPlayer.main(getOtherArgs(args));
         }
+        else if(args.length > 0 && "editor".equalsIgnoreCase(args[0]))
+        {
+            Editor.main(getOtherArgs(args));
+        }
         else
         {
-            if(args.length > 0 && "editor".equalsIgnoreCase(args[0]))
-            {
-                Editor.main(getOtherArgs(args));
-            }
-            else
-            {
-                GUIPlayer.main(args);
-            }
+            GUIPlayer.main(args);
         }
     }
 

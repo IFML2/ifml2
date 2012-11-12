@@ -96,7 +96,6 @@ public class OMManager
             {
                 assignItemsToLocations(story);
             }
-            assignLibRefs(story);
             assignLinksWordsToObjects(story);
 
             LOG.debug("loadStoryFromXmlFile :: End");
@@ -154,39 +153,6 @@ public class OMManager
                 }
             }
         }
-    }
-
-    private static void assignLibRefs(Story story) throws IFML2Exception
-    {
-/*
-        // -- assign refs to actions in hooks
-        
-        HashMap<String, Action> actions = new HashMap<String, Action>();
-        
-        // copy all actions to HashMap
-        for(Action action : story.getAllActions())
-        {
-            actions.put(action.getName().toLowerCase(), action);
-        }
-        
-        // iterate items for hooks
-        for(Item item : story.getItems())
-        {
-            for(Hook hook : item.getHooks())
-            {
-                String loweredActionRef = hook.getAction().getName().toLowerCase();
-                if(actions.containsKey(loweredActionRef))
-                {
-                    hook.setAction(actions.get(loweredActionRef));
-                }
-                else
-                {
-                    throw new IFML2Exception("Действие \"{0}\" в \"{1}\" не объявлено ни в одной из библиотек",
-                            hook.getAction().getName(), item.getName());
-                }
-            }
-        }
-*/
     }
 
     public static Library loadLibrary(String libPath) throws IFML2Exception
@@ -388,8 +354,14 @@ public class OMManager
                         {
                             LOG.debug(MessageFormat.format("call() ::    story is not null, trying to get story.getLibraries(). " +
                                     "getLibraries() returns {0}", story.getLibraries()));
-                            for (Library library : story.getLibraries())
+                            for (Object object : story.getLibraries())
                             {
+                                LOG.debug(MessageFormat.format("call() ::   test object class from getLibraries(): {0}", object.getClass()));
+                                if(!(object instanceof Library))
+                                {
+                                    throw new IFML2Exception("Member of getLibraries isn't a Library! It's {0}", object.getClass());
+                                }
+                                Library library = (Library)object;
                                 LOG.debug(MessageFormat.format("call() ::   - searching in lib {0}, class is {1}", library.getName(), aClass));
 
                                 // attributes
