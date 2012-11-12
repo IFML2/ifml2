@@ -388,8 +388,14 @@ public class OMManager
                         {
                             LOG.debug(MessageFormat.format("call() ::    story is not null, trying to get story.getLibraries(). " +
                                     "getLibraries() returns {0}", story.getLibraries()));
-                            for (Library library : story.getLibraries())
+                            for (Object object : story.getLibraries())
                             {
+                                LOG.debug(MessageFormat.format("call() ::   test object class from getLibraries(): {0}", object.getClass()));
+                                if(!(object instanceof Library))
+                                {
+                                    throw new IFML2Exception("Member of getLibraries isn't a Library! It's {0}", object.getClass());
+                                }
+                                Library library = (Library)object;
                                 LOG.debug(MessageFormat.format("call() ::   - searching in lib {0}, class is {1}", library.getName(), aClass));
 
                                 // attributes
