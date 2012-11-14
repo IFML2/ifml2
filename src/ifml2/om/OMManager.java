@@ -1,21 +1,20 @@
 package ifml2.om;
 
 import com.sun.xml.internal.bind.IDResolver;
+import ifml2.FormatLogger;
 import ifml2.IFML2Exception;
-import org.apache.log4j.Logger;
 import org.xml.sax.SAXException;
 
 import javax.xml.bind.*;
 import javax.xml.bind.util.ValidationEventCollector;
 import java.io.File;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.Callable;
 
 public class OMManager
 {
-    public static final Logger LOG = Logger.getLogger(OMManager.class);
+    public static final FormatLogger LOG = FormatLogger.getLogger(OMManager.class);
 
     /**
      * Loads story from xml file
@@ -27,7 +26,7 @@ public class OMManager
      */
     public static LoadStoryResult loadStoryFromXmlFile(String xmlFile, final boolean toInitItemsStartLoc) throws IFML2Exception
     {
-        LOG.debug(String.format("loadStoryFromXmlFile(xmlFile = \"%s\", toInitItemsStartLoc = %s) :: begin", xmlFile,  toInitItemsStartLoc));
+        LOG.debug("loadStoryFromXmlFile(xmlFile = \"{0}\", toInitItemsStartLoc = {1}) :: begin", xmlFile, toInitItemsStartLoc);
         final Story story;
         final ArrayList<Item> inventory = new ArrayList<Item>();
 
@@ -64,21 +63,17 @@ public class OMManager
             });
 
 	        File file = new File(xmlFile);
-            LOG.debug(String.format("loadStoryFromXmlFile :: File object for path \"%s\" created", file.getAbsolutePath()));
-
+            LOG.debug("loadStoryFromXmlFile :: File object for path \"{0}\" created", file.getAbsolutePath());
 
             ValidationEventCollector validationEventCollector = new ValidationEventCollector()
-            /*{
-                ///ArrayList<ValidationEvent> events = new ArrayList<ValidationEvent>();
-
+            {
                 @Override
                 public boolean handleEvent(ValidationEvent event)
                 {
-                    //events.add(event);
-                    return super.handleEvent(event);    //To change body of overridden methods use File | Settings | File Templates.
-                    //return false;
+                    LOG.warn("There is ValidationEvent during unmarshalling: {0}", event);
+                    return super.handleEvent(event);
                 }
-            }*/;
+            };
             unmarshaller.setEventHandler(validationEventCollector);
 
             LOG.debug("loadStoryFromXmlFile :: before unmarshal");
@@ -165,22 +160,22 @@ public class OMManager
 		{
 			JAXBContext context = JAXBContext.newInstance(Library.class);
 	        Unmarshaller unmarshaller = context.createUnmarshaller();
-            //unmarshaller.setProperty(IDResolver.class.getName(), new IFMLIDResolver());
+            //todo:unmarshaller.setProperty(IDResolver.class.getName(), new IFMLIDResolver());
 
             // TODO: загрузка стандартных и прочих либ
 
 	        String realRelativePath = "libs/" + libPath; // for JAR should be from root: "/libs/:
-            LOG.debug(String.format("loadLibrary :: realRelativePath = \"%s\"", realRelativePath));
+            LOG.debug("loadLibrary :: realRelativePath = \"{0}\"", realRelativePath);
 
             //--Loading from JAR--Reader reader = new BufferedReader(new InputStreamReader(OMManager.class.getResourceAsStream(realRelativePath), "UTF-8"));
 
             File file = new File(realRelativePath);
-            LOG.debug(String.format("loadLibrary :: File object for path \"%s\" created", file.getAbsolutePath()));
+            LOG.debug("loadLibrary :: File object for path \"{0}\" created", file.getAbsolutePath());
 
 	        if(!file.exists())
 	        {
-                LOG.error(String.format("loadLibrary :: Library file \"%s\" isn't found!", file.getAbsolutePath()));
-                throw new IFML2Exception(String.format("Файл \"%s\" библиотеки не найдена", file.getAbsolutePath()));
+                LOG.error("loadLibrary :: Library file \"{0}\" isn't found!", file.getAbsolutePath());
+                throw new IFML2Exception("Файл \"{0}\" библиотеки не найдена", file.getAbsolutePath());
 	        }
 
             ValidationEventCollector validationEventCollector = new ValidationEventCollector()
@@ -313,13 +308,13 @@ public class OMManager
         @Override
         public void bind(String s, Object o) throws SAXException
         {
-            LOG.debug(MessageFormat.format("bind(s = \"{0}\", o = \"{1}\"); class of o is {2}", s, o,
-                    o != null ? o.getClass() : "[o is null!]"));
+            LOG.debug("bind(s = \"{0}\", o = \"{1}\"); class of o is {2}", s, o,
+                    o != null ? o.getClass() : "[o is null!]");
 
             // save link to story
             if(o instanceof Story)
             {
-                LOG.debug(MessageFormat.format("bind() :: parameter Object o is Story, saving: {0}", o));
+                LOG.debug("bind() :: parameter Object o is Story, saving: {0}", o);
                 story = (Story) o;
             }
             else
@@ -331,19 +326,19 @@ public class OMManager
         @Override
         public Callable<?> resolve(final String s, final Class aClass) throws SAXException
         {
-            LOG.debug(MessageFormat.format("resolve(s = \"{0}\", aClass = \"{1}\")", s, aClass));
+            LOG.debug("resolve(s = \"{0}\", aClass = \"{1}\")", s, aClass);
 
             return new Callable<Object>()
             {
                 public Object call() throws Exception
                 {
-                    LOG.debug(MessageFormat.format("call() :: Trying to resolve \"{0}\" for \"{1}\" class", s, aClass));
+                    LOG.debug("call() :: Trying to resolve \"{0}\" for \"{1}\" class", s, aClass);
 
                     if(bindings.containsKeyOfClass(s, aClass))
                     {
                         Object object = bindings.getObjectOfClass(s, aClass);
-                        LOG.debug(MessageFormat.format("call() ::    => binding \"{0}\"; class is {1}", object,
-                                object != null ? object.getClass() : "[o is null!]"));
+                        LOG.debug("call() ::    => binding \"{0}\"; class is {1}", object,
+                                object != null ? object.getClass() : "[o is null!]");
                         return object;
                     }
                     else
@@ -352,26 +347,26 @@ public class OMManager
                         // try to find key in libraries
                         if(story != null)
                         {
-                            LOG.debug(MessageFormat.format("call() ::    story is not null, trying to get story.getLibraries(). " +
-                                    "getLibraries() returns {0}", story.getLibraries()));
+                            LOG.debug("call() ::    story is not null, trying to get story.getLibraries(). " +
+                                    "getLibraries() returns {0}", story.getLibraries());
                             for (Object object : story.getLibraries())
                             {
-                                LOG.debug(MessageFormat.format("call() ::   test object class from getLibraries(): {0}", object.getClass()));
+                                LOG.debug("call() ::   test object class from getLibraries(): {0}", object.getClass());
                                 if(!(object instanceof Library))
                                 {
                                     throw new IFML2Exception("Member of getLibraries isn't a Library! It's {0}", object.getClass());
                                 }
                                 Library library = (Library)object;
-                                LOG.debug(MessageFormat.format("call() ::   - searching in lib {0}, class is {1}", library.getName(), aClass));
+                                LOG.debug("call() ::   - searching in lib {0}, class is {1}", library.getName(), aClass);
 
                                 // attributes
                                 if(aClass == Attribute.class || aClass == Object.class) //todo: remove Object after JAXB fix
                                 {
-                                    LOG.debug(MessageFormat.format("call() ::   => searching Attribute \"{0}\"", s));
+                                    LOG.debug("call() ::   => searching Attribute \"{0}\"", s);
                                     Attribute attribute = library.getAttributeByName(s);
                                     if(attribute != null)
                                     {
-                                        LOG.debug(MessageFormat.format("call() ::     - found Attribute: \"{0}\"", attribute));
+                                        LOG.debug("call() ::     - found Attribute: \"{0}\"", attribute);
                                         return attribute;
                                     }
                                     /*todo из-за приходящего Object вместо нормального Attribute мы не сможем проверить,
@@ -381,11 +376,11 @@ public class OMManager
                                 // actions
                                 else if(aClass == Action.class || aClass == Object.class) //todo: remove Object after JAXB fix
                                 {
-                                    LOG.debug(MessageFormat.format("call() ::   => searching Action \"{0}\"", s));
+                                    LOG.debug("call() ::   => searching Action \"{0}\"", s);
                                     Action action = library.getActionByName(s);
                                     if(action != null)
                                     {
-                                        LOG.debug(MessageFormat.format("call() ::     - found Action: \"{0}\"", action));
+                                        LOG.debug("call() ::     - found Action: \"{0}\"", action);
                                         return action;
                                     }
                                 }

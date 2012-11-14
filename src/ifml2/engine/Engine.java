@@ -334,9 +334,9 @@ public class Engine
             return systemVariables.get(loweredSymbol);
         }
 
-        if(getStory().getObjectsHeap().containsKey(loweredSymbol))
+        if(story.getObjectsHeap().containsKey(loweredSymbol))
         {
-            return new ObjectValue(getStory().getObjectsHeap().get(loweredSymbol));
+            return new ObjectValue(story.getObjectsHeap().get(loweredSymbol));
         }
 
         throw new IFML2VMException("Неизвестный идентификатор \"{0}\"", symbol);
