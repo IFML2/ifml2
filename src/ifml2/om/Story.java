@@ -157,9 +157,7 @@ public class Story
     @Override
     public String toString()
     {
-        return MessageFormat.format("История:\n" +
-                "  Локаций: {0}\n" +
-                "  Предметов: {1}\n", locations.size(), items.size());
+        return MessageFormat.format("История \"{0}\"", id);
     }
 
     public String generateIdByName(String name)
@@ -183,7 +181,7 @@ public class Story
         int counter = 1;
         while(objectsHeap.containsKey(id.toLowerCase())
                 || dictionary.containsKey(id.toLowerCase())
-                || getProcedures().containsKey(id.toLowerCase()))
+                || procedures.containsKey(id.toLowerCase()))
         {
             id = camelCaseId + counter;
             counter++;

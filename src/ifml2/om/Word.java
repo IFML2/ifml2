@@ -82,8 +82,12 @@ public class Word
      */
     @XmlTransient
     public final ArrayList<IFMLObject> linkerObjects = new ArrayList<IFMLObject>();
+    public ArrayList<IFMLObject> getLinkerObjects()
+    {
+        return linkerObjects;
+    }
 
-	@Override
+    @Override
 	public String toString()
 	{
 		return ip;

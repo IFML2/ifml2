@@ -91,7 +91,7 @@ public class OMManager
             {
                 assignItemsToLocations(story);
             }
-            assignLinksWordsToObjects(story);
+            assignLinksWordsToObjects(ifmlObjectsHeap);
 
             LOG.debug("loadStoryFromXmlFile :: End");
 		}
@@ -114,9 +114,9 @@ public class OMManager
         }
     }
 
-    private static void assignLinksWordsToObjects(Story story) throws IFML2Exception
+    private static void assignLinksWordsToObjects(HashMap<String, IFMLObject> objectsHeap) throws IFML2Exception
     {
-        for(IFMLObject ifmlObject : story.getObjectsHeap().values())
+        for(IFMLObject ifmlObject : objectsHeap.values())
         {
             WordLinks wordLinks = ifmlObject.getWordLinks();
 
@@ -132,7 +132,8 @@ public class OMManager
 
             if(wordLinks.getMainWord() != null)
             {
-                wordLinks.getMainWord().linkerObjects.add(ifmlObject);
+                LOG.debug("assignLinksWordsToObjects() :: Adding link for main word \"{0}\" to object \"{1}\"",  wordLinks.getMainWord(), ifmlObject);
+                wordLinks.getMainWord().getLinkerObjects().add(ifmlObject);
             }
 
             for(Word word : wordLinks.getWords())
@@ -142,9 +143,10 @@ public class OMManager
                     throw new IFML2Exception("Задана неверная ссылка на слово у объекта {0}", ifmlObject);
                 }
 
-                if(!word.linkerObjects.contains(ifmlObject))
+                if(!word.getLinkerObjects().contains(ifmlObject))
                 {
-                    word.linkerObjects.add(ifmlObject);
+                    LOG.debug("assignLinksWordsToObjects() :: Adding link for word \"{0}\" to object \"{1}\"",  wordLinks.getMainWord(), ifmlObject);
+                    word.getLinkerObjects().add(ifmlObject);
                 }
             }
         }
