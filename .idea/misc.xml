@@ -24,11 +24,6 @@
     <option name="LAST_EDITED_MODULE_NAME" />
     <option name="LAST_EDITED_TAB_NAME" />
   </component>
-  <component name="ProjectInspectionProfilesVisibleTreeState">
-    <entry key="Project Default">
-      <profile-state />
-    </entry>
-  </component>
   <component name="ProjectResources">
     <resource url="http://toysoft.narod.ru/IFML2Schema" location="$PROJECT_DIR$/Schemes/IFML2Schema.xsd" />
     <default-html-doctype>http://www.w3.org/1999/xhtml</default-html-doctype>

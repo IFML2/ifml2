@@ -1,5 +1,6 @@
 package ifml2.engine;
 
+import ifml2.FormatLogger;
 import ifml2.IFML2Exception;
 import ifml2.SystemIdentifiers;
 import ifml2.interfaces.Interface;
@@ -25,6 +26,8 @@ import java.util.HashMap;
 
 public class Engine
 {
+    public static final FormatLogger LOG = FormatLogger.getLogger(Engine.class);
+
     private Interface gameInterface = null;
 	private Story story = null;
 	private final Parser parser = new Parser(this);
@@ -37,15 +40,18 @@ public class Engine
 
 	public Engine(Interface gameInterface)
 	{
-        this.setGameInterface(gameInterface);
+        this.gameInterface = gameInterface;
         virtualMachine.setEngine(this);
+        LOG.info("Engine created.");
 	}
 
 	public void loadStory(String storyFile) throws IFML2Exception
 	{
-		if(! new File(storyFile).exists())
+		LOG.info("Loading story \"{0}\"...", storyFile);
+
+        if(! new File(storyFile).exists())
 		{
-			throw new IFML2Exception("Файл истории не найден");
+            throw new IFML2Exception("Файл истории не найден");
 		}
 
 		//TODO validate xml
@@ -53,6 +59,8 @@ public class Engine
         OMManager.LoadStoryResult loadStoryResult = OMManager.loadStoryFromXmlFile(storyFile, true);
         setStory(loadStoryResult.getStory());
         setInventory(loadStoryResult.getInventory());
+
+        LOG.info("Story \"{0}\" loaded", story);
 	}
 
 	public void outText(String text)
@@ -72,7 +80,9 @@ public class Engine
 
 	public void initGame() throws IFML2Exception
     {
-		if(story == null)
+		LOG.info("Initializing game...");
+
+        if(story == null)
 		{
 			throw new IFML2Exception("История не загружена.");
 		}
@@ -125,6 +135,8 @@ public class Engine
             // show first location description
             virtualMachine.showLocName(getCurrentLocation());
         }
+
+        LOG.info("Game initialized.");
 	}
 
     public boolean executeGamerCommand(String gamerCommand)
@@ -274,11 +286,6 @@ public class Engine
         return gameInterface;
     }
 
-    void setGameInterface(Interface gameInterface)
-    {
-        this.gameInterface = gameInterface;
-    }
-
     public Story getStory()
     {
         return story;
@@ -345,5 +352,10 @@ public class Engine
     void setInventory(ArrayList<Item> inventory)
     {
         this.inventory = inventory;
+    }
+
+    public HashMap<String, Value> getGlobalVariables()
+    {
+        return globalVariables;
     }
 }

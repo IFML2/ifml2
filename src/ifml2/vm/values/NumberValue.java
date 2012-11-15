@@ -57,4 +57,9 @@ public class NumberValue extends Value implements IAddableValue
     {
         return "число";
     }
+
+    public Double getValue()
+    {
+        return value;
+    }
 }

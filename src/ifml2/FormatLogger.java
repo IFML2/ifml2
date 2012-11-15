@@ -47,4 +47,14 @@ public class FormatLogger
     {
         error(MessageFormat.format(message, args));
     }
+
+    public void info(String message)
+    {
+        logger.info(message);
+    }
+
+    public void info(String message, Object... args)
+    {
+        info(MessageFormat.format(message, args));
+    }
 }

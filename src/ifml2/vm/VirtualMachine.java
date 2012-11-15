@@ -34,7 +34,7 @@ public class VirtualMachine
             // lazy initialization
             if(!containsKey(key))
             {
-                Procedure inheritor = getEngine().getStory().getSystemInheritorProcedure((SystemProcedureEnum) key);
+                Procedure inheritor = engine.getStory().getSystemInheritorProcedure((SystemProcedureEnum) key);
                 put((SystemProcedureEnum) key, inheritor);
                 return inheritor;
             }
@@ -73,7 +73,7 @@ public class VirtualMachine
             Value value = runningContext.getVariable(Variable.VariableScope.GLOBAL, var.getKey());
             if(value != null)
             {
-                engine.globalVariables.put(var.getKey(), value);
+                engine.getGlobalVariables().put(var.getKey(), value);
             }
         }
     }
@@ -194,14 +194,14 @@ public class VirtualMachine
 
 	public void showInventory()
 	{
-		if(getEngine().getInventory().size() > 0)
+		if(engine.getInventory().size() > 0)
 		{
-            String objectsList = convertObjectsToString(getEngine().getInventory());
-            getEngine().outTextLn("У Вас при себе " + objectsList);
+            String objectsList = convertObjectsToString(engine.getInventory());
+            engine.outTextLn("У Вас при себе " + objectsList);
 		}
 		else
 		{
-			getEngine().outTextLn("А у Вас ничего нет.");
+            engine.outTextLn("А у Вас ничего нет.");
 		}
 	}
 
@@ -244,6 +244,6 @@ public class VirtualMachine
             return systemConstants.get(loweredSymbol);
         }
 
-        return getEngine().resolveSymbol(symbol);
+        return engine.resolveSymbol(symbol);
     }
 }

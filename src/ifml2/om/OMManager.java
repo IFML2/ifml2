@@ -125,10 +125,10 @@ public class OMManager
                 throw new IFML2Exception("Список ссылок на слова не задан у объекта {0}", ifmlObject);
             }
 
-            /*if(wordLinks.mainWord == null)
+            if(ifmlObject instanceof Item && wordLinks.getMainWord() == null)
             {
                 throw new IFML2Exception("Основное слово не задано у объекта {0}", ifmlObject);
-            }*/
+            }
 
             if(wordLinks.getMainWord() != null)
             {
@@ -162,11 +162,9 @@ public class OMManager
 		{
 			JAXBContext context = JAXBContext.newInstance(Library.class);
 	        Unmarshaller unmarshaller = context.createUnmarshaller();
-            //todo:unmarshaller.setProperty(IDResolver.class.getName(), new IFMLIDResolver());
+            //todo: modify IDResolver for library hierarchical loading --  unmarshaller.setProperty(IDResolver.class.getName(), new IFMLIDResolver());
 
-            // TODO: загрузка стандартных и прочих либ
-
-	        String realRelativePath = "libs/" + libPath; // for JAR should be from root: "/libs/:
+	        final String realRelativePath = "libs/" + libPath; // for JAR should be from root: "/libs/:
             LOG.debug("loadLibrary :: realRelativePath = \"{0}\"", realRelativePath);
 
             //--Loading from JAR--Reader reader = new BufferedReader(new InputStreamReader(OMManager.class.getResourceAsStream(realRelativePath), "UTF-8"));
@@ -185,8 +183,8 @@ public class OMManager
                 @Override
                 public boolean handleEvent(ValidationEvent event)
                 {
-                    //return super.handleEvent(event);    //To change body of overridden methods use File | Settings | File Templates.
-                    return false;
+                    LOG.warn("There is ValidationEvent during unmarshalling of library {0}: {1}", realRelativePath, event);
+                    return super.handleEvent(event);
                 }
             };
             unmarshaller.setEventHandler(validationEventCollector);
@@ -248,9 +246,13 @@ public class OMManager
 
     private static class IFMLIDResolver extends IDResolver
     {
+        public static final FormatLogger LOG = FormatLogger.getLogger(IFMLIDResolver.class);
+
         private class BindingMap extends HashMap <String, ArrayList<Object>>
         {
-            void addBinding(String name, Object object)
+            public final FormatLogger LOG = FormatLogger.getLogger(BindingMap.class);
+
+            public void addBinding(String name, Object object)
             {
                 if(containsKey(name))
                 {
@@ -264,14 +266,18 @@ public class OMManager
                 }
             }
 
-            boolean containsKeyOfClass(String name, Class aClass)
+            public boolean containsKeyOfClass(String name, Class aClass)
             {
                 if(containsKey(name))
                 {
                     for(Object object : get(name))
                     {
-                        if(object != null && (object.getClass().equals(aClass) || Object.class.equals(aClass))) //todo remove Object after JAXB fix
+                        if(object != null && (object.getClass().equals(aClass) || aClass == Object.class)) //todo remove Object after JAXB fix
                         {
+                            if(aClass == Object.class)
+                            {
+                                LOG.warn("containsKeyOfClass() :: returns true for \"{0}\" when aClass is Object!", name);
+                            }
                             return true;
                         }
                     }
@@ -279,14 +285,18 @@ public class OMManager
                 return false;
             }
 
-            Object getObjectOfClass(String name, Class aClass)
+            public Object getObjectOfClass(String name, Class aClass)
             {
                 if(containsKey(name))
                 {
                     for(Object object : get(name))
                     {
-                        if(object != null && (object.getClass().equals(aClass) || Object.class.equals(aClass))) //todo remove Object after JAXB fix
+                        if(object != null && (object.getClass().equals(aClass) || aClass == Object.class)) //todo remove Object after JAXB fix
                         {
+                            if(aClass == Object.class)
+                            {
+                                LOG.warn("getObjectOfClass() :: returns object \"{0}\" for \"{0}\" when aClass is Object!", object, name);
+                            }
                             return object;
                         }
                     }
@@ -361,6 +371,11 @@ public class OMManager
                                 Library library = (Library)object;
                                 LOG.debug("call() ::   - searching in lib {0}, class is {1}", library.getName(), aClass);
 
+                                if(aClass == Object.class)
+                                {
+                                    LOG.warn("call() :: aClass is Object for name \"{0}\"!", s);
+                                }
+
                                 // attributes
                                 if(aClass == Attribute.class || aClass == Object.class) //todo: remove Object after JAXB fix
                                 {
@@ -371,9 +386,6 @@ public class OMManager
                                         LOG.debug("call() ::     - found Attribute: \"{0}\"", attribute);
                                         return attribute;
                                     }
-                                    /*todo из-за приходящего Object вместо нормального Attribute мы не сможем проверить,
-                                      есть ли такой аттрибут вообще (не понятно, что запрашивает, атрибут или другой объект)
-                                      */
                                 }
                                 // actions
                                 else if(aClass == Action.class || aClass == Object.class) //todo: remove Object after JAXB fix
@@ -386,12 +398,21 @@ public class OMManager
                                         return action;
                                     }
                                 }
+                                // role definitions
+                                else if (aClass == RoleDefinition.class || aClass == Object.class)
+                                {
+                                    LOG.debug("call() ::   => searching RoleDefinition \"{0}\"", s);
+                                    RoleDefinition roleDefinition = library.getRoleDefinitionByName(s);
+                                    if(roleDefinition != null)
+                                    {
+                                        LOG.debug("call() ::     - found RoleDefinition: \"{0}\"", roleDefinition);
+                                        return roleDefinition;
+                                    }
+                                }
                                 else
                                 {
-                                    LOG.debug("call() ::     it's nor Attribute, nor Action, nothing to search else");
+                                    LOG.debug("call() ::     it's nor Attribute, nor Action, nor RoleDefinition => nothing to search else");
                                 }
-
-                                //todo ANOTHER LINKS!
                             }
                         }
                         else

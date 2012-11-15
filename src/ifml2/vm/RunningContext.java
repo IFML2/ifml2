@@ -110,9 +110,11 @@ public class RunningContext
 
     public void deleteVariable(Variable.VariableScope scope, String name)
     {
-        if(variables.get(scope).containsKey(name.toLowerCase()))
+        String loweredName = name.toLowerCase();
+        HashMap<String, Variable> variableHashMap = variables.get(scope);
+        if(variableHashMap.containsKey(loweredName))
         {
-            variables.get(scope).remove(name.toLowerCase());
+            variableHashMap.remove(loweredName);
         }
     }
 
@@ -123,15 +125,16 @@ public class RunningContext
 
     public void setContextVariable(String name, Value value)
     {
-        if(variables.get(Variable.VariableScope.LOCAL).containsKey(name.toLowerCase()))
+        String loweredName = name.toLowerCase();
+        if(variables.get(Variable.VariableScope.LOCAL).containsKey(loweredName))
         {
             setVariable(Variable.VariableScope.LOCAL, name, value);
         }
-        else if(variables.get(Variable.VariableScope.PROCEDURE).containsKey(name.toLowerCase()))
+        else if(variables.get(Variable.VariableScope.PROCEDURE).containsKey(loweredName))
         {
-            setVariable(Variable.VariableScope.PROCEDURE, name,  value);
+            setVariable(Variable.VariableScope.PROCEDURE, name, value);
         }
-        else if(variables.get(Variable.VariableScope.GLOBAL).containsKey(name.toLowerCase()))
+        else if(variables.get(Variable.VariableScope.GLOBAL).containsKey(loweredName))
         {
             setVariable(Variable.VariableScope.GLOBAL, name, value);
         }

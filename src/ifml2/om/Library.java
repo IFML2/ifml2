@@ -54,7 +54,7 @@ public class Library
 
     @XmlElementWrapper(name = "role-definitions")
     @XmlElement(name = "role-definition")
-    public EventList<RoleDefinition> roleDefinition = new BasicEventList<RoleDefinition>();
+    public EventList<RoleDefinition> roleDefinitions = new BasicEventList<RoleDefinition>();
 
     @XmlElementWrapper(name = "actions")
 	@XmlElement(name = "action")
@@ -93,6 +93,21 @@ public class Library
                 if(name.equalsIgnoreCase(action.getName()))
                 {
                     return action;
+                }
+            }
+        }
+        return null;
+    }
+
+    public RoleDefinition getRoleDefinitionByName(String name)
+    {
+        if(name != null)
+        {
+            for(RoleDefinition roleDefinition : roleDefinitions)
+            {
+                if(name.equalsIgnoreCase(roleDefinition.getName()))
+                {
+                    return roleDefinition;
                 }
             }
         }
