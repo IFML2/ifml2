@@ -584,6 +584,24 @@
             </ifml2:parameters>
             <ifml2:procedureBody>
                 <ifml2:showItemDesc position="1" item="предмет"/>
+                <ifml2:if position="2" condition="предмет.поверхность">
+                    <ifml2:then>
+                        <ifml2:loop position="1" collection="предмет.предметыСверху" element="предметСверху">
+                            <ifml2:alone>
+                                <ifml2:showMessage position="1" type="expression" message="'Сверху лежит ' + предметСверху.имя + '.'" carriageReturn="true"/>
+                            </ifml2:alone>
+                            <ifml2:first>
+                                <ifml2:showMessage position="1" type="expression" message="'Сверху лежит ' + предметСверху.имя + ', '" carriageReturn="false"/>
+                            </ifml2:first>
+                            <ifml2:next>
+                                <ifml2:showMessage position="1" type="expression" message="предметСверху.имя + ', '" carriageReturn="false"/>
+                            </ifml2:next>
+                            <ifml2:last>
+                                <ifml2:showMessage position="1" type="expression" message="предметСверху.имя + ','" carriageReturn="true"/>
+                            </ifml2:last>
+                        </ifml2:loop>
+                    </ifml2:then>
+                </ifml2:if>
             </ifml2:procedureBody>
         </ifml2:procedure>
         <ifml2:procedure name="ПерейтиНаСевер">

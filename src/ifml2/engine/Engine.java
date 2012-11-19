@@ -100,7 +100,21 @@ public class Engine
             globalVariables.put(varInstruction.getName(), value);
         }
 
-		// show initial info
+        // find properties and evaluates its expression into value
+        for(IFMLObject ifmlObject : story.getObjectsHeap().values())
+        {
+            //todo: check pure object properties
+            // check roles:
+            for(Role role : ifmlObject.getRoles())
+            {
+                for(Property property : role.getProperties())
+                {
+                    property.evaluateFromPrimaryExpression(new RunningContext(virtualMachine));
+                }
+            }
+        }
+
+        // show initial info
         StoryOptions.StoryDescription storyDescription = getStory().getStoryOptions().getStoryDescription();
         outTextLn(storyDescription.getName() != null ? storyDescription.getName() : "<Без имени>");
         outTextLn("**********");
@@ -115,7 +129,7 @@ public class Engine
             {
                 virtualMachine.runProcedure(getStory().getStartProcedure());
             }
-            catch (IFML2Exception e)
+            catch (IFML2Exception e)  // should we catch it?
             {
                 outTextLn(e.getMessage());
             }

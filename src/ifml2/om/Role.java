@@ -16,13 +16,29 @@ public class Role
     @XmlIDREF
     private RoleDefinition roleDefinition;
 
+    public RoleDefinition getRoleDefinition()
+    {
+        return roleDefinition;
+    }
+
     @XmlElementWrapper(name = ROLE_PROPERTIES_ELEMENT)
     @XmlElement(name = ROLE_PROPERTY_ELEMENT)
     private EventList<Property> properties = new BasicEventList<Property>();
+
+    public EventList<Property> getProperties()
+    {
+        return properties;
+    }
 
     @Override
     public String toString()
     {
         return "роль " + (roleDefinition != null ? roleDefinition.getName() : "не задана");
+    }
+
+    public String getName()
+    {
+        assert roleDefinition != null;
+        return roleDefinition.getName();
     }
 }

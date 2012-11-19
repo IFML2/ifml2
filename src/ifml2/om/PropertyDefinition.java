@@ -9,11 +9,21 @@ public class PropertyDefinition
     @XmlAttribute(name = "name")
     public String name;
 
+    public String getName()
+    {
+        return name;
+    }
+
     @XmlAttribute(name = "description")
     public String description;
 
     @XmlAttribute(name = "type")
     public PropertyTypeEnum type;
+
+    public PropertyTypeEnum getType()
+    {
+        return type;
+    }
 
     @XmlEnum
     public enum PropertyTypeEnum

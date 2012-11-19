@@ -62,6 +62,11 @@ public class IFMLObject implements Cloneable
     @XmlElement(name = IFML_OBJECT_ROLE_ELEMENT)
     private EventList<Role> roles = new BasicEventList<Role>();
 
+    public EventList<Role> getRoles()
+    {
+        return roles;
+    }
+
 	@Override
 	public String toString()
 	{
@@ -94,9 +99,8 @@ public class IFMLObject implements Cloneable
             return new TextValue(getDescription());
         }
 
-        // test cases
-        String upperPropertyName = propertyName.toUpperCase();
-        GramCaseEnum caseEnum = GramCaseEnum.getValueByAbbr(upperPropertyName);
+        // test gram cases
+        GramCaseEnum caseEnum = GramCaseEnum.getValueByAbbr(propertyName);
         if(caseEnum != null)
         {
             return new TextValue(wordLinks.getMainWord().getFormByGramCase(caseEnum));
@@ -105,9 +109,28 @@ public class IFMLObject implements Cloneable
         // test attributes
         for(Attribute attribute : attributes)
         {
-            if(attribute != null && attribute.getName().equalsIgnoreCase(propertyName))
+            if(attribute.getName().equalsIgnoreCase(propertyName))
             {
                 return new BooleanValue(true);
+            }
+        }
+
+        // test roles and properties
+        for(Role role : roles)
+        {
+            // test role as boolean
+            if(role.getName().equalsIgnoreCase(propertyName))
+            {
+                return new BooleanValue(true);
+            }
+
+            // test properties of role
+            for(Property property : role.getProperties())
+            {
+                if(property.getName().equalsIgnoreCase(propertyName))
+                {
+                    return property.getValue();
+                }
             }
         }
 
@@ -121,6 +144,17 @@ public class IFMLObject implements Cloneable
             }
         }
 
-        throw new IFML2VMException("У объекта \"{0}\" нет свойства \"{1}\", а также в игре нет признаков с таким названием.", this, propertyName);
+        // test principal possibility of role
+        for(RoleDefinition roleDefinition: runningContext.getStory().getAllRoleDefinitions())
+        {
+            if(roleDefinition.getName().equalsIgnoreCase(propertyName))
+            {
+                // there is such role but object hasn't it - take false and exit
+                return new BooleanValue(false);
+            }
+        }
+
+        throw new IFML2VMException("У объекта \"{0}\" нет свойства \"{1}\", а также в игре" +
+                " нет признаков и ролей с таким названием.", this, propertyName);
     }
 }

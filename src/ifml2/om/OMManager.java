@@ -91,7 +91,8 @@ public class OMManager
             {
                 assignItemsToLocations(story);
             }
-            assignLinksWordsToObjects(ifmlObjectsHeap);
+
+            postProcessObjects(ifmlObjectsHeap);
 
             LOG.debug("loadStoryFromXmlFile :: End");
 		}
@@ -114,10 +115,18 @@ public class OMManager
         }
     }
 
-    private static void assignLinksWordsToObjects(HashMap<String, IFMLObject> objectsHeap) throws IFML2Exception
+    /**
+     * Post process objects:
+     * set reverse links word -> object;
+     * evaluate properties.
+     * @param objectsHeap Objects heap
+     * @throws IFML2Exception In case of incorrect state ob object model
+     */
+    private static void postProcessObjects(HashMap<String, IFMLObject> objectsHeap) throws IFML2Exception
     {
         for(IFMLObject ifmlObject : objectsHeap.values())
         {
+            // assign reverse links from words to objects
             WordLinks wordLinks = ifmlObject.getWordLinks();
 
             if(wordLinks == null)
@@ -132,7 +141,7 @@ public class OMManager
 
             if(wordLinks.getMainWord() != null)
             {
-                LOG.debug("assignLinksWordsToObjects() :: Adding link for main word \"{0}\" to object \"{1}\"",  wordLinks.getMainWord(), ifmlObject);
+                LOG.debug("postProcessObjects() :: Adding link for main word \"{0}\" to object \"{1}\"",  wordLinks.getMainWord(), ifmlObject);
                 wordLinks.getMainWord().getLinkerObjects().add(ifmlObject);
             }
 
@@ -145,7 +154,7 @@ public class OMManager
 
                 if(!word.getLinkerObjects().contains(ifmlObject))
                 {
-                    LOG.debug("assignLinksWordsToObjects() :: Adding link for word \"{0}\" to object \"{1}\"",  wordLinks.getMainWord(), ifmlObject);
+                    LOG.debug("postProcessObjects() :: Adding link for word \"{0}\" to object \"{1}\"",  wordLinks.getMainWord(), ifmlObject);
                     word.getLinkerObjects().add(ifmlObject);
                 }
             }

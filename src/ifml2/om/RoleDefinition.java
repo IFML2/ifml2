@@ -30,4 +30,17 @@ class RoleDefinition
     {
         return "определение роли " + name;
     }
+
+    public PropertyDefinition getPropertyDefinitionByName(String name)
+    {
+        assert name != null;
+        for(PropertyDefinition propertyDefinition : propertyDefinitions)
+        {
+            if(name.equalsIgnoreCase(propertyDefinition.getName()))
+            {
+               return propertyDefinition;
+            }
+        }
+        return null;
+    }
 }

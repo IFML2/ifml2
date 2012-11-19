@@ -149,6 +149,25 @@ public class Story
         return allAttributes;
     }
 
+    @XmlTransient
+    private EventList<RoleDefinition> allRoleDefinitions = null;
+
+    public List<RoleDefinition> getAllRoleDefinitions()
+    {
+        if(allRoleDefinitions == null)
+        {
+            allRoleDefinitions = new BasicEventList<RoleDefinition>();
+            if(libraries != null)
+            {
+                for(Library library : libraries)
+                {
+                    allRoleDefinitions.addAll(library.getRoleDefinitions());
+                }
+            }
+        }
+        return allRoleDefinitions;
+    }
+
     @XmlJavaTypeAdapter(value=ProceduresAdapter.class)
     private final HashMap<String, Procedure> procedures = new HashMap<String, Procedure>();
 

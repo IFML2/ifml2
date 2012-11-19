@@ -56,6 +56,11 @@ public class Library
     @XmlElement(name = "role-definition")
     public EventList<RoleDefinition> roleDefinitions = new BasicEventList<RoleDefinition>();
 
+    public EventList<RoleDefinition> getRoleDefinitions()
+    {
+        return roleDefinitions;
+    }
+
     @XmlElementWrapper(name = "actions")
 	@XmlElement(name = "action")
 	public final EventList<Action> actions = new BasicEventList<Action>();
