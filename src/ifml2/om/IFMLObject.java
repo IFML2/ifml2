@@ -157,4 +157,16 @@ public class IFMLObject implements Cloneable
         throw new IFML2VMException("У объекта \"{0}\" нет свойства \"{1}\", а также в игре" +
                 " нет признаков и ролей с таким названием.", this, propertyName);
     }
+
+    public Value tryGetPropertyValue(String symbol, RunningContext runningContext)
+    {
+        try
+        {
+            return getPropertyValue(symbol, runningContext);
+        }
+        catch (IFML2Exception e)
+        {
+            return null;
+        }
+    }
 }

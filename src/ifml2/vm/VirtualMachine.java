@@ -246,4 +246,14 @@ public class VirtualMachine
 
         return engine.resolveSymbol(symbol);
     }
+
+    public Value runTrigger(Trigger trigger, IFMLObject ifmlObject) throws IFML2Exception
+    {
+        RunningContext runningContext = new RunningContext(this);
+        runningContext.setDefaultObject(ifmlObject);
+
+        runInstructionList(trigger.getInstructions(), runningContext, false);
+
+        return runningContext.getReturnValue();
+    }
 }

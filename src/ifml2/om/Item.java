@@ -3,7 +3,10 @@ package ifml2.om;
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
+import ifml2.IFML2Exception;
 import ifml2.om.xml.XmlSchemaConstants;
+import ifml2.vm.VirtualMachine;
+import ifml2.vm.values.Value;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -25,16 +28,33 @@ public class Item extends IFMLObject implements Cloneable
     @XmlElement(name = ITEM_HOOK_ELEMENT)
     public EventList<Hook> hooks = new BasicEventList<Hook>();
 
-    public EventList<Hook> getHooks()
-    {
-        return hooks;
-    }
-
     @Override
 	public String toString()
 	{
 		return getName();
 	}
+
+    /***
+     * Just runs appropriate trigger
+     * @return Value returned by trigger
+     * @param virtualMachine Virtual Machine
+     */
+    public Value getAccessibleContent(VirtualMachine virtualMachine) throws IFML2Exception
+    {
+        //todo: run own triggers -- when they will exist
+
+        // run roles' triggers
+        for (Role role : getRoles())
+        {
+            Trigger trigger = role.getRoleDefinition().getTrigger(Trigger.TriggerTypeEnum.GET_ACCESSIBLE_CONTENT);
+            if(trigger != null)
+            {
+                return virtualMachine.runTrigger(trigger, this);
+            }
+        }
+
+        return null;
+    }
 
     public static class ItemStartingPosition implements Cloneable
     {

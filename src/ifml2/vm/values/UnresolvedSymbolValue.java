@@ -37,4 +37,9 @@ public class UnresolvedSymbolValue extends Value
     {
         return "идентификатор";
     }
+
+    public String getValue()
+    {
+        return value;
+    }
 }

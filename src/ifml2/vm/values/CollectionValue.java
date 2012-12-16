@@ -39,4 +39,9 @@ public class CollectionValue extends Value
     {
         return "коллекция";
     }
+
+    public List getValue()
+    {
+        return value;
+    }
 }

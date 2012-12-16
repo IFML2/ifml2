@@ -38,7 +38,7 @@ public class Engine
 
 	private ArrayList<Item> inventory = new ArrayList<Item>();
 
-	public Engine(Interface gameInterface)
+    public Engine(Interface gameInterface)
 	{
         this.gameInterface = gameInterface;
         virtualMachine.setEngine(this);
@@ -371,5 +371,10 @@ public class Engine
     public HashMap<String, Value> getGlobalVariables()
     {
         return globalVariables;
+    }
+
+    public VirtualMachine getVirtualMachine()
+    {
+        return virtualMachine;
     }
 }

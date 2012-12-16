@@ -267,6 +267,7 @@
             <element name="if" type="ifml2:instructionIfType"/>
             <element name="loop" type="ifml2:instructionLoopType"/>
             <element name="var" type="ifml2:instructionSetVarType"/>
+            <element name="return" type="ifml2:instructionReturnType"/>
         </choice>
     </complexType>
 
@@ -359,7 +360,7 @@
 
     <complexType name="hookType">
         <sequence>
-            <element name="instructions" type="ifml2:instructionsType"/>
+            <element name="instructions" type="ifml2:instructionsType" maxOccurs="1"/>
         </sequence>
         <attribute name="action" type="string" use="required"/>
         <attribute name="objectElement" type="string" use="required"/>
@@ -472,6 +473,14 @@
         </complexContent>
     </complexType>
 
+    <complexType name="instructionReturnType">
+        <complexContent>
+            <extension base="ifml2:instructionType">
+                <attribute name="value" type="string" use="required"/>
+            </extension>
+        </complexContent>
+    </complexType>
+
     <element name="library" type="ifml2:libraryType"/>
 
     <complexType name="libraryType">
@@ -503,7 +512,8 @@
 
     <complexType name="role-definitionType">
         <sequence>
-            <element name="properties" type="ifml2:properties-definitionsType"/>
+            <element name="properties" type="ifml2:properties-definitionsType" maxOccurs="1"/>
+            <element name="triggers" type="ifml2:triggersType" maxOccurs="1"/>
         </sequence>
         <attribute name="name" type="string" use="required"/>
         <attribute name="description" type="string" use="optional"/>
@@ -528,6 +538,25 @@
             <enumeration value="number"/>
             <enumeration value="logic"/>
             <enumeration value="collection"/>
+        </restriction>
+    </simpleType>
+
+    <complexType name="triggersType">
+        <sequence maxOccurs="unbounded">
+            <element name="trigger" type="ifml2:triggerType"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="triggerType">
+        <sequence>
+            <element name="instructions" type="ifml2:instructionsType" maxOccurs="1"/>
+        </sequence>
+        <attribute name="type" type="ifml2:triggerTypeEnumType" use="required"/>
+    </complexType>
+
+    <simpleType name="triggerTypeEnumType">
+        <restriction base="string">
+            <enumeration value="getAccessibleContent"/>
         </restriction>
     </simpleType>
 

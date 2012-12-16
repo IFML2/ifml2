@@ -123,13 +123,13 @@ public class ExpressionCalculator
     private enum OperatorTypeEnum
     {
         BINARY,
-        URNARY_RIGHT
+        UNARY_RIGHT
     }
 
     private enum ExpressionOperatorEnum
     {
         GET_PROPERTY(GET_PROPERTY_OPERATOR, 100),
-        NOT(NOT_OPERATOR, OperatorTypeEnum.URNARY_RIGHT, 30),
+        NOT(NOT_OPERATOR, OperatorTypeEnum.UNARY_RIGHT, 30),
         ADD(ADD_OPERATOR, 20),
         COMPARE(COMPARE_OPERATOR, 10),
         AND(AND_OPERATOR, OperatorTypeEnum.BINARY, 5);
@@ -217,7 +217,7 @@ public class ExpressionCalculator
                     leftValue = valueStack.pop();
                     break;
 
-                case URNARY_RIGHT:
+                case UNARY_RIGHT:
                     rightValue = valueStack.pop();
                     break;
 
@@ -436,7 +436,7 @@ public class ExpressionCalculator
 
     private Value resolveSymbol(UnresolvedSymbolValue unresolvedSymbolValue) throws IFML2VMException
     {
-        String symbol = unresolvedSymbolValue.value.trim();
+        String symbol = unresolvedSymbolValue.getValue().trim();
         return runningContext.resolveSymbol(symbol);
     }
 }

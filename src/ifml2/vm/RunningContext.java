@@ -1,5 +1,6 @@
 package ifml2.vm;
 
+import ifml2.om.IFMLObject;
 import ifml2.om.Story;
 import ifml2.parser.FormalElement;
 import ifml2.vm.values.ObjectValue;
@@ -21,6 +22,8 @@ public class RunningContext
             put(Variable.VariableScope.GLOBAL, new HashMap<String, Variable>());
         }
     }; //todo create properties for all the scopes
+    private Value returnValue;
+    private IFMLObject defaultObject;
 
     public RunningContext(List<FormalElement> parameters, VirtualMachine virtualMachine) throws IFML2VMException
     {
@@ -64,18 +67,32 @@ public class RunningContext
         variables.get(Variable.VariableScope.GLOBAL).putAll(runningContext.variables.get(Variable.VariableScope.GLOBAL));
         variables.get(Variable.VariableScope.PROCEDURE).putAll(runningContext.variables.get(Variable.VariableScope.PROCEDURE));
         variables.get(Variable.VariableScope.LOCAL).putAll(runningContext.variables.get(Variable.VariableScope.LOCAL));
+        defaultObject = runningContext.defaultObject;
+        returnValue = runningContext.returnValue;
     }
 
     public Value resolveSymbol(String symbol) throws IFML2VMException 
     {
         String loweredSymbol = symbol.toLowerCase();
 
+        // check context variables
         Value value = getContextVariable(loweredSymbol);
         if(value != null)
         {
             return value;
         }
 
+        // check default object
+        if(defaultObject != null)
+        {
+            value = defaultObject.tryGetPropertyValue(loweredSymbol, this);
+            if(value != null)
+            {
+                return value;
+            }
+        }
+
+        // check VM symbols
         return virtualMachine.resolveSymbol(symbol);
     }
 
@@ -86,11 +103,13 @@ public class RunningContext
         {
             return value;
         }
+
         value = getVariable(Variable.VariableScope.PROCEDURE, name);
         if(value != null)
         {
             return value;
         }
+
         return getVariable(Variable.VariableScope.GLOBAL, name);
     }
 
@@ -142,5 +161,20 @@ public class RunningContext
         {
             setVariable(Variable.VariableScope.LOCAL, name, value);
         }
+    }
+
+    public void setReturnValue(Value returnValue)
+    {
+        this.returnValue = returnValue;
+    }
+
+    public void setDefaultObject(IFMLObject defaultObject)
+    {
+        this.defaultObject = defaultObject;
+    }
+
+    public Value getReturnValue()
+    {
+        return returnValue;
     }
 }

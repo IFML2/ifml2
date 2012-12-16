@@ -25,6 +25,10 @@ class RoleDefinition
     @XmlElement(name = "property")
     public List<PropertyDefinition> propertyDefinitions = new BasicEventList<PropertyDefinition>();
 
+    @XmlElementWrapper(name = "triggers")
+    @XmlElement(name = "trigger")
+    public List<Trigger> triggers = new BasicEventList<Trigger>();
+
     @Override
     public String toString()
     {
@@ -41,6 +45,19 @@ class RoleDefinition
                return propertyDefinition;
             }
         }
+        return null;
+    }
+
+    public Trigger getTrigger(Trigger.TriggerTypeEnum triggerType)
+    {
+        for (Trigger trigger : triggers)
+        {
+            if(triggerType.equals(trigger.getType()))
+            {
+                return trigger;
+            }
+        }
+
         return null;
     }
 }

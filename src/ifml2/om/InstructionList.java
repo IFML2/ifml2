@@ -20,7 +20,8 @@ public class InstructionList
             @XmlElement(name = "dropItem", type = DropItemInstruction.class),
             @XmlElement(name = "if", type = IfInstruction.class),
             @XmlElement(name = "loop", type = LoopInstruction.class),
-            @XmlElement(name = "var", type = SetVarInstruction.class)
+            @XmlElement(name = "var", type = SetVarInstruction.class),
+            @XmlElement(name = "return", type = ReturnInstruction.class)
     })
     public void setInstructions(List<Instruction> instructions) { this.instructions = instructions; }
     public List<Instruction> getInstructions() { return instructions; }
