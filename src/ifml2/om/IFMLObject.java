@@ -124,6 +124,15 @@ public class IFMLObject implements Cloneable
                 return new BooleanValue(true);
             }
 
+            // test attributes of role
+            for(Attribute attribute : role.getRoleDefinition().getAttributes())
+            {
+                if(attribute.getName().equalsIgnoreCase(propertyName))
+                {
+                    return new BooleanValue(true);
+                }
+            }
+
             // test properties of role
             for(Property property : role.getProperties())
             {

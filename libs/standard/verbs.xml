@@ -14,18 +14,44 @@
         <ifml2:attribute-definition name="читаемый" description="Определяет, может ли предмет быть прочитан."/>
         <ifml2:attribute-definition name="контейнер" description="Определяет, может ли предмет быть там размещен."/>
         <ifml2:attribute-definition name="прикреплён" description="Определяет, прикреплён ли предмет к чему-либо, чтобы его откреплять (отрезать)."/>
+        <ifml2:attribute-definition name="открываемый" description="Определяет, открываем ли предмет."/>
     </ifml2:attribute-definitions>
 
     <ifml2:role-definitions>
         <ifml2:role-definition name="поверхность" description="Означает, что предмет является поверхностью и может держать на себе предметы.">
             <ifml2:properties>
-                <ifml2:property name="предметыСверху" description="Контейнер с предметами, лежащими на поверхности." type="collection"/>
+                <ifml2:property name="предметыСверху" description="Коллекция предметов, лежащих на поверхности." type="collection"/>
             </ifml2:properties>
             <ifml2:triggers>
                 <ifml2:trigger type="getAccessibleContent">
                     <ifml2:instructions>
                         <!-- Предметы на поверхности всегда доступны, просто возвращаем коллекцию -->
                         <ifml2:return position="1" value="предметыСверху"/>
+                    </ifml2:instructions>
+                </ifml2:trigger>
+            </ifml2:triggers>
+        </ifml2:role-definition>
+
+        <ifml2:role-definition name="контейнер" description="Означает, что предмет является контейнером и может содержать в себе предметы.">
+            <ifml2:attributes>
+                <ifml2:attribute>открываемый</ifml2:attribute>
+            </ifml2:attributes>
+            <ifml2:properties>
+                <ifml2:property name="предметыВнутри" type="collection" description="Коллекция предметов, находящихся внутри."/>
+                <ifml2:property name="открыт" type="logic" value="нет" description="Открыт ли контейнер."/>
+            </ifml2:properties>
+            <ifml2:triggers>
+                <ifml2:trigger type="getAccessibleContent">
+                    <ifml2:instructions>
+                        <!-- Если контейнер открыт, показываем предметы, если нет, то не показываем -->
+                        <ifml2:if position="1" condition="открыт">
+                            <ifml2:then>
+                                <ifml2:return position="1" value="предметыВнутри"/>
+                            </ifml2:then>
+                            <ifml2:else>
+                                <!-- Если закрыт, ничего не возвращаем -->
+                            </ifml2:else>
+                        </ifml2:if>
                     </ifml2:instructions>
                 </ifml2:trigger>
             </ifml2:triggers>

@@ -17,7 +17,7 @@ import static ifml2.om.xml.XmlSchemaConstants.*;
 
 public class Property
 {
-    @XmlAttribute(name = PROPERTY_NAME_ATTRIBUE)
+    @XmlAttribute(name = PROPERTY_NAME_ATTRIBUTE)
     private String name; //can't load as IDREF because this name isn't unique
 
     public String getName()

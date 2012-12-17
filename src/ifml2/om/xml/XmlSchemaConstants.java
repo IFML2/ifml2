@@ -22,9 +22,11 @@ public interface XmlSchemaConstants
     String ROLE_NAME_ATTRIBUTE = "name";
     String ROLE_PROPERTIES_ELEMENT = "properties";
     String ROLE_PROPERTY_ELEMENT = "property";
-    String PROPERTY_NAME_ATTRIBUE = "name";
+    String PROPERTY_NAME_ATTRIBUTE = "name";
     String PROPERTY_VALUE_ATTRIBUTE = "value";
     String PROPERTY_COLLECTION_ITEM_ELEMENT = "collectionItem";
     String IFML_OBJECT_ATTRIBUTES_ELEMENT = "attributes";
     String IFML_OBJECT_ATTRIBUTE_ELEMENT = "attribute";
+    String ROLE_DEFINITION_ATTRIBUTES_ELEMENT = "attributes";
+    String ROLE_DEFINITION_ATTRIBUTE_ELEMENT = "attribute";
 }

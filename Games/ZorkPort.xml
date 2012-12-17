@@ -18,6 +18,14 @@
             <tp>ящиком</tp>
             <pp>ящике</pp>
         </word>
+        <word>
+            <ip>письмо</ip>
+            <rp>письма</rp>
+            <dp>письму</dp>
+            <vp>письмо</vp>
+            <tp>письмом</tp>
+            <pp>письме</pp>
+        </word>
     </dictionary>
     <locations>
         <location name="К западу от дома" id="КЗападуОтДома">
@@ -27,6 +35,15 @@
     </locations>
     <items>
         <item name="небольшой почтовый ящик" id="ПочтовыйЯщик">
+            <roles>
+                <role name="контейнер">
+                    <properties>
+                        <property name="предметыВнутри">
+                            <collectionItem>письмо</collectionItem>
+                        </property>
+                    </properties>
+                </role>
+            </roles>
             <startingPosition>
                 <inventory>false</inventory>
                 <locations>
@@ -40,6 +57,11 @@
                 <attribute>недоступен</attribute>
             </attributes>
             <description/>
+        </item>
+
+        <item id="ПисьмоКИгроку" name="письмо">
+            <words mainWord="письмо">
+            </words>
         </item>
     </items>
     <actions/>

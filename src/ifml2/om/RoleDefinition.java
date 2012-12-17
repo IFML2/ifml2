@@ -1,12 +1,13 @@
 package ifml2.om;
 
 import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.*;
 import java.util.List;
+
+import static ifml2.om.xml.XmlSchemaConstants.ROLE_DEFINITION_ATTRIBUTES_ELEMENT;
+import static ifml2.om.xml.XmlSchemaConstants.ROLE_DEFINITION_ATTRIBUTE_ELEMENT;
 
 class RoleDefinition
 {
@@ -20,6 +21,13 @@ class RoleDefinition
 
     @XmlAttribute(name = "description")
     public String description;
+
+    private EventList<Attribute> attributes = new BasicEventList<Attribute>();
+    @XmlElementWrapper(name = ROLE_DEFINITION_ATTRIBUTES_ELEMENT)
+    @XmlElement(name = ROLE_DEFINITION_ATTRIBUTE_ELEMENT)
+    @XmlIDREF
+    public EventList<Attribute> getAttributes() { return attributes; }
+    public void setAttributes(EventList<Attribute> attributes) { this.attributes = attributes; }
 
     @XmlElementWrapper(name = "properties")
     @XmlElement(name = "property")

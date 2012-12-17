@@ -512,15 +512,16 @@
 
     <complexType name="role-definitionType">
         <sequence>
-            <element name="properties" type="ifml2:properties-definitionsType" maxOccurs="1"/>
-            <element name="triggers" type="ifml2:triggersType" maxOccurs="1"/>
+            <element name="attributes" type="ifml2:attributesType" minOccurs="0" maxOccurs="1"/>
+            <element name="properties" type="ifml2:properties-definitionsType" minOccurs="0" maxOccurs="1"/>
+            <element name="triggers" type="ifml2:triggersType" minOccurs="0" maxOccurs="1"/>
         </sequence>
         <attribute name="name" type="string" use="required"/>
         <attribute name="description" type="string" use="optional"/>
     </complexType>
 
     <complexType name="properties-definitionsType">
-        <sequence maxOccurs="unbounded">
+        <sequence minOccurs="0" maxOccurs="unbounded">
             <element name="property" type="ifml2:property-definitionType"/>
         </sequence>
     </complexType>
@@ -542,7 +543,7 @@
     </simpleType>
 
     <complexType name="triggersType">
-        <sequence maxOccurs="unbounded">
+        <sequence minOccurs="0" maxOccurs="unbounded">
             <element name="trigger" type="ifml2:triggerType"/>
         </sequence>
     </complexType>
