@@ -60,7 +60,7 @@ public class Location extends IFMLObject
 	}
 
     @Override
-    public Value getPropertyValue(String propertyName, RunningContext runningContext) throws IFML2Exception
+    public Value getMemberValue(String propertyName, RunningContext runningContext) throws IFML2Exception
     {
         if ("север".equalsIgnoreCase(propertyName))
         {
@@ -92,7 +92,7 @@ public class Location extends IFMLObject
         }
         else
         {
-            return super.getPropertyValue(propertyName, runningContext);
+            return super.getMemberValue(propertyName, runningContext);
         }
     }
 }

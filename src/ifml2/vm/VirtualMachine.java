@@ -134,6 +134,12 @@ public class VirtualMachine
                         instructionList.getInstructions().indexOf(instruction) + 1, instruction.toString());
             }
         }
+
+        // return "returningValue" in any case of enclosure...
+        if(runningContext != instructionRunningContext)
+        {
+            runningContext.setReturnValue(instructionRunningContext.getReturnValue());
+        }
     }
 
     private void loadProcedureVariables(RunningContext runningContext, Procedure procedure) throws IFML2VMException

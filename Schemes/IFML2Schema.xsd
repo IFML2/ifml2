@@ -268,6 +268,7 @@
             <element name="loop" type="ifml2:instructionLoopType"/>
             <element name="var" type="ifml2:instructionSetVarType"/>
             <element name="return" type="ifml2:instructionReturnType"/>
+            <element name="setProperty" type="ifml2:instructionSetPropertyType"/>
         </choice>
     </complexType>
 
@@ -476,6 +477,16 @@
     <complexType name="instructionReturnType">
         <complexContent>
             <extension base="ifml2:instructionType">
+                <attribute name="value" type="string" use="required"/>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="instructionSetPropertyType">
+        <complexContent>
+            <extension base="ifml2:instructionType">
+                <attribute name="object" type="string" use="required"/>
+                <attribute name="name" type="string" use="required"/>
                 <attribute name="value" type="string" use="required"/>
             </extension>
         </complexContent>

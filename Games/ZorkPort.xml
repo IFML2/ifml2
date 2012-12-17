@@ -4,7 +4,7 @@
         <startLocationOption showStartLocDesc="true" location="КЗападуОтДома"/>
         <startProcedureOption/>
         <storyDescription name="Zork порт" author="realsonic" description="Портированный Zork под ЯРИЛ 2.0"
-                          version="0.0.1 (в разработке)"/>
+                          version="0.0.2 (в разработке)"/>
     </storyOptions>
     <libraries>
         <library>standard/verbs.xml</library>
@@ -39,7 +39,7 @@
                 <role name="контейнер">
                     <properties>
                         <property name="предметыВнутри">
-                            <collectionItem>письмо</collectionItem>
+                            <collectionItem>ПисьмоКИгроку</collectionItem>
                         </property>
                     </properties>
                 </role>
@@ -56,12 +56,20 @@
             <attributes>
                 <attribute>недоступен</attribute>
             </attributes>
-            <description/>
+            <description>Обычный почтовый ящик.</description>
         </item>
 
         <item id="ПисьмоКИгроку" name="письмо">
-            <words mainWord="письмо">
-            </words>
+            <words mainWord="письмо"/>
+            <description>Небольшой прямоугольный листок.</description>
+            <hooks>
+                <hook action="читать" objectElement="предмет" type="instead">
+                    <instructions>
+                        <showMessage position="1" type="text"
+                                     message="&quot;Приветствую тебя, путешественник! Ты на пороге огромной империи!&quot;" carriageReturn="true"/>
+                    </instructions>
+                </hook>
+            </hooks>
         </item>
     </items>
     <actions/>

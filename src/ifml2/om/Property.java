@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlTransient;
+import java.text.MessageFormat;
 
 import static ifml2.om.xml.XmlSchemaConstants.*;
 
@@ -19,6 +20,18 @@ public class Property
 {
     @XmlAttribute(name = PROPERTY_NAME_ATTRIBUTE)
     private String name; //can't load as IDREF because this name isn't unique
+
+    public Property() { }
+
+    public Property(PropertyDefinition propertyDefinition, Role parentRole)
+    {
+        super();
+        name = propertyDefinition.getName();
+        this.parentRole = parentRole;
+        valueExpression = propertyDefinition.getValue();
+
+        parentRole.getProperties().add(this);
+    }
 
     public String getName()
     {
@@ -43,11 +56,6 @@ public class Property
 
     @XmlAttribute(name = PROPERTY_VALUE_ATTRIBUTE)
     private String valueExpression;
-
-    public String getValueExpression()
-    {
-        return valueExpression;
-    }
 
     @XmlElement(name = PROPERTY_COLLECTION_ITEM_ELEMENT)
     @XmlIDREF
@@ -114,5 +122,11 @@ public class Property
             default:
                 throw new IFML2Exception("Неизвестный тип свойства - \"{0}\"", propertyDefinition.getType());
         }
+    }
+
+    @Override
+    public String toString()
+    {
+        return MessageFormat.format("Свойство \"{0}\" = {1}", name, value);
     }
 }

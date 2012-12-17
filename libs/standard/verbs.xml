@@ -537,7 +537,7 @@
             </ifml2:templates>
             <ifml2:procedureCall procedure="СломатьПредмет"/>
         </ifml2:action>
-        <ifml2:action name="читать [что]" description="Читать предмет">
+        <ifml2:action name="читать" description="Читать предмет">
             <ifml2:templates>
                 <ifml2:template>
                     <ifml2:literalElement position="1">
@@ -584,6 +584,17 @@
             </ifml2:templates>
             <ifml2:procedureCall procedure="ПоложитьВ"/>
         </ifml2:action>
+        <ifml2:action name="открыть">
+            <ifml2:templates>
+                <ifml2:template>
+                    <ifml2:literalElement position="1">
+                        <ifml2:synonym>открыть</ifml2:synonym>
+                    </ifml2:literalElement>
+                    <ifml2:objectElement position="2" case="vp" parameter="чтоОткрыть"/>
+                </ifml2:template>
+            </ifml2:templates>
+            <ifml2:procedureCall procedure="ОткрытьПредмет"/>
+        </ifml2:action>
     </ifml2:actions>
     <ifml2:procedures>
         <ifml2:procedure name="ОписатьТекущуюЛокацию" inheritsSystemProcedure="showLocName">
@@ -622,10 +633,10 @@
                     <ifml2:then>
                         <ifml2:loop position="1" collection="предмет.предметыСверху" element="предметСверху">
                             <ifml2:alone>
-                                <ifml2:showMessage position="1" type="expression" message="'Сверху лежит ' + предметСверху.имя + '.'" carriageReturn="true"/>
+                                <ifml2:showMessage position="1" type="expression" message="'Сверху ' + предметСверху.имя + '.'" carriageReturn="true"/>
                             </ifml2:alone>
                             <ifml2:first>
-                                <ifml2:showMessage position="1" type="expression" message="'Сверху лежит ' + предметСверху.имя + ', '" carriageReturn="false"/>
+                                <ifml2:showMessage position="1" type="expression" message="'Сверху ' + предметСверху.имя + ', '" carriageReturn="false"/>
                             </ifml2:first>
                             <ifml2:next>
                                 <ifml2:showMessage position="1" type="expression" message="предметСверху.имя + ', '" carriageReturn="false"/>
@@ -634,6 +645,32 @@
                                 <ifml2:showMessage position="1" type="expression" message="предметСверху.имя + ','" carriageReturn="true"/>
                             </ifml2:last>
                         </ifml2:loop>
+                    </ifml2:then>
+                </ifml2:if>
+                <ifml2:if position="3" condition="предмет.контейнер">
+                    <ifml2:then>
+                        <ifml2:if position="1" condition="предмет.открыт">
+                            <ifml2:then>
+                                <ifml2:showMessage position="1" type="expression" message="предмет.имя + ' открыт.'" beginWithCap="true" carriageReturn="false"/>
+                                <ifml2:loop position="2" collection="предмет.предметыВнутри" element="предметВнутри">
+                                    <ifml2:alone>
+                                        <ifml2:showMessage position="1" type="expression" message="' Внутри ' + предметВнутри.имя + '.'" carriageReturn="true"/>
+                                    </ifml2:alone>
+                                    <ifml2:first>
+                                        <ifml2:showMessage position="1" type="expression" message="' Внутри ' + предметВнутри.имя + ', '" carriageReturn="false"/>
+                                    </ifml2:first>
+                                    <ifml2:next>
+                                        <ifml2:showMessage position="1" type="expression" message="предметВнутри.имя + ', '" carriageReturn="false"/>
+                                    </ifml2:next>
+                                    <ifml2:last>
+                                        <ifml2:showMessage position="1" type="expression" message="предметВнутри.имя + ','" carriageReturn="true"/>
+                                    </ifml2:last>
+                                </ifml2:loop>
+                            </ifml2:then>
+                            <ifml2:else>
+                                <ifml2:showMessage position="1" type="expression" message="предмет.имя + ' закрыт.'" beginWithCap="true" carriageReturn="true"/>
+                            </ifml2:else>
+                        </ifml2:if>
                     </ifml2:then>
                 </ifml2:if>
             </ifml2:procedureBody>
@@ -994,6 +1031,30 @@
                                 <ifml2:showMessage position="1" type="text" message="Вы не можете туда это положить."/>
                             </ifml2:else>
                         </ifml2:if>
+                    </ifml2:else>
+                </ifml2:if>
+            </ifml2:procedureBody>
+        </ifml2:procedure>
+        <ifml2:procedure name="ОткрытьПредмет">
+            <ifml2:parameters>
+                <ifml2:parameter name="чтоОткрыть"/>
+            </ifml2:parameters>
+            <ifml2:procedureBody>
+                <ifml2:if position="1" condition="чтоОткрыть.открываемый">
+                    <ifml2:then>
+                        <ifml2:if position="1" condition="не чтоОткрыть.открыт">
+                            <ifml2:then>
+                                <ifml2:setProperty position="1" object="чтоОткрыть" name="открыт" value="да"/>
+                                <ifml2:showMessage position="2" type="expression"
+                                                   message="'Вы открыли ' + чтоОткрыть.имя + '.'"/>
+                            </ifml2:then>
+                            <ifml2:else>
+                                <ifml2:showMessage position="1" type="expression" message="чтоОткрыть.имя + ' уже открыт.'" beginWithCap="true" carriageReturn="true"/>
+                            </ifml2:else>
+                        </ifml2:if>
+                    </ifml2:then>
+                    <ifml2:else>
+                        <ifml2:showMessage position="1" type="expression" message="чтоОткрыть.имя + ' невозможно открыть.'" beginWithCap="true" carriageReturn="true"/>
                     </ifml2:else>
                 </ifml2:if>
             </ifml2:procedureBody>

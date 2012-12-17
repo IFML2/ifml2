@@ -20,6 +20,8 @@ public interface XmlSchemaConstants
     String IFML_OBJECT_ROLES_ELEMENT = "roles";
     String IFML_OBJECT_ROLE_ELEMENT = "role";
     String ROLE_NAME_ATTRIBUTE = "name";
+    String OBJECT_PROPERTIES_ELEMENT = "properties";
+    String OBJECT_PROPERTY_ELEMENT = "property";
     String ROLE_PROPERTIES_ELEMENT = "properties";
     String ROLE_PROPERTY_ELEMENT = "property";
     String PROPERTY_NAME_ATTRIBUTE = "name";

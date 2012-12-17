@@ -85,7 +85,7 @@ public class RunningContext
         // check default object
         if(defaultObject != null)
         {
-            value = defaultObject.tryGetPropertyValue(loweredSymbol, this);
+            value = defaultObject.tryGetMemberValue(loweredSymbol, this);
             if(value != null)
             {
                 return value;
@@ -177,4 +177,18 @@ public class RunningContext
     {
         return returnValue;
     }
+
+    /*public IFMLObject getObjectByName(String name)
+    {
+        Story story = getStory();
+        String loweredName = name.toLowerCase();
+        if(story.getObjectsHeap().containsKey(loweredName))
+        {
+            return story.getObjectsHeap().get(loweredName);
+        }
+        else
+        {
+            return null;
+        }
+    }*/
 }

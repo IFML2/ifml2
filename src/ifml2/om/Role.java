@@ -15,7 +15,6 @@ public class Role
     @XmlAttribute(name = ROLE_NAME_ATTRIBUTE)
     @XmlIDREF
     private RoleDefinition roleDefinition;
-
     public RoleDefinition getRoleDefinition()
     {
         return roleDefinition;
@@ -24,7 +23,6 @@ public class Role
     @XmlElementWrapper(name = ROLE_PROPERTIES_ELEMENT)
     @XmlElement(name = ROLE_PROPERTY_ELEMENT)
     private EventList<Property> properties = new BasicEventList<Property>();
-
     public EventList<Property> getProperties()
     {
         return properties;
@@ -40,5 +38,36 @@ public class Role
     {
         assert roleDefinition != null;
         return roleDefinition.getName();
+    }
+
+    public Property tryFindPropertyByDefinition(PropertyDefinition propertyDefinition)
+    {
+        if(propertyDefinition == null)
+        {
+            return null;
+        }
+
+        for(Property property : properties)
+        {
+            if(propertyDefinition.getName().equalsIgnoreCase(property.getName()))
+            {
+                return property;
+            }
+        }
+
+        return null;
+    }
+
+    public Property getPropertyByName(String name)
+    {
+        for(Property property : properties)
+        {
+            if(property.getName().equalsIgnoreCase(name))
+            {
+                return property;
+            }
+        }
+
+        return null;
     }
 }

@@ -39,4 +39,9 @@ public class ObjectValue extends Value
     {
         return "объект";
     }
+
+    public IFMLObject getValue()
+    {
+        return value;
+    }
 }

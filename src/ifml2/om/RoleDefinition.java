@@ -9,7 +9,7 @@ import java.util.List;
 import static ifml2.om.xml.XmlSchemaConstants.ROLE_DEFINITION_ATTRIBUTES_ELEMENT;
 import static ifml2.om.xml.XmlSchemaConstants.ROLE_DEFINITION_ATTRIBUTE_ELEMENT;
 
-class RoleDefinition
+public class RoleDefinition
 {
     @XmlAttribute(name = "name")
     @XmlID
@@ -67,5 +67,10 @@ class RoleDefinition
         }
 
         return null;
+    }
+
+    public List<PropertyDefinition> getPropertyDefinitions()
+    {
+        return propertyDefinitions;
     }
 }

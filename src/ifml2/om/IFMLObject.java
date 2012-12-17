@@ -18,6 +18,14 @@ import static ifml2.om.xml.XmlSchemaConstants.*;
 
 public class IFMLObject implements Cloneable
 {
+    @XmlElementWrapper(name = OBJECT_PROPERTIES_ELEMENT)
+    @XmlElement(name = OBJECT_PROPERTY_ELEMENT)
+    private EventList<Property> properties = new BasicEventList<Property>();
+    public EventList<Property> getProperties()
+    {
+        return properties;
+    }
+
     @Override
     public IFMLObject clone() throws CloneNotSupportedException
     {
@@ -87,7 +95,7 @@ public class IFMLObject implements Cloneable
         return wordLinks.getMainWord().getFormByGramCase(gramCase);
     }
 
-    public Value getPropertyValue(String propertyName, RunningContext runningContext) throws IFML2Exception
+    public Value getMemberValue(String propertyName, RunningContext runningContext) throws IFML2Exception
     {
         // test system properties
         if(NAME_PROPERTY_LITERAL.equalsIgnoreCase(propertyName))
@@ -167,15 +175,39 @@ public class IFMLObject implements Cloneable
                 " нет признаков и ролей с таким названием.", this, propertyName);
     }
 
-    public Value tryGetPropertyValue(String symbol, RunningContext runningContext)
+    public Value tryGetMemberValue(String symbol, RunningContext runningContext)
     {
         try
         {
-            return getPropertyValue(symbol, runningContext);
+            return getMemberValue(symbol, runningContext);
         }
         catch (IFML2Exception e)
         {
             return null;
         }
+    }
+
+    public Property getPropertyByName(String name)
+    {
+        // search in local properties
+        for(Property property : properties)
+        {
+            if(property.getName().equalsIgnoreCase(name))
+            {
+                return property;
+            }
+        }
+
+        // search in roles' properties
+        for(Role role : roles)
+        {
+            Property property = role.getPropertyByName(name);
+            if(property != null)
+            {
+                return property;
+            }
+        }
+
+        return null;
     }
 }

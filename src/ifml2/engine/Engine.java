@@ -107,8 +107,17 @@ public class Engine
             // check roles:
             for(Role role : ifmlObject.getRoles())
             {
-                for(Property property : role.getProperties())
+                // fill roles instances with default properties (not set in instances but defined in role definitions)
+                for(PropertyDefinition propertyDefinition : role.getRoleDefinition().getPropertyDefinitions())
                 {
+                    Property property = role.tryFindPropertyByDefinition(propertyDefinition);
+                    if(property == null)
+                    {
+                        // property is default (not set in role instance) -- create it in role instance
+                        property = new Property(propertyDefinition, role);
+                    }
+
+                    // calculate property
                     property.evaluateFromPrimaryExpression(new RunningContext(virtualMachine));
                 }
             }

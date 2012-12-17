@@ -270,7 +270,7 @@ public class ExpressionCalculator
 
                     String propertyName = ((UnresolvedSymbolValue)rightValue).value;
 
-                    Value propertyValue = object.getPropertyValue(propertyName, runningContext);
+                    Value propertyValue = object.getMemberValue(propertyName, runningContext);
 
                     if(propertyValue == null)
                     {
