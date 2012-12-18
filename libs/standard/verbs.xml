@@ -11,10 +11,8 @@
                                     description="Определяет, может ли предмет быть налит, вылит или выпит."/>
         <ifml2:attribute-definition name="горючий" description="Определяет, может ли предмет гореть."/>
         <ifml2:attribute-definition name="хрупкий" description="Определяет, может ли предмет быть сломан или разбит."/>
-        <ifml2:attribute-definition name="читаемый" description="Определяет, может ли предмет быть прочитан."/>
-        <ifml2:attribute-definition name="контейнер" description="Определяет, может ли предмет быть там размещен."/>
+        <!--ifml2:attribute-definition name="контейнер" description="Определяет, может ли предмет быть там размещен."/-->
         <ifml2:attribute-definition name="прикреплён" description="Определяет, прикреплён ли предмет к чему-либо, чтобы его откреплять (отрезать)."/>
-        <ifml2:attribute-definition name="открываемый" description="Определяет, открываем ли предмет."/>
     </ifml2:attribute-definitions>
 
     <ifml2:role-definitions>
@@ -33,28 +31,44 @@
         </ifml2:role-definition>
 
         <ifml2:role-definition name="контейнер" description="Означает, что предмет является контейнером и может содержать в себе предметы.">
-            <ifml2:attributes>
-                <ifml2:attribute>открываемый</ifml2:attribute>
-            </ifml2:attributes>
             <ifml2:properties>
                 <ifml2:property name="предметыВнутри" type="collection" description="Коллекция предметов, находящихся внутри."/>
-                <ifml2:property name="открыт" type="logic" value="нет" description="Открыт ли контейнер."/>
             </ifml2:properties>
             <ifml2:triggers>
                 <ifml2:trigger type="getAccessibleContent">
                     <ifml2:instructions>
-                        <!-- Если контейнер открыт, показываем предметы, если нет, то не показываем -->
-                        <ifml2:if position="1" condition="открыт">
+                        <!-- Если предмет открываемый, он может быть закрыт и скрывать предметы -->
+                        <ifml2:if position="1" condition="открываемый">
                             <ifml2:then>
-                                <ifml2:return position="1" value="предметыВнутри"/>
+                                <!-- Если контейнер открыт, показываем предметы, если нет, то не показываем -->
+                                <ifml2:if position="1" condition="открыт">
+                                    <ifml2:then>
+                                        <ifml2:return position="1" value="предметыВнутри"/>
+                                    </ifml2:then>
+                                    <ifml2:else>
+                                        <!-- Если закрыт, ничего не возвращаем -->
+                                    </ifml2:else>
+                                </ifml2:if>
                             </ifml2:then>
                             <ifml2:else>
-                                <!-- Если закрыт, ничего не возвращаем -->
+                                <ifml2:return position="1" value="предметыВнутри"/>
                             </ifml2:else>
                         </ifml2:if>
                     </ifml2:instructions>
                 </ifml2:trigger>
             </ifml2:triggers>
+        </ifml2:role-definition>
+
+        <ifml2:role-definition name="открываемый" description="Означает, что предмет можно открыть и закрыть.">
+            <ifml2:properties>
+                <ifml2:property name="открыт" type="logic" value="нет" description="Открыт ли контейнер."/>
+            </ifml2:properties>
+        </ifml2:role-definition>
+
+        <ifml2:role-definition name="читаемый" description="Означает, что предмет можно прочитать.">
+            <ifml2:properties>
+                <ifml2:property name="текст" type="text"/>
+            </ifml2:properties>
         </ifml2:role-definition>
     </ifml2:role-definitions>
 
@@ -548,6 +562,18 @@
                     <ifml2:objectElement position="2" case="vp" parameter="предмет"/>
                 </ifml2:template>
             </ifml2:templates>
+            <ifml2:restrictions>
+                <ifml2:restriction condition="предмет.недоступен">
+                    <ifml2:reaction>
+                        <ifml2:showMessage position="1" type="text" message="Это невозможно. Предмет недоступен."/>
+                    </ifml2:reaction>
+                </ifml2:restriction>
+                <ifml2:restriction condition="не предмет.читаемый">
+                    <ifml2:reaction>
+                        <ifml2:showMessage position="1" type="expression" message="'На ' + предмет.пп + ' ничего не написано.'"/>
+                    </ifml2:reaction>
+                </ifml2:restriction>
+            </ifml2:restrictions>
             <ifml2:procedureCall procedure="ЧитатьПредмет"/>
         </ifml2:action>
         <ifml2:action name="пробовать [что]" description="Пробовать предмет">
@@ -975,22 +1001,7 @@
                 <ifml2:parameter name="предмет"/>
             </ifml2:parameters>
             <ifml2:procedureBody>
-                <ifml2:if position="1" condition="предмет.недоступен">
-                    <ifml2:then>
-                        <ifml2:showMessage position="1" type="text" message="Это невозможно. Предмет недоступен."/>
-                    </ifml2:then>
-                    <ifml2:else>
-                        <ifml2:if position="1" condition="предмет.читаемый">
-                            <ifml2:then>
-                                <ifml2:showMessage position="1" type="expression" message="'Вы прочли ' + предмет.вп + '.'"/>
-                            </ifml2:then>
-                            <ifml2:else>
-                                <ifml2:showMessage position="1" type="expression"
-                                                   message="'На ' + предмет.пп + ' ничего не написано.'"/>
-                            </ifml2:else>
-                        </ifml2:if>
-                    </ifml2:else>
-                </ifml2:if>
+                <ifml2:showMessage position="1" type="expression" message="'&quot;' + предмет.текст + '&quot;'"/>
             </ifml2:procedureBody>
         </ifml2:procedure>
         <ifml2:procedure name="ПробоватьПредмет">

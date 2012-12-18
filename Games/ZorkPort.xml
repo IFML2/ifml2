@@ -29,12 +29,22 @@
     </dictionary>
     <locations>
         <location name="К западу от дома" id="КЗападуОтДома">
-            <attributes/>
             <description>Вы стоите на площадке к западу от белого дома с белой заколоченной парадной дверью.</description>
         </location>
     </locations>
     <items>
         <item name="небольшой почтовый ящик" id="ПочтовыйЯщик">
+            <description>Обычный почтовый ящик.</description>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>КЗападуОтДома</location>
+                </locations>
+            </startingPosition>
+            <words mainWord="ящик"/>
+            <attributes>
+                <attribute>недоступен</attribute>
+            </attributes>
             <roles>
                 <role name="контейнер">
                     <properties>
@@ -43,33 +53,24 @@
                         </property>
                     </properties>
                 </role>
+                <role name="открываемый">
+                    <properties>
+                        <property name="открыт" value="нет"/>
+                    </properties>
+                </role>
             </roles>
-            <startingPosition>
-                <inventory>false</inventory>
-                <locations>
-                    <location>КЗападуОтДома</location>
-                </locations>
-            </startingPosition>
-            <words mainWord="ящик">
-                <word>ящик</word>
-            </words>
-            <attributes>
-                <attribute>недоступен</attribute>
-            </attributes>
-            <description>Обычный почтовый ящик.</description>
         </item>
 
         <item id="ПисьмоКИгроку" name="письмо">
             <words mainWord="письмо"/>
             <description>Небольшой прямоугольный листок.</description>
-            <hooks>
-                <hook action="читать" objectElement="предмет" type="instead">
-                    <instructions>
-                        <showMessage position="1" type="text"
-                                     message="&quot;Приветствую тебя, путешественник! Ты на пороге огромной империи!&quot;" carriageReturn="true"/>
-                    </instructions>
-                </hook>
-            </hooks>
+            <roles>
+                <role name="читаемый">
+                    <properties>
+                        <property name="текст" value="'Приветствую тебя, путешественник! Ты на пороге огромной империи Zork!'"/>
+                    </properties>
+                </role>
+            </roles>
         </item>
     </items>
     <actions/>
