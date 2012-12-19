@@ -188,15 +188,10 @@
                 <word>зелёное</word>
                 <word>яблоко</word>
             </words>
-            <attributes/>
-            <description>Зеленое яблоко, надкушенное с одного края. По следу надкуса можно предположить, что надкушено совсем недавно</description>
-            <!--moved to role on altar-
-            startingPosition>
-                <inventory>false</inventory>
-                <locations>
-                    <location>ЦентральнаяЧастьХрама</location>
-                </locations>
-            </startingPosition-->
+            <description>Зеленое яблоко, надкушенное с одного края. По следу надкуса можно предположить, что надкушено совсем недавно.</description>
+            <roles>
+                <role name="съедобный"/>
+            </roles>
         </item>
     </items>
 </story>

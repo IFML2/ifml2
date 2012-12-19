@@ -6,7 +6,6 @@
                                     description="Определяет, пропускать ли упоминание предмета при описании локации."/>
         <ifml2:attribute-definition name="недоступен"
                                     description="Определяет возможность взятия и манипуляции с предметом."/>
-        <ifml2:attribute-definition name="съедобен" description="Определяет, может ли предмет быть съеден."/>
         <ifml2:attribute-definition name="жидкий"
                                     description="Определяет, может ли предмет быть налит, вылит или выпит."/>
         <ifml2:attribute-definition name="горючий" description="Определяет, может ли предмет гореть."/>
@@ -69,6 +68,10 @@
             <ifml2:properties>
                 <ifml2:property name="текст" type="text"/>
             </ifml2:properties>
+        </ifml2:role-definition>
+
+        <ifml2:role-definition name="съедобный" description="Означает, что предмет можно съесть.">
+            <!-- Здесь пока ничего -->
         </ifml2:role-definition>
     </ifml2:role-definitions>
 
@@ -494,7 +497,7 @@
             </ifml2:templates>
             <ifml2:procedureCall procedure="ВыпитьПредмет"/>
         </ifml2:action>
-        <ifml2:action name="съесть [что]" description="Съесть предмет">
+        <ifml2:action name="съесть" description="Съесть предмет">
             <ifml2:templates>
                 <ifml2:template>
                     <ifml2:literalElement position="1">
@@ -506,6 +509,19 @@
                     <ifml2:objectElement position="2" case="vp" parameter="предмет"/>
                 </ifml2:template>
             </ifml2:templates>
+            <ifml2:restrictions>
+                <ifml2:restriction condition="предмет.недоступен">
+                    <ifml2:reaction>
+                        <ifml2:showMessage position="1" type="expression"
+                                           message="'В этих условиях, либо из этого положения, либо в данный момент взять и что-либо сделать с(о) ' + предмет.тп + ' невозможно.'"/>
+                    </ifml2:reaction>
+                </ifml2:restriction>
+                <ifml2:restriction condition="не предмет.съедобный">
+                    <ifml2:reaction>
+                        <ifml2:showMessage position="1" type="text" message="Не съедобено."/>
+                    </ifml2:reaction>
+                </ifml2:restriction>
+            </ifml2:restrictions>
             <ifml2:procedureCall procedure="СъестьПредмет"/>
         </ifml2:action>
 
@@ -951,24 +967,9 @@
                 <ifml2:parameter name="предмет"/>
             </ifml2:parameters>
             <ifml2:procedureBody>
-                <ifml2:if position="1" condition="предмет.недоступен">
-                    <ifml2:then>
-                        <ifml2:showMessage position="1" type="expression"
-                                           message="Это невозможно. Предмет недоступен."/>
-                    </ifml2:then>
-                    <ifml2:else>
-                        <ifml2:if position="1" condition="предмет.съедобен">
-                            <ifml2:then>
-                                <ifml2:showMessage position="1" type="expression" beginWithCap="true"
-                                                   message="'Вы съели ' + предмет.вп + '.'"/>
-                            </ifml2:then>
-                            <ifml2:else>
-                                <ifml2:showMessage position="1" type="text"
-                                                   message="Это съесть невозможно?"/>
-                            </ifml2:else>
-                        </ifml2:if>
-                    </ifml2:else>
-                </ifml2:if>
+                <ifml2:showMessage position="1" type="expression" beginWithCap="true"
+                                   message="'Вы съели ' + предмет.вп + '.'"/>
+                <ifml2:moveItem position="2" item="предмет" to="пустота"/>
             </ifml2:procedureBody>
         </ifml2:procedure>
         <ifml2:procedure name="СломатьПредмет">

@@ -13,7 +13,7 @@
             <element name="attribute-definitions" type="ifml2:attribute-definitionsType" maxOccurs="1" minOccurs="0"/>
             <element name="role-definitions" type="ifml2:role-definitionsType" minOccurs="0" maxOccurs="1"/>
             <element name="dictionary" type="ifml2:dictionaryType" minOccurs="1" maxOccurs="1"/>
-            <element minOccurs="1" maxOccurs="1" name="locations" type="ifml2:locationsType"/>
+            <element name="locations" type="ifml2:locationsType" minOccurs="1" maxOccurs="1"/>
             <element name="items" type="ifml2:itemsType" maxOccurs="1" minOccurs="0"/>
             <element minOccurs="0" maxOccurs="1" name="actions" type="ifml2:actionsType"/>
             <element minOccurs="0" maxOccurs="1" name="procedures" type="ifml2:proceduresType"/>
@@ -269,6 +269,7 @@
             <element name="var" type="ifml2:instructionSetVarType"/>
             <element name="return" type="ifml2:instructionReturnType"/>
             <element name="setProperty" type="ifml2:instructionSetPropertyType"/>
+            <element name="moveItem" type="ifml2:instructionMoveItemType"/>
         </choice>
     </complexType>
 
@@ -488,6 +489,15 @@
                 <attribute name="object" type="string" use="required"/>
                 <attribute name="name" type="string" use="required"/>
                 <attribute name="value" type="string" use="required"/>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="instructionMoveItemType">
+        <complexContent>
+            <extension base="ifml2:instructionType">
+                <attribute name="item" type="string" use="required"/>
+                <attribute name="to" type="string" use="required"/>
             </extension>
         </complexContent>
     </complexType>

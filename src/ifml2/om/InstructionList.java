@@ -21,7 +21,8 @@ public class InstructionList
             @XmlElement(name = "loop", type = LoopInstruction.class),
             @XmlElement(name = "var", type = SetVarInstruction.class),
             @XmlElement(name = "return", type = ReturnInstruction.class),
-            @XmlElement(name = "setProperty", type = SetPropertyInstruction.class)
+            @XmlElement(name = "setProperty", type = SetPropertyInstruction.class),
+            @XmlElement(name = "moveItem", type = MoveItemInstruction.class)
     })
     private List<Instruction> instructions = new ArrayList<Instruction>();
     public List<Instruction> getInstructions() { return instructions; }

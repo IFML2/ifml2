@@ -12,16 +12,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class IfInstruction extends Instruction
 {
     @XmlAttribute(name = "condition")
-    private
-    String conditionExpression;
+    private String conditionExpression;
 
     @XmlElement(name = "then")
-    private final
-    InstructionList thenInstructions = new InstructionList();
+    private final InstructionList thenInstructions = new InstructionList();
 
     @XmlElement(name = "else")
-    private final
-    InstructionList elseInstructions = new InstructionList();
+    private final InstructionList elseInstructions = new InstructionList();
     
     @Override
     public void run(RunningContext runningContext) throws IFML2Exception

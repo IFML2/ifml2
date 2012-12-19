@@ -37,6 +37,7 @@ public class Engine
     public final HashMap<String, Value> globalVariables = new HashMap<String, Value>();
 
 	private ArrayList<Item> inventory = new ArrayList<Item>();
+    private ArrayList<Item> abyss = new ArrayList<Item>();
 
     public Engine(Interface gameInterface)
 	{
@@ -346,7 +347,7 @@ public class Engine
 
         if("инвентарий".equalsIgnoreCase(loweredSymbol))
         {
-            return new CollectionValue(getInventory());
+            return new CollectionValue(inventory);
         }
 
         if("куча".equalsIgnoreCase(loweredSymbol))
@@ -357,6 +358,11 @@ public class Engine
         if("словарь".equalsIgnoreCase(loweredSymbol))
         {
             return new CollectionValue(new ArrayList<Word>(story.getDictionary().values()));
+        }
+
+        if("пустота".equalsIgnoreCase(loweredSymbol))
+        {
+            return new CollectionValue(abyss);
         }
 
         if(systemVariables.containsKey(loweredSymbol))

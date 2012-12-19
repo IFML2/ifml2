@@ -2,6 +2,7 @@ package ifml2.vm.instructions;
 
 import ifml2.IFML2Exception;
 import ifml2.om.IFMLObject;
+import ifml2.om.Item;
 import ifml2.om.Location;
 import ifml2.vm.ExpressionCalculator;
 import ifml2.vm.IFML2VMException;
@@ -62,10 +63,10 @@ public abstract class Instruction
         return object;
     }
 
-    /*private Item getItemFromExpression(String expression, List<FormalElement> parameters, String instructionTitle, Object parameterName,
+    Item getItemFromExpression(String expression, RunningContext runningContext, String instructionTitle, Object parameterName,
                                          boolean objectCanBeNull) throws IFML2Exception
     {
-        IFMLObject object = getObjectFromExpression(expression, parameters, instructionTitle, parameterName, objectCanBeNull);
+        IFMLObject object = getObjectFromExpression(expression, runningContext, instructionTitle, parameterName, objectCanBeNull);
 
         if(objectCanBeNull && object == null)
         {
@@ -78,7 +79,7 @@ public abstract class Instruction
         }
 
         return (Item) object;
-    }*/
+    }
 
     /*protected Item getItemFromExpression(String expression, List<FormalElement> parameters, String instructionTitle,
                                          Object parameterName) throws IFML2Exception
