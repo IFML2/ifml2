@@ -18,7 +18,7 @@ public class ShowItemDescInstruction extends Instruction
 	@Override
 	public void run(RunningContext runningContext) throws IFML2Exception
 	{
-		IFMLObject object = getObjectFromExpression(itemExpression, runningContext, getTitle(), "Предмет", false);
+		IFMLObject object = getObjectFromExpression(itemExpression, runningContext, getTitle(), "Объект", false);
 
         if(object instanceof Location)
         {

@@ -11,6 +11,8 @@ import ifml2.vm.values.Value;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlIDREF;
+import javax.xml.bind.annotation.XmlTransient;
+import java.util.List;
 
 import static ifml2.om.xml.XmlSchemaConstants.*;
 
@@ -27,6 +29,22 @@ public class Item extends IFMLObject implements Cloneable
     @XmlElementWrapper(name = ITEM_HOOKS_ELEMENT)
     @XmlElement(name = ITEM_HOOK_ELEMENT)
     public EventList<Hook> hooks = new BasicEventList<Hook>();
+
+    @XmlTransient
+    private List parentLIst;
+
+//    /**
+//     * JAXB afterUnmarshal listener
+//     * @param unmarshaller Unmarshaller
+//     * @param parent Parent, should be Role
+//     */
+//    @SuppressWarnings("UnusedDeclaration")
+//    private void afterUnmarshal(final Unmarshaller unmarshaller,
+//                                final Object parent)
+//    {
+//        assert parent instanceof List;
+//        parentLIst = (List) parent;
+//    }
 
     @Override
 	public String toString()

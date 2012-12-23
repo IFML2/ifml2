@@ -43,6 +43,8 @@ public class OMManager
                 @Override
                 public void afterUnmarshal(Object target, Object parent)
                 {
+                    LOG.debug("afterUnmarshal({0}, {1})", target, parent);
+
                     // load all objects into objectsHeap
                     if (target instanceof IFMLObject)
                     {

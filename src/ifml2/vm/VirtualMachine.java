@@ -56,7 +56,7 @@ public class VirtualMachine
             RunningContext runningContext = new RunningContext(parameters, this);
             loadGlobalVariables(runningContext);
             loadProcedureVariables(runningContext, procedure);
-            runInstructionList(procedure.getProcedureBody(), runningContext, false);
+            runInstructionList(procedure.getProcedureBody(), runningContext, false, true);
             saveProcedureVariables(runningContext, procedure);
             saveGlobalVariables(runningContext);
         }
@@ -98,7 +98,7 @@ public class VirtualMachine
             RunningContext runningContext = new RunningContext(this);
             loadGlobalVariables(runningContext);
             loadProcedureVariables(runningContext, procedure);
-            runInstructionList(procedure.getProcedureBody(), runningContext, false);
+            runInstructionList(procedure.getProcedureBody(), runningContext, false, true);
             saveProcedureVariables(runningContext, procedure);
             saveGlobalVariables(runningContext);
         }
@@ -112,11 +112,11 @@ public class VirtualMachine
     {
         RunningContext runningContext = new RunningContext(formalElements, this);
         loadGlobalVariables(runningContext);
-        runInstructionList(hook.instructionList, runningContext, false);
+        runInstructionList(hook.instructionList, runningContext, false, true);
         saveGlobalVariables(runningContext);
     }
 
-    public void runInstructionList(InstructionList instructionList, RunningContext runningContext, boolean encloseContext) throws IFML2Exception
+    public void runInstructionList(InstructionList instructionList, RunningContext runningContext, boolean encloseContext, boolean returnResult) throws IFML2Exception
     {
         RunningContext instructionRunningContext;
         instructionRunningContext = encloseContext ? new RunningContext(runningContext) : runningContext;
@@ -135,8 +135,7 @@ public class VirtualMachine
             }
         }
 
-        // return "returningValue" in any case of enclosure...
-        if(runningContext != instructionRunningContext)
+        if(returnResult && runningContext != instructionRunningContext)
         {
             runningContext.setReturnValue(instructionRunningContext.getReturnValue());
         }
@@ -258,7 +257,7 @@ public class VirtualMachine
         RunningContext runningContext = new RunningContext(this);
         runningContext.setDefaultObject(ifmlObject);
 
-        runInstructionList(trigger.getInstructions(), runningContext, false);
+        runInstructionList(trigger.getInstructions(), runningContext, false, true);
 
         return runningContext.getReturnValue();
     }

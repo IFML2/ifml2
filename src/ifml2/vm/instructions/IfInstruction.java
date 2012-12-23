@@ -27,11 +27,11 @@ public class IfInstruction extends Instruction
 
         if(conditionValue)
         {
-            virtualMachine.runInstructionList(thenInstructions, runningContext, true);
+            virtualMachine.runInstructionList(thenInstructions, runningContext, true, conditionValue);
         }
         else
         {
-            virtualMachine.runInstructionList(elseInstructions, runningContext, true);
+            virtualMachine.runInstructionList(elseInstructions, runningContext, true, conditionValue);
         }
     }
 

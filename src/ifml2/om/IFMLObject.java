@@ -78,18 +78,18 @@ public class IFMLObject implements Cloneable
 	@Override
 	public String toString()
 	{
-		return getName();
+		return name;
 	}
 
     public String getName(GramCaseEnum gramCase) throws IFML2Exception
     {
         if(wordLinks == null)
         {
-            throw new IFML2Exception(MessageFormat.format("Ссылка на словарь пустая у объекта {0}!", getName()));
+            throw new IFML2Exception(MessageFormat.format("Ссылка на словарь пустая у объекта {0}!", name));
         }
         else if(wordLinks.getMainWord() == null)
         {
-            throw new IFML2Exception(MessageFormat.format("Ссылка на главное слово пустая у объекта {0}!", getName()));
+            throw new IFML2Exception(MessageFormat.format("Ссылка на главное слово пустая у объекта {0}!", name));
         }
 
         return wordLinks.getMainWord().getFormByGramCase(gramCase);

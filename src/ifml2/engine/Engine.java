@@ -207,7 +207,7 @@ public class Engine
                     }
                     if(((BooleanValue)isRestricted).getValue()) // if condition is true, run reaction
                     {
-                        virtualMachine.runInstructionList(restriction.getReaction(), runningContext, false);
+                        virtualMachine.runInstructionList(restriction.getReaction(), runningContext, false, false);
                         return true;
                     }
                 }

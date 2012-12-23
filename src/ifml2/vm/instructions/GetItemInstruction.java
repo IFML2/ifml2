@@ -16,8 +16,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class GetItemInstruction extends Instruction
 {
 	@XmlAttribute(name="item")
-    private
-    String itemExpression;
+    private String itemExpression;
 
 	@Override
 	public void run(RunningContext runningContext) throws IFML2Exception

@@ -4,17 +4,12 @@ import javax.xml.bind.annotation.*;
 
 public class Hook
 {
-    private Action action;
     @XmlAttribute(name = "action")
     @XmlIDREF
+    private Action action;
     public Action getAction()
     {
         return action;
-    }
-
-    public void setAction(Action action)
-    {
-        this.action = action;
     }
 
     @XmlAttribute(name = "objectElement")

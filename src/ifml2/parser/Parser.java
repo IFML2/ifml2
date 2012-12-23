@@ -76,6 +76,11 @@ public class Parser
         public Action action = null;
         public ArrayList<FittedFormalElement> fittedFormalElements = new ArrayList<FittedFormalElement>();
 
+        public ArrayList<FittedFormalElement> getFittedFormalElements()
+        {
+            return fittedFormalElements;
+        }
+
         public FittedTemplate(Action action, ArrayList<FittedFormalElement> fittedFormalElements)
         {
             this.action = action;
@@ -106,6 +111,11 @@ public class Parser
     private class FittedObjects extends FittedFormalElement
     {
         ArrayList<IFMLObject> objects = new ArrayList<IFMLObject>();
+        public ArrayList<IFMLObject> getObjects()
+        {
+            return objects;
+        }
+
         final Word.GramCaseEnum gramCase;
 
         public FittedObjects(ArrayList<IFMLObject> objects, Word.GramCaseEnum gramCase, String parameter)
@@ -286,50 +296,47 @@ public class Parser
         ArrayList<FittedTemplate> result = new ArrayList<FittedTemplate>();
         IFMLObject inaccessibleObject = null;
 
-        //templates:
-        for(FittedTemplate fittedTemplate : fittedTemplates)
+        for (FittedTemplate fittedTemplate : fittedTemplates)
         {
             Boolean toAddTemplate = true;
 
-            for(FittedFormalElement fittedFormalElement : fittedTemplate.fittedFormalElements)
+            for (FittedFormalElement fittedFormalElement : fittedTemplate.getFittedFormalElements())
             {
-                if(fittedFormalElement instanceof FittedObjects)
+                if (fittedFormalElement instanceof FittedObjects)
                 {
                     ArrayList<IFMLObject> objectsToRemove = new ArrayList<IFMLObject>();
 
-                    ArrayList<IFMLObject> fittedObjects = ((FittedObjects) fittedFormalElement).objects;
+                    ArrayList<IFMLObject> fittedObjects = ((FittedObjects) fittedFormalElement).getObjects();
 
-                    for(IFMLObject object : fittedObjects)
+                    for (IFMLObject object : fittedObjects)
                     {
-                        if(!isObjectAccessible(object))
+                        if (!isObjectAccessible(object))
                         {
                             objectsToRemove.add(object);
 
-                            if(inaccessibleObject == null)
+                            if (inaccessibleObject == null)
                             {
                                 inaccessibleObject = object;
                             }
-
-                            //continue templates;
                         }
                     }
 
                     fittedObjects.removeAll(objectsToRemove);
 
-                    if(fittedObjects.size() == 0)
+                    if (fittedObjects.size() == 0)
                     {
                         toAddTemplate = false;
                     }
                 }
             }
 
-           if(toAddTemplate)
-           {
-               result.add(fittedTemplate);
-           }
+            if (toAddTemplate)
+            {
+                result.add(fittedTemplate);
+            }
         }
 
-        if(result.size() > 0)
+        if (result.size() > 0)
         {
             return result;
         }
@@ -338,7 +345,7 @@ public class Parser
             if (inaccessibleObject != null)
             {
                 throw new IFML2ParseException("Не вижу здесь " + inaccessibleObject.getName(Word.GramCaseEnum.VP)
-                    + ".");
+                        + ".");
             }
             else
             {

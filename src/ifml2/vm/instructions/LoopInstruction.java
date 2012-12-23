@@ -89,7 +89,7 @@ public class LoopInstruction extends Instruction
             case 0:
                 if(emptyInstructions != null)
                 {
-                    virtualMachine.runInstructionList(emptyInstructions, runningContext, true);
+                    virtualMachine.runInstructionList(emptyInstructions, runningContext, true, true);
                 }
                 break;
 
@@ -97,22 +97,22 @@ public class LoopInstruction extends Instruction
                 runningContext.setVariable(Variable.VariableScope.LOCAL, elementName, new ObjectValue(filteredCollection.get(0)));
                 if(aloneInstructions != null)
                 {
-                    virtualMachine.runInstructionList(aloneInstructions, runningContext, true);
+                    virtualMachine.runInstructionList(aloneInstructions, runningContext, true, true);
                     break;
                 }
                 if(firstInstructions != null)
                 {
-                    virtualMachine.runInstructionList(firstInstructions, runningContext, true);
+                    virtualMachine.runInstructionList(firstInstructions, runningContext, true, true);
                     break;
                 }
                 if(nextInstructions != null)
                 {
-                    virtualMachine.runInstructionList(nextInstructions, runningContext, true);
+                    virtualMachine.runInstructionList(nextInstructions, runningContext, true, true);
                     break;
                 }
                 if(lastInstructions != null)
                 {
-                    virtualMachine.runInstructionList(lastInstructions, runningContext, true);
+                    virtualMachine.runInstructionList(lastInstructions, runningContext, true, true);
                     break;
                 }
                 break;
@@ -126,29 +126,29 @@ public class LoopInstruction extends Instruction
                     {
                         if(firstInstructions != null)
                         {
-                            virtualMachine.runInstructionList(firstInstructions, runningContext, true);
+                            virtualMachine.runInstructionList(firstInstructions, runningContext, true, true);
                         }
                         else if(nextInstructions != null)
                         {
-                            virtualMachine.runInstructionList(nextInstructions, runningContext, true);
+                            virtualMachine.runInstructionList(nextInstructions, runningContext, true, true);
                         }
                     }
                     else if(index == elementsQuantity - 1) // last element
                     {
                         if(lastInstructions != null)
                         {
-                            virtualMachine.runInstructionList(lastInstructions, runningContext, true);
+                            virtualMachine.runInstructionList(lastInstructions, runningContext, true, true);
                         }
                         else if(nextInstructions != null)
                         {
-                            virtualMachine.runInstructionList(nextInstructions, runningContext, true);
+                            virtualMachine.runInstructionList(nextInstructions, runningContext, true, true);
                         }
                     }
                     else // other elements
                     {
                         if(nextInstructions != null)
                         {
-                            virtualMachine.runInstructionList(nextInstructions, runningContext, true);
+                            virtualMachine.runInstructionList(nextInstructions, runningContext, true, true);
                         }
                     }
                 }
