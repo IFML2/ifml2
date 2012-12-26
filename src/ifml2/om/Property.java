@@ -87,6 +87,14 @@ public class Property
         {
             case COLLECTION:
                 value = new CollectionValue(collectionItems);
+                //set parent to items
+                for(IFMLObject ifmlObject : collectionItems)
+                {
+                    if(ifmlObject instanceof Item)
+                    {
+                        ((Item) ifmlObject).setParent(collectionItems);
+                    }
+                }
                 break;
 
             case LOGIC:

@@ -3,7 +3,6 @@ package ifml2.vm.instructions;
 import ifml2.IFML2Exception;
 import ifml2.om.Item;
 import ifml2.vm.RunningContext;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -23,16 +22,19 @@ public class MoveItemInstruction extends Instruction
     public void run(RunningContext runningContext) throws IFML2Exception
     {
         Item itemObject = getItemFromExpression(item, runningContext, getTitle(), "предмет", false);
+        assert itemObject.getParent() != null;
+
         List collection = getCollectionFromExpression(to, runningContext, getTitle(), "куда");
 
-        //todo!
-        /*
-        * Вопрос в том, как определять, откуда предмет нужно извлечь, чтобы переместить?
-        * Или хранить ему ссылку на parent (тогда знать о коллекции, в которой о находится)
-        * Или в инструкции указывать, откуда перемещать (а это не верно! зачем автору знать об этом?)
-        *
-        * */
-        throw new NotImplementedException();
+        // move item from parent to new collection
+        itemObject.move(collection);
+
+        /*TODO if(engine.getInventory().contains(item))
+        {
+            throw new IFML2Exception(CommonUtils.uppercaseFirstLetter(object.getName()) + " уже в инвентаре.");
+        }
+
+        engine.outTextLn("Вы взяли {0}.", item.getName(Word.GramCaseEnum.VP));*/
     }
 
     @Override

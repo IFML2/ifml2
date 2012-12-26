@@ -779,7 +779,7 @@
                 <ifml2:parameter name="предмет"/>
             </ifml2:parameters>
             <ifml2:procedureBody>
-                <ifml2:getItem position="1" item="предмет"/>
+                <ifml2:moveItem position="1" item="предмет" to="инвентарий"/>
             </ifml2:procedureBody>
         </ifml2:procedure>
         

@@ -21,6 +21,9 @@ public class Item extends IFMLObject implements Cloneable
     @XmlElement(name = ITEM_STARTING_POSITION_ELEMENT)
     public ItemStartingPosition startingPosition = new ItemStartingPosition();
 
+    @XmlTransient
+    private List parent;
+
     public ItemStartingPosition getStartingPosition()
     {
         return startingPosition;
@@ -29,9 +32,6 @@ public class Item extends IFMLObject implements Cloneable
     @XmlElementWrapper(name = ITEM_HOOKS_ELEMENT)
     @XmlElement(name = ITEM_HOOK_ELEMENT)
     public EventList<Hook> hooks = new BasicEventList<Hook>();
-
-    @XmlTransient
-    private List parentLIst;
 
 //    /**
 //     * JAXB afterUnmarshal listener
@@ -72,6 +72,24 @@ public class Item extends IFMLObject implements Cloneable
         }
 
         return null;
+    }
+
+    public void setParent(List parent)
+    {
+        this.parent = parent;
+    }
+
+    public List getParent()
+    {
+        return parent;
+    }
+
+    public void move(List collection)
+    {
+        assert parent != null;
+        assert collection != null;
+        parent.remove(this);
+        collection.add(this);
     }
 
     public static class ItemStartingPosition implements Cloneable

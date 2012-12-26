@@ -10,6 +10,7 @@ import javax.xml.bind.util.ValidationEventCollector;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 public class OMManager
@@ -58,6 +59,7 @@ public class OMManager
                             if (item.getStartingPosition().getInventory())
                             {
                                 inventory.add(item); //should it be original items
+                                item.setParent(inventory);
                             }
                         }
                     }
@@ -112,7 +114,9 @@ public class OMManager
         {
             for(Location location : item.getStartingPosition().getLocations())
             {
-                location.getItems().add(item);
+                List<Item> items = location.getItems();
+                items.add(item);
+                item.setParent(items);
             }
         }
     }
