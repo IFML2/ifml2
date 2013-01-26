@@ -86,8 +86,11 @@ public class Item extends IFMLObject implements Cloneable
 
     public void move(List collection)
     {
+        // contract
         assert parent != null;
         assert collection != null;
+        //
+
         parent.remove(this);
         collection.add(this);
     }

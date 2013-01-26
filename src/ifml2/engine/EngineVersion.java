@@ -2,5 +2,5 @@ package ifml2.engine;
 
 public class EngineVersion
 {
-    public static final String IFML_ENGINE_VERSION = "Прототип 9 (в разработке)";
+    public static final String IFML_ENGINE_VERSION = "Прототип 10 выпуск 1";
 }
