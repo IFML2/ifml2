@@ -117,15 +117,23 @@
                 <word>свеча</word>
             </words>
             <attributes>
-                <attribute>недоступен</attribute>
+                <attribute>частьПейзажа</attribute>
+                <!--see hooks-attribute>недоступен</attribute-->
             </attributes>
             <description>Свеча установлена в подсвечнике, находящемся под потолком.</description>
             <startingPosition>
                 <inventory>false</inventory>
                 <locations>
-                    <location>ЗападнаяСторонаХрама</location>
+                    <location>ЦентральнаяЧастьХрама</location>
                 </locations>
             </startingPosition>
+            <hooks>
+                <hook action="взять" objectElement="предмет" type="instead">
+                    <instructions>
+                        <showMessage position="1" type="text" message="Свеча слишком высоко, до неё не дотянуться."/>
+                    </instructions>
+                </hook>
+            </hooks>
         </item>
         <item name="потолок" id="Потолок1">
             <words mainWord="потолок">
@@ -133,6 +141,7 @@
             </words>
             <attributes>
                 <attribute>частьПейзажа</attribute>
+                <attribute>недоступен</attribute>
             </attributes>
             <description>Высокий закопченый потолок.</description>
             <startingPosition>
@@ -164,7 +173,8 @@
                 <word>алтарь</word>
             </words>
             <attributes>
-                <attribute>недоступен</attribute>
+                <attribute>частьПейзажа</attribute>
+                <attribute>прикреплён</attribute>
             </attributes>
             <description>Место, предназначенное для жертвоприношений. Около алтаря на полу стопкой лежат дрова. Смутное предположение терзает меня, а не для меня ли они приготовлены!?</description>
             <roles>
@@ -179,7 +189,7 @@
             <startingPosition>
                 <inventory>false</inventory>
                 <locations>
-                    <location>ЗападнаяСторонаХрама</location>
+                    <location>ЦентральнаяЧастьХрама</location>
                 </locations>
             </startingPosition>
         </item>

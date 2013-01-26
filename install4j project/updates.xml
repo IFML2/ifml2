@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <updateDescriptor baseUrl="">
-  <entry targetMediaFileId="37" updatableVersionMin="" updatableVersionMax="" fileName="ЯРИЛ_2_0_windows_P9_with_java6_20121220.exe" newVersion="P9" newMediaFileId="37" fileSize="18376704" bundledJre="windows-x86-1.6.0_38" archive="false">
+  <entry targetMediaFileId="37" updatableVersionMin="" updatableVersionMax="" fileName="ЯРИЛ_2_0_windows_P10_with_java6_20130126.exe" newVersion="P10" newMediaFileId="37" fileSize="18378240" bundledJre="windows-x86-1.6.0_38" archive="false">
     <comment language="ru" />
     <comment language="en" />
   </entry>

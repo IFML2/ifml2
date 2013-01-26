@@ -2,9 +2,7 @@ package ifml2.vm.instructions;
 
 import ifml2.CommonUtils;
 import ifml2.IFML2Exception;
-import ifml2.engine.Engine;
 import ifml2.om.Item;
-import ifml2.om.Word;
 import ifml2.vm.RunningContext;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -29,16 +27,13 @@ public class MoveItemInstruction extends Instruction
 
         List collection = getCollectionFromExpression(to, runningContext, getTitle(), "куда");
 
-        Engine engine = virtualMachine.getEngine();
-        if(engine.getInventory().contains(itemObject))
+        if(collection.contains(itemObject))
         {
-            throw new IFML2Exception(CommonUtils.uppercaseFirstLetter(itemObject.getName()) + " уже в инвентаре.");
+            throw new IFML2Exception(CommonUtils.uppercaseFirstLetter(itemObject.getName()) + " уже там.");
         }
 
         // move item from parent to new collection
         itemObject.move(collection);
-
-        engine.outTextLn("Вы взяли {0}.", itemObject.getName(Word.GramCaseEnum.VP));
     }
 
     @Override

@@ -345,7 +345,7 @@ public class Engine
     {
         String loweredSymbol = symbol.toLowerCase();
 
-        if("инвентарий".equalsIgnoreCase(loweredSymbol))
+        if("инвентарий".equalsIgnoreCase(loweredSymbol) || "инвентарь".equalsIgnoreCase(loweredSymbol))
         {
             return new CollectionValue(inventory);
         }

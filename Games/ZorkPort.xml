@@ -34,7 +34,7 @@
     </locations>
     <items>
         <item name="небольшой почтовый ящик" id="ПочтовыйЯщик">
-            <description>Обычный почтовый ящик.</description>
+            <description/>
             <startingPosition>
                 <inventory>false</inventory>
                 <locations>
