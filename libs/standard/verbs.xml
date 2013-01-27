@@ -204,16 +204,26 @@
                 </ifml2:template>
             </ifml2:templates>
             <ifml2:restrictions>
+                <ifml2:restriction condition="предмет.прикреплён">
+                    <ifml2:reaction>
+                        <ifml2:showMessage position="1" type="expression" message="предмет.имя + ' надёжно прикреплён.'" beginWithCap="true"/>
+                    </ifml2:reaction>
+                </ifml2:restriction>
                 <ifml2:restriction condition="предмет.недоступен">
                     <ifml2:reaction>
                         <ifml2:showMessage position="1" type="expression"
                                            message="'В этих условиях, либо из этого положения, либо в данный момент взять и что-либо сделать с(о) ' + предмет.тп + ' невозможно.'"/>
                     </ifml2:reaction>
                 </ifml2:restriction>
-                <ifml2:restriction condition="предмет.частьПейзажа">
+                <!--ifml2:restriction condition="предмет.частьПейзажа">
                     <ifml2:reaction>
                         <ifml2:showMessage position="1" type="expression" beginWithCap="true"
                                            message="предмет.вп + ' взять невозможно ни при каких условиях.'"/>
+                    </ifml2:reaction>
+                </ifml2:restriction-->
+                <ifml2:restriction condition="предмет в инвентарий">
+                    <ifml2:reaction>
+                        <ifml2:showMessage position="1" type="expression" message="предмет.имя + ' уже у Вас.'" beginWithCap="true"/>
                     </ifml2:reaction>
                 </ifml2:restriction>
             </ifml2:restrictions>
@@ -606,9 +616,12 @@
             </ifml2:templates>
             <ifml2:procedureCall procedure="ПробоватьПредмет"/>
         </ifml2:action>
-        <ifml2:action name="положить [что во что]">
+
+        <!-- Положить -->
+        <ifml2:action name="положить" description="положить [ВП] в(о) [ВП] / положить [ВП] на [ВП]">
             <ifml2:templates>
                 <ifml2:template>
+                    <!-- Положить на/в/во что-то -->
                     <ifml2:literalElement position="1">
                         <ifml2:synonym>положить</ifml2:synonym>
                         <ifml2:synonym>поставить</ifml2:synonym>
@@ -624,7 +637,32 @@
                     <ifml2:objectElement position="4" case="vp" parameter="кудаПоложить"/>
                 </ifml2:template>
             </ifml2:templates>
-            <ifml2:procedureCall procedure="ПоложитьВ"/>
+            <ifml2:restrictions>
+                <ifml2:restriction condition="чтоПоложить.недоступен">
+                    <ifml2:reaction>
+                        <ifml2:showMessage position="1" type="text" message="Это невозможно. Предмет недоступен."/>
+                    </ifml2:reaction>
+                </ifml2:restriction>
+                <ifml2:restriction condition="предлог = 'на' и не кудаПоложить.поверхность">
+                    <ifml2:reaction>
+                        <ifml2:showMessage position="1" type="expression"
+                                           message="'На ' + кудаПоложить.ВП + ' нельзя ничего класть.'"/>
+                    </ifml2:reaction>
+                </ifml2:restriction>
+                <ifml2:restriction condition="предлог = 'в' и не кудаПоложить.контейнер">
+                    <ifml2:reaction>
+                        <ifml2:showMessage position="1" type="expression"
+                                           message="'В ' + кудаПоложить.ВП + ' нельзя ничего класть.'"/>
+                    </ifml2:reaction>
+                </ifml2:restriction>
+                <ifml2:restriction condition="предлог = 'во' и не кудаПоложить.контейнер">
+                    <ifml2:reaction>
+                        <ifml2:showMessage position="1" type="expression"
+                                           message="'В ' + кудаПоложить.ВП + ' нельзя ничего класть.'"/>
+                    </ifml2:reaction>
+                </ifml2:restriction>
+            </ifml2:restrictions>
+            <ifml2:procedureCall procedure="Положить"/>
         </ifml2:action>
 
         <!-- Открыть -->
@@ -684,18 +722,22 @@
             </ifml2:parameters>
             <ifml2:procedureBody>
                 <!--trying avoid standard mechanism-ifml2:showItemDesc position="1" item="предмет"/-->
-                <ifml2:showMessage position="1" type="expression" message="предмет.имя" beginWithCap="true" carriageReturn="false"/>
+                <!--ifml2:showMessage position="1" type="expression" message="предмет.имя" beginWithCap="true" carriageReturn="false"/-->
                 <ifml2:if position="2" condition="предмет.открываемый">
                     <ifml2:then>
                         <ifml2:if position="1" condition="предмет.открыт">
                             <ifml2:then>
-                                <ifml2:showMessage position="1" type="text" message=" (открыт)" carriageReturn="true"/>
+                                <ifml2:showMessage position="1" type="text" message="(открыт)" carriageReturn="true"/>
                             </ifml2:then>
                             <ifml2:else>
-                                <ifml2:showMessage position="1" type="text" message=" (закрыт)" carriageReturn="true"/>
+                                <ifml2:showMessage position="1" type="text" message="(закрыт)" carriageReturn="true"/>
                             </ifml2:else>
                         </ifml2:if>
                     </ifml2:then>
+                    <ifml2:else>
+                        <!-- Вставляем перевод каретки после имени, если не было статуса открытия -->
+                        <!--ifml2:showMessage position="1" type="text" message="" carriageReturn="true"/-->
+                    </ifml2:else>
                 </ifml2:if>
                 <ifml2:if position="3" condition="предмет.описание = ''">
                     <ifml2:then>
@@ -814,6 +856,7 @@
             </ifml2:parameters>
             <ifml2:procedureBody>
                 <ifml2:moveItem position="1" item="предмет" to="инвентарий"/>
+                <ifml2:showMessage position="2" type="expression" message="'Вы взяли ' + предмет.ВП + '.'"/>
             </ifml2:procedureBody>
         </ifml2:procedure>
         
@@ -1056,19 +1099,17 @@
                 </ifml2:if>
             </ifml2:procedureBody>
         </ifml2:procedure>
-        <ifml2:procedure name="ПоложитьВ">
+
+        <!-- Положить предмет [в/во/на предмет]-->
+        <ifml2:procedure name="Положить">
             <ifml2:parameters>
                 <ifml2:parameter name="чтоПоложить"/>
                 <ifml2:parameter name="предлог"/>
                 <ifml2:parameter name="кудаПоложить"/>
             </ifml2:parameters>
             <ifml2:procedureBody>
-                <ifml2:if position="1" condition="чтоПоложить.недоступен">
-                    <ifml2:then>
-                        <ifml2:showMessage position="1" type="text" message="Это невозможно. Предмет недоступен."/>
-                    </ifml2:then>
-                    <ifml2:else>
-                        <ifml2:if position="1" condition="кудаПоложить.контейнер">
+
+                        <!--ifml2:if position="1" condition="кудаПоложить.контейнер">
                             <ifml2:then>
                                 <ifml2:showMessage position="1" type="expression"
                                                    message="'Вы положили ' + чтоПоложить.вп + ' ' + предлог + ' ' + кудаПоложить.вп + '.'"/>
@@ -1076,9 +1117,23 @@
                             <ifml2:else>
                                 <ifml2:showMessage position="1" type="text" message="Вы не можете туда это положить."/>
                             </ifml2:else>
-                        </ifml2:if>
-                    </ifml2:else>
+                        </ifml2:if-->
+
+                <ifml2:if position="1" condition="предлог = 'на'">
+                    <ifml2:then>
+                        <ifml2:moveItem position="1" item="чтоПоложить" to="кудаПоложить.предметыСверху"/>
+                        <ifml2:showMessage position="2" type="expression"
+                                           message="'Вы положили ' + чтоПоложить.вп + ' ' + предлог + ' ' + кудаПоложить.вп + '.'"/>
+                    </ifml2:then>
                 </ifml2:if>
+                <ifml2:if position="2" condition="предлог = 'в' или предлог = 'во'">
+                    <ifml2:then>
+                        <ifml2:moveItem position="1" item="чтоПоложить" to="кудаПоложить.предметыВнутри"/>
+                        <ifml2:showMessage position="2" type="expression"
+                                           message="'Вы положили ' + чтоПоложить.вп + ' ' + предлог + ' ' + кудаПоложить.вп + '.'"/>
+                    </ifml2:then>
+                </ifml2:if>
+
             </ifml2:procedureBody>
         </ifml2:procedure>
 

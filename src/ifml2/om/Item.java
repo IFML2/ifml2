@@ -93,6 +93,7 @@ public class Item extends IFMLObject implements Cloneable
 
         parent.remove(this);
         collection.add(this);
+        parent = collection;
     }
 
     public static class ItemStartingPosition implements Cloneable

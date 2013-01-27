@@ -16,6 +16,7 @@ public class ExpressionCalculator
     private static final char ADD_OPERATOR = '+';
     private static final String NOT_OPERATOR = "не";
     private static final String AND_OPERATOR = "и";
+    private static final String OR_OPERATOR = "или";
     private static final String IN_OPERATOR = "в";
 
     private static final char QUOTE_CHAR = '"';
@@ -88,6 +89,19 @@ public class ExpressionCalculator
                             {
                                 case OPERAND:
                                     calculationStack.pushOperator(ExpressionOperatorEnum.AND);
+                                    context = ExprContextEnum.OPERATOR;
+                                    break;
+                                default:
+                                    calculationStack.pushSymbol(tokenizer.sval);
+                                    context = ExprContextEnum.OPERAND;
+                            }
+                        }
+                        else if(OR_OPERATOR.equalsIgnoreCase(tokenizer.sval))
+                        {
+                            switch (context)
+                            {
+                                case OPERAND:
+                                    calculationStack.pushOperator(ExpressionOperatorEnum.OR);
                                     context = ExprContextEnum.OPERATOR;
                                     break;
                                 default:
@@ -188,10 +202,11 @@ public class ExpressionCalculator
     {
         GET_PROPERTY(GET_PROPERTY_OPERATOR, 100),
         IN(IN_OPERATOR, OperatorTypeEnum.BINARY, 50),
-        NOT(NOT_OPERATOR, OperatorTypeEnum.UNARY_RIGHT, 30),
-        ADD(ADD_OPERATOR, 20),
-        COMPARE(COMPARE_OPERATOR, 10),
-        AND(AND_OPERATOR, OperatorTypeEnum.BINARY, 5);
+        NOT(NOT_OPERATOR, OperatorTypeEnum.UNARY_RIGHT, 40),
+        ADD(ADD_OPERATOR, 30),
+        COMPARE(COMPARE_OPERATOR, 20),
+        AND(AND_OPERATOR, OperatorTypeEnum.BINARY, 10),
+        OR(OR_OPERATOR, OperatorTypeEnum.BINARY, 5);
 
         public final char operatorCharacter;
         public String operatorString;
@@ -418,6 +433,25 @@ public class ExpressionCalculator
                     boolean rightBoolValue = ((BooleanValue) rightValue).value;
 
                     result = new BooleanValue(leftBoolValue && rightBoolValue);
+
+                    break;
+                }
+
+                case OR:
+                {
+                    if(!(leftValue instanceof BooleanValue))
+                    {
+                        throw new IFML2ExpressionException("Величина не является логической ({0})", leftValue);
+                    }
+                    if(!(rightValue instanceof BooleanValue))
+                    {
+                        throw new IFML2ExpressionException("Величина не является логической ({0})", rightValue);
+                    }
+
+                    boolean leftBoolValue = ((BooleanValue) leftValue).value;
+                    boolean rightBoolValue = ((BooleanValue) rightValue).value;
+
+                    result = new BooleanValue(leftBoolValue || rightBoolValue);
 
                     break;
                 }
