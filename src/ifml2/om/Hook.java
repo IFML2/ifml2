@@ -44,6 +44,6 @@ public class Hook
     @Override
     public String toString()
     {
-        return String.format("%s: %s (%s)", action.getName(), objectElement, type.ruName);
+        return String.format("%s: %s (%s)", action, objectElement, type.ruName);
     }
 }
