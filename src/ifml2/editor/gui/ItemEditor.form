@@ -85,7 +85,7 @@
                 </constraints>
                 <properties>
                   <labelFor value="39f1d"/>
-                  <text value="&amp;Идентификатор:"/>
+                  <text value="Идентификатор:"/>
                   <visible value="false"/>
                 </properties>
               </component>
@@ -103,7 +103,7 @@
                 </constraints>
                 <properties>
                   <labelFor value="bf34d"/>
-                  <text value="&amp;Название:"/>
+                  <text value="Название:"/>
                 </properties>
               </component>
               <component id="9cd6c" class="javax.swing.JLabel">
@@ -114,7 +114,7 @@
                 </constraints>
                 <properties>
                   <labelFor value="631fd"/>
-                  <text value="&amp;Описание:"/>
+                  <text value="Описание:"/>
                 </properties>
               </component>
               <scrollpane id="e91d0">
@@ -141,7 +141,7 @@
                 </constraints>
                 <properties>
                   <labelFor value="2c91c"/>
-                  <text value="&amp;Локация:"/>
+                  <text value="Локация:"/>
                   <visible value="false"/>
                 </properties>
               </component>

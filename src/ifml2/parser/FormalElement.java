@@ -4,6 +4,11 @@ import ifml2.om.IFMLObject;
 
 public class FormalElement
 {
+    public String getParameterName()
+    {
+        return parameterName;
+    }
+
     public enum FormalElementTypeEnum
 	{
 		LITERAL,
@@ -11,6 +16,10 @@ public class FormalElement
     }
 
     public final FormalElementTypeEnum type;
+    public FormalElementTypeEnum getType()
+    {
+        return type;
+    }
 
     public String literal = "";
 

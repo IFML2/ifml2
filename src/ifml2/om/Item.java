@@ -96,6 +96,11 @@ public class Item extends IFMLObject implements Cloneable
         parent = collection;
     }
 
+    public EventList<Hook> getHooks()
+    {
+        return hooks;
+    }
+
     public static class ItemStartingPosition implements Cloneable
     {
         @Override
