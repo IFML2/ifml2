@@ -11,10 +11,6 @@ public class Hook
     {
         return action;
     }
-    public void setAction(Action action)
-    {
-        this.action = action;
-    }
 
     @XmlAttribute(name = "objectElement")
     public String objectElement;
