@@ -11,12 +11,26 @@ public class Hook
     {
         return action;
     }
+    public void setAction(Action action)
+    {
+        this.action = action;
+    }
 
     @XmlAttribute(name = "objectElement")
     public String objectElement;
 
+    public String getObjectElement()
+    {
+        return objectElement;
+    }
+
     @XmlAttribute(name = "type")
     public HookTypeEnum type;
+
+    public HookTypeEnum getType()
+    {
+        return type;
+    }
 
     @XmlElement(name = "instructions")
     public final InstructionList instructionList = new InstructionList();

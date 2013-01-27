@@ -225,15 +225,15 @@ public class Engine
             mainLoop:
             for (FormalElement formalElement : parseResult.getFormalElements())
             {
-                if (FormalElement.FormalElementTypeEnum.OBJECT.equals(formalElement.type) && formalElement.getObject() instanceof Item)
+                if (FormalElement.FormalElementTypeEnum.OBJECT.equals(formalElement.getType()) && formalElement.getObject() instanceof Item)
                 {
-                    Item item = (Item) formalElement.object;
-                    for (Hook hook : item.hooks)
+                    Item item = (Item) formalElement.getObject();
+                    for (Hook hook : item.getHooks())
                     {
-                        if (parseResult.action.equals(hook.getAction()) && formalElement.parameterName.equalsIgnoreCase(hook.objectElement))
+                        if (parseResult.getAction().equals(hook.getAction()) && formalElement.getParameterName().equalsIgnoreCase(hook.getObjectElement()))
                         {
                             // if INSTEAD - remove all other hooks and take only this one
-                            if(Hook.HookTypeEnum.INSTEAD.equals(hook.type))
+                            if(Hook.HookTypeEnum.INSTEAD.equals(hook.getType()))
                             {
                                 insteadHook = hook;
                                 break mainLoop;

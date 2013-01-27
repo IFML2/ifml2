@@ -1,11 +1,14 @@
 package ifml2.editor.gui;
 
+import com.sun.istack.internal.NotNull;
 import ifml2.GUIUtils;
 import ifml2.om.Hook;
 import ifml2.om.InstructionList;
 
 import javax.swing.*;
+import javax.swing.event.ListDataListener;
 import java.awt.event.*;
+import java.util.List;
 
 public class HookEditor extends JDialog
 {
@@ -20,8 +23,11 @@ public class HookEditor extends JDialog
     private JButton editInstructionsButton;
     private InstructionList instructionsClone;
 
-    public HookEditor(Hook hook)
+    private static final String HOOK_EDITOR_TITLE = "Перехват";
+
+    public HookEditor(@NotNull Hook hook, @NotNull List<ifml2.om.Action> actionList)
     {
+        setTitle(HOOK_EDITOR_TITLE);
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
@@ -67,12 +73,51 @@ public class HookEditor extends JDialog
         EditInstructionsAction editInstructionsAction = new EditInstructionsAction();
         editInstructionsButton.setAction(editInstructionsAction);
 
-        // data clones
+        // data clones - for underling objects (all plain data are edited just in controls)
         //todo instructionsClone = hook.instructionList.clone();
         
         // form init
-        // todo load actions and current action
+        actionCombo.setModel(new DefaultComboBoxModel(actionList.toArray()));
+        actionCombo.setSelectedItem(hook.getAction());
         // todo load parameters and current parameter after action select
+        parameterCombo.setModel(new ComboBoxModel()
+        {
+            @Override
+            public void setSelectedItem(Object anItem)
+            {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+
+            @Override
+            public Object getSelectedItem()
+            {
+                return null;  //To change body of implemented methods use File | Settings | File Templates.
+            }
+
+            @Override
+            public int getSize()
+            {
+                return 0;  //To change body of implemented methods use File | Settings | File Templates.
+            }
+
+            @Override
+            public Object getElementAt(int index)
+            {
+                return null;  //To change body of implemented methods use File | Settings | File Templates.
+            }
+
+            @Override
+            public void addListDataListener(ListDataListener l)
+            {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+
+            @Override
+            public void removeListDataListener(ListDataListener l)
+            {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+        });
         // todo set radio
     }
 

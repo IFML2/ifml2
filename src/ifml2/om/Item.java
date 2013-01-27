@@ -33,17 +33,23 @@ public class Item extends IFMLObject implements Cloneable
     @XmlElement(name = ITEM_HOOK_ELEMENT)
     public EventList<Hook> hooks = new BasicEventList<Hook>();
 
-//    /**
-//     * JAXB afterUnmarshal listener
-//     * @param unmarshaller Unmarshaller
-//     * @param parent Parent, should be Role
-//     */
-//    @SuppressWarnings("UnusedDeclaration")
-//    private void afterUnmarshal(final Unmarshaller unmarshaller,
-//                                final Object parent)
-//    {
-//        assert parent instanceof List;
-//        parentLIst = (List) parent;
+    public EventList<Hook> getHooks()
+    {
+        return hooks;
+    }
+
+    //    /**
+    //     * JAXB afterUnmarshal listener
+    //     * @param unmarshaller Unmarshaller
+    //     * @param parent Parent, should be Role
+    //     */
+    //    @SuppressWarnings("UnusedDeclaration")
+    //    private void afterUnmarshal(final Unmarshaller unmarshaller,
+    //                                final Object parent)
+    //    {
+    //        assert parent instanceof List;
+    //        parentLIst = (List) parent;
+
 //    }
 
     @Override

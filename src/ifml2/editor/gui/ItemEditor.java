@@ -293,7 +293,7 @@ public class ItemEditor extends JDialog
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            HookEditor hookEditor = new HookEditor(new Hook());
+            HookEditor hookEditor = new HookEditor(new Hook(), story.getAllActions());
             hookEditor.setVisible(true);
             // todo analyze isOk
         }
@@ -309,7 +309,10 @@ public class ItemEditor extends JDialog
         @Override()
         public void actionPerformed(ActionEvent e)
         {
-            //todo
+            Hook hook = (Hook) hooksList.getSelectedValue();
+            HookEditor hookEditor = new HookEditor(hook, story.getAllActions());
+            hookEditor.setVisible(true);
+            // todo analyze isOk
         }
     }
 
