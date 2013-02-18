@@ -13,6 +13,10 @@ public class Template
             @XmlElement(name = "objectElement", type = ObjectTemplateElement.class)
     })
     public final EventList<TemplateElement> elements = new BasicEventList<TemplateElement>();
+    public EventList<TemplateElement> getElements()
+    {
+        return elements;
+    }
 
     public int size()
     {

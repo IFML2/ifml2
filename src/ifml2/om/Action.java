@@ -13,11 +13,14 @@ public class Action
     @XmlElementWrapper(name = "templates")
     @XmlElement(name = "template")
     public final EventList<Template> templates = new BasicEventList<Template>();
+    public EventList<Template> getTemplates()
+    {
+        return templates;
+    }
 
     @XmlElementWrapper(name = "restrictions")
     @XmlElement(name = "restriction")
     private final EventList<Restriction> restrictions = new BasicEventList<Restriction>();
-
     public EventList<Restriction> getRestrictions()
     {
         return restrictions;
@@ -41,15 +44,5 @@ public class Action
 	public String toString()
 	{
 		return name;
-        /*if(templates.size() > 0)
-        {
-            Template template = templates.get(0);
-            if(template.size() > 0)
-            {
-                return template.get(0).toString();
-            }
-        }
-
-        return "";*/
 	}
 }
