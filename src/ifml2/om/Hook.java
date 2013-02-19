@@ -4,9 +4,13 @@ import javax.xml.bind.annotation.*;
 
 public class Hook
 {
+    private Action action;
     @XmlAttribute(name = "action")
     @XmlIDREF
-    private Action action;
+    public void setAction(Action action)
+    {
+        this.action = action;
+    }
     public Action getAction()
     {
         return action;
@@ -14,15 +18,13 @@ public class Hook
 
     @XmlAttribute(name = "objectElement")
     public String objectElement;
-
     public String getObjectElement()
     {
         return objectElement;
     }
 
     @XmlAttribute(name = "type")
-    public HookTypeEnum type;
-
+    public HookTypeEnum type = HookTypeEnum.INSTEAD; // default value for new hook in editors
     public HookTypeEnum getType()
     {
         return type;
@@ -30,6 +32,11 @@ public class Hook
 
     @XmlElement(name = "instructions")
     public final InstructionList instructionList = new InstructionList();
+
+    public InstructionList getInstructionList()
+    {
+        return instructionList;
+    }
 
     @XmlEnum
     public enum HookTypeEnum

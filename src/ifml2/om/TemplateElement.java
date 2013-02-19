@@ -9,4 +9,8 @@ public class TemplateElement
 
     @XmlAttribute(name = "parameter")
     public String parameter;
+    public String getParameter()
+    {
+        return parameter;
+    }
 }

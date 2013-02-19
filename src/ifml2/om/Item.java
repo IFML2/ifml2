@@ -19,7 +19,7 @@ import static ifml2.om.xml.XmlSchemaConstants.*;
 public class Item extends IFMLObject implements Cloneable
 {
     @XmlElement(name = ITEM_STARTING_POSITION_ELEMENT)
-    public ItemStartingPosition startingPosition = new ItemStartingPosition();
+    private ItemStartingPosition startingPosition = new ItemStartingPosition();
 
     @XmlTransient
     private List parent;
@@ -112,22 +112,25 @@ public class Item extends IFMLObject implements Cloneable
             return clone;
         }
 
+        private boolean inventory = false;
         @XmlElement(name = STARTING_POSITION_INVENTORY_ELEMENT)
-        public boolean inventory = false;
+        public boolean getInventory()
+        {
+            return inventory;
+        }
+        public void setInventory(boolean inventory)
+        {
+            this.inventory = inventory;
+        }
 
         @XmlElementWrapper(name = XmlSchemaConstants.STARTING_POSITION_LOCATIONS_ELEMENT)
         @XmlElement(name = XmlSchemaConstants.STARTING_POSITION_LOCATION_ELEMENT)
         @XmlIDREF
-        public EventList<Location> locations = new BasicEventList<Location>();
+        private EventList<Location> locations = new BasicEventList<Location>();
 
         public EventList<Location> getLocations()
         {
             return locations;
-        }
-
-        public boolean getInventory()
-        {
-            return inventory;
         }
     }
 

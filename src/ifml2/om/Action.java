@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlID;
+import java.util.ArrayList;
 
 public class Action
 {
@@ -45,4 +46,22 @@ public class Action
 	{
 		return name;
 	}
+
+    public Object[] getAllParameters()
+    {
+        ArrayList<Object> parameters = new ArrayList<Object>();
+
+        for (Template template : templates)
+        {
+            for (TemplateElement element : template.getElements())
+            {
+                if (element instanceof ObjectTemplateElement && element.getParameter() != null)
+                {
+                    parameters.add(element.parameter);
+                }
+            }
+        }
+
+        return parameters.toArray();
+    }
 }

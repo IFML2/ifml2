@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlElements;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InstructionList
+public class InstructionList implements Cloneable
 {
     @XmlElements({
             @XmlElement(name = "showLocName", type = ShowLocNameInstruction.class),
@@ -24,6 +24,18 @@ public class InstructionList
             @XmlElement(name = "setProperty", type = SetPropertyInstruction.class),
             @XmlElement(name = "moveItem", type = MoveItemInstruction.class)
     })
-    private List<Instruction> instructions = new ArrayList<Instruction>();
+    private List<Instruction> instructions = new ArrayList<Instruction>(); // InstructionList controls its instructions
     public List<Instruction> getInstructions() { return instructions; }
+
+    @Override
+    public InstructionList clone() throws CloneNotSupportedException
+    {
+        InstructionList clone = (InstructionList) super.clone();
+        clone.instructions =  new ArrayList<Instruction>(instructions.size());
+        for(Instruction instruction : instructions)
+        {
+            clone.instructions.add(instruction.clone());
+        }
+        return clone;
+    }
 }

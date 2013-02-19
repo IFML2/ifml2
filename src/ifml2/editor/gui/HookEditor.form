@@ -69,7 +69,7 @@
             </constraints>
             <properties>
               <labelFor value="30263"/>
-              <text value="&amp;Действие:"/>
+              <text value="Действие:"/>
             </properties>
           </component>
           <component id="7c837" class="javax.swing.JComboBox" binding="parameterCombo">
@@ -84,7 +84,7 @@
             </constraints>
             <properties>
               <labelFor value="7c837"/>
-              <text value="&amp;Параметр:"/>
+              <text value="Параметр:"/>
             </properties>
           </component>
           <component id="d35ae" class="javax.swing.JLabel">
@@ -103,7 +103,7 @@
             <properties/>
             <border type="etched"/>
             <children>
-              <component id="34fa9" class="javax.swing.JRadioButton" binding="доДействияRadioButton" default-binding="true">
+              <component id="34fa9" class="javax.swing.JRadioButton" binding="beforeRadio">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -112,7 +112,7 @@
                   <text value="д&amp;о действия"/>
                 </properties>
               </component>
-              <component id="3fc1" class="javax.swing.JRadioButton" binding="вместоДействияRadioButton" default-binding="true">
+              <component id="3fc1" class="javax.swing.JRadioButton" binding="insteadRadio">
                 <constraints>
                   <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -120,7 +120,7 @@
                   <text value="&amp;вместо действия"/>
                 </properties>
               </component>
-              <component id="63e81" class="javax.swing.JRadioButton" binding="послеДействияRadioButton" default-binding="true">
+              <component id="63e81" class="javax.swing.JRadioButton" binding="afterRadio">
                 <constraints>
                   <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>

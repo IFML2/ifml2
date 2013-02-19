@@ -22,7 +22,6 @@ public class ItemEditor extends JDialog
     private JTextArea descText;
     private JButton editAttributesButton;
     private JList attributesList;
-    private JComboBox locCombo;
     private JButton editWordsButton;
     private JLabel wordsLabel;
     private JCheckBox itemInInventoryCheck;
@@ -156,7 +155,7 @@ public class ItemEditor extends JDialog
         }
         catch (CloneNotSupportedException e)
         {
-            throw new InternalError("WordLinks isn't clonable!");
+            throw new InternalError("WordLinks isn't cloneable!");
         }
         wordsLabel.setText(wordLinksClone.getAllWords());
         wordLinksClone.addChangeListener(new ChangeListener()
@@ -169,7 +168,7 @@ public class ItemEditor extends JDialog
         });
 
         // set item in inventory
-        itemInInventoryCheck.setSelected(item.startingPosition.inventory);
+        itemInInventoryCheck.setSelected(item.getStartingPosition().getInventory());
         // set item in locations
         itemInLocationsList.setModel(new DefaultEventListModel<Location>(story.getLocations()));
         DefaultEventSelectionModel<Location> selectionModel = new DefaultEventSelectionModel<Location>(story.getLocations());
@@ -177,7 +176,7 @@ public class ItemEditor extends JDialog
         selectionModel.setValueIsAdjusting(true);
         try
         {
-            for(Location startLocation : item.startingPosition.locations)
+            for(Location startLocation : item.getStartingPosition().getLocations())
             {
                 int index = story.getLocations().indexOf(startLocation);
                 selectionModel.addSelectionInterval(index, index);
@@ -187,6 +186,7 @@ public class ItemEditor extends JDialog
         {
            selectionModel.setValueIsAdjusting(false);
         }
+        itemInLocationsList.ensureIndexIsVisible(selectionModel.getAnchorSelectionIndex());
 
         // set attributes
         attributesClone = GlazedLists.eventList(item.getAttributes());
@@ -225,11 +225,12 @@ public class ItemEditor extends JDialog
 
         item.setWordLinks(wordLinksClone);
 
-        item.startingPosition.inventory = itemInInventoryCheck.isSelected();
-        item.startingPosition.locations.clear();
+        item.getStartingPosition().setInventory(itemInInventoryCheck.isSelected());
+        EventList<Location> locations = item.getStartingPosition().getLocations();
+        locations.clear();
         for(Object object : itemInLocationsList.getSelectedValues())
         {
-            item.startingPosition.locations.add((Location)object);
+            locations.add((Location) object);
         }
 
         item.setAttributes(attributesClone);

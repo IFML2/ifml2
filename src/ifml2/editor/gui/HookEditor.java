@@ -3,13 +3,12 @@ package ifml2.editor.gui;
 import com.sun.istack.internal.NotNull;
 import ifml2.GUIUtils;
 import ifml2.om.Action;
-import ifml2.om.*;
+import ifml2.om.Hook;
+import ifml2.om.InstructionList;
 
 import javax.swing.*;
-import javax.swing.event.ListDataListener;
 import java.awt.event.*;
 import java.text.MessageFormat;
-import java.util.HashMap;
 import java.util.List;
 
 public class HookEditor extends JDialog
@@ -19,9 +18,9 @@ public class HookEditor extends JDialog
     private JButton buttonCancel;
     private JComboBox actionCombo;
     private JComboBox parameterCombo;
-    private JRadioButton доДействияRadioButton;
-    private JRadioButton вместоДействияRadioButton;
-    private JRadioButton послеДействияRadioButton;
+    private JRadioButton beforeRadio;
+    private JRadioButton insteadRadio;
+    private JRadioButton afterRadio;
     private JButton editInstructionsButton;
     private InstructionList instructionsClone;
 
@@ -29,6 +28,8 @@ public class HookEditor extends JDialog
 
     public HookEditor(@NotNull final Hook hook, @NotNull List<Action> actionList)
     {
+        // -- dialog init --
+
         setTitle(HOOK_EDITOR_TITLE);
         setContentPane(contentPane);
         setModal(true);
@@ -70,104 +71,70 @@ public class HookEditor extends JDialog
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-        // form actions init
+        // -- form actions init --
+
         EditInstructionsAction editInstructionsAction = new EditInstructionsAction();
         editInstructionsButton.setAction(editInstructionsAction);
 
+        // -- data init --
+
         // data clones - for underling objects (all plain data are edited just in controls)
-        //todo instructionsClone = hook.instructionList.clone();
-        
-        // form init
-        // todo load parameters and current parameter after action select
-        parameterCombo.setModel(new ComboBoxModel()           {
+        try
+        {
+            instructionsClone = hook.getInstructionList().clone();
+        }
+        catch (CloneNotSupportedException e)
+        {
+            throw new InternalError("InstructionList isn't cloneable!");
+        }
 
-            // subscribe to action combo box changes
+        //  -- form init --
+        // load parameters and current parameter after action select
+        actionCombo.addActionListener(new ActionListener()
+        {
+            Action prevSelectedAction;
+
+            @Override
+            public void actionPerformed(ActionEvent e)
             {
-                actionCombo.addActionListener(new ActionListener()
+                Action selectedAction = (Action) actionCombo.getSelectedItem();
+                if (prevSelectedAction != selectedAction)
                 {
-                    @Override
-                    public void actionPerformed(ActionEvent e)
+                    prevSelectedAction = selectedAction;
+                    parameterCombo.setModel(new DefaultComboBoxModel(selectedAction.getAllParameters()));
+                    if(parameterCombo.getItemCount() > 0) // if there are elements ...
                     {
-                        Action selectedAction = (Action) actionCombo.getSelectedItem();
-                        if(cachedAction != selectedAction)
-                        {
-                            System.out.println(MessageFormat.format("action changed to {0}", selectedAction));
-                            cachedAction = selectedAction;
-                            cacheParameters();
-                            selectedParameter = cachedParameters.size() > 0 ? cachedParameters.values().iterator().next() : null;
-                            repaint();
-                        }
-                    }
-                });
-            }
-
-            Object selectedParameter = hook.getObjectElement();
-            Action cachedAction = (Action) actionCombo.getSelectedItem();
-            HashMap<String, Object> cachedParameters = new HashMap<String, Object>();
-
-            private void cacheParameters()
-            {
-                cachedParameters.clear();
-                if(cachedAction == null)
-                {
-                    return;
-                }
-
-                for(Template template : cachedAction.getTemplates())
-                {
-                    for(TemplateElement element : template.getElements())
-                    {
-                        if(element instanceof ObjectTemplateElement && element.parameter != null && !cachedParameters.containsKey(element.parameter.toLowerCase()))
-                        {
-                            cachedParameters.put(element.parameter.toLowerCase(), element.parameter);
-                        }
+                        parameterCombo.setSelectedIndex(0); // ... select first element
                     }
                 }
-            }
-
-            @Override
-            public void setSelectedItem(Object anItem)
-            {
-                selectedParameter = anItem;
-            }
-
-            @Override
-            public Object getSelectedItem()
-            {
-                return selectedParameter;
-            }
-
-            @Override
-            public int getSize()
-            {
-                int size = cachedParameters.size();
-                //System.out.println(MessageFormat.format("getSize() = {0}", size));
-                return size;
-            }
-
-            @Override
-            public Object getElementAt(int index)
-            {
-                Object element = cachedParameters.values().toArray()[index];
-                //System.out.println(MessageFormat.format("getElementAt({0}) = {1}", index, element));
-                return element;
-            }
-
-            @Override
-            public void addListDataListener(ListDataListener l)
-            {
-                //To change body of implemented methods use File | Settings | File Templates.
-            }
-
-            @Override
-            public void removeListDataListener(ListDataListener l)
-            {
-                //To change body of implemented methods use File | Settings | File Templates.
+                hook.setAction(selectedAction);
             }
         });
         actionCombo.setModel(new DefaultComboBoxModel(actionList.toArray()));
-        actionCombo.setSelectedItem(hook.getAction());
-        // todo set radio
+        if(hook.getAction() != null)
+        {
+            actionCombo.setSelectedItem(hook.getAction()); // select hook's action
+        }
+        else if (actionCombo.getItemCount() > 0) // if hook's action is null (for new hook e.g.) ...
+        {
+            actionCombo.setSelectedIndex(0); // ... select first
+        }
+
+        // set radio
+        switch (hook.getType())
+        {
+            case BEFORE:
+                beforeRadio.setSelected(true);
+                break;
+            case AFTER:
+                afterRadio.setSelected(true);
+                break;
+            case INSTEAD:
+                insteadRadio.setSelected(true);
+                break;
+            default:
+                throw new InternalError(MessageFormat.format("Unknown hook type: {0}", hook.getType()));
+        }
     }
 
     private void onOK()
