@@ -21,7 +21,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.util.Arrays;
 
 public class Editor extends JFrame
 {
@@ -340,8 +339,7 @@ public class Editor extends JFrame
 
     /*private void editDict()
     {
-        DictionaryEditor dictionaryEditor = new DictionaryEditor();
-        dictionaryEditor.setAllData(story.dictionary);
+        DictionaryEditor dictionaryEditor = new DictionaryEditor(story.dictionary);
         dictionaryEditor.setVisible(true);
     }*/
 
@@ -350,11 +348,10 @@ public class Editor extends JFrame
     {
         if(location != null)
         {
-            LocationEditor locationEditor = new LocationEditor();
+            LocationEditor locationEditor = new LocationEditor(this);
 
             locationEditor.setAllData(story, location);
-            locationEditor.setVisible(true);
-            if(locationEditor.isOk)
+            if(locationEditor.showDialog())
             {
                 locationEditor.getAllData(location);
                 return true;
@@ -461,7 +458,7 @@ public class Editor extends JFrame
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            UsedLibsEditor usedLibsEditor = new UsedLibsEditor();
+            UsedLibsEditor usedLibsEditor = new UsedLibsEditor(Editor.this);
             usedLibsEditor.setAllData(story.getLibraries());
             usedLibsEditor.setVisible(true);
         }
@@ -521,7 +518,7 @@ public class Editor extends JFrame
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            JOptionPane.showMessageDialog(frame, "Сначала нужно сохранить историю", "Сохранение перед запуском",
+            /*JOptionPane.showMessageDialog(frame, "Сначала нужно сохранить историю", "Сохранение перед запуском",
                     JOptionPane.INFORMATION_MESSAGE);
             String fileName = null;
             try
@@ -532,7 +529,17 @@ public class Editor extends JFrame
             {
                 JOptionPane.showMessageDialog(frame, "Ошибка во время сохранения истории: " + Arrays.toString(e1.getStackTrace()));
             }
-            GUIPlayer.main(new String[]{fileName});
+            GUIPlayer.main(new String[]{fileName});*/
+            /*Story clone = null;
+            try
+            {
+                clone = story.clone();
+            }
+            catch (CloneNotSupportedException ex)
+            {
+                throw new InternalError("Story isn't cloneable!");
+            }*/
+            GUIPlayer.startFromOM(story/*clone*/); //todo change to full clone
         }
     }
 
@@ -546,12 +553,10 @@ public class Editor extends JFrame
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            StoryOptionsEditor storyOptionsEditor = new StoryOptionsEditor();
+            StoryOptionsEditor storyOptionsEditor = new StoryOptionsEditor(Editor.this);
 
             storyOptionsEditor.setAllData(story.storyOptions, story.getLocations(), story.getProcedures());
-            storyOptionsEditor.setVisible(true);
-
-            if(storyOptionsEditor.isOk)
+            if(storyOptionsEditor.showDialog())
             {
                 storyOptionsEditor.getAllData(story.storyOptions);
             }
@@ -568,12 +573,11 @@ public class Editor extends JFrame
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            ProceduresEditor proceduresEditor = new ProceduresEditor();
+            ProceduresEditor proceduresEditor = new ProceduresEditor(Editor.this);
             proceduresEditor.setAllData(story.getProcedures());
             proceduresEditor.setVisible(true);
         }
     }
-
 
     private class EditActionsAction extends AbstractAction
     {
@@ -585,9 +589,8 @@ public class Editor extends JFrame
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            ActionsEditor actionsEditor = new ActionsEditor();
-            actionsEditor.setAllData(story.getActions());
-            actionsEditor.setVisible(true);
+            ActionsEditor actionsEditor = new ActionsEditor(Editor.this, story.getActions());
+            actionsEditor.showDialog();
         }
     }
 
@@ -615,10 +618,8 @@ public class Editor extends JFrame
     {
         if(item != null)
         {
-            ItemEditor itemEditor = new ItemEditor(story, item);
-
-            itemEditor.setVisible(true);
-            if(itemEditor.isOk)
+            ItemEditor itemEditor = new ItemEditor(this, story, item);
+            if(itemEditor.showDialog())
             {
                 itemEditor.getData(item);
                 return true;

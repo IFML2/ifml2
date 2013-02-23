@@ -3,6 +3,7 @@ package ifml2.editor.gui;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.swing.DefaultEventListModel;
+import com.sun.istack.internal.NotNull;
 import ifml2.GUIUtils;
 import ifml2.om.Attribute;
 import ifml2.om.Library;
@@ -11,12 +12,14 @@ import ifml2.om.Story;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+import java.awt.*;
 import java.awt.event.*;
 import java.util.Arrays;
 import java.util.Vector;
 
 public class ObjectAttributesEditor extends JDialog
 {
+    public static final String OBJATTR_EDITOR_TITLE = "Признаки";
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
@@ -26,16 +29,13 @@ public class ObjectAttributesEditor extends JDialog
     private JButton delButton;
 
     private EventList<Attribute> attributesClone = null;
-    public boolean isOk = false;
+    private boolean isOk = false;
 
-    public ObjectAttributesEditor(EventList<Attribute> attributes, Story story)
+    public ObjectAttributesEditor(Window owner, @NotNull EventList<Attribute> attributes, @NotNull Story story)
     {
-        assert attributes != null;
-        assert story != null;
+        super(owner, OBJATTR_EDITOR_TITLE, ModalityType.DOCUMENT_MODAL);
 
-        setTitle("Признаки");
         setContentPane(contentPane);
-        setModal(true);
         getRootPane().setDefaultButton(buttonOK);
 
         GUIUtils.packAndCenterWindow(this);
@@ -121,6 +121,12 @@ public class ObjectAttributesEditor extends JDialog
     {
         attributes.clear();
         attributes.addAll(attributesClone);
+    }
+
+    public boolean showDialog()
+    {
+        setVisible(true);
+        return isOk;
     }
 
     private class AddAttributeAction extends AbstractAction

@@ -4,22 +4,25 @@ import ifml2.GUIUtils;
 import ifml2.vm.instructions.ShowMessageInstr;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 
 public class ShowMessageInstrEditor extends JDialog
 {
+    public static final String SHOWMESSAGE_INSTREDITOR_TITLE = "Вывести сообщение";
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
     private JTextArea messageText;
-    public boolean isOk = false;
+    private boolean isOk = false;
 
-    public ShowMessageInstrEditor()
+    public ShowMessageInstrEditor(Window owner, ShowMessageInstr instruction)
     {
-        setTitle("Вывести сообщение");
+        super(owner, SHOWMESSAGE_INSTREDITOR_TITLE, ModalityType.DOCUMENT_MODAL);
+
         setContentPane(contentPane);
-        setModal(true);
         getRootPane().setDefaultButton(buttonOK);
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
         GUIUtils.packAndCenterWindow(this);
 
@@ -40,7 +43,6 @@ public class ShowMessageInstrEditor extends JDialog
         });
 
 // call onCancel() when cross is clicked
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter()
         {
             public void windowClosing(WindowEvent e)
@@ -57,6 +59,8 @@ public class ShowMessageInstrEditor extends JDialog
                 onCancel();
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
+        setData(instruction);
     }
 
     private void onOK()
@@ -79,5 +83,11 @@ public class ShowMessageInstrEditor extends JDialog
     public void getData(ShowMessageInstr data)
     {
         data.setMessage(messageText.getText());
+    }
+
+    public boolean showDialog()
+    {
+        setVisible(true);
+        return isOk;
     }
 }

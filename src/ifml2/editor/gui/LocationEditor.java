@@ -40,23 +40,20 @@ public class LocationEditor extends JDialog
 
     private static final String LOCATION_EDITOR_FORM_NAME = "Локация";
 
-    public boolean isOk = false;
+    private boolean isOk = false;
     private boolean toGenerateId = false;
 
     private ArrayList<Item> itemsClone = null;
     private EventList<Attribute> attributesClone = null;
 
-    private Dialog dialog = null;
     //private DelItemAction delItemAction = new DelItemAction();
     private Story story = null;
 
-    public LocationEditor()
+    public LocationEditor(Frame owner)
     {
-        this.dialog = this;
+        super(owner, LOCATION_EDITOR_FORM_NAME, ModalityType.DOCUMENT_MODAL);
 
-        setTitle(LOCATION_EDITOR_FORM_NAME);
         setContentPane(contentPane);
-        setModal(true);
         getRootPane().setDefaultButton(buttonOK);
 
         GUIUtils.packAndCenterWindow(this);
@@ -190,6 +187,12 @@ public class LocationEditor extends JDialog
     {
         isOk = false;
         dispose();
+    }
+
+    public boolean showDialog()
+    {
+        setVisible(true);
+        return isOk;
     }
 
     public void setAllData(Story story, Location location)
@@ -353,9 +356,8 @@ public class LocationEditor extends JDialog
     {
         if(item != null)
         {
-            ItemEditor itemEditor = new ItemEditor(story, item);
-            itemEditor.setVisible(true);
-            if(itemEditor.isOk)
+            ItemEditor itemEditor = new ItemEditor(LocationEditor.this, story, item);
+            if(itemEditor.showDialog())
             {
                 itemEditor.getData(item);
                 return true;
@@ -392,7 +394,7 @@ public class LocationEditor extends JDialog
             Item item = (Item) itemsList.getSelectedValue();
             if(item != null)
             {
-                int answer = JOptionPane.showConfirmDialog(dialog, "Вы уверены, что хотите удалить этот предмет?");
+                int answer = JOptionPane.showConfirmDialog(LocationEditor.this, "Вы уверены, что хотите удалить этот предмет?");
                 if(answer == 0)
                 {
                     itemsClone.remove(item);
@@ -412,9 +414,8 @@ public class LocationEditor extends JDialog
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            ObjectAttributesEditor objectAttributesEditor = new ObjectAttributesEditor(attributesClone, story);
-            objectAttributesEditor.setVisible(true);
-            if(objectAttributesEditor.isOk)
+            ObjectAttributesEditor objectAttributesEditor = new ObjectAttributesEditor(LocationEditor.this, attributesClone, story);
+            if(objectAttributesEditor.showDialog())
             {
                 updateAttributes();
             }

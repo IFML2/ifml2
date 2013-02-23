@@ -7,19 +7,24 @@ import javax.swing.*;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
+import java.awt.*;
 import java.awt.event.*;
 
 public class InstructionsEditor extends JDialog
 {
+    private static final String INSTR_EDITOR_TITLE = "Инструкции";
+
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
     private JTree instructionsTree;
+    private boolean isOk;
 
-    public InstructionsEditor(InstructionList instructionList)
+    public InstructionsEditor(Window owner, InstructionList instructionList)
     {
+        super(owner, INSTR_EDITOR_TITLE, ModalityType.DOCUMENT_MODAL);
+
         setContentPane(contentPane);
-        setModal(true);
         getRootPane().setDefaultButton(buttonOK);
 
         GUIUtils.packAndCenterWindow(this);
@@ -122,5 +127,11 @@ public class InstructionsEditor extends JDialog
     {
 // add your code here if necessary
         dispose();
+    }
+
+    public boolean showDialog()
+    {
+        setVisible(true);
+        return isOk;
     }
 }

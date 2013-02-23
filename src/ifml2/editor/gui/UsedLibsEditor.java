@@ -9,6 +9,7 @@ import ifml2.om.OMManager;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
+import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
@@ -17,24 +18,22 @@ import java.util.List;
 
 public class UsedLibsEditor extends JDialog
 {
+    public static final String USEDLIBS_EDITOR_TITLE = "Используемые библиотеки";
     private JPanel contentPane;
     private JButton buttonOK;
     private JList usedLibsList;
     private JButton addButton;
     private JButton delButton;
     private List<Library> libraries;
-    private final UsedLibsEditor dialog;
 
-    public UsedLibsEditor()
+    public UsedLibsEditor(Window owner)
     {
-        dialog = this;
+        super(owner, USEDLIBS_EDITOR_TITLE, ModalityType.DOCUMENT_MODAL);
 
-        setTitle("Используемые библиотеки");
         setContentPane(contentPane);
-        setModal(true);
         getRootPane().setDefaultButton(buttonOK);
 
-        GUIUtils.packAndCenterWindow(dialog);
+        GUIUtils.packAndCenterWindow(this);
 
         buttonOK.addActionListener(new ActionListener()
         {
@@ -83,7 +82,7 @@ public class UsedLibsEditor extends JDialog
                     }
                 });
 
-                if(libFileChooser.showOpenDialog(dialog) != JFileChooser.APPROVE_OPTION)
+                if(libFileChooser.showOpenDialog(UsedLibsEditor.this) != JFileChooser.APPROVE_OPTION)
                 {
                     return;
                 }
@@ -97,7 +96,7 @@ public class UsedLibsEditor extends JDialog
                 }
                 catch (IOException e1)
                 {
-                    JOptionPane.showMessageDialog(dialog, "Произошла ошибка во время загрузки библиотеки: \n"
+                    JOptionPane.showMessageDialog(UsedLibsEditor.this, "Произошла ошибка во время загрузки библиотеки: \n"
                             + e1.getMessage(), "Ошибка при загрузке", JOptionPane.ERROR_MESSAGE);
 
                     return;
@@ -111,7 +110,7 @@ public class UsedLibsEditor extends JDialog
                 }
                 catch (IFML2Exception error)
                 {
-                    JOptionPane.showMessageDialog(dialog, "Произошла ошибка во время загрузки библиотеки: \n" +
+                    JOptionPane.showMessageDialog(UsedLibsEditor.this, "Произошла ошибка во время загрузки библиотеки: \n" +
                         error.getMessage(), "Ошибка при загрузке", JOptionPane.ERROR_MESSAGE);
 
                     return;
@@ -134,7 +133,7 @@ public class UsedLibsEditor extends JDialog
                 Library usedLib = (Library) usedLibsList.getSelectedValue();
                 if(usedLib != null)
                 {
-                    int answer = JOptionPane.showConfirmDialog(dialog,
+                    int answer = JOptionPane.showConfirmDialog(UsedLibsEditor.this,
                             "Вы уверены, что не хотите больше использовать эту библиотеку?", "Удаление библиотеки",
                             JOptionPane.YES_NO_OPTION);
                     if(answer == 0)

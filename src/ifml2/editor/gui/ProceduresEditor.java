@@ -10,12 +10,14 @@ import ifml2.vm.instructions.ShowMessageInstr;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 
 public class ProceduresEditor extends JDialog
 {
+    public static final String PROCEDURES_EDITOR_TITLE = "Процедуры";
     private JPanel contentPane;
     private JButton buttonOK;
     private JList proceduresList;
@@ -26,7 +28,6 @@ public class ProceduresEditor extends JDialog
     private JButton editInstructionButton;
     private JButton delInstructionButton;
 
-    private final JDialog dialog;
     private HashMap<String, Procedure> procedures = null;
 
     private final DelProcedureAction delProcedureAction = new DelProcedureAction();
@@ -35,16 +36,14 @@ public class ProceduresEditor extends JDialog
     private final EditInstructionAction editInstructionAction = new EditInstructionAction();
     private final DelInstructionAction delInstructionAction = new DelInstructionAction();
 
-    public ProceduresEditor()
+    public ProceduresEditor(Window owner)
     {
-        dialog = this;
+        super(owner, PROCEDURES_EDITOR_TITLE, ModalityType.DOCUMENT_MODAL);
 
-        setTitle("Процедуры");
         setContentPane(contentPane);
-        setModal(true);
         getRootPane().setDefaultButton(buttonOK);
 
-        GUIUtils.packAndCenterWindow(dialog);
+        GUIUtils.packAndCenterWindow(this);
 
         AddProcedureAction addProcedureAction = new AddProcedureAction();
         addProcedureButton.setAction(addProcedureAction);
@@ -133,7 +132,7 @@ public class ProceduresEditor extends JDialog
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            String procedureName = JOptionPane.showInputDialog(dialog, "Имя новой процедуры:");
+            String procedureName = JOptionPane.showInputDialog(ProceduresEditor.this, "Имя новой процедуры:");
 
             if(procedureName != null && !"".equals(procedureName))
             {
@@ -172,7 +171,7 @@ public class ProceduresEditor extends JDialog
                 return;
             }
 
-            int answer = JOptionPane.showConfirmDialog(dialog, "Вы действительно хотите удалить процедуру " + procedure.getName() + "?",
+            int answer = JOptionPane.showConfirmDialog(ProceduresEditor.this, "Вы действительно хотите удалить процедуру " + procedure.getName() + "?",
                     "Удаление процедуры", JOptionPane.YES_NO_OPTION);
 
             if(answer == 0)
@@ -216,10 +215,8 @@ public class ProceduresEditor extends JDialog
 
         if(instruction instanceof ShowMessageInstr)
         {
-            ShowMessageInstrEditor showMessageInstrEditor = new ShowMessageInstrEditor();
-            showMessageInstrEditor.setData((ShowMessageInstr) instruction);
-            showMessageInstrEditor.setVisible(true);
-            if(showMessageInstrEditor.isOk)
+            ShowMessageInstrEditor showMessageInstrEditor = new ShowMessageInstrEditor(this, (ShowMessageInstr) instruction);
+            if(showMessageInstrEditor.showDialog())
             {
                 showMessageInstrEditor.getData((ShowMessageInstr) instruction);
                 return true;
@@ -227,7 +224,7 @@ public class ProceduresEditor extends JDialog
         }
         else
         {
-            JOptionPane.showMessageDialog(dialog, "Инструкция для " + instruction.getClass().getName() + " пока не редактируется");
+            JOptionPane.showMessageDialog(ProceduresEditor.this, "Инструкция для " + instruction.getClass().getSimpleName() + " пока не редактируется");
         }
 
         return false;
@@ -251,7 +248,7 @@ public class ProceduresEditor extends JDialog
                 return;
             }
 
-            int answer = JOptionPane.showConfirmDialog(dialog, "Вы действительно хотите удалить выбраную инструкцию?",
+            int answer = JOptionPane.showConfirmDialog(ProceduresEditor.this, "Вы действительно хотите удалить выбраную инструкцию?",
                     "Удаление инструкции", JOptionPane.YES_NO_OPTION);
 
             if(answer == 0)
@@ -279,7 +276,7 @@ public class ProceduresEditor extends JDialog
                 return;
             }
 
-            InstructionTypeEnum answer = (InstructionTypeEnum) JOptionPane.showInputDialog(dialog, "Выберите тип инструкции",
+            InstructionTypeEnum answer = (InstructionTypeEnum) JOptionPane.showInputDialog(ProceduresEditor.this, "Выберите тип инструкции",
                     "Новая инструкция", JOptionPane.PLAIN_MESSAGE, null, InstructionTypeEnum.values(),
                     InstructionTypeEnum.SHOW_MESSAGE);
 
@@ -295,7 +292,7 @@ public class ProceduresEditor extends JDialog
             }
             catch (Throwable ex)
             {
-                GUIUtils.showErrorMessage(dialog, ex);
+                GUIUtils.showErrorMessage(ProceduresEditor.this, ex);
             }
         }
     }

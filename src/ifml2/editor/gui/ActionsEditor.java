@@ -1,11 +1,12 @@
 package ifml2.editor.gui;
 
+import ca.odell.glazedlists.EventList;
 import ifml2.GUIUtils;
 import ifml2.om.Action;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
-import java.util.List;
 
 public class ActionsEditor extends JDialog
 {
@@ -14,11 +15,11 @@ public class ActionsEditor extends JDialog
     private JButton buttonCancel;
     private static final String ACTIONS_EDITOR_FORM_NAME = "Действия";
 
-    public ActionsEditor()
+    public ActionsEditor(Frame owner, EventList<Action> actions)
     {
-        setTitle(ACTIONS_EDITOR_FORM_NAME);
+        super(owner, ACTIONS_EDITOR_FORM_NAME, ModalityType.DOCUMENT_MODAL);
+
         setContentPane(contentPane);
-        setModal(true);
         getRootPane().setDefaultButton(buttonOK);
 
         GUIUtils.packAndCenterWindow(this);
@@ -51,6 +52,8 @@ public class ActionsEditor extends JDialog
                 onCancel();
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
+        // todo form init
     }
 
     private void onOK()
@@ -65,7 +68,8 @@ public class ActionsEditor extends JDialog
         dispose();
     }
 
-    public void setAllData(List<Action> actions)
+    public void showDialog()
     {
+        setVisible(true);
     }
 }

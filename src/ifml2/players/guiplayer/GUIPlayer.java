@@ -7,6 +7,7 @@ import ifml2.engine.Engine;
 import ifml2.engine.EngineVersion;
 import ifml2.interfaces.GUIInterface;
 import ifml2.om.IFML2LoadXmlException;
+import ifml2.om.Story;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
@@ -101,6 +102,28 @@ public class GUIPlayer extends JFrame
         guiPlayer.setVisible(true);
 
         guiPlayer.loadStory(storyFile);
+    }
+
+    public static void startFromOM(Story story)
+    {
+        GUIPlayer guiPlayer = new GUIPlayer();
+
+        guiPlayer.setVisible(true);
+
+        guiPlayer.loadFromOM(story);
+    }
+
+    private void loadFromOM(Story story)
+    {
+        try
+        {
+            engine.setStory(story);
+            engine.initGame();
+        }
+        catch (Throwable e)
+        {
+            ReportError(e, "Ошибка при загрузке истории!");
+        }
     }
 
     private void loadStory(String storyFile)

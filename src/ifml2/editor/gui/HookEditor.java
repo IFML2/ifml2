@@ -7,6 +7,7 @@ import ifml2.om.Hook;
 import ifml2.om.InstructionList;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 import java.text.MessageFormat;
 import java.util.List;
@@ -26,13 +27,13 @@ public class HookEditor extends JDialog
 
     private static final String HOOK_EDITOR_TITLE = "Перехват";
 
-    public HookEditor(@NotNull final Hook hook, @NotNull List<Action> actionList)
+    public HookEditor(Window owner, @NotNull final Hook hook, @NotNull List<Action> actionList)
     {
+        super(owner, HOOK_EDITOR_TITLE, ModalityType.DOCUMENT_MODAL);
+
         // -- dialog init --
 
-        setTitle(HOOK_EDITOR_TITLE);
         setContentPane(contentPane);
-        setModal(true);
         getRootPane().setDefaultButton(buttonOK);
 
         GUIUtils.packAndCenterWindow(this);
@@ -157,7 +158,11 @@ public class HookEditor extends JDialog
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            //todo InstructionsEditor instructionsEditor = new InstructionsEditor();
+            InstructionsEditor instructionsEditor = new InstructionsEditor(HookEditor.this, instructionsClone);
+            if(instructionsEditor.showDialog())
+            {
+                //todo
+            }
         }
     }
 }

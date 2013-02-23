@@ -315,7 +315,7 @@ public class Engine
         return story;
     }
 
-    void setStory(Story story)
+    public void setStory(Story story)
     {
         this.story = story;
         getParser().setStory(story);

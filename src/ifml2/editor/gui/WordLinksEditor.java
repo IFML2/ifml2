@@ -12,6 +12,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.Document;
+import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,19 +44,16 @@ public class WordLinksEditor extends JDialog
     private boolean isUpdatingText = false;
     private HashMap<String, Word> dictionary = null;
     private ArrayList<Word> wordsClone = null;
-    private final WordLinksEditor dialog;
-    public boolean isOk = false;
+    private boolean isOk = false;
 
-    public WordLinksEditor()
+    public WordLinksEditor(Window owner)
     {
-        dialog = this;
+        super(owner, DICTIONARY_EDITOR_TITLE,  ModalityType.DOCUMENT_MODAL);
 
-        setTitle(DICTIONARY_EDITOR_TITLE);
         setContentPane(contentPane);
-        setModal(true);
         getRootPane().setDefaultButton(buttonOK);
 
-        GUIUtils.packAndCenterWindow(dialog);
+        GUIUtils.packAndCenterWindow(this);
 
         buttonOK.addActionListener(new ActionListener()
         {
@@ -105,7 +103,7 @@ public class WordLinksEditor extends JDialog
                 }
                 catch (IFML2EditorException e1)
                 {
-                    GUIUtils.showErrorMessage(dialog, e1);
+                    GUIUtils.showErrorMessage(WordLinksEditor.this, e1);
                 }
             }
 
@@ -118,7 +116,7 @@ public class WordLinksEditor extends JDialog
                 }
                 catch (IFML2EditorException e1)
                 {
-                    GUIUtils.showErrorMessage(dialog, e1);
+                    GUIUtils.showErrorMessage(WordLinksEditor.this, e1);
                 }
             }
 
@@ -158,7 +156,7 @@ public class WordLinksEditor extends JDialog
                     Word word = new Word(newWordIp);
                     if(dictionary.containsKey(newWordIp))
                     {
-                        JOptionPane.showMessageDialog(dialog, DUPLICATED_WORD_ERROR_MESSAGE, DUPLICATED_WORD_ERROR_DIALOG_TITLE,
+                        JOptionPane.showMessageDialog(WordLinksEditor.this, DUPLICATED_WORD_ERROR_MESSAGE, DUPLICATED_WORD_ERROR_DIALOG_TITLE,
                                 JOptionPane.INFORMATION_MESSAGE);
                         word = dictionary.get(newWordIp);
                         wordsClone.add(word);
@@ -312,5 +310,11 @@ public class WordLinksEditor extends JDialog
         wordLinks.getWords().clear();
         wordLinks.getWords().addAll(wordsClone);
         wordLinks.setMainWord((Word) mainWordCombo.getSelectedItem());
+    }
+
+    public boolean showDialog()
+    {
+        setVisible(true);
+        return isOk;
     }
 }

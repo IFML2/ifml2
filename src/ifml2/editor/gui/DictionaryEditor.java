@@ -10,6 +10,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.Document;
+import java.awt.*;
 import java.awt.event.*;
 import java.util.HashMap;
 
@@ -37,18 +38,15 @@ public class DictionaryEditor extends JDialog
 
     private boolean isUpdatingText = false;
     private HashMap<String, Word> dictionary = null;
-    private final DictionaryEditor dialog;
 
-    public DictionaryEditor()
+    public DictionaryEditor(Frame owner)
     {
-        dialog = this;
+        super(owner, DICTIONARY_EDITOR_TITLE, ModalityType.DOCUMENT_MODAL);
 
-        setTitle(DICTIONARY_EDITOR_TITLE);
         setContentPane(contentPane);
-        setModal(true);
         getRootPane().setDefaultButton(buttonOK);
 
-        GUIUtils.packAndCenterWindow(dialog);
+        GUIUtils.packAndCenterWindow(this);
 
         buttonOK.addActionListener(new ActionListener()
         {
@@ -98,7 +96,7 @@ public class DictionaryEditor extends JDialog
                 }
                 catch (IFML2EditorException e1)
                 {
-                    GUIUtils.showErrorMessage(dialog, e1);
+                    GUIUtils.showErrorMessage(DictionaryEditor.this, e1);
                 }
             }
 
@@ -111,7 +109,7 @@ public class DictionaryEditor extends JDialog
                 }
                 catch (IFML2EditorException e1)
                 {
-                    GUIUtils.showErrorMessage(dialog, e1);
+                    GUIUtils.showErrorMessage(DictionaryEditor.this, e1);
                 }
             }
 
@@ -151,7 +149,7 @@ public class DictionaryEditor extends JDialog
                     Word word = new Word(newWordIp);
                     if(dictionary.containsKey(newWordIp))
                     {
-                        JOptionPane.showMessageDialog(dialog, DUPLICATED_WORD_ERROR_MESSAGE, DUPLICATED_WORD_ERROR_DIALOG_TITLE,
+                        JOptionPane.showMessageDialog(DictionaryEditor.this, DUPLICATED_WORD_ERROR_MESSAGE, DUPLICATED_WORD_ERROR_DIALOG_TITLE,
                                 JOptionPane.ERROR_MESSAGE);
                         dictList.setSelectedValue(dictionary.get(newWordIp), true);
                         return;

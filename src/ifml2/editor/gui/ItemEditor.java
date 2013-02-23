@@ -10,6 +10,7 @@ import ifml2.om.*;
 
 import javax.swing.*;
 import javax.swing.event.*;
+import java.awt.*;
 import java.awt.event.*;
 
 public class ItemEditor extends JDialog
@@ -33,7 +34,7 @@ public class ItemEditor extends JDialog
 
     private static final String ITEM_EDITOR_TITLE = "Предмет";
 
-    boolean isOk = false;
+    private boolean isOk = false;
     private Story story = null;
     private boolean toGenerateId = false;
     // clones
@@ -43,12 +44,12 @@ public class ItemEditor extends JDialog
     private final EditHookAction editHookAction = new EditHookAction();
     private final DeleteHookAction deleteHookAction = new DeleteHookAction();
 
-    public ItemEditor(@NotNull final Story story, @NotNull final Item item)
+    public ItemEditor(Window owner, @NotNull final Story story, @NotNull final Item item)
     {
+        super(owner, ITEM_EDITOR_TITLE, ModalityType.DOCUMENT_MODAL);
+
         // window tuning
-        setTitle(ITEM_EDITOR_TITLE);
         setContentPane(contentPane);
-        setModal(true);
         getRootPane().setDefaultButton(buttonOK);
 
         GUIUtils.packAndCenterWindow(this);
@@ -245,6 +246,12 @@ public class ItemEditor extends JDialog
         }
     }
 
+    public boolean showDialog()
+    {
+        setVisible(true);
+        return isOk;
+    }
+
     private class EditAttributesAction extends AbstractAction
     {
         private EditAttributesAction()
@@ -255,9 +262,8 @@ public class ItemEditor extends JDialog
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            ObjectAttributesEditor objectAttributesEditor = new ObjectAttributesEditor(attributesClone, story);
-            objectAttributesEditor.setVisible(true);
-            if(objectAttributesEditor.isOk)
+            ObjectAttributesEditor objectAttributesEditor = new ObjectAttributesEditor(ItemEditor.this, attributesClone, story);
+            if(objectAttributesEditor.showDialog())
             {
                 objectAttributesEditor.getData(attributesClone);
             }
@@ -274,10 +280,9 @@ public class ItemEditor extends JDialog
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            WordLinksEditor wordLinksEditor = new WordLinksEditor();
+            WordLinksEditor wordLinksEditor = new WordLinksEditor(ItemEditor.this);
             wordLinksEditor.setAllData(story.getDictionary(), wordLinksClone);
-            wordLinksEditor.setVisible(true);
-            if(wordLinksEditor.isOk)
+            if(wordLinksEditor.showDialog())
             {
                 wordLinksEditor.getData(wordLinksClone);
             }
@@ -294,7 +299,7 @@ public class ItemEditor extends JDialog
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            HookEditor hookEditor = new HookEditor(new Hook(), story.getAllActions());
+            HookEditor hookEditor = new HookEditor(ItemEditor.this, new Hook(), story.getAllActions());
             hookEditor.setVisible(true);
             // todo analyze isOk
         }
@@ -311,7 +316,7 @@ public class ItemEditor extends JDialog
         public void actionPerformed(ActionEvent e)
         {
             Hook hook = (Hook) hooksList.getSelectedValue();
-            HookEditor hookEditor = new HookEditor(hook, story.getAllActions());
+            HookEditor hookEditor = new HookEditor(ItemEditor.this, hook, story.getAllActions());
             hookEditor.setVisible(true);
             // todo analyze isOk
         }
