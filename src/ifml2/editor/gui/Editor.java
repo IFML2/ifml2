@@ -37,8 +37,6 @@ public class Editor extends JFrame
     private final JMenuBar mainMenu = new JMenuBar();
     private final JPopupMenu locationPopupMenu = new JPopupMenu();
 
-    private final JFrame frame;
-
     private Story story = new Story();
 
     private final NewLocationAction newLocationAction = new NewLocationAction();
@@ -56,8 +54,6 @@ public class Editor extends JFrame
 
     public Editor()
     {
-        frame = this;
-
         String IFML_EDITOR_VERSION = "ЯРИЛ 2.0 (" + EngineVersion.IFML_ENGINE_VERSION + ") Редактор";
         setTitle(IFML_EDITOR_VERSION);
         setContentPane(mainPanel);
@@ -68,7 +64,7 @@ public class Editor extends JFrame
 
         createPopupMenus();
 
-        GUIUtils.packAndCenterWindow(frame);
+        GUIUtils.packAndCenterWindow(this);
 
         newLocButton.setAction(newLocationAction);
         editLocButton.setAction(editLocationAction);
@@ -197,16 +193,16 @@ public class Editor extends JFrame
             public void run()
             {
                 Cursor previousCursor = mainPanel.getCursor();
+                mainPanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 try
                 {
-                    mainPanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                     progressBar.setVisible(true);
                     setAllData(OMManager.loadStoryFromXmlFile(storyFile, false).getStory());
                 }
                 catch (IFML2Exception e)
                 {
                     LOG.error("Error while loading story!", e);
-                    ifml2.GUIUtils.showErrorMessage(frame, e);
+                    ifml2.GUIUtils.showErrorMessage(Editor.this, e);
                 }
                 finally
                 {
@@ -257,7 +253,7 @@ public class Editor extends JFrame
             }
         });
 
-        if(ifmlFileChooser.showOpenDialog(frame) != JFileChooser.APPROVE_OPTION)
+        if(ifmlFileChooser.showOpenDialog(this) != JFileChooser.APPROVE_OPTION)
         {
             return null;
         }
@@ -377,7 +373,7 @@ public class Editor extends JFrame
             }
             catch (IFML2Exception e1)
             {
-                JOptionPane.showMessageDialog(frame, "Ошибка во время сохранения истории: " + e1.getMessage());
+                JOptionPane.showMessageDialog(Editor.this, "Ошибка во время сохранения истории: " + e1.getMessage());
             }
         }
     }
@@ -418,7 +414,7 @@ public class Editor extends JFrame
             }
         });
 
-        if(ifmlFileChooser.showSaveDialog(frame) != JFileChooser.APPROVE_OPTION)
+        if(ifmlFileChooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION)
         {
             return null;
         }
@@ -497,7 +493,7 @@ public class Editor extends JFrame
             Location location = (Location) locationsList.getSelectedValue();
             if(location != null)
             {
-                int answer = JOptionPane.showConfirmDialog(frame, "Вы уверены, что хотите удалить эту локацию?",
+                int answer = JOptionPane.showConfirmDialog(Editor.this, "Вы уверены, что хотите удалить эту локацию?",
                         "Удаление локации", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if(JOptionPane.YES_OPTION == answer)
                 {
@@ -661,7 +657,7 @@ public class Editor extends JFrame
             Item item = (Item) itemsList.getSelectedValue();
             if(item != null)
             {
-                int answer = JOptionPane.showConfirmDialog(frame, "Вы уверены, что хотите удалить этот предмет?");
+                int answer = JOptionPane.showConfirmDialog(Editor.this, "Вы уверены, что хотите удалить этот предмет?");
                 if(answer == 0)
                 {
                     story.getItems().remove(item);

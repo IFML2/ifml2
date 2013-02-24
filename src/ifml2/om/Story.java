@@ -21,6 +21,20 @@ import static ifml2.om.xml.XmlSchemaConstants.*;
 @XmlRootElement(name = "story")
 public class Story
 {
+    @Override
+    public Story clone() throws CloneNotSupportedException
+    {
+        Story clone = (Story) super.clone(); // todo check subscriptions made in anonymous constructor
+       /* clone.actions = GlazedLists.eventList(actions);
+        clone.dictionary = new HashMap<String, Word>(dictionary);
+        clone.items = GlazedLists.eventList(items);
+        clone.libraries = GlazedLists.eventList(libraries);
+        clone.locations = GlazedLists.eventList(locations);
+        clone.objectsHeap = new HashMap<String, IFMLObject>(objectsHeap);*/
+        //todo FULL COPY of objects! they all are OWN! that's why they should be copied not just links
+        return clone;
+    }
+
     @XmlAttribute(name = "id")
     @XmlID
     private String id = "story";
@@ -41,7 +55,7 @@ public class Story
     }
 
     @XmlJavaTypeAdapter(value=DictionaryAdapter.class)
-	private final HashMap<String, Word> dictionary = new HashMap<String, Word>();
+	private HashMap<String, Word> dictionary = new HashMap<String, Word>();
     public HashMap<String, Word> getDictionary()
     {
         return dictionary;
@@ -49,7 +63,7 @@ public class Story
 
     @XmlElementWrapper(name = STORY_LOCATIONS_ELEMENT)
     @XmlElement(name = LOCATIONS_LOCATION_ELEMENT)
-    private final EventList<Location> locations = new BasicEventList<Location>();
+    private EventList<Location> locations = new BasicEventList<Location>();
 
     // subscribe to location changes for items update
     {
@@ -83,7 +97,7 @@ public class Story
 
     @XmlElementWrapper(name = STORY_ITEMS_ELEMENT)
     @XmlElement(name = ITEMS_ITEM_ELEMENT)
-    private final EventList<Item> items = new BasicEventList<Item>();
+    private EventList<Item> items = new BasicEventList<Item>();
     public EventList<Item> getItems() { return items; }
 
     /**
@@ -105,7 +119,7 @@ public class Story
     // todo subscribe all objects to attributes change
     @XmlElementWrapper(name="actions")
     @XmlElement(name="action")
-    private final EventList<Action> actions = new BasicEventList<Action>();
+    private EventList<Action> actions = new BasicEventList<Action>();
     public EventList<Action> getActions() { return actions; }
 
     @XmlTransient

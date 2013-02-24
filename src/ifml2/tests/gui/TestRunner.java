@@ -29,19 +29,15 @@ public class TestRunner extends JFrame
     private JButton startButton;
     private JPanel mainPanel;
 
-    private final JFrame frame;
-
     private final TestManager testManager = new TestManager();
     private final ArrayList<ListDataListener> commandsListDataListeners = new ArrayList<ListDataListener>();
 
     public TestRunner()
     {
-        frame = this;
-
-        setTitle("ЯРИЛ 2.0 Тестер " + EngineVersion.IFML_ENGINE_VERSION);
+        super("ЯРИЛ 2.0 Тестер " + EngineVersion.IFML_ENGINE_VERSION);
         setContentPane(mainPanel);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        GUIUtils.packAndCenterWindow(frame);
+        GUIUtils.packAndCenterWindow(this);
 
         testsList.setModel(new ListModel()
         {
@@ -131,7 +127,7 @@ public class TestRunner extends JFrame
                 });
                 testFileChooser.setMultiSelectionEnabled(true);
 
-                if (testFileChooser.showOpenDialog(frame) != JFileChooser.APPROVE_OPTION)
+                if (testFileChooser.showOpenDialog(TestRunner.this) != JFileChooser.APPROVE_OPTION)
                 {
                     return;
                 }
@@ -154,28 +150,34 @@ public class TestRunner extends JFrame
             public void actionPerformed(ActionEvent event)
             {
                 loadTestsButton.setEnabled(false);
-                startButton.setEnabled(false);
                 try
                 {
-                    testManager.run(new Interface()
+                    startButton.setEnabled(false);
+                    try
                     {
-                        @Override
-                        public void outputText(String text)
+                        testManager.run(new Interface()
                         {
-                            logText.append(text);
-                        }
+                            @Override
+                            public void outputText(String text)
+                            {
+                                logText.append(text);
+                            }
 
-                        @Override
-                        public String inputText()
-                        {
-                            return null;
-                        }
-                    });
+                            @Override
+                            public String inputText()
+                            {
+                                return null;
+                            }
+                        });
+                    }
+                    finally
+                    {
+                        startButton.setEnabled(true);
+                    }
                 }
                 finally
                 {
                     loadTestsButton.setEnabled(true);
-                    startButton.setEnabled(true);
                 }
             }
         });
@@ -188,7 +190,7 @@ public class TestRunner extends JFrame
 
     private void showError(Throwable exception)
     {
-        JOptionPane.showMessageDialog(frame, "Произошла ошибка:\n" + exception.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, "Произошла ошибка:\n" + exception.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
     }
 
     public static void main(String[] args)

@@ -201,8 +201,7 @@ public class WordLinksEditor extends JDialog
     private void updateMainWord()
     {
         Object selectedMainWord = mainWordCombo.getSelectedItem();
-        DefaultComboBoxModel mainWordComboModel = new DefaultComboBoxModel(wordsClone.toArray());
-        mainWordCombo.setModel(mainWordComboModel);
+        mainWordCombo.setModel(new DefaultComboBoxModel(wordsClone.toArray()));
         mainWordCombo.setSelectedItem(selectedMainWord);
     }
 

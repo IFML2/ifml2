@@ -156,7 +156,7 @@ public class UsedLibsEditor extends JDialog
     {
         this.libraries = libraries;
         DefaultListModel usedLibsListModel = new DefaultListModel();
-                for(Library library : libraries)
+        for(Library library : libraries)
         {
             usedLibsListModel.addElement(library);
         }

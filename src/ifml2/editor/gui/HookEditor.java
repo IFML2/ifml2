@@ -161,7 +161,7 @@ public class HookEditor extends JDialog
             InstructionsEditor instructionsEditor = new InstructionsEditor(HookEditor.this, instructionsClone);
             if(instructionsEditor.showDialog())
             {
-                //todo
+                instructionsEditor.getData(instructionsClone);
             }
         }
     }
