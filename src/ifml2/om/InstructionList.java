@@ -38,4 +38,9 @@ public class InstructionList implements Cloneable
         }
         return clone;
     }
+
+    public int getSize()
+    {
+        return instructions.size();
+    }
 }
