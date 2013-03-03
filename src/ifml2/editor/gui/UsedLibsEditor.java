@@ -62,7 +62,7 @@ public class UsedLibsEditor extends JDialog
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-        addButton.addActionListener(new ActionListener()
+        addButton.setAction(new AbstractAction("Добавить...", GUIUtils.ADD_ELEMENT_ICON)
         {
             @Override
             public void actionPerformed(ActionEvent e)
@@ -82,7 +82,7 @@ public class UsedLibsEditor extends JDialog
                     }
                 });
 
-                if(libFileChooser.showOpenDialog(UsedLibsEditor.this) != JFileChooser.APPROVE_OPTION)
+                if (libFileChooser.showOpenDialog(UsedLibsEditor.this) != JFileChooser.APPROVE_OPTION)
                 {
                     return;
                 }
@@ -111,21 +111,21 @@ public class UsedLibsEditor extends JDialog
                 catch (IFML2Exception error)
                 {
                     JOptionPane.showMessageDialog(UsedLibsEditor.this, "Произошла ошибка во время загрузки библиотеки: \n" +
-                        error.getMessage(), "Ошибка при загрузке", JOptionPane.ERROR_MESSAGE);
+                            error.getMessage(), "Ошибка при загрузке", JOptionPane.ERROR_MESSAGE);
 
                     return;
                 }
 
                 setAllData(libraries);
 
-                if(library != null)
+                if (library != null)
                 {
                     usedLibsList.setSelectedValue(library, true);
                 }
             }
         });
 
-        delButton.addActionListener(new ActionListener()
+        delButton.setAction(new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
         {
             @Override
             public void actionPerformed(ActionEvent e)

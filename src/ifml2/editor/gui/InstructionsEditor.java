@@ -1,23 +1,80 @@
 package ifml2.editor.gui;
 
+import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ifml2.GUIUtils;
 import ifml2.om.InstructionList;
+import ifml2.vm.instructions.Instruction;
+import ifml2.vm.instructions.InstructionTypeEnum;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.event.ListDataListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.*;
 
 public class InstructionsEditor extends JDialog
 {
-    private static final String INSTR_EDITOR_TITLE = "Инструкции";
-
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
     private JList instructionsList;
+    private JButton addInstrButton;
+    private JButton editInstrButton;
+    private JButton delInstrButton;
+    private JButton upButton;
+    private JButton downButton;
     private boolean isOk;
+
+    private static final String INSTR_EDITOR_TITLE = "Инструкции";
+
+    // data to clone
     private InstructionList instructionListClone;
+
+    private final AbstractAction editInstrAction = new AbstractAction("Изменить...", GUIUtils.EDIT_ELEMENT_ICON)
+    {
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+            Instruction selectedInstr = (Instruction) instructionsList.getSelectedValue();
+            if(selectedInstr != null)
+            {
+                editInstruction(selectedInstr);
+            }
+        }
+    };
+    private final AbstractAction delInstrAction = new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
+    {
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+            if(JOptionPane.showConfirmDialog(InstructionsEditor.this, "Вы действительно хотите удалить выбранную инструкцию?",
+                    "Удаление инструкции", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
+            {
+                Instruction selectedInstr = (Instruction) instructionsList.getSelectedValue();
+                if(selectedInstr != null)
+                {
+                    instructionListClone.getInstructions().remove(selectedInstr);
+                }
+            }
+        }
+    };
+    private final AbstractAction upAction = new AbstractAction("", GUIUtils.UP_ICON)
+    {
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+            //todo
+        }
+    };
+    private final AbstractAction downAction = new AbstractAction("", GUIUtils.DOWN_ICON)
+    {
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+            //todo
+        }
+    };
 
     public InstructionsEditor(Window owner, final InstructionList instructionList)
     {
@@ -63,7 +120,39 @@ public class InstructionsEditor extends JDialog
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-        // clone data
+        // -- form actions init --
+
+        addInstrButton.setAction(new AbstractAction("Добавить...", GUIUtils.ADD_ELEMENT_ICON)
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                InstructionTypeEnum instrType = EditorUtils.askInstructionType(InstructionsEditor.this);
+                if(instrType != null)
+                {
+                    try
+                    {
+                        Instruction instruction = instrType.getInstrClass().newInstance();
+                        if (EditorUtils.showAssociatedEditor(InstructionsEditor.this, instruction))
+                        {
+                            instructionListClone.getInstructions().add(instruction);
+                            instructionsList.setSelectedValue(instruction, true);
+                        }
+                    }
+                    catch (Throwable ex)
+                    {
+                        GUIUtils.showErrorMessage(InstructionsEditor.this, ex);
+                    }
+                }
+            }
+        });
+        editInstrButton.setAction(editInstrAction);
+        delInstrButton.setAction(delInstrAction);
+        upButton.setAction(upAction);
+        downButton.setAction(downAction);
+
+        // -- clone data --
+
         try
         {
             instructionListClone = instructionList.clone();
@@ -73,33 +162,50 @@ public class InstructionsEditor extends JDialog
             GUIUtils.showErrorMessage(this, e);
         }
 
-        // init form
-        instructionsList.setModel(new ListModel()
+        // -- init form --
+
+        instructionsList.addListSelectionListener(new ListSelectionListener()
         {
             @Override
-            public int getSize()
+            public void valueChanged(ListSelectionEvent e)
             {
-                return instructionList.getSize();
-            }
-
-            @Override
-            public Object getElementAt(int index)
-            {
-                return instructionList.getInstructions().get(index);
-            }
-
-            @Override
-            public void addListDataListener(ListDataListener l)
-            {
-                //todo addListDataListener
-            }
-
-            @Override
-            public void removeListDataListener(ListDataListener l)
-            {
-                //todo removeListDataListener
+                UpdateActions();
             }
         });
+        instructionsList.addMouseListener(new MouseAdapter()
+        {
+            @Override
+            public void mouseClicked(MouseEvent e)
+            {
+                if(e.getClickCount() == 2)
+                {
+                    Instruction instruction = (Instruction) instructionsList.getSelectedValue();
+                    if(instruction != null)
+                    {
+                        editInstruction(instruction);
+                    }
+                }
+            }
+        });
+        instructionsList.setModel(new DefaultEventListModel<Instruction>(instructionListClone.getInstructions()));
+
+        UpdateActions();
+    }
+
+    private void editInstruction(Instruction instruction)
+    {
+        EditorUtils.showAssociatedEditor(InstructionsEditor.this, instruction);
+    }
+
+    private void UpdateActions()
+    {
+        boolean isInstrSelected = instructionsList.getSelectedValue() != null;
+        editInstrAction.setEnabled(isInstrSelected);
+        delInstrAction.setEnabled(isInstrSelected);
+
+        int selectedInstrIdx = instructionsList.getSelectedIndex();
+        upAction.setEnabled(isInstrSelected && selectedInstrIdx > 0);
+        downAction.setEnabled(isInstrSelected && selectedInstrIdx < instructionsList.getModel().getSize() - 1);
     }
 
     private void onOK()
@@ -120,8 +226,8 @@ public class InstructionsEditor extends JDialog
         return isOk;
     }
 
-    public void getData(InstructionList instructionList)
+    public void getData(@NotNull InstructionList instructionList)
     {
-        //todo instructionList.setInstuctions(ins);
+        instructionList.setInstructions(instructionListClone.getInstructions());
     }
 }

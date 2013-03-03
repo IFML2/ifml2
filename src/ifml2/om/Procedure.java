@@ -5,7 +5,6 @@ import ca.odell.glazedlists.EventList;
 import ifml2.vm.instructions.Instruction;
 
 import javax.xml.bind.annotation.*;
-import java.util.List;
 
 @XmlRootElement(name="procedure")
 public class Procedure
@@ -39,7 +38,7 @@ public class Procedure
     private final InstructionList procedureBody = new InstructionList();
     public InstructionList getProcedureBody() { return procedureBody; }
 
-    public List<Instruction> getInstructions()
+    public EventList<Instruction> getInstructions()
     {
         return procedureBody.getInstructions();
     }

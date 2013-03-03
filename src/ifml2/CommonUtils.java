@@ -1,8 +1,5 @@
 package ifml2;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
 public class CommonUtils
 {
     private static String getCurrentDirectory()
@@ -37,7 +34,7 @@ public class CommonUtils
         return getCurrentDirectory() + CommonConstants.TESTS_DIRECTORY;
     }
 
-    public static String getExtendedStackTrace(Throwable e)
+    /*public static String getExtendedStackTrace(Throwable e)
     {
         StringWriter stringWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(stringWriter);
@@ -52,5 +49,5 @@ public class CommonUtils
             stringBuilder.append(stringWriter.toString());
         }
         return stringBuilder.toString();
-    }
+    }*/
 }

@@ -35,8 +35,31 @@ public class LocationEditor extends JDialog
     private JButton editAttributesButton;
     private JList attributesList;
 
-    private final EditItemAction editItemAction = new EditItemAction();
-    private final DelItemAction delItemAction = new DelItemAction();
+    private final AbstractAction editItemAction = new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON)
+    {
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+            editItem((Item) itemsList.getSelectedValue());
+        }
+    };
+    private final AbstractAction delItemAction = new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
+    {
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+            Item item = (Item) itemsList.getSelectedValue();
+            if(item != null)
+            {
+                int answer = JOptionPane.showConfirmDialog(LocationEditor.this, "Вы уверены, что хотите удалить этот предмет?");
+                if(answer == 0)
+                {
+                    itemsClone.remove(item);
+                    updateItems();
+                }
+            }
+        }
+    };
 
     private static final String LOCATION_EDITOR_FORM_NAME = "Локация";
 
@@ -94,11 +117,34 @@ public class LocationEditor extends JDialog
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
         //AddItemAction addItemAction = new AddItemAction();
-        NewItemAction newItemAction = new NewItemAction();
-        addItemButton.setAction(newItemAction);
+        addItemButton.setAction(new AbstractAction("Добавить...")
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                Item item = new Item();
+                if(editItem(item))
+                {
+                    itemsClone.add(item);
+                    updateItems();
+                    itemsList.setSelectedValue(item, true);
+                }
+            }
+        });
         editItemButton.setAction(editItemAction);
         delItemButton.setAction(delItemAction);
-        EditAttributesAction editAttributesAction = new EditAttributesAction();
+        AbstractAction editAttributesAction = new AbstractAction("Изменить...")
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                ObjectAttributesEditor objectAttributesEditor = new ObjectAttributesEditor(LocationEditor.this, attributesClone, story);
+                if(objectAttributesEditor.showDialog())
+                {
+                    updateAttributes();
+                }
+            }
+        };
         editAttributesButton.setAction(editAttributesAction);
 
         itemsList.addListSelectionListener(new ListSelectionListener()
@@ -312,7 +358,7 @@ public class LocationEditor extends JDialog
     {
         private DelItemAction()
         {
-            super("Удалить...");
+            super("Удалить");
         }
 
         @Override
@@ -332,26 +378,6 @@ public class LocationEditor extends JDialog
     }
     */
 
-    private class NewItemAction extends AbstractAction
-    {
-        private NewItemAction()
-        {
-            super("Добавить...");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            Item item = new Item();
-            if(editItem(item))
-            {
-                itemsClone.add(item);
-                updateItems();
-                itemsList.setSelectedValue(item, true);
-            }
-        }
-    }
-
     private boolean editItem(Item item)
     {
         if(item != null)
@@ -365,60 +391,5 @@ public class LocationEditor extends JDialog
         }
 
         return false;
-    }
-
-    private class EditItemAction extends AbstractAction
-    {
-        private EditItemAction()
-        {
-            super("Редактировать...");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            editItem((Item) itemsList.getSelectedValue());
-        }
-    }
-
-    private class DelItemAction extends AbstractAction
-    {
-        private DelItemAction()
-        {
-            super("Удалить...");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            Item item = (Item) itemsList.getSelectedValue();
-            if(item != null)
-            {
-                int answer = JOptionPane.showConfirmDialog(LocationEditor.this, "Вы уверены, что хотите удалить этот предмет?");
-                if(answer == 0)
-                {
-                    itemsClone.remove(item);
-                    updateItems();
-                }
-            }
-        }
-    }
-
-    private class EditAttributesAction extends AbstractAction
-    {
-        private EditAttributesAction()
-        {
-            super("Изменить...");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            ObjectAttributesEditor objectAttributesEditor = new ObjectAttributesEditor(LocationEditor.this, attributesClone, story);
-            if(objectAttributesEditor.showDialog())
-            {
-                updateAttributes();
-            }
-        }
     }
 }

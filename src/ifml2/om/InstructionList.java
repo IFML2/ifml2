@@ -1,11 +1,11 @@
 package ifml2.om;
 
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
 import ifml2.vm.instructions.*;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
-import java.util.ArrayList;
-import java.util.List;
 
 public class InstructionList implements Cloneable
 {
@@ -24,23 +24,22 @@ public class InstructionList implements Cloneable
             @XmlElement(name = "setProperty", type = SetPropertyInstruction.class),
             @XmlElement(name = "moveItem", type = MoveItemInstruction.class)
     })
-    private List<Instruction> instructions = new ArrayList<Instruction>(); // InstructionList controls its instructions
-    public List<Instruction> getInstructions() { return instructions; }
+    public void setInstructions(EventList<Instruction> instructions)
+    {
+        this.instructions = instructions;
+    }
+    private EventList<Instruction> instructions = new BasicEventList<Instruction>(); // InstructionList controls its instructions
+    public EventList<Instruction> getInstructions() { return instructions; }
 
     @Override
     public InstructionList clone() throws CloneNotSupportedException
     {
         InstructionList clone = (InstructionList) super.clone();
-        clone.instructions =  new ArrayList<Instruction>(instructions.size());
+        clone.instructions =  new BasicEventList<Instruction>();
         for(Instruction instruction : instructions)
         {
             clone.instructions.add(instruction.clone());
         }
         return clone;
-    }
-
-    public int getSize()
-    {
-        return instructions.size();
     }
 }

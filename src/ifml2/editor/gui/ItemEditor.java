@@ -4,9 +4,9 @@ import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
-import com.sun.istack.internal.NotNull;
 import ifml2.GUIUtils;
 import ifml2.om.*;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -37,12 +37,38 @@ public class ItemEditor extends JDialog
     private boolean isOk = false;
     private Story story = null;
     private boolean toGenerateId = false;
+
     // clones
     private EventList<Attribute> attributesClone = null;
     private WordLinks wordLinksClone = null;
     private EventList<Hook> hooksClone = null;
-    private final EditHookAction editHookAction = new EditHookAction();
-    private final DeleteHookAction deleteHookAction = new DeleteHookAction();
+
+    // updated actions
+    private final AbstractAction editHookAction = new AbstractAction("Изменить...", GUIUtils.EDIT_ELEMENT_ICON)
+    {
+        @Override()
+        public void actionPerformed(ActionEvent e)
+        {
+            Hook selectedHook = (Hook) hooksList.getSelectedValue();
+            if (selectedHook != null)
+            {
+                editHook(selectedHook);
+            }
+        }
+    };
+    private final AbstractAction deleteHookAction = new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
+    {
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+            Hook selectedHook = (Hook) hooksList.getSelectedValue();
+            if (selectedHook != null && JOptionPane.showConfirmDialog(ItemEditor.this, "Вы действительно хотите удалить выбранный перехват?",
+                    "Удаление перехвата", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
+            {
+                hooksClone.remove(selectedHook);
+            }
+        }
+    };
 
     public ItemEditor(Window owner, @NotNull final Story story, @NotNull final Item item)
     {
@@ -62,7 +88,6 @@ public class ItemEditor extends JDialog
                 onOK();
             }
         });
-
         buttonCancel.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -90,14 +115,48 @@ public class ItemEditor extends JDialog
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-        EditAttributesAction editAttributesAction = new EditAttributesAction();
-        editAttributesButton.setAction(editAttributesAction);
-        EditWordsAction editWordsAction = new EditWordsAction();
-        editWordsButton.setAction(editWordsAction);
+        // -- init form --
+
+        editAttributesButton.setAction(new AbstractAction("Изменить...", GUIUtils.EDIT_ELEMENT_ICON)
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                ObjectAttributesEditor objectAttributesEditor = new ObjectAttributesEditor(ItemEditor.this, attributesClone, ItemEditor.this.story);
+                if(objectAttributesEditor.showDialog())
+                {
+                    objectAttributesEditor.getData(attributesClone);
+                }
+            }
+        });
+        editWordsButton.setAction(new AbstractAction("Изменить...", GUIUtils.EDIT_ELEMENT_ICON)
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                WordLinksEditor wordLinksEditor = new WordLinksEditor(ItemEditor.this);
+                wordLinksEditor.setAllData(ItemEditor.this.story.getDictionary(), wordLinksClone); //todo move to ctor
+                if(wordLinksEditor.showDialog())
+                {
+                    wordLinksEditor.getData(wordLinksClone);
+                }
+            }
+        });
         
         // hooks
-        AddHookAction addHookAction = new AddHookAction();
-        addHookButton.setAction(addHookAction);
+        addHookButton.setAction(new AbstractAction("Добавить...", GUIUtils.ADD_ELEMENT_ICON)
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                Hook hook = new Hook();
+                HookEditor hookEditor = new HookEditor(ItemEditor.this, hook, ItemEditor.this.story.getAllActions());
+                if(hookEditor.showDialog())
+                {
+                    hooksClone.add(hook);
+                }
+            }
+        });
         editHookButton.setAction(editHookAction);
         deleteHookButton.setAction(deleteHookAction);
         hooksList.addListSelectionListener(new ListSelectionListener()
@@ -195,8 +254,34 @@ public class ItemEditor extends JDialog
         
         // set hooks
         hooksClone = GlazedLists.eventList(item.hooks);
+        hooksList.addMouseListener(new MouseAdapter()
+        {
+            @Override
+            public void mouseClicked(MouseEvent e)
+            {
+                if(e.getClickCount() == 2)
+                {
+                    Hook selectedHook = (Hook) hooksList.getSelectedValue();
+                    if (selectedHook != null)
+                    {
+                        editHook(selectedHook);
+                    }
+                }
+            }
+        });
         hooksList.setModel(new DefaultEventListModel<Hook>(hooksClone));
+
+        // initially update form actions
         UpdateHookActions();
+    }
+
+    private void editHook(Hook hook)
+    {
+        HookEditor hookEditor = new HookEditor(ItemEditor.this, hook, story.getAllActions());
+        if(hookEditor.showDialog())
+        {
+            hookEditor.getData(hook);
+        }
     }
 
     private void UpdateHookActions()
@@ -250,89 +335,5 @@ public class ItemEditor extends JDialog
     {
         setVisible(true);
         return isOk;
-    }
-
-    private class EditAttributesAction extends AbstractAction
-    {
-        private EditAttributesAction()
-        {
-            super("Изменить");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            ObjectAttributesEditor objectAttributesEditor = new ObjectAttributesEditor(ItemEditor.this, attributesClone, story);
-            if(objectAttributesEditor.showDialog())
-            {
-                objectAttributesEditor.getData(attributesClone);
-            }
-        }
-    }
-
-    private class EditWordsAction extends AbstractAction
-    {
-        private EditWordsAction()
-        {
-            super("Изменить...");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            WordLinksEditor wordLinksEditor = new WordLinksEditor(ItemEditor.this);
-            wordLinksEditor.setAllData(story.getDictionary(), wordLinksClone);
-            if(wordLinksEditor.showDialog())
-            {
-                wordLinksEditor.getData(wordLinksClone);
-            }
-        }
-    }
-
-    private class AddHookAction extends AbstractAction
-    {
-        AddHookAction()
-        {
-            super("Добавить...");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            HookEditor hookEditor = new HookEditor(ItemEditor.this, new Hook(), story.getAllActions());
-            hookEditor.setVisible(true);
-            // todo analyze isOk
-        }
-    }
-
-    private class EditHookAction extends AbstractAction
-    {
-        private EditHookAction()
-        {
-            super("Изменить...");
-        }
-
-        @Override()
-        public void actionPerformed(ActionEvent e)
-        {
-            Hook hook = (Hook) hooksList.getSelectedValue();
-            HookEditor hookEditor = new HookEditor(ItemEditor.this, hook, story.getAllActions());
-            hookEditor.setVisible(true);
-            // todo analyze isOk
-        }
-    }
-
-    private class DeleteHookAction extends AbstractAction
-    {
-        private DeleteHookAction()
-        {
-            super("Удалить");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            //todo
-        }
     }
 }

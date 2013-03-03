@@ -1,10 +1,10 @@
 package ifml2.editor.gui;
 
-import com.sun.istack.internal.NotNull;
 import ifml2.GUIUtils;
 import ifml2.om.Action;
 import ifml2.om.Hook;
 import ifml2.om.InstructionList;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,9 +23,12 @@ public class HookEditor extends JDialog
     private JRadioButton insteadRadio;
     private JRadioButton afterRadio;
     private JButton editInstructionsButton;
-    private InstructionList instructionsClone;
+
+    // data to edit
+    private InstructionList instructionList; // no need to clone - InstructionList isn't modified here
 
     private static final String HOOK_EDITOR_TITLE = "Перехват";
+    private boolean isOk;
 
     public HookEditor(Window owner, @NotNull final Hook hook, @NotNull List<Action> actionList)
     {
@@ -74,20 +77,23 @@ public class HookEditor extends JDialog
 
         // -- form actions init --
 
-        EditInstructionsAction editInstructionsAction = new EditInstructionsAction();
-        editInstructionsButton.setAction(editInstructionsAction);
+        editInstructionsButton.setAction(new AbstractAction("Редактировать инструкции...", GUIUtils.EDIT_ELEMENT_ICON)
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                InstructionsEditor instructionsEditor = new InstructionsEditor(HookEditor.this, instructionList);
+                if(instructionsEditor.showDialog())
+                {
+                    instructionsEditor.getData(instructionList);
+                }
+            }
+        });
 
         // -- data init --
 
-        // data clones - for underling objects (all plain data are edited just in controls)
-        try
-        {
-            instructionsClone = hook.getInstructionList().clone();
-        }
-        catch (CloneNotSupportedException e)
-        {
-            throw new InternalError("InstructionList isn't cloneable!");
-        }
+        // no need to clone - InstructionList isn't modified here
+        instructionList = hook.getInstructionList();
 
         //  -- form init --
         // load parameters and current parameter after action select
@@ -115,6 +121,10 @@ public class HookEditor extends JDialog
         if(hook.getAction() != null)
         {
             actionCombo.setSelectedItem(hook.getAction()); // select hook's action
+            if(hook.getObjectElement() != null) // if hook has assigned objectElement
+            {
+                parameterCombo.setSelectedItem(hook.getObjectElement());
+            }
         }
         else if (actionCombo.getItemCount() > 0) // if hook's action is null (for new hook e.g.) ...
         {
@@ -140,29 +150,41 @@ public class HookEditor extends JDialog
 
     private void onOK()
     {
+        isOk = true;
         dispose();
     }
 
     private void onCancel()
     {
+        isOk = false;
         dispose();
     }
 
-    private class EditInstructionsAction extends AbstractAction
+    public boolean showDialog()
     {
-        public EditInstructionsAction()
-        {
-            super("Редактировать инструкции");
-        }
+        setVisible(true);
+        return isOk;
+    }
 
-        @Override
-        public void actionPerformed(ActionEvent e)
+    public void getData(@NotNull Hook hook)
+    {
+        hook.setAction((Action) actionCombo.getSelectedItem());
+        hook.setObjectElement((String) parameterCombo.getSelectedItem());
+        if(beforeRadio.isSelected())
         {
-            InstructionsEditor instructionsEditor = new InstructionsEditor(HookEditor.this, instructionsClone);
-            if(instructionsEditor.showDialog())
-            {
-                instructionsEditor.getData(instructionsClone);
-            }
+            hook.setType(Hook.HookTypeEnum.BEFORE);
+        }
+        else if(afterRadio.isSelected())
+        {
+            hook.setType(Hook.HookTypeEnum.AFTER);
+        }
+        else if(insteadRadio.isSelected())
+        {
+            hook.setType(Hook.HookTypeEnum.INSTEAD);
+        }
+        else
+        {
+            throw new InternalError("No hook type selected!");
         }
     }
 }

@@ -23,7 +23,7 @@ public class ShowMessageInstr extends Instruction
     }
 
     @XmlAttribute(name="type")
-    private MessageTypeEnum type;
+    private MessageTypeEnum type = MessageTypeEnum.TEXT; // default type
 
     private Boolean carriageReturn = true;
     @XmlAttribute(name = "carriageReturn")

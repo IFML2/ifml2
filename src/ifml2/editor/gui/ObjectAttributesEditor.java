@@ -3,11 +3,11 @@ package ifml2.editor.gui;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.swing.DefaultEventListModel;
-import com.sun.istack.internal.NotNull;
 import ifml2.GUIUtils;
 import ifml2.om.Attribute;
 import ifml2.om.Library;
 import ifml2.om.Story;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -19,7 +19,7 @@ import java.util.Vector;
 
 public class ObjectAttributesEditor extends JDialog
 {
-    public static final String OBJATTR_EDITOR_TITLE = "Признаки";
+    public static final String OBJECT_ATTRIBUTES_EDITOR_TITLE = "Признаки";
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
@@ -33,7 +33,7 @@ public class ObjectAttributesEditor extends JDialog
 
     public ObjectAttributesEditor(Window owner, @NotNull EventList<Attribute> attributes, @NotNull Story story)
     {
-        super(owner, OBJATTR_EDITOR_TITLE, ModalityType.DOCUMENT_MODAL);
+        super(owner, OBJECT_ATTRIBUTES_EDITOR_TITLE, ModalityType.DOCUMENT_MODAL);
 
         setContentPane(contentPane);
         getRootPane().setDefaultButton(buttonOK);
@@ -44,7 +44,6 @@ public class ObjectAttributesEditor extends JDialog
         {
             public void actionPerformed(ActionEvent e) {onOK();}
         });
-
         buttonCancel.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent e) {onCancel();}
@@ -69,10 +68,42 @@ public class ObjectAttributesEditor extends JDialog
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-        AddAttributeAction addAttributeAction = new AddAttributeAction();
-        addButton.setAction(addAttributeAction);
-        DelAttributeAction delAttributeAction = new DelAttributeAction();
-        delButton.setAction(delAttributeAction);
+        addButton.setAction(new AbstractAction("", GUIUtils.MOVE_LEFT_ICON)
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                int selectedRow = allAttrsTable.getSelectedRow();
+                if(selectedRow >= 0)
+                {
+                    Attribute attribute = (Attribute) allAttrsTable.getValueAt(selectedRow, 1);
+
+                    int attributeIndex = attributesClone.indexOf(attribute);
+                    if(attributeIndex >= 0)
+                    {
+                        objAttrsList.setSelectedIndex(attributeIndex); // just highlight existing attribute w/o adding
+                    }
+                    else
+                    {
+                        attributesClone.add(attribute);
+                        objAttrsList.setSelectedValue(attribute, true);
+                    }
+                }
+            }
+        });
+        delButton.setAction(new AbstractAction("", GUIUtils.MOVE_RIGHT_ICON)
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                Attribute selectedObject = (Attribute) objAttrsList.getSelectedValue();
+
+                if(selectedObject != null)
+                {
+                    attributesClone.remove(selectedObject);
+                }
+            }
+        });
 
         // --- set data with listeners ---
 
@@ -127,53 +158,5 @@ public class ObjectAttributesEditor extends JDialog
     {
         setVisible(true);
         return isOk;
-    }
-
-    private class AddAttributeAction extends AbstractAction
-    {
-        private AddAttributeAction()
-        {
-            super("<<");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            int selectedRow = allAttrsTable.getSelectedRow();
-            if(selectedRow >= 0)
-            {
-                Attribute attribute = (Attribute) allAttrsTable.getValueAt(selectedRow, 1);
-                
-                int attributeIndex = attributesClone.indexOf(attribute);
-                if(attributeIndex >= 0)
-                {
-                    objAttrsList.setSelectedIndex(attributeIndex); // just highlight existing attribute w/o adding
-                }
-                else
-                {
-                    attributesClone.add(attribute);
-                    objAttrsList.setSelectedValue(attribute, true);
-                }
-            }
-        }
-    }
-
-    private class DelAttributeAction extends AbstractAction
-    {
-        private DelAttributeAction()
-        {
-            super(">>");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            Attribute selectedObject = (Attribute) objAttrsList.getSelectedValue();
-
-            if(selectedObject != null)
-            {
-                attributesClone.remove(selectedObject);
-            }
-        }
     }
 }

@@ -89,29 +89,15 @@ public class GUIPlayer extends JFrame
 
     public static void main(String[] args)
     {
-        GUIPlayer guiPlayer = new GUIPlayer();
-
-        final String storyFile = getStoryFileNameForPlay(args);
-        if(storyFile == null)
-        {
-            JOptionPane.showMessageDialog(null, "История не выбрана, Плеер завершает свою работу");
-            guiPlayer.dispose();
-            return;
-        }
-
-        guiPlayer.setVisible(true);
-
-        guiPlayer.loadStory(storyFile);
+        startFromFile(getStoryFileNameForPlay(args));
     }
 
-    public static void startFromOM(Story story)
+    /*public static void startFromOM(Story story)
     {
         GUIPlayer guiPlayer = new GUIPlayer();
-
         guiPlayer.setVisible(true);
-
         guiPlayer.loadFromOM(story);
-    }
+    }*/
 
     private void loadFromOM(Story story)
     {
@@ -167,9 +153,10 @@ public class GUIPlayer extends JFrame
 
     private GUIPlayer()
     {
+        super("ЯРИЛ 2.0 " + EngineVersion.IFML_ENGINE_VERSION);
+
         initEngine();
 
-        setTitle("ЯРИЛ 2.0 " + EngineVersion.IFML_ENGINE_VERSION);
         setContentPane(mainPanel);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
@@ -255,5 +242,21 @@ public class GUIPlayer extends JFrame
     {
         commandHistory.add(gamerCommand);
         historyIterator = commandHistory.listIterator(commandHistory.size());
+    }
+
+    public static void startFromFile(String fileName)
+    {
+        GUIPlayer guiPlayer = new GUIPlayer();
+
+        if (fileName != null)
+        {
+            guiPlayer.setVisible(true);
+            guiPlayer.loadStory(fileName);
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(guiPlayer, "История не выбрана, Плеер завершает свою работу");
+            guiPlayer.dispose();
+        }
     }
 }

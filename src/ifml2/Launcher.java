@@ -1,9 +1,12 @@
 package ifml2;
 
 import ifml2.editor.gui.Editor;
+import ifml2.engine.EngineVersion;
 import ifml2.players.guiplayer.GUIPlayer;
+import ifml2.tests.gui.TestRunner;
 import org.apache.log4j.Logger;
 
+import javax.swing.*;
 import java.text.MessageFormat;
 import java.util.Map;
 
@@ -32,9 +35,50 @@ public class Launcher
         {
             Editor.main(getOtherArgs(args));
         }
+        else if(args.length > 0 && "tester".equalsIgnoreCase(args[0]))
+        {
+            TestRunner.main(getOtherArgs(args));
+        }
         else
         {
-            GUIPlayer.main(args);
+            Object playerOption = new Object()
+            {
+                @Override
+                public String toString()
+                {
+                    return "Плеер";
+                }
+            };
+            Object editorOption = new Object()
+            {
+                @Override
+                public String toString()
+                {
+                    return "Редактор";
+                }
+            };
+            Object testerOption = new Object()
+            {
+                @Override
+                public String toString()
+                {
+                    return "Тестер";
+                }
+            };
+            Object answer = JOptionPane.showInputDialog(null, "Что запустить?", "ЯРИЛ 2.0 " + EngineVersion.IFML_ENGINE_VERSION,
+                    JOptionPane.QUESTION_MESSAGE, null, new Object[]{playerOption, editorOption, testerOption}, playerOption);
+            if(playerOption.equals(answer))
+            {
+                GUIPlayer.main(args);
+            }
+            else if(editorOption.equals(answer))
+            {
+                Editor.main(args);
+            }
+            else if(testerOption.equals(answer))
+            {
+                TestRunner.main(args);
+            }
         }
     }
 

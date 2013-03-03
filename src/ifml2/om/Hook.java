@@ -17,14 +17,22 @@ public class Hook
     }
 
     @XmlAttribute(name = "objectElement")
-    public String objectElement;
+    public void setObjectElement(String objectElement)
+    {
+        this.objectElement = objectElement;
+    }
+    private String objectElement;
     public String getObjectElement()
     {
         return objectElement;
     }
 
     @XmlAttribute(name = "type")
-    public HookTypeEnum type = HookTypeEnum.INSTEAD; // default value for new hook in editors
+    public void setType(HookTypeEnum type)
+    {
+        this.type = type;
+    }
+    private HookTypeEnum type = HookTypeEnum.INSTEAD; // default value for new hook in editors
     public HookTypeEnum getType()
     {
         return type;

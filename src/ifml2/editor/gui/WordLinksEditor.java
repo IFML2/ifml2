@@ -145,16 +145,16 @@ public class WordLinksEditor extends JDialog
         ppText.getDocument().putProperty(CASE_DOC_PROPERTY, Word.GramCaseEnum.PP);
         ppText.getDocument().addDocumentListener(wordDocListener);
 
-        newWordButton.addActionListener(new ActionListener()
+        newWordButton.setAction(new AbstractAction("Новое...", GUIUtils.ADD_ELEMENT_ICON)
         {
             @Override
             public void actionPerformed(ActionEvent e)
             {
                 String newWordIp = JOptionPane.showInputDialog(WORD_IP_QUERY_PROMPT);
-                if(newWordIp != null && !"".equals(newWordIp))
+                if (newWordIp != null && !"".equals(newWordIp))
                 {
                     Word word = new Word(newWordIp);
-                    if(dictionary.containsKey(newWordIp))
+                    if (dictionary.containsKey(newWordIp))
                     {
                         JOptionPane.showMessageDialog(WordLinksEditor.this, DUPLICATED_WORD_ERROR_MESSAGE, DUPLICATED_WORD_ERROR_DIALOG_TITLE,
                                 JOptionPane.INFORMATION_MESSAGE);
@@ -172,16 +172,16 @@ public class WordLinksEditor extends JDialog
             }
         });
 
-        delWordButton.addActionListener(new ActionListener()
+        delWordButton.setAction(new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
         {
             @Override
             public void actionPerformed(ActionEvent e)
             {
                 Word word = (Word) wordList.getSelectedValue();
-                if(word != null)
+                if (word != null)
                 {
                     int answer = JOptionPane.showConfirmDialog(getContentPane(), WORD_DELETION_QUERY_PROMPT);
-                    if(answer == JOptionPane.YES_OPTION)
+                    if (answer == JOptionPane.YES_OPTION)
                     {
                         //dictionary.values().remove(word);
                         wordsClone.remove(word);
