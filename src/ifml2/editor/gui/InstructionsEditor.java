@@ -1,5 +1,6 @@
 package ifml2.editor.gui;
 
+import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ifml2.GUIUtils;
 import ifml2.om.InstructionList;
@@ -64,7 +65,18 @@ public class InstructionsEditor extends JDialog
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            //todo
+            Instruction selectedInst = (Instruction) instructionsList.getSelectedValue();
+            EventList<Instruction> instructions = instructionListClone.getInstructions();
+            int selectedIndex = instructions.indexOf(selectedInst);
+            if(selectedInst != null && selectedIndex > 0)
+            {
+                //get previous instruction
+                Instruction prevInstr = instructions.get(selectedIndex - 1);
+                // exchange previous instruction with selected
+                instructions.set(selectedIndex - 1, selectedInst);
+                instructions.set(selectedIndex,  prevInstr);
+                instructionsList.setSelectedValue(selectedInst, true);
+            }
         }
     };
     private final AbstractAction downAction = new AbstractAction("", GUIUtils.DOWN_ICON)
@@ -73,6 +85,18 @@ public class InstructionsEditor extends JDialog
         public void actionPerformed(ActionEvent e)
         {
             //todo
+            Instruction selectedInst = (Instruction) instructionsList.getSelectedValue();
+            EventList<Instruction> instructions = instructionListClone.getInstructions();
+            int selectedIndex = instructions.indexOf(selectedInst);
+            if(selectedInst != null && selectedIndex < instructions.size() - 1)
+            {
+                // get next instruction
+                Instruction nextInstr = instructions.get(selectedIndex + 1);
+                // exchange next instruction with selected
+                instructions.set(selectedIndex + 1, selectedInst);
+                instructions.set(selectedIndex,  nextInstr);
+                instructionsList.setSelectedValue(selectedInst, true);
+            }
         }
     };
 

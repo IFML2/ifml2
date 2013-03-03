@@ -11,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Arrays;
@@ -126,14 +125,13 @@ public class ObjectAttributesEditor extends JDialog
                 data.add(line);
             }
         }
-        TableModel tableModel = new DefaultTableModel(data, new Vector<String>(Arrays.asList("Библиотека", "Признак", "Описание"))) {
+        allAttrsTable.setModel(new DefaultTableModel(data, new Vector<String>(Arrays.asList("Библиотека", "Признак", "Описание"))) {
             @Override
             public boolean isCellEditable(int row, int column)
             {
                 return false;
             }
-        };
-        allAttrsTable.setModel(tableModel);
+        });
     }
 
     private void onOK()
