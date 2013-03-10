@@ -32,7 +32,6 @@
       <mountPoint id="88" root="87" location="" mode="755" />
     </mountPoints>
     <entries>
-      <fileEntry mountPoint="23" file="C:/Users/realsonic/Documents/ЯРИЛ 2.0/ifml2 project/out/artifacts/ifml2/annotations.jar" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
       <dirEntry mountPoint="23" file="C:/Users/realsonic/Documents/ЯРИЛ 2.0/ifml2 project/libs" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="libs" excludeSuffixes="" dirMode="755" overrideDirMode="false">
         <exclude>
           <entry location=".svn" fileType="regular" />
@@ -46,7 +45,6 @@
       <fileEntry mountPoint="23" file="C:/Users/realsonic/Documents/ЯРИЛ 2.0/ifml2 project/lib/glazedlists_java15-1.9-20110828.184933-10.jar" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
       <fileEntry mountPoint="23" file="C:/Users/realsonic/Documents/ЯРИЛ 2.0/ifml2 project/lib/apache-log4j-1.2.17/log4j-1.2.17.jar" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
       <fileEntry mountPoint="23" file="C:/Users/realsonic/Documents/ЯРИЛ 2.0/ifml2 project/docs/notes.txt" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
-      <fileEntry mountPoint="23" file="C:/Users/realsonic/Documents/ЯРИЛ 2.0/ifml2 project/docs/todo.txt" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
       <fileEntry mountPoint="23" file="C:/Users/realsonic/Documents/ЯРИЛ 2.0/ifml2 project/log4j.xml" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
       <dirEntry mountPoint="34" file="C:/Users/realsonic/Documents/ЯРИЛ 2.0/ifml2 project/Games" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="Games" excludeSuffixes="*.zip" dirMode="755" overrideDirMode="false">
         <exclude>
@@ -349,18 +347,6 @@
                             <void property="target">
                               <object class="java.io.File">
                                 <string>notes.txt</string>
-                              </object>
-                            </void>
-                          </object>
-                        </void>
-                        <void method="add">
-                          <object class="com.install4j.runtime.beans.screens.components.ProgramGroupFileConfig">
-                            <void property="name">
-                              <string>Планы следующих выпусков</string>
-                            </void>
-                            <void property="target">
-                              <object class="java.io.File">
-                                <string>todo.txt</string>
                               </object>
                             </void>
                           </object>
