@@ -258,9 +258,9 @@ public class Engine
                 Collections.sort(firingHooks, new Comparator<Hook>()
                 {
                     @Override
-                    public int compare(Hook o1, Hook o2)
+                    public int compare(Hook firstHook, Hook secondHook)
                     {
-                        return o1.type.sortValue - o2.type.sortValue;
+                        return firstHook.getType().sortValue - secondHook.getType().sortValue;
                     }
                 });
 
@@ -269,11 +269,11 @@ public class Engine
                 for(Hook hook : firingHooks)
                 {
                     // if it's BEFORE - fire it
-                    if(Hook.HookTypeEnum.BEFORE.equals(hook.type))
+                    if(Hook.HookTypeEnum.BEFORE.equals(hook.getType()))
                     {
                         virtualMachine.runHook(hook, parseResult.formalElements);
                     }
-                    else if (Hook.HookTypeEnum.AFTER.equals(hook.type))
+                    else if (Hook.HookTypeEnum.AFTER.equals(hook.getType()))
                     {
                         // if it's AFTER but action isn't fired yet - fire action ...
                         if(!isActionFired)
@@ -315,7 +315,7 @@ public class Engine
         return story;
     }
 
-    void setStory(Story story)
+    public void setStory(Story story)
     {
         this.story = story;
         getParser().setStory(story);

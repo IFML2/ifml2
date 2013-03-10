@@ -1,21 +1,22 @@
 package ifml2.editor.gui;
 
+import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ifml2.GUIUtils;
-import ifml2.editor.gui.instructions.ShowMessageInstrEditor;
 import ifml2.om.Procedure;
 import ifml2.vm.instructions.Instruction;
 import ifml2.vm.instructions.InstructionTypeEnum;
-import ifml2.vm.instructions.ShowMessageInstr;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 
 public class ProceduresEditor extends JDialog
 {
+    public static final String PROCEDURES_EDITOR_TITLE = "Процедуры";
     private JPanel contentPane;
     private JButton buttonOK;
     private JList proceduresList;
@@ -26,28 +27,118 @@ public class ProceduresEditor extends JDialog
     private JButton editInstructionButton;
     private JButton delInstructionButton;
 
-    private final JDialog dialog;
     private HashMap<String, Procedure> procedures = null;
 
-    private final DelProcedureAction delProcedureAction = new DelProcedureAction();
-
-    private final AddInstructionAction addInstructionAction = new AddInstructionAction();
-    private final EditInstructionAction editInstructionAction = new EditInstructionAction();
-    private final DelInstructionAction delInstructionAction = new DelInstructionAction();
-
-    public ProceduresEditor()
+    private final AbstractAction delProcedureAction = new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
     {
-        dialog = this;
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+            Procedure procedure = (Procedure) proceduresList.getSelectedValue();
 
-        setTitle("Процедуры");
+            if(procedure == null)
+            {
+                return;
+            }
+
+            int answer = JOptionPane.showConfirmDialog(ProceduresEditor.this, "Вы действительно хотите удалить процедуру " + procedure.getName() + "?",
+                    "Удаление процедуры", JOptionPane.YES_NO_OPTION);
+
+            if(answer == 0)
+            {
+                procedures.values().remove(procedure);
+                updateAllData();
+            }
+        }
+    };
+
+    private final AbstractAction addInstructionAction = new AbstractAction("Добавить...", GUIUtils.ADD_ELEMENT_ICON)
+    {
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+            Procedure procedure = (Procedure) proceduresList.getSelectedValue();
+
+            if (procedure != null)
+            {
+                InstructionTypeEnum answer = EditorUtils.askInstructionType(ProceduresEditor.this);
+
+                if (answer != null)
+                {
+                    try
+                    {
+                        Instruction instruction = answer.getInstrClass().newInstance();
+                        if (EditorUtils.showAssociatedEditor(ProceduresEditor.this, instruction))
+                        {
+                            procedure.getInstructions().add(instruction);
+                            updateSelectedProcedure();
+                            instructionsList.setSelectedValue(instruction, true);
+                        }
+                    }
+                    catch (Throwable ex)
+                    {
+                        GUIUtils.showErrorMessage(ProceduresEditor.this, ex);
+                    }
+                }
+            }
+        }
+    };
+    private final AbstractAction editInstructionAction = new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON)
+    {
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+            Instruction instruction = (Instruction) instructionsList.getSelectedValue();
+
+            if (instruction != null && EditorUtils.showAssociatedEditor(ProceduresEditor.this, instruction))
+            {
+                updateSelectedProcedure();
+            }
+        }
+    };
+    private final AbstractAction delInstructionAction = new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
+    {
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+            Procedure procedure = (Procedure) proceduresList.getSelectedValue();
+            Instruction instruction = (Instruction) instructionsList.getSelectedValue();
+
+            if (procedure != null && instruction != null &&
+                    JOptionPane.showConfirmDialog(ProceduresEditor.this, "Вы действительно хотите удалить выбраную инструкцию?",
+                    "Удаление инструкции", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
+            {
+                procedure.getInstructions().remove(instruction);
+            }
+        }
+    };
+
+    public ProceduresEditor(Window owner)
+    {
+        super(owner, PROCEDURES_EDITOR_TITLE, ModalityType.DOCUMENT_MODAL);
+
         setContentPane(contentPane);
-        setModal(true);
         getRootPane().setDefaultButton(buttonOK);
 
-        GUIUtils.packAndCenterWindow(dialog);
+        GUIUtils.packAndCenterWindow(this);
 
-        AddProcedureAction addProcedureAction = new AddProcedureAction();
-        addProcedureButton.setAction(addProcedureAction);
+        addProcedureButton.setAction(new AbstractAction("Новая...", GUIUtils.ADD_ELEMENT_ICON)
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                String procedureName = JOptionPane.showInputDialog(ProceduresEditor.this, "Имя новой процедуры:",
+                        "Новая процедура", JOptionPane.QUESTION_MESSAGE);
+
+                if(procedureName != null && !"".equals(procedureName))
+                {
+                    Procedure procedure = new Procedure(procedureName);
+                    procedures.put(procedureName, procedure);
+                    updateAllData();
+                    proceduresList.setSelectedValue(procedure, true);
+                }
+            }
+        });
         delProcedureButton.setAction(delProcedureAction);
 
         addInstructionButton.setAction(addInstructionAction);
@@ -99,17 +190,10 @@ public class ProceduresEditor extends JDialog
     {
         Procedure procedure = (Procedure) proceduresList.getSelectedValue();
 
-        if(procedure == null)
+        if (procedure != null)
         {
-            return;
+            instructionsList.setModel(new DefaultEventListModel<Instruction>(procedure.getInstructions()));
         }
-
-        DefaultListModel instructionsListModel = new DefaultListModel();
-        for(Instruction instruction : procedure.getInstructions())
-        {
-            instructionsListModel.addElement(instruction);
-        }
-        instructionsList.setModel(instructionsListModel);
     }
 
     private void onOK()
@@ -123,28 +207,6 @@ public class ProceduresEditor extends JDialog
         updateAllData();
     }
 
-    private class AddProcedureAction extends AbstractAction
-    {
-        private AddProcedureAction()
-        {
-            super("Новая...");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            String procedureName = JOptionPane.showInputDialog(dialog, "Имя новой процедуры:");
-
-            if(procedureName != null && !"".equals(procedureName))
-            {
-                Procedure procedure = new Procedure(procedureName);
-                procedures.put(procedureName, procedure);
-                updateAllData();
-                proceduresList.setSelectedValue(procedure, true);
-            }
-        }
-    }
-
     private void updateAllData()
     {
         DefaultListModel proceduresListModel = new DefaultListModel();
@@ -153,150 +215,5 @@ public class ProceduresEditor extends JDialog
             proceduresListModel.addElement(procedure);
         }
         proceduresList.setModel(proceduresListModel);
-    }
-
-    private class DelProcedureAction extends AbstractAction
-    {
-        private DelProcedureAction()
-        {
-            super("Удалить...");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            Procedure procedure = (Procedure) proceduresList.getSelectedValue();
-
-            if(procedure == null)
-            {
-                return;
-            }
-
-            int answer = JOptionPane.showConfirmDialog(dialog, "Вы действительно хотите удалить процедуру " + procedure.getName() + "?",
-                    "Удаление процедуры", JOptionPane.YES_NO_OPTION);
-
-            if(answer == 0)
-            {
-                procedures.values().remove(procedure);
-                updateAllData();
-            }
-        }
-    }
-
-    private class EditInstructionAction extends AbstractAction
-    {
-        private EditInstructionAction()
-        {
-            super("Редактировать...");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            Instruction instruction = (Instruction) instructionsList.getSelectedValue();
-
-            if(instruction == null)
-            {
-                return;
-            }
-
-            if(showAssociatedEditor(instruction))
-            {
-                updateSelectedProcedure();
-            }
-        }
-    }
-
-    private boolean showAssociatedEditor(Instruction instruction)
-    {
-        if(instruction == null)
-        {
-            return false;
-        }
-
-        if(instruction instanceof ShowMessageInstr)
-        {
-            ShowMessageInstrEditor showMessageInstrEditor = new ShowMessageInstrEditor();
-            showMessageInstrEditor.setData((ShowMessageInstr) instruction);
-            showMessageInstrEditor.setVisible(true);
-            if(showMessageInstrEditor.isOk)
-            {
-                showMessageInstrEditor.getData((ShowMessageInstr) instruction);
-                return true;
-            }
-        }
-        else
-        {
-            JOptionPane.showMessageDialog(dialog, "Инструкция для " + instruction.getClass().getName() + " пока не редактируется");
-        }
-
-        return false;
-    }
-
-    private class DelInstructionAction extends AbstractAction
-    {
-        private DelInstructionAction()
-        {
-            super("Удалить...");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            Procedure procedure = (Procedure) proceduresList.getSelectedValue();
-            Instruction instruction = (Instruction) instructionsList.getSelectedValue();
-
-            if(procedure == null || instruction == null)
-            {
-                return;
-            }
-
-            int answer = JOptionPane.showConfirmDialog(dialog, "Вы действительно хотите удалить выбраную инструкцию?",
-                    "Удаление инструкции", JOptionPane.YES_NO_OPTION);
-
-            if(answer == 0)
-            {
-                procedure.getInstructions().remove(instruction);
-                updateSelectedProcedure();
-            }
-        }
-    }
-
-    private class AddInstructionAction extends AbstractAction
-    {
-        private AddInstructionAction()
-        {
-            super("Добавить...");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            Procedure procedure = (Procedure) proceduresList.getSelectedValue();
-
-            if(procedure == null)
-            {
-                return;
-            }
-
-            InstructionTypeEnum answer = (InstructionTypeEnum) JOptionPane.showInputDialog(dialog, "Выберите тип инструкции",
-                    "Новая инструкция", JOptionPane.PLAIN_MESSAGE, null, InstructionTypeEnum.values(),
-                    InstructionTypeEnum.SHOW_MESSAGE);
-
-            try
-            {
-                Instruction instruction = (Instruction) answer.getInstrClass().newInstance();
-                if(showAssociatedEditor(instruction))
-                {
-                    procedure.getInstructions().add(instruction);
-                    updateSelectedProcedure();
-                    instructionsList.setSelectedValue(instruction, true);
-                }
-            }
-            catch (Throwable ex)
-            {
-                GUIUtils.showErrorMessage(dialog, ex);
-            }
-        }
     }
 }

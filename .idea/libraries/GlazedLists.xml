@@ -4,6 +4,8 @@
       <root url="jar://$PROJECT_DIR$/lib/glazedlists_java15-1.9-20110828.184933-10.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/lib/glazedlists_java15-1.9-20110828.184933-10-sources.jar!/" />
+    </SOURCES>
   </library>
 </component>

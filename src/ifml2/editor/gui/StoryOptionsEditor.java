@@ -7,6 +7,7 @@ import ifml2.om.Procedure;
 import ifml2.om.StoryOptions;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 import java.util.HashMap;
 
@@ -18,14 +19,14 @@ public class StoryOptionsEditor extends JDialog
     private JComboBox startLocCombo;
     private JComboBox startProcedureCombo;
     private JCheckBox showStartLocDescCheck;
-    public boolean isOk = false;
+    private boolean isOk = false;
     private final static String STORY_OPTIONS_EDITOR_FORM_NAME = "Настройка истории";
 
-    public StoryOptionsEditor()
+    public StoryOptionsEditor(Window owner)
     {
-        setTitle(STORY_OPTIONS_EDITOR_FORM_NAME);
+        super(owner, STORY_OPTIONS_EDITOR_FORM_NAME, ModalityType.DOCUMENT_MODAL);
+
         setContentPane(contentPane);
-        setModal(true);
         getRootPane().setDefaultButton(buttonOK);
 
         GUIUtils.packAndCenterWindow(this);
@@ -95,5 +96,11 @@ public class StoryOptionsEditor extends JDialog
         storyOptions.startLocationOption.location = (Location) startLocCombo.getSelectedItem();
         storyOptions.startLocationOption.showStartLocDesc = showStartLocDescCheck.isSelected();
         storyOptions.startProcedureOption.procedure = (Procedure) startProcedureCombo.getSelectedItem();
+    }
+
+    public boolean showDialog()
+    {
+        setVisible(true);
+        return isOk;
     }
 }

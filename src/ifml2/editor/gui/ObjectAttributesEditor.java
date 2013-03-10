@@ -7,16 +7,18 @@ import ifml2.GUIUtils;
 import ifml2.om.Attribute;
 import ifml2.om.Library;
 import ifml2.om.Story;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
+import java.awt.*;
 import java.awt.event.*;
 import java.util.Arrays;
 import java.util.Vector;
 
 public class ObjectAttributesEditor extends JDialog
 {
+    public static final String OBJECT_ATTRIBUTES_EDITOR_TITLE = "Признаки";
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
@@ -26,16 +28,13 @@ public class ObjectAttributesEditor extends JDialog
     private JButton delButton;
 
     private EventList<Attribute> attributesClone = null;
-    public boolean isOk = false;
+    private boolean isOk = false;
 
-    public ObjectAttributesEditor(EventList<Attribute> attributes, Story story)
+    public ObjectAttributesEditor(Window owner, @NotNull EventList<Attribute> attributes, @NotNull Story story)
     {
-        assert attributes != null;
-        assert story != null;
+        super(owner, OBJECT_ATTRIBUTES_EDITOR_TITLE, ModalityType.DOCUMENT_MODAL);
 
-        setTitle("Признаки");
         setContentPane(contentPane);
-        setModal(true);
         getRootPane().setDefaultButton(buttonOK);
 
         GUIUtils.packAndCenterWindow(this);
@@ -44,7 +43,6 @@ public class ObjectAttributesEditor extends JDialog
         {
             public void actionPerformed(ActionEvent e) {onOK();}
         });
-
         buttonCancel.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent e) {onCancel();}
@@ -69,10 +67,42 @@ public class ObjectAttributesEditor extends JDialog
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-        AddAttributeAction addAttributeAction = new AddAttributeAction();
-        addButton.setAction(addAttributeAction);
-        DelAttributeAction delAttributeAction = new DelAttributeAction();
-        delButton.setAction(delAttributeAction);
+        addButton.setAction(new AbstractAction("", GUIUtils.MOVE_LEFT_ICON)
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                int selectedRow = allAttrsTable.getSelectedRow();
+                if(selectedRow >= 0)
+                {
+                    Attribute attribute = (Attribute) allAttrsTable.getValueAt(selectedRow, 1);
+
+                    int attributeIndex = attributesClone.indexOf(attribute);
+                    if(attributeIndex >= 0)
+                    {
+                        objAttrsList.setSelectedIndex(attributeIndex); // just highlight existing attribute w/o adding
+                    }
+                    else
+                    {
+                        attributesClone.add(attribute);
+                        objAttrsList.setSelectedValue(attribute, true);
+                    }
+                }
+            }
+        });
+        delButton.setAction(new AbstractAction("", GUIUtils.MOVE_RIGHT_ICON)
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                Attribute selectedObject = (Attribute) objAttrsList.getSelectedValue();
+
+                if(selectedObject != null)
+                {
+                    attributesClone.remove(selectedObject);
+                }
+            }
+        });
 
         // --- set data with listeners ---
 
@@ -95,14 +125,13 @@ public class ObjectAttributesEditor extends JDialog
                 data.add(line);
             }
         }
-        TableModel tableModel = new DefaultTableModel(data, new Vector<String>(Arrays.asList("Библиотека", "Признак", "Описание"))) {
+        allAttrsTable.setModel(new DefaultTableModel(data, new Vector<String>(Arrays.asList("Библиотека", "Признак", "Описание"))) {
             @Override
             public boolean isCellEditable(int row, int column)
             {
                 return false;
             }
-        };
-        allAttrsTable.setModel(tableModel);
+        });
     }
 
     private void onOK()
@@ -123,51 +152,9 @@ public class ObjectAttributesEditor extends JDialog
         attributes.addAll(attributesClone);
     }
 
-    private class AddAttributeAction extends AbstractAction
+    public boolean showDialog()
     {
-        private AddAttributeAction()
-        {
-            super("<<");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            int selectedRow = allAttrsTable.getSelectedRow();
-            if(selectedRow >= 0)
-            {
-                Attribute attribute = (Attribute) allAttrsTable.getValueAt(selectedRow, 1);
-                
-                int attributeIndex = attributesClone.indexOf(attribute);
-                if(attributeIndex >= 0)
-                {
-                    objAttrsList.setSelectedIndex(attributeIndex); // just highlight existing attribute w/o adding
-                }
-                else
-                {
-                    attributesClone.add(attribute);
-                    objAttrsList.setSelectedValue(attribute, true);
-                }
-            }
-        }
-    }
-
-    private class DelAttributeAction extends AbstractAction
-    {
-        private DelAttributeAction()
-        {
-            super(">>");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            Attribute selectedObject = (Attribute) objAttrsList.getSelectedValue();
-
-            if(selectedObject != null)
-            {
-                attributesClone.remove(selectedObject);
-            }
-        }
+        setVisible(true);
+        return isOk;
     }
 }

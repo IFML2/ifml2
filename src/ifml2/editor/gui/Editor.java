@@ -21,6 +21,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.Arrays;
 
 public class Editor extends JFrame
@@ -35,19 +36,79 @@ public class Editor extends JFrame
     private JButton newItemButton;
     private JButton editItemButton;
     private JButton delItemButton;
-    private final JMenuBar mainMenu = new JMenuBar();
-    private final JPopupMenu locationPopupMenu = new JPopupMenu();
-
-    private final JFrame frame;
 
     private Story story = new Story();
 
-    private final NewLocationAction newLocationAction = new NewLocationAction();
-    private final EditLocationAction editLocationAction = new EditLocationAction();
-    private final DelLocationAction delLocationAction = new DelLocationAction();
+    private final AbstractAction newLocationAction = new AbstractAction("Добавить...", GUIUtils.ADD_ELEMENT_ICON)
+    {
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+            Location location = new Location();
+            if(editLocation(location))
+            {
+                story.getLocations().add(location);
+                reloadDataInForm();
+                locationsList.setSelectedValue(location, true);
+            }
+        }
+    };
+    private final AbstractAction editLocationAction = new AbstractAction(EDIT_LOCATION_ACTION_NAME, GUIUtils.EDIT_ELEMENT_ICON)
+    {
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+            editLocation((Location) locationsList.getSelectedValue());
+        }
+    };
+    private final AbstractAction delLocationAction = new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
+    {
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+            Location location = (Location) locationsList.getSelectedValue();
+            if(location != null)
+            {
+                if(JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(Editor.this, "Вы уверены, что хотите удалить эту локацию?",
+                        "Удаление локации", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE))
+                {
+                    story.getLocations().remove(location);
+                    reloadDataInForm();
+                }
+            }
+        }
+    };
 
-    private final EditItemAction editItemAction = new EditItemAction();
-    private final DelItemAction delItemAction = new DelItemAction();
+    private final AbstractAction editItemAction = new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON)
+    {
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+            Item item = (Item) itemsList.getSelectedValue();
+            if(editItem(item))
+            {
+                reloadDataInForm();
+                itemsList.setSelectedValue(item, true);
+            }
+        }
+    };
+    private final AbstractAction delItemAction = new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
+    {
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+            Item item = (Item) itemsList.getSelectedValue();
+            if(item != null)
+            {
+                if(JOptionPane.showConfirmDialog(Editor.this, "Вы уверены, что хотите удалить этот предмет?",
+                        "Удаление предмета", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
+                {
+                    story.getItems().remove(item);
+                    reloadDataInForm();
+                }
+            }
+        }
+    };
 
     private static final String FILE_MENU_NAME = "Файл";
     private static final String STORY_MENU_NAME = "История";
@@ -57,28 +118,37 @@ public class Editor extends JFrame
 
     public Editor()
     {
-        frame = this;
-
         String IFML_EDITOR_VERSION = "ЯРИЛ 2.0 (" + EngineVersion.IFML_ENGINE_VERSION + ") Редактор";
         setTitle(IFML_EDITOR_VERSION);
         setContentPane(mainPanel);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
-        createMainMenu();
-        setJMenuBar(mainMenu);
+        setJMenuBar(createMainMenu());
 
-        createPopupMenus();
-
-        GUIUtils.packAndCenterWindow(frame);
+        GUIUtils.packAndCenterWindow(this);
 
         newLocButton.setAction(newLocationAction);
         editLocButton.setAction(editLocationAction);
         delLocButton.setAction(delLocationAction);
 
-        NewItemAction newItemAction = new NewItemAction();
-        newItemButton.setAction(newItemAction);
+        newItemButton.setAction(new AbstractAction("Добавить...", GUIUtils.ADD_ELEMENT_ICON)
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                Item item = new Item();
+                if(editItem(item))
+                {
+                    story.getItems().add(item);
+                    reloadDataInForm();
+                    itemsList.setSelectedValue(item, true);
+                }
+            }
+        });
         editItemButton.setAction(editItemAction);
         delItemButton.setAction(delItemAction);
+
+        final JPopupMenu locationPopupMenu = createPopupMenus();
 
         locationsList.addMouseListener(new MouseAdapter()
         {
@@ -198,16 +268,16 @@ public class Editor extends JFrame
             public void run()
             {
                 Cursor previousCursor = mainPanel.getCursor();
+                mainPanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 try
                 {
-                    mainPanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                     progressBar.setVisible(true);
                     setAllData(OMManager.loadStoryFromXmlFile(storyFile, false).getStory());
                 }
                 catch (IFML2Exception e)
                 {
                     LOG.error("Error while loading story!", e);
-                    ifml2.GUIUtils.showErrorMessage(frame, e);
+                    ifml2.GUIUtils.showErrorMessage(Editor.this, e);
                 }
                 finally
                 {
@@ -218,25 +288,150 @@ public class Editor extends JFrame
         }.start();
     }
 
-    private void createMainMenu()
+    private JMenuBar createMainMenu()
     {
+        JMenuBar mainMenu = new JMenuBar();
+
         JMenu fileMenu = new JMenu(FILE_MENU_NAME);
-        fileMenu.add(new NewStoryAction());
+        fileMenu.add(new AbstractAction("Новая история", GUIUtils.NEW_ELEMENT_ICON)
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                story = new Story();
+                reloadDataInForm();
+            }
+        });
         fileMenu.addSeparator();
-        fileMenu.add(new OpenStoryAction());
-        fileMenu.add(new SaveStoryAction());
+        fileMenu.add(new AbstractAction(OPEN_STORY_ACTION_NAME, GUIUtils.OPEN_ICON)
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                String storyFileName = selectStoryFileForOpen();
+                if(storyFileName != null)
+                {
+                    loadStory(storyFileName);
+                }
+            }
+        });
+        fileMenu.add(new AbstractAction("Сохранить...", GUIUtils.SAVE_ICON)
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                try
+                {
+                    selectFileAndSaveStory();
+                }
+                catch (IFML2Exception e1)
+                {
+                    JOptionPane.showMessageDialog(Editor.this, "Ошибка во время сохранения истории: " + e1.getMessage());
+                }
+            }
+        });
         mainMenu.add(fileMenu);
 
         JMenu storyMenu = new JMenu(STORY_MENU_NAME);
-        storyMenu.add(new EditStoryOptions());
+        storyMenu.add(new AbstractAction("Настройки истории...", GUIUtils.PREFERENCES_ICON)
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                StoryOptionsEditor storyOptionsEditor = new StoryOptionsEditor(Editor.this);
+
+                storyOptionsEditor.setAllData(story.storyOptions, story.getLocations(), story.getProcedures());
+                if(storyOptionsEditor.showDialog())
+                {
+                    storyOptionsEditor.getAllData(story.storyOptions);
+                }
+            }
+        });
         storyMenu.addSeparator();
-        storyMenu.add(new EditUsedLibsAction());
+        storyMenu.add(new AbstractAction("Используемые библиотеки...")
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                UsedLibsEditor usedLibsEditor = new UsedLibsEditor(Editor.this);
+                usedLibsEditor.setAllData(story.getLibraries()); //todo rewrite to ctor
+                usedLibsEditor.setVisible(true);
+            }
+        });
         //storyMenu.add(new EditDictAction()); //https://www.hostedredmine.com/issues/11947
-        storyMenu.add(new EditProceduresAction());
-        storyMenu.add(new EditActionsAction());
+        storyMenu.add(new AbstractAction("Редактировать процедуры...")
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                ProceduresEditor proceduresEditor = new ProceduresEditor(Editor.this);
+                proceduresEditor.setAllData(story.getProcedures()); //todo rewrite to ctor
+                proceduresEditor.setVisible(true);
+            }
+        });
+        storyMenu.add(new AbstractAction("Редактировать действия...")
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                ActionsEditor actionsEditor = new ActionsEditor(Editor.this, story.getActions());
+                actionsEditor.showDialog();
+            }
+        });
         storyMenu.addSeparator();
-        storyMenu.add(new RunStoryAction());
+        storyMenu.add(new AbstractAction("Запустить историю в плеере...", GUIUtils.PLAY_ICON)
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                //region Old play via save dialog
+                /*JOptionPane.showMessageDialog(frame, "Сначала нужно сохранить историю", "Сохранение перед запуском",
+                        JOptionPane.INFORMATION_MESSAGE);
+                String fileName = null;
+                try
+                {
+                    fileName = selectFileAndSaveStory();
+                }
+                catch (IFML2Exception e1)
+                {
+                    JOptionPane.showMessageDialog(frame, "Ошибка во время сохранения истории: " + Arrays.toString(e1.getStackTrace()));
+                }
+                GUIPlayer.main(new String[]{fileName});*/
+                //endregion
+                String fileName;
+                try
+                {
+                    File tempFile = File.createTempFile("ifml2run_", ".xml");
+                    fileName = tempFile.getAbsolutePath();
+                    saveStory(fileName);
+                    GUIPlayer.startFromFile(fileName);
+                    if(!tempFile.delete())
+                    {
+                        LOG.error(MessageFormat.format("Can't delete temp file {0}", tempFile.getAbsolutePath()));
+                    }
+                }
+                catch (Throwable ex)
+                {
+                    JOptionPane.showMessageDialog(Editor.this,
+                            MessageFormat.format("Ошибка во время сохранения истории во временный файл: {0}", Arrays.toString(ex.getStackTrace())));
+                }
+                //region New play via OM yield
+                /*Story clone = null;
+                try
+                {
+                    clone = story.clone();
+                }
+                catch (CloneNotSupportedException ex)
+                {
+                    throw new InternalError("Story isn't cloneable!");
+                }*/
+                //GUIPlayer.startFromOM(story/*clone*/); //todo change to full clone
+                //endregion
+            }
+        });
         mainMenu.add(storyMenu);
+
+        return mainMenu;
     }
 
     private String selectStoryFileForOpen()
@@ -258,7 +453,7 @@ public class Editor extends JFrame
             }
         });
 
-        if(ifmlFileChooser.showOpenDialog(frame) != JFileChooser.APPROVE_OPTION)
+        if(ifmlFileChooser.showOpenDialog(this) != JFileChooser.APPROVE_OPTION)
         {
             return null;
         }
@@ -266,62 +461,17 @@ public class Editor extends JFrame
         return ifmlFileChooser.getSelectedFile().getAbsolutePath();
     }
 
-    private void createPopupMenus()
+    private JPopupMenu createPopupMenus()
     {
         // locations popup
+        JPopupMenu locationPopupMenu = new JPopupMenu();
+
         locationPopupMenu.add(newLocationAction);
         locationPopupMenu.addSeparator();
         locationPopupMenu.add(editLocationAction);
         locationPopupMenu.add(delLocationAction);
 
-        /*locationPopupMenu.addPopupMenuListener(new PopupMenuListener()
-        {
-            @Override
-            public void popupMenuWillBecomeVisible(PopupMenuEvent e)
-            {
-                Object selectedLoc = locationsList.getSelectedValue();
-                editLocationAction.setEnabled(selectedLoc != null);
-                delLocationAction.setEnabled(selectedLoc != null);
-            }
-
-            @Override
-            public void popupMenuWillBecomeInvisible(PopupMenuEvent e){}
-
-            @Override
-            public void popupMenuCanceled(PopupMenuEvent e){}
-        });*/
-    }
-
-    private class OpenStoryAction extends AbstractAction
-    {
-        private OpenStoryAction()
-        {
-            super(OPEN_STORY_ACTION_NAME);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            String storyFileName = selectStoryFileForOpen();
-            if(storyFileName != null)
-            {
-                loadStory(storyFileName);
-            }
-        }
-    }
-
-    private class EditLocationAction extends AbstractAction
-    {
-        private EditLocationAction()
-        {
-            super(EDIT_LOCATION_ACTION_NAME);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            editLocation((Location) locationsList.getSelectedValue());
-        }
+        return locationPopupMenu;
     }
 
     /*private class EditDictAction extends AbstractAction
@@ -340,8 +490,7 @@ public class Editor extends JFrame
 
     /*private void editDict()
     {
-        DictionaryEditor dictionaryEditor = new DictionaryEditor();
-        dictionaryEditor.setAllData(story.dictionary);
+        DictionaryEditor dictionaryEditor = new DictionaryEditor(story.dictionary);
         dictionaryEditor.setVisible(true);
     }*/
 
@@ -350,11 +499,10 @@ public class Editor extends JFrame
     {
         if(location != null)
         {
-            LocationEditor locationEditor = new LocationEditor();
+            LocationEditor locationEditor = new LocationEditor(this);
 
             locationEditor.setAllData(story, location);
-            locationEditor.setVisible(true);
-            if(locationEditor.isOk)
+            if(locationEditor.showDialog())
             {
                 locationEditor.getAllData(location);
                 return true;
@@ -362,27 +510,6 @@ public class Editor extends JFrame
         }
 
         return false;
-    }
-
-    private class SaveStoryAction extends AbstractAction
-    {
-        private SaveStoryAction()
-        {
-            super("Сохранить...");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            try
-            {
-                selectFileAndSaveStory();
-            }
-            catch (IFML2Exception e1)
-            {
-                JOptionPane.showMessageDialog(frame, "Ошибка во время сохранения истории: " + e1.getMessage());
-            }
-        }
     }
 
     private String selectFileAndSaveStory() throws IFML2Exception
@@ -421,7 +548,7 @@ public class Editor extends JFrame
             }
         });
 
-        if(ifmlFileChooser.showSaveDialog(frame) != JFileChooser.APPROVE_OPTION)
+        if(ifmlFileChooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION)
         {
             return null;
         }
@@ -436,189 +563,12 @@ public class Editor extends JFrame
         return fileName;
     }
 
-    private class NewStoryAction extends AbstractAction
-    {
-        private NewStoryAction()
-        {
-            super("Новая история");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            story = new Story();
-            reloadDataInForm();
-        }
-    }
-
-    private class EditUsedLibsAction extends AbstractAction
-    {
-        public EditUsedLibsAction()
-        {
-            super("Используемые библиотеки...");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            UsedLibsEditor usedLibsEditor = new UsedLibsEditor();
-            usedLibsEditor.setAllData(story.getLibraries());
-            usedLibsEditor.setVisible(true);
-        }
-    }
-
-    private class NewLocationAction extends AbstractAction
-    {
-        private NewLocationAction()
-        {
-            super("Добавить...");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            Location location = new Location();
-            if(editLocation(location))
-            {
-                story.getLocations().add(location);
-                reloadDataInForm();
-                locationsList.setSelectedValue(location, true);
-            }
-        }
-    }
-
-    private class DelLocationAction extends AbstractAction
-    {
-        private DelLocationAction()
-        {
-            super("Удалить...");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            Location location = (Location) locationsList.getSelectedValue();
-            if(location != null)
-            {
-                int answer = JOptionPane.showConfirmDialog(frame, "Вы уверены, что хотите удалить эту локацию?",
-                        "Удаление локации", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                if(JOptionPane.YES_OPTION == answer)
-                {
-                    story.getLocations().remove(location);
-                    reloadDataInForm();
-                }
-            }
-        }
-    }
-
-    private class RunStoryAction extends AbstractAction
-    {
-        private RunStoryAction()
-        {
-            super("Запустить историю в плеере...");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            JOptionPane.showMessageDialog(frame, "Сначала нужно сохранить историю", "Сохранение перед запуском",
-                    JOptionPane.INFORMATION_MESSAGE);
-            String fileName = null;
-            try
-            {
-                fileName = selectFileAndSaveStory();
-            }
-            catch (IFML2Exception e1)
-            {
-                JOptionPane.showMessageDialog(frame, "Ошибка во время сохранения истории: " + Arrays.toString(e1.getStackTrace()));
-            }
-            GUIPlayer.main(new String[]{fileName});
-        }
-    }
-
-    private class EditStoryOptions extends AbstractAction
-    {
-        private EditStoryOptions()
-        {
-            super("Настройки истории...");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            StoryOptionsEditor storyOptionsEditor = new StoryOptionsEditor();
-
-            storyOptionsEditor.setAllData(story.storyOptions, story.getLocations(), story.getProcedures());
-            storyOptionsEditor.setVisible(true);
-
-            if(storyOptionsEditor.isOk)
-            {
-                storyOptionsEditor.getAllData(story.storyOptions);
-            }
-        }
-    }
-
-    private class EditProceduresAction extends AbstractAction
-    {
-        private EditProceduresAction()
-        {
-            super("Редактировать процедуры...");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            ProceduresEditor proceduresEditor = new ProceduresEditor();
-            proceduresEditor.setAllData(story.getProcedures());
-            proceduresEditor.setVisible(true);
-        }
-    }
-
-
-    private class EditActionsAction extends AbstractAction
-    {
-        private EditActionsAction()
-        {
-            super("Редактировать действия...");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            ActionsEditor actionsEditor = new ActionsEditor();
-            actionsEditor.setAllData(story.getActions());
-            actionsEditor.setVisible(true);
-        }
-    }
-
-    private class NewItemAction extends AbstractAction
-    {
-        private NewItemAction()
-        {
-            super("Добавить...");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            Item item = new Item();
-            if(editItem(item))
-            {
-                story.getItems().add(item);
-                reloadDataInForm();
-                itemsList.setSelectedValue(item, true);
-            }
-        }
-    }
-
     private boolean editItem(Item item)
     {
         if(item != null)
         {
-            ItemEditor itemEditor = new ItemEditor(story, item);
-
-            itemEditor.setVisible(true);
-            if(itemEditor.isOk)
+            ItemEditor itemEditor = new ItemEditor(this, story, item);
+            if(itemEditor.showDialog())
             {
                 itemEditor.getData(item);
                 return true;
@@ -626,47 +576,5 @@ public class Editor extends JFrame
         }
 
         return false;
-    }
-
-    private class EditItemAction extends AbstractAction
-    {
-        private EditItemAction()
-        {
-            super("Редактировать...");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            Item item = (Item) itemsList.getSelectedValue();
-            if(editItem(item))
-            {
-                reloadDataInForm();
-                itemsList.setSelectedValue(item, true);
-            }
-        }
-    }
-
-    private class DelItemAction extends AbstractAction
-    {
-        private DelItemAction()
-        {
-            super("Удалить...");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            Item item = (Item) itemsList.getSelectedValue();
-            if(item != null)
-            {
-                int answer = JOptionPane.showConfirmDialog(frame, "Вы уверены, что хотите удалить этот предмет?");
-                if(answer == 0)
-                {
-                    story.getItems().remove(item);
-                    reloadDataInForm();
-                }
-            }
-        }
     }
 }

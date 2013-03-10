@@ -111,7 +111,7 @@
             </constraints>
             <properties>
               <labelFor value="93730"/>
-              <text value="&amp;Признаки объекта:"/>
+              <text value="Признаки объекта:"/>
             </properties>
           </component>
           <component id="be30e" class="javax.swing.JLabel">
@@ -120,7 +120,7 @@
             </constraints>
             <properties>
               <labelFor value="80b9"/>
-              <text value="&amp;Все доступные признаки:"/>
+              <text value="Все доступные признаки:"/>
             </properties>
           </component>
           <scrollpane id="93730">

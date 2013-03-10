@@ -17,15 +17,23 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import java.util.List;
 
-public abstract class Instruction
+public abstract class Instruction implements Cloneable
 {
 	@XmlAttribute(name="position")
 	public int position;
 	
 	@XmlTransient
-	public VirtualMachine virtualMachine;
-	
-	abstract public void run(RunningContext runningContext) throws IFML2Exception;
+	public VirtualMachine virtualMachine; // links
+
+    @Override
+    public Instruction clone() throws CloneNotSupportedException
+    {
+        Instruction clone = (Instruction) super.clone();
+        clone.virtualMachine = virtualMachine; // just link
+        return clone;
+    }
+
+    abstract public void run(RunningContext runningContext) throws IFML2Exception;
 
     /*public static String getTitle()
     {

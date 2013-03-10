@@ -1,13 +1,15 @@
 package ifml2.editor.gui;
 
-import com.sun.istack.internal.NotNull;
 import ifml2.GUIUtils;
+import ifml2.om.Action;
 import ifml2.om.Hook;
 import ifml2.om.InstructionList;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.event.ListDataListener;
+import java.awt.*;
 import java.awt.event.*;
+import java.text.MessageFormat;
 import java.util.List;
 
 public class HookEditor extends JDialog
@@ -17,19 +19,24 @@ public class HookEditor extends JDialog
     private JButton buttonCancel;
     private JComboBox actionCombo;
     private JComboBox parameterCombo;
-    private JRadioButton доДействияRadioButton;
-    private JRadioButton вместоДействияRadioButton;
-    private JRadioButton послеДействияRadioButton;
+    private JRadioButton beforeRadio;
+    private JRadioButton insteadRadio;
+    private JRadioButton afterRadio;
     private JButton editInstructionsButton;
-    private InstructionList instructionsClone;
+
+    // data to edit
+    private InstructionList instructionList; // no need to clone - InstructionList isn't modified here
 
     private static final String HOOK_EDITOR_TITLE = "Перехват";
+    private boolean isOk;
 
-    public HookEditor(@NotNull Hook hook, @NotNull List<ifml2.om.Action> actionList)
+    public HookEditor(Window owner, @NotNull final Hook hook, @NotNull List<Action> actionList)
     {
-        setTitle(HOOK_EDITOR_TITLE);
+        super(owner, HOOK_EDITOR_TITLE, ModalityType.DOCUMENT_MODAL);
+
+        // -- dialog init --
+
         setContentPane(contentPane);
-        setModal(true);
         getRootPane().setDefaultButton(buttonOK);
 
         GUIUtils.packAndCenterWindow(this);
@@ -41,7 +48,6 @@ public class HookEditor extends JDialog
                 onOK();
             }
         });
-
         buttonCancel.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -50,7 +56,7 @@ public class HookEditor extends JDialog
             }
         });
 
-// call onCancel() when cross is clicked
+        // call onCancel() when cross is clicked
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter()
         {
@@ -60,7 +66,7 @@ public class HookEditor extends JDialog
             }
         });
 
-// call onCancel() on ESCAPE
+        // call onCancel() on ESCAPE
         contentPane.registerKeyboardAction(new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -69,79 +75,116 @@ public class HookEditor extends JDialog
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-        // form actions init
-        EditInstructionsAction editInstructionsAction = new EditInstructionsAction();
-        editInstructionsButton.setAction(editInstructionsAction);
+        // -- form actions init --
 
-        // data clones - for underling objects (all plain data are edited just in controls)
-        //todo instructionsClone = hook.instructionList.clone();
-        
-        // form init
-        actionCombo.setModel(new DefaultComboBoxModel(actionList.toArray()));
-        actionCombo.setSelectedItem(hook.getAction());
-        // todo load parameters and current parameter after action select
-        parameterCombo.setModel(new ComboBoxModel()
+        editInstructionsButton.setAction(new AbstractAction("Редактировать инструкции...", GUIUtils.EDIT_ELEMENT_ICON)
         {
             @Override
-            public void setSelectedItem(Object anItem)
+            public void actionPerformed(ActionEvent e)
             {
-                //To change body of implemented methods use File | Settings | File Templates.
-            }
-
-            @Override
-            public Object getSelectedItem()
-            {
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
-            }
-
-            @Override
-            public int getSize()
-            {
-                return 0;  //To change body of implemented methods use File | Settings | File Templates.
-            }
-
-            @Override
-            public Object getElementAt(int index)
-            {
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
-            }
-
-            @Override
-            public void addListDataListener(ListDataListener l)
-            {
-                //To change body of implemented methods use File | Settings | File Templates.
-            }
-
-            @Override
-            public void removeListDataListener(ListDataListener l)
-            {
-                //To change body of implemented methods use File | Settings | File Templates.
+                InstructionsEditor instructionsEditor = new InstructionsEditor(HookEditor.this, instructionList);
+                if(instructionsEditor.showDialog())
+                {
+                    instructionsEditor.getData(instructionList);
+                }
             }
         });
-        // todo set radio
+
+        // -- data init --
+
+        // no need to clone - InstructionList isn't modified here
+        instructionList = hook.getInstructionList();
+
+        //  -- form init --
+        // load parameters and current parameter after action select
+        actionCombo.addActionListener(new ActionListener()
+        {
+            Action prevSelectedAction;
+
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                Action selectedAction = (Action) actionCombo.getSelectedItem();
+                if (prevSelectedAction != selectedAction)
+                {
+                    prevSelectedAction = selectedAction;
+                    parameterCombo.setModel(new DefaultComboBoxModel(selectedAction.getAllParameters()));
+                    if(parameterCombo.getItemCount() > 0) // if there are elements ...
+                    {
+                        parameterCombo.setSelectedIndex(0); // ... select first element
+                    }
+                }
+                hook.setAction(selectedAction);
+            }
+        });
+        actionCombo.setModel(new DefaultComboBoxModel(actionList.toArray()));
+        if(hook.getAction() != null)
+        {
+            actionCombo.setSelectedItem(hook.getAction()); // select hook's action
+            if(hook.getObjectElement() != null) // if hook has assigned objectElement
+            {
+                parameterCombo.setSelectedItem(hook.getObjectElement());
+            }
+        }
+        else if (actionCombo.getItemCount() > 0) // if hook's action is null (for new hook e.g.) ...
+        {
+            actionCombo.setSelectedIndex(0); // ... select first
+        }
+
+        // set radio
+        switch (hook.getType())
+        {
+            case BEFORE:
+                beforeRadio.setSelected(true);
+                break;
+            case AFTER:
+                afterRadio.setSelected(true);
+                break;
+            case INSTEAD:
+                insteadRadio.setSelected(true);
+                break;
+            default:
+                throw new InternalError(MessageFormat.format("Unknown hook type: {0}", hook.getType()));
+        }
     }
 
     private void onOK()
     {
+        isOk = true;
         dispose();
     }
 
     private void onCancel()
     {
+        isOk = false;
         dispose();
     }
 
-    private class EditInstructionsAction extends AbstractAction
+    public boolean showDialog()
     {
-        public EditInstructionsAction()
-        {
-            super("Редактировать инструкции");
-        }
+        setVisible(true);
+        return isOk;
+    }
 
-        @Override
-        public void actionPerformed(ActionEvent e)
+    public void getData(@NotNull Hook hook)
+    {
+        hook.setAction((Action) actionCombo.getSelectedItem());
+        hook.setObjectElement((String) parameterCombo.getSelectedItem());
+        if(beforeRadio.isSelected())
         {
-            //todo InstructionsEditor instructionsEditor = new InstructionsEditor();
+            hook.setType(Hook.HookTypeEnum.BEFORE);
+        }
+        else if(afterRadio.isSelected())
+        {
+            hook.setType(Hook.HookTypeEnum.AFTER);
+        }
+        else if(insteadRadio.isSelected())
+        {
+            hook.setType(Hook.HookTypeEnum.INSTEAD);
+        }
+        else
+        {
+            throw new InternalError("No hook type selected!");
         }
     }
 }

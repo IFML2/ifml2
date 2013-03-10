@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<install4j version="5.1.4" transformSequenceNumber="4">
-  <directoryPresets config="C:/Users/realsonic/Documents/ЯРИЛ 2.0/ifml2 project/log4j.xml" />
-  <application name="ЯРИЛ 2.0" distributionSourceDir="" applicationId="3169-8645-0418-5303" mediaDir="C:/Users/realsonic/Documents/ЯРИЛ 2.0/ifml2 project/install4j project" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="9" lzmaCompression="true" pack200Compression="true" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="true" shortName="${compiler:sys.fullName}" publisher="TOY Soft" publisherWeb="http://toysoft.narod.ru" version="P10" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" installerName="" javaMinVersion="1.6" javaMaxVersion="1.6" allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
+<install4j version="5.1.5" transformSequenceNumber="4">
+  <directoryPresets config="C:/Users/realsonic/Documents/ЯРИЛ 2.0/ifml2 project/out/artifacts/ifml2/annotations.jar" />
+  <application name="ЯРИЛ 2.0" distributionSourceDir="" applicationId="3169-8645-0418-5303" mediaDir="C:/Users/realsonic/Documents/ЯРИЛ 2.0/ifml2 project/install4j project" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="9" lzmaCompression="true" pack200Compression="true" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="true" shortName="${compiler:sys.fullName}" publisher="TOY Soft" publisherWeb="http://toysoft.narod.ru" version="P10.3" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" installerName="" javaMinVersion="1.6" javaMaxVersion="1.6" allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="true" languageSelectionInPrincipalLanguage="false">
       <principalLanguage id="ru" customLocalizationFile="" />
       <additionalLanguages>
@@ -32,6 +32,7 @@
       <mountPoint id="88" root="87" location="" mode="755" />
     </mountPoints>
     <entries>
+      <fileEntry mountPoint="23" file="C:/Users/realsonic/Documents/ЯРИЛ 2.0/ifml2 project/out/artifacts/ifml2/annotations.jar" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
       <dirEntry mountPoint="23" file="C:/Users/realsonic/Documents/ЯРИЛ 2.0/ifml2 project/libs" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="libs" excludeSuffixes="" dirMode="755" overrideDirMode="false">
         <exclude>
           <entry location=".svn" fileType="regular" />
@@ -401,8 +402,41 @@
             <validation />
             <preActivation />
             <postActivation />
-            <actions />
-            <formComponents />
+            <actions>
+              <action name="" id="155" customizedId="" beanClass="com.install4j.runtime.beans.actions.finish.ExecuteLauncherAction" enabled="true" commentSet="false" comment="" actionElevationType="none" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.finish.ExecuteLauncherAction">
+                      <void property="launcherId">
+                        <string>25</string>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition>context.getBooleanVariable("executeLauncherAction") &amp;&amp; (!context.isUnattended())</condition>
+              </action>
+            </actions>
+            <formComponents>
+              <formComponent name="Execute launcher" id="156" customizedId="" beanClass="com.install4j.runtime.beans.formcomponents.CheckboxComponent" enabled="true" commentSet="false" comment="" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.formcomponents.CheckboxComponent">
+                      <void property="checkboxText">
+                        <string>${i18n:RunEntryExec("${compiler:sys.fullName}")}</string>
+                      </void>
+                      <void property="initiallySelected">
+                        <boolean>true</boolean>
+                      </void>
+                      <void property="variableName">
+                        <string>executeLauncherAction</string>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <initScript />
+                <visibilityScript />
+              </formComponent>
+            </formComponents>
           </screen>
         </screens>
       </application>

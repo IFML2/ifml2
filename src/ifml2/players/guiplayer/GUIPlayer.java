@@ -7,6 +7,7 @@ import ifml2.engine.Engine;
 import ifml2.engine.EngineVersion;
 import ifml2.interfaces.GUIInterface;
 import ifml2.om.IFML2LoadXmlException;
+import ifml2.om.Story;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
@@ -88,19 +89,27 @@ public class GUIPlayer extends JFrame
 
     public static void main(String[] args)
     {
+        startFromFile(getStoryFileNameForPlay(args));
+    }
+
+    /*public static void startFromOM(Story story)
+    {
         GUIPlayer guiPlayer = new GUIPlayer();
-
-        final String storyFile = getStoryFileNameForPlay(args);
-        if(storyFile == null)
-        {
-            JOptionPane.showMessageDialog(null, "История не выбрана, Плеер завершает свою работу");
-            guiPlayer.dispose();
-            return;
-        }
-
         guiPlayer.setVisible(true);
+        guiPlayer.loadFromOM(story);
+    }*/
 
-        guiPlayer.loadStory(storyFile);
+    private void loadFromOM(Story story)
+    {
+        try
+        {
+            engine.setStory(story);
+            engine.initGame();
+        }
+        catch (Throwable e)
+        {
+            ReportError(e, "Ошибка при загрузке истории!");
+        }
     }
 
     private void loadStory(String storyFile)
@@ -144,9 +153,10 @@ public class GUIPlayer extends JFrame
 
     private GUIPlayer()
     {
+        super("ЯРИЛ 2.0 " + EngineVersion.IFML_ENGINE_VERSION);
+
         initEngine();
 
-        setTitle("ЯРИЛ 2.0 " + EngineVersion.IFML_ENGINE_VERSION);
         setContentPane(mainPanel);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
@@ -232,5 +242,21 @@ public class GUIPlayer extends JFrame
     {
         commandHistory.add(gamerCommand);
         historyIterator = commandHistory.listIterator(commandHistory.size());
+    }
+
+    public static void startFromFile(String fileName)
+    {
+        GUIPlayer guiPlayer = new GUIPlayer();
+
+        if (fileName != null)
+        {
+            guiPlayer.setVisible(true);
+            guiPlayer.loadStory(fileName);
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(guiPlayer, "История не выбрана, Плеер завершает свою работу");
+            guiPlayer.dispose();
+        }
     }
 }

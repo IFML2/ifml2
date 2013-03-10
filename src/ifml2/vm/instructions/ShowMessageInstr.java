@@ -14,7 +14,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class ShowMessageInstr extends Instruction
 {
     @XmlEnum
-    enum MessageTypeEnum
+    public enum MessageTypeEnum
     {
         @XmlEnumValue(value = "text")
         TEXT,
@@ -22,8 +22,16 @@ public class ShowMessageInstr extends Instruction
         EXPRESSION
     }
 
+    private MessageTypeEnum type = MessageTypeEnum.TEXT; // default type
     @XmlAttribute(name="type")
-    private MessageTypeEnum type;
+    public MessageTypeEnum getType()
+    {
+        return type;
+    }
+    public void setType(MessageTypeEnum type)
+    {
+        this.type = type;
+    }
 
     private Boolean carriageReturn = true;
     @XmlAttribute(name = "carriageReturn")

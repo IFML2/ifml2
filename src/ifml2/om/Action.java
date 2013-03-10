@@ -7,17 +7,21 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlID;
+import java.util.ArrayList;
 
 public class Action
 {
     @XmlElementWrapper(name = "templates")
     @XmlElement(name = "template")
     public final EventList<Template> templates = new BasicEventList<Template>();
+    public EventList<Template> getTemplates()
+    {
+        return templates;
+    }
 
     @XmlElementWrapper(name = "restrictions")
     @XmlElement(name = "restriction")
     private final EventList<Restriction> restrictions = new BasicEventList<Restriction>();
-
     public EventList<Restriction> getRestrictions()
     {
         return restrictions;
@@ -41,15 +45,23 @@ public class Action
 	public String toString()
 	{
 		return name;
-        /*if(templates.size() > 0)
+	}
+
+    public Object[] getAllParameters()
+    {
+        ArrayList<Object> parameters = new ArrayList<Object>();
+
+        for (Template template : templates)
         {
-            Template template = templates.get(0);
-            if(template.size() > 0)
+            for (TemplateElement element : template.getElements())
             {
-                return template.get(0).toString();
+                if (element instanceof ObjectTemplateElement && element.getParameter() != null)
+                {
+                    parameters.add(element.parameter);
+                }
             }
         }
 
-        return "";*/
-	}
+        return parameters.toArray();
+    }
 }
