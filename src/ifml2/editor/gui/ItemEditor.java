@@ -215,7 +215,7 @@ public class ItemEditor extends JDialog
         }
         catch (CloneNotSupportedException e)
         {
-            throw new InternalError("WordLinks isn't cloneable!");
+            GUIUtils.showErrorMessage(this, e);
         }
         wordsLabel.setText(wordLinksClone.getAllWords());
         wordLinksClone.addChangeListener(new ChangeListener()

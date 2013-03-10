@@ -26,6 +26,8 @@ import java.util.HashMap;
 
 public class Engine
 {
+    public static final String ENGINE_VERSION = "Прототип 10 выпуск 4";
+
     public static final FormatLogger LOG = FormatLogger.getLogger(Engine.class);
 
     private Interface gameInterface = null;

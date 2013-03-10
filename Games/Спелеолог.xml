@@ -293,7 +293,8 @@
                                 <if position="2" condition="чем = КиркаПред">
                                     <then>
                                         <showMessage position="1" type="text" message="Вы срубили одну лиану киркой!"/>
-                                        <getItem position="2" item="CтволЗасохшейЛианы"/>
+                                        <moveItem position="2" item="CтволЗасохшейЛианы" to="инвентарий"/>
+                                        <!--<getItem position="2" item="CтволЗасохшейЛианы"/>-->
                                         <var position="3" name="СрубилЛиану" value="да"/>
                                     </then>
                                     <else>
@@ -321,7 +322,7 @@
                     <instructions>
                         <if position="1" condition="СрубилЛиану">
                             <then>
-                                <showMessage position="1" type="text" message="Вы уже взяли лиану."/>
+                                <showMessage position="1" type="text" message="Вы уже срубили и взяли лиану."/>
                             </then>
                             <else>
                                 <showMessage position="1" type="text" message="Вы попытались выдернуть лиану голыми руками, но ничего не вышло."/>
@@ -399,7 +400,8 @@
                 <if position="1" condition="ком = 'го'">
                     <then>
                         <goToLoc position="1" location="Растительность"/>
-                        <getItem position="2" item="КиркаПред"/>
+                        <moveItem position="2" item="КиркаПред" to="инвентарий"/>
+                        <!--<getItem position="2" item="КиркаПред"/>-->
                     </then>
                     <else>
                         <showMessage position="1" type="text" message="Не знаю такой отладочной команды."/>

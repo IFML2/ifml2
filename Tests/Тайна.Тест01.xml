@@ -1,6 +1,6 @@
 <ifm:testPlan xmlns:ifm="http://toysoft.narod.ru/IFML2Test"
               name='Простой тест "Тайны заброшенного храма"'>
-    <ifm:storyLink>\..\Samples\Тайна заброшенного храма.xml</ifm:storyLink>
+    <ifm:storyLink>\..\Games\Тайна заброшенного храма.xml</ifm:storyLink>
     <ifm:test>
         <ifm:testIteration>
             <ifm:command>осм</ifm:command>

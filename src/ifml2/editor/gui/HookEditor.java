@@ -1,9 +1,11 @@
 package ifml2.editor.gui;
 
+import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ifml2.GUIUtils;
 import ifml2.om.Action;
 import ifml2.om.Hook;
 import ifml2.om.InstructionList;
+import ifml2.vm.instructions.Instruction;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -23,9 +25,10 @@ public class HookEditor extends JDialog
     private JRadioButton insteadRadio;
     private JRadioButton afterRadio;
     private JButton editInstructionsButton;
+    private JList instructionsList;
 
     // data to edit
-    private InstructionList instructionList; // no need to clone - InstructionList isn't modified here
+    private InstructionList instructionListClone; // no need to clone - InstructionList isn't modified here
 
     private static final String HOOK_EDITOR_TITLE = "Перехват";
     private boolean isOk;
@@ -82,18 +85,23 @@ public class HookEditor extends JDialog
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                InstructionsEditor instructionsEditor = new InstructionsEditor(HookEditor.this, instructionList);
+                InstructionsEditor instructionsEditor = new InstructionsEditor(HookEditor.this, instructionListClone);
                 if(instructionsEditor.showDialog())
                 {
-                    instructionsEditor.getData(instructionList);
+                    instructionsEditor.getData(instructionListClone);
                 }
             }
         });
 
         // -- data init --
-
-        // no need to clone - InstructionList isn't modified here
-        instructionList = hook.getInstructionList();
+        try
+        {
+            instructionListClone = hook.getInstructionList().clone();
+        }
+        catch (CloneNotSupportedException e)
+        {
+            GUIUtils.showErrorMessage(this, e);
+        }
 
         //  -- form init --
         // load parameters and current parameter after action select
@@ -109,7 +117,7 @@ public class HookEditor extends JDialog
                 {
                     prevSelectedAction = selectedAction;
                     parameterCombo.setModel(new DefaultComboBoxModel(selectedAction.getAllParameters()));
-                    if(parameterCombo.getItemCount() > 0) // if there are elements ...
+                    if (parameterCombo.getItemCount() > 0) // if there are elements ...
                     {
                         parameterCombo.setSelectedIndex(0); // ... select first element
                     }
@@ -146,6 +154,23 @@ public class HookEditor extends JDialog
             default:
                 throw new InternalError(MessageFormat.format("Unknown hook type: {0}", hook.getType()));
         }
+
+        instructionsList.setModel(new DefaultEventListModel<Instruction>(instructionListClone.getInstructions()));
+        instructionsList.addMouseListener(new MouseAdapter()
+        {
+            @Override
+            public void mouseClicked(MouseEvent e)
+            {
+                if(e.getClickCount() == 2)
+                {
+                    Instruction instruction = (Instruction) instructionsList.getSelectedValue();
+                    if (instruction != null)
+                    {
+                        EditorUtils.showAssociatedEditor(HookEditor.this, instruction);
+                    }
+                }
+            }
+        });
     }
 
     private void onOK()

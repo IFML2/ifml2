@@ -4,12 +4,13 @@ import ifml2.CommonConstants;
 import ifml2.CommonUtils;
 import ifml2.GUIUtils;
 import ifml2.IFML2Exception;
-import ifml2.engine.EngineVersion;
+import ifml2.engine.Engine;
 import ifml2.om.Item;
 import ifml2.om.Location;
 import ifml2.om.OMManager;
 import ifml2.om.Story;
 import ifml2.players.guiplayer.GUIPlayer;
+import ifml2.tests.gui.TestRunner;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
@@ -118,7 +119,7 @@ public class Editor extends JFrame
 
     public Editor()
     {
-        String IFML_EDITOR_VERSION = "ЯРИЛ 2.0 (" + EngineVersion.IFML_ENGINE_VERSION + ") Редактор";
+        String IFML_EDITOR_VERSION = "ЯРИЛ 2.0 Редактор " + Engine.ENGINE_VERSION;
         setTitle(IFML_EDITOR_VERSION);
         setContentPane(mainPanel);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -309,7 +310,7 @@ public class Editor extends JFrame
             public void actionPerformed(ActionEvent e)
             {
                 String storyFileName = selectStoryFileForOpen();
-                if(storyFileName != null)
+                if (storyFileName != null)
                 {
                     loadStory(storyFileName);
                 }
@@ -379,25 +380,11 @@ public class Editor extends JFrame
             }
         });
         storyMenu.addSeparator();
-        storyMenu.add(new AbstractAction("Запустить историю в плеере...", GUIUtils.PLAY_ICON)
+        storyMenu.add(new AbstractAction("Запустить историю в Плеере...", GUIUtils.PLAY_ICON)
         {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                //region Old play via save dialog
-                /*JOptionPane.showMessageDialog(frame, "Сначала нужно сохранить историю", "Сохранение перед запуском",
-                        JOptionPane.INFORMATION_MESSAGE);
-                String fileName = null;
-                try
-                {
-                    fileName = selectFileAndSaveStory();
-                }
-                catch (IFML2Exception e1)
-                {
-                    JOptionPane.showMessageDialog(frame, "Ошибка во время сохранения истории: " + Arrays.toString(e1.getStackTrace()));
-                }
-                GUIPlayer.main(new String[]{fileName});*/
-                //endregion
                 String fileName;
                 try
                 {
@@ -405,7 +392,7 @@ public class Editor extends JFrame
                     fileName = tempFile.getAbsolutePath();
                     saveStory(fileName);
                     GUIPlayer.startFromFile(fileName);
-                    if(!tempFile.delete())
+                    if (!tempFile.delete())
                     {
                         LOG.error(MessageFormat.format("Can't delete temp file {0}", tempFile.getAbsolutePath()));
                     }
@@ -415,18 +402,15 @@ public class Editor extends JFrame
                     JOptionPane.showMessageDialog(Editor.this,
                             MessageFormat.format("Ошибка во время сохранения истории во временный файл: {0}", Arrays.toString(ex.getStackTrace())));
                 }
-                //region New play via OM yield
-                /*Story clone = null;
-                try
-                {
-                    clone = story.clone();
-                }
-                catch (CloneNotSupportedException ex)
-                {
-                    throw new InternalError("Story isn't cloneable!");
-                }*/
-                //GUIPlayer.startFromOM(story/*clone*/); //todo change to full clone
-                //endregion
+            }
+        });
+        storyMenu.addSeparator();
+        storyMenu.add(new AbstractAction("Открыть Тестер...")
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                TestRunner.main(new String[]{});
             }
         });
         mainMenu.add(storyMenu);

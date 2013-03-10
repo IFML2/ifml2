@@ -8,11 +8,11 @@ import javax.xml.bind.annotation.XmlElements;
 
 public class Template
 {
+    private final EventList<TemplateElement> elements = new BasicEventList<TemplateElement>();
     @XmlElements({
             @XmlElement(name = "literalElement", type = LiteralTemplateElement.class),
             @XmlElement(name = "objectElement", type = ObjectTemplateElement.class)
     })
-    public final EventList<TemplateElement> elements = new BasicEventList<TemplateElement>();
     public EventList<TemplateElement> getElements()
     {
         return elements;

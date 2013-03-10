@@ -11,19 +11,43 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "if")
 public class IfInstruction extends Instruction
 {
+    private String condition;
     @XmlAttribute(name = "condition")
-    private String conditionExpression;
+    public String getCondition()
+    {
+        return condition;
+    }
+    public void setCondition(String condition)
+    {
+        this.condition = condition;
+    }
 
+    private InstructionList thenInstructions = new InstructionList();
     @XmlElement(name = "then")
-    private final InstructionList thenInstructions = new InstructionList();
+    public InstructionList getThenInstructions()
+    {
+        return thenInstructions;
+    }
+    public void setThenInstructions(InstructionList thenInstructions)
+    {
+        this.thenInstructions = thenInstructions;
+    }
 
+    private InstructionList elseInstructions = new InstructionList();
     @XmlElement(name = "else")
-    private final InstructionList elseInstructions = new InstructionList();
-    
+    public InstructionList getElseInstructions()
+    {
+        return elseInstructions;
+    }
+    public void setElseInstructions(InstructionList elseInstructions)
+    {
+        this.elseInstructions = elseInstructions;
+    }
+
     @Override
     public void run(RunningContext runningContext) throws IFML2Exception
     {
-        boolean conditionValue = getBooleanFromExpression(conditionExpression, runningContext, getTitle(), "Условие");
+        boolean conditionValue = getBooleanFromExpression(condition, runningContext, getTitle(), "Условие");
 
         if(conditionValue)
         {
@@ -38,7 +62,7 @@ public class IfInstruction extends Instruction
     @Override
     public String toString()
     {
-        return "Проверка условия: " + conditionExpression;
+        return "Проверка условия: " + condition;
     }
 
     public static String getTitle()

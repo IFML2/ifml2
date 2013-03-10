@@ -261,7 +261,7 @@
             <element name="goToLoc" type="ifml2:instructionGoToLocationType"/>
             <element name="showItemDesc" type="ifml2:instructionShowItemDescType"/>
             <element name="showInventory" type="ifml2:instructionShowInventoryType"/>
-            <element name="getItem" type="ifml2:instructionGetItemType"/>
+            <!--replaced by moveItem-<element name="getItem" type="ifml2:instructionGetItemType"/>-->
             <element name="showMessage" type="ifml2:instructionShowMessageType"/>
             <element name="dropItem" type="ifml2:instructionDropItemType"/>
             <element name="if" type="ifml2:instructionIfType"/>
@@ -403,13 +403,13 @@
         </complexContent>
     </complexType>
 
-    <complexType name="instructionGetItemType">
+    <!--replaced by moveItem-<complexType name="instructionGetItemType">
         <complexContent>
             <extension base="ifml2:instructionType">
                 <attribute name="item" type="string"/>
             </extension>
         </complexContent>
-    </complexType>
+    </complexType>-->
 
     <complexType name="instructionShowMessageType">
         <complexContent>

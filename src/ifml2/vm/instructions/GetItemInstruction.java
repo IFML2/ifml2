@@ -15,8 +15,18 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "getItem")
 public class GetItemInstruction extends Instruction
 {
-	@XmlAttribute(name="item")
     private String itemExpression;
+
+    @XmlAttribute(name="item")
+    public void setItemExpression(String itemExpression)
+    {
+        this.itemExpression = itemExpression;
+    }
+
+    public String getItemExpression()
+    {
+        return itemExpression;
+    }
 
 	@Override
 	public void run(RunningContext runningContext) throws IFML2Exception
@@ -47,5 +57,11 @@ public class GetItemInstruction extends Instruction
     public static String getTitle()
     {
         return "Взять предмет";
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Взять предмет: " + itemExpression;
     }
 }

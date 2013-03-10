@@ -13,6 +13,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Collections;
 
 public class InstructionsEditor extends JDialog
 {
@@ -40,7 +41,7 @@ public class InstructionsEditor extends JDialog
             Instruction selectedInstr = (Instruction) instructionsList.getSelectedValue();
             if(selectedInstr != null)
             {
-                editInstruction(selectedInstr);
+                EditorUtils.showAssociatedEditor(InstructionsEditor.this, selectedInstr);
             }
         }
     };
@@ -65,17 +66,11 @@ public class InstructionsEditor extends JDialog
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            Instruction selectedInst = (Instruction) instructionsList.getSelectedValue();
-            EventList<Instruction> instructions = instructionListClone.getInstructions();
-            int selectedIndex = instructions.indexOf(selectedInst);
-            if(selectedInst != null && selectedIndex > 0)
+            int selIdx = instructionsList.getSelectedIndex();
+            if(selIdx > 0)
             {
-                //get previous instruction
-                Instruction prevInstr = instructions.get(selectedIndex - 1);
-                // exchange previous instruction with selected
-                instructions.set(selectedIndex - 1, selectedInst);
-                instructions.set(selectedIndex,  prevInstr);
-                instructionsList.setSelectedValue(selectedInst, true);
+                Collections.swap(instructionListClone.getInstructions(), selIdx, selIdx - 1);
+                instructionsList.setSelectedIndex(selIdx - 1);
             }
         }
     };
@@ -84,18 +79,12 @@ public class InstructionsEditor extends JDialog
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            //todo
-            Instruction selectedInst = (Instruction) instructionsList.getSelectedValue();
+            int selIdx = instructionsList.getSelectedIndex();
             EventList<Instruction> instructions = instructionListClone.getInstructions();
-            int selectedIndex = instructions.indexOf(selectedInst);
-            if(selectedInst != null && selectedIndex < instructions.size() - 1)
+            if(selIdx < instructions.size() - 1)
             {
-                // get next instruction
-                Instruction nextInstr = instructions.get(selectedIndex + 1);
-                // exchange next instruction with selected
-                instructions.set(selectedIndex + 1, selectedInst);
-                instructions.set(selectedIndex,  nextInstr);
-                instructionsList.setSelectedValue(selectedInst, true);
+                Collections.swap(instructions, selIdx, selIdx + 1);
+                instructionsList.setSelectedIndex(selIdx + 1);
             }
         }
     };
@@ -206,7 +195,7 @@ public class InstructionsEditor extends JDialog
                     Instruction instruction = (Instruction) instructionsList.getSelectedValue();
                     if(instruction != null)
                     {
-                        editInstruction(instruction);
+                        EditorUtils.showAssociatedEditor(InstructionsEditor.this, instruction);
                     }
                 }
             }
@@ -214,11 +203,6 @@ public class InstructionsEditor extends JDialog
         instructionsList.setModel(new DefaultEventListModel<Instruction>(instructionListClone.getInstructions()));
 
         UpdateActions();
-    }
-
-    private void editInstruction(Instruction instruction)
-    {
-        EditorUtils.showAssociatedEditor(InstructionsEditor.this, instruction);
     }
 
     private void UpdateActions()

@@ -75,9 +75,7 @@
                     <preferred-size width="150" height="-1"/>
                   </grid>
                 </constraints>
-                <properties>
-                  <visible value="false"/>
-                </properties>
+                <properties/>
               </component>
               <component id="b16ad" class="javax.swing.JLabel">
                 <constraints>
@@ -86,7 +84,6 @@
                 <properties>
                   <labelFor value="39f1d"/>
                   <text value="Идентификатор:"/>
-                  <visible value="false"/>
                 </properties>
               </component>
               <component id="bf34d" class="javax.swing.JTextField" binding="nameText">

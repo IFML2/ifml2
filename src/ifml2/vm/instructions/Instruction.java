@@ -35,17 +35,12 @@ public abstract class Instruction implements Cloneable
 
     abstract public void run(RunningContext runningContext) throws IFML2Exception;
 
-    /*public static String getTitle()
-    {
-        return "Безымянная инструкция";
-    }*/
-
     private void validateParameterForNull(String parameterValue, String instructionTitle, Object parameterName) throws IFML2VMException
     {
         if(parameterValue == null || "".equals(parameterValue))
-         {
-             throw new IFML2VMException("Параметр {0} не задан у инструкции [{1}]", parameterName, instructionTitle);
-         }          
+        {
+            throw new IFML2VMException("Параметр {0} не задан у инструкции [{1}]", parameterName, instructionTitle);
+        }
     }
 
     IFMLObject getObjectFromExpression(String expression, RunningContext runningContext, String instructionTitle, Object parameterName,
@@ -88,12 +83,6 @@ public abstract class Instruction implements Cloneable
 
         return (Item) object;
     }
-
-    /*protected Item getItemFromExpression(String expression, List<FormalElement> parameters, String instructionTitle,
-                                         Object parameterName) throws IFML2Exception
-    {
-        return getItemFromExpression(expression, parameters, instructionTitle, parameterName, false);
-    }*/
 
     Location getLocationFromExpression(String expression, RunningContext runningContext, String instructionTitle,
                                        Object parameterName, boolean objectCanBeNull) throws IFML2Exception

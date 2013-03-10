@@ -162,7 +162,7 @@ public class Parser
                 try
                 {
                     ArrayList<FittedFormalElement> fittedFormalElements =
-                            fitPhraseWithTemplate(phraseAsList, template.elements);
+                            fitPhraseWithTemplate(phraseAsList, template.getElements());
 
                     FittedTemplate fittedTemplate = new FittedTemplate(action, fittedFormalElements);
                     fittedTemplates.add(fittedTemplate);
@@ -173,7 +173,10 @@ public class Parser
                                 || (lastException instanceof IFML2ParseException
                                     && e.isMoreFull((IFML2ParseException) lastException, template.size())))
                     {
-                        lastException = new IFML2ParseException(e.getMessage() + convertFittedToString(e.fittedFormalElements), e.usedWords, template.size());
+                        lastException = new IFML2ParseException(MessageFormat.format(
+                                "Я бы понял, если бы вы сказали \"{0}\", но я не понял вот эту часть фразы: \"{1}\".",
+                                convertFittedToString(e.getFittedFormalElements()), e.getPhraseRest()), // convert phrase rest to normal string
+                                e.getUsedWords(), template.size());
                     }
                 }
                 catch (IFML2ParseException e)
@@ -183,7 +186,7 @@ public class Parser
                                     && e.isMoreFull((IFML2ParseException) lastException, template.size())))
                     {
                         lastException = e;
-                        ((IFML2ParseException) lastException).templateSize = template.size();
+                        ((IFML2ParseException) lastException).setTemplateSize(template.size());
                     }
                 }
                 catch (IFML2Exception e)
@@ -462,12 +465,12 @@ public class Parser
         else
         if(templateRest.size() > 0 && phraseRest.size() == 0)
         {
-            throw new IFML2ParseException(makeQuestionsForTemplate(templateRest), result.usedWordsQty);
+            throw new IFML2ParseException(makeQuestionsForTemplate(templateRest) + " (пишите ответ полностью)", result.usedWordsQty);
         }
         else
         if(templateRest.size() == 0 && phraseRest.size() > 0)
         {
-            throw new IFML2ParsePhraseTooLong("Я бы понял фразу, если бы вы сказали: ", fittedFormalElements, result.usedWordsQty);
+            throw new IFML2ParsePhraseTooLong(fittedFormalElements, phraseRest, result.usedWordsQty);
         }
         else
         {
@@ -479,13 +482,13 @@ public class Parser
             }
             catch (IFML2ParsePhraseTooLong e)
             {
-                e.fittedFormalElements.add(0, result.fittedFormalElement);
-                e.usedWords += result.usedWordsQty;
+                e.getFittedFormalElements().add(0, result.fittedFormalElement);
+                e.setUsedWords(e.getUsedWords() + result.usedWordsQty);
                 throw e;
             }
             catch (IFML2ParseException e)
             {
-                e.usedWords += result.usedWordsQty;
+                e.setUsedWords(e.getUsedWords() + result.usedWordsQty);
                 throw e;
             }
         }
@@ -507,7 +510,7 @@ public class Parser
                 }
                 catch (IFML2ParseException e)
                 {
-                    if(lastException == null || ((e.usedWords > ((IFML2ParseException) lastException).usedWords)))
+                    if(lastException == null || ((e.getUsedWords() > ((IFML2ParseException) lastException).getUsedWords())))
                     {
                         lastException = e;
                     }

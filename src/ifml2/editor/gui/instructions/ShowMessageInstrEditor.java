@@ -14,8 +14,6 @@ import static ifml2.vm.instructions.ShowMessageInstr.MessageTypeEnum.TEXT;
 
 public class ShowMessageInstrEditor extends JDialog
 {
-    private static final String SHOW_MESSAGE_INSTR_EDITOR_TITLE = "Вывести сообщение";
-    private static final String TYPE_ERROR = "Message type \"{0}\" is unknown";
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
@@ -24,6 +22,10 @@ public class ShowMessageInstrEditor extends JDialog
     private JRadioButton exprTypeRadio;
     private JCheckBox beginWithCapCheck;
     private JCheckBox carriageReturnCheck;
+
+    private static final String SHOW_MESSAGE_INSTR_EDITOR_TITLE = "Вывести сообщение";
+    private static final String TYPE_ERROR = "Message type \"{0}\" is unknown";
+
     private boolean isOk = false;
 
     public ShowMessageInstrEditor(Window owner, @NotNull ShowMessageInstr instruction)
@@ -71,6 +73,7 @@ public class ShowMessageInstrEditor extends JDialog
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
         // -- init form --
+
         switch (instruction.getType())
         {
             case TEXT:

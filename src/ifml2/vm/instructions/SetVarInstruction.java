@@ -11,11 +11,21 @@ import java.text.MessageFormat;
 @XmlRootElement(name = "var")
 public class SetVarInstruction extends Instruction
 {
-    @XmlAttribute(name = "name")
     private String name;
-    
-    @XmlAttribute(name = "value")
+
+    @XmlAttribute(name = "name")
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
     private String value;
+
+    @XmlAttribute(name = "value")
+    public void setValue(String value)
+    {
+        this.value = value;
+    }
 
     @Override
     public void run(RunningContext runningContext) throws IFML2Exception
@@ -26,7 +36,7 @@ public class SetVarInstruction extends Instruction
     @Override
     public String toString()
     {
-        return MessageFormat.format("Установить переменной {0} значение {1}", name,  value);
+        return MessageFormat.format("Установить переменной \"{0}\" значение {1}", name,  value);
     }
 
     public static String getTitle()
