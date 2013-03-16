@@ -12,10 +12,12 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Collections;
 
-public class InstructionsEditor extends JDialog
+public class InstructionsEditor extends AbstractEditor<InstructionList>
 {
     private JPanel contentPane;
     private JButton buttonOK;
@@ -26,7 +28,6 @@ public class InstructionsEditor extends JDialog
     private JButton delInstrButton;
     private JButton upButton;
     private JButton downButton;
-    private boolean isOk;
 
     private static final String INSTR_EDITOR_TITLE = "Инструкции";
 
@@ -91,47 +92,8 @@ public class InstructionsEditor extends JDialog
 
     public InstructionsEditor(Window owner, final InstructionList instructionList)
     {
-        super(owner, INSTR_EDITOR_TITLE, ModalityType.DOCUMENT_MODAL);
-
-        setContentPane(contentPane);
-        getRootPane().setDefaultButton(buttonOK);
-
-        GUIUtils.packAndCenterWindow(this);
-
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-
-        buttonOK.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                onOK();
-            }
-        });
-        buttonCancel.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                onCancel();
-            }
-        });
-
-        // call onCancel() when cross is clicked
-        addWindowListener(new WindowAdapter()
-        {
-            public void windowClosing(WindowEvent e)
-            {
-                onCancel();
-            }
-        });
-
-        // call onCancel() on ESCAPE
-        contentPane.registerKeyboardAction(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                onCancel();
-            }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        super(owner);
+        initializeEditor(INSTR_EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
 
         // -- form actions init --
 
@@ -216,28 +178,9 @@ public class InstructionsEditor extends JDialog
         downAction.setEnabled(isInstrSelected && selectedInstrIdx < instructionsList.getModel().getSize() - 1);
     }
 
-    private void onOK()
-    {
-        isOk = true;
-        dispose();
-    }
-
-    private void onCancel()
-    {
-        isOk = false;
-        dispose();
-    }
-
-    public boolean showDialog()
-    {
-        setVisible(true);
-        return isOk;
-    }
-
+    @Override
     public void getData(@NotNull InstructionList instructionList)
     {
-        EventList<Instruction> instructions = instructionList.getInstructions();
-        instructions.clear();
-        instructions.addAll(instructionListClone.getInstructions());
+        instructionList.rewriteInstructions(instructionListClone);
     }
 }

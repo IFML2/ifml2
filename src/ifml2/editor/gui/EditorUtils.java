@@ -37,7 +37,7 @@ public class EditorUtils
                 AbstractInstrEditor instrEditor = editorClass.getConstructor(Window.class, instrClass).newInstance(owner, instruction);
                 if(instrEditor.showDialog())
                 {
-                    instrEditor.getData(instruction);
+                    instrEditor.getInstruction(instruction);
                     return true;
                 }
             }

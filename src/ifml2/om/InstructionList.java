@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlElements;
 
 public class InstructionList implements Cloneable
 {
+    private EventList<Instruction> instructions = new BasicEventList<Instruction>(); // InstructionList controls its instructions
     @XmlElements({
 //            @XmlElement(name = "showLocName", type = ShowLocNameInstruction.class),
             @XmlElement(name = "goToLoc", type = GoToLocInstruction.class),
@@ -24,7 +25,6 @@ public class InstructionList implements Cloneable
             @XmlElement(name = "setProperty", type = SetPropertyInstruction.class),
             @XmlElement(name = "moveItem", type = MoveItemInstruction.class)
     })
-    private EventList<Instruction> instructions = new BasicEventList<Instruction>(); // InstructionList controls its instructions
     public EventList<Instruction> getInstructions() { return instructions; }
 
     @Override
@@ -37,5 +37,11 @@ public class InstructionList implements Cloneable
             clone.instructions.add(instruction.clone());
         }
         return clone;
+    }
+
+    public void rewriteInstructions(InstructionList instructionList)
+    {
+        instructions.clear();
+        instructions.addAll(instructionList.getInstructions());
     }
 }

@@ -29,7 +29,7 @@ public class ShowMessageInstrEditor extends AbstractInstrEditor
     public ShowMessageInstrEditor(Window owner, @NotNull ShowMessageInstr instruction) throws IFML2EditorException
     {
         super(owner);
-        init();
+        initializeEditor(SHOW_MESSAGE_INSTR_EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
 
         // -- init form data --
 
@@ -52,39 +52,15 @@ public class ShowMessageInstrEditor extends AbstractInstrEditor
     }
 
     @Override
-    protected JButton getButtonCancel()
-    {
-        return buttonCancel;
-    }
-
-    @Override
-    protected JButton getButtonOK()
-    {
-        return buttonOK;
-    }
-
-    @Override
-    protected JPanel getEditorContentPane()
-    {
-        return contentPane;
-    }
-
-    @Override
-    protected String getEditorTitle()
-    {
-        return SHOW_MESSAGE_INSTR_EDITOR_TITLE;
-    }
-
-    @Override
     protected Class<? extends Instruction> getInstrClass()
     {
         return ShowMessageInstr.class;
     }
 
     @Override
-    public void getData(@NotNull Instruction instruction) throws IFML2EditorException
+    public void getInstruction(@NotNull Instruction instruction) throws IFML2EditorException
     {
-        super.getData(instruction);
+        getData(instruction);
 
         ShowMessageInstr showMessageInstr = (ShowMessageInstr) instruction;
 

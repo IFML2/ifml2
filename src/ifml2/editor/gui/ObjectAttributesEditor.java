@@ -12,13 +12,12 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
 import java.util.Arrays;
 import java.util.Vector;
 
-public class ObjectAttributesEditor extends JDialog
+public class ObjectAttributesEditor extends AbstractEditor<EventList<Attribute>>
 {
-    public static final String OBJECT_ATTRIBUTES_EDITOR_TITLE = "Признаки";
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
@@ -27,45 +26,16 @@ public class ObjectAttributesEditor extends JDialog
     private JButton addButton;
     private JButton delButton;
 
+    public static final String OBJECT_ATTRIBUTES_EDITOR_TITLE = "Признаки";
+
     private EventList<Attribute> attributesClone = null;
-    private boolean isOk = false;
 
     public ObjectAttributesEditor(Window owner, @NotNull EventList<Attribute> attributes, @NotNull Story story)
     {
-        super(owner, OBJECT_ATTRIBUTES_EDITOR_TITLE, ModalityType.DOCUMENT_MODAL);
+        super(owner);
+        initializeEditor(OBJECT_ATTRIBUTES_EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
 
-        setContentPane(contentPane);
-        getRootPane().setDefaultButton(buttonOK);
-
-        GUIUtils.packAndCenterWindow(this);
-
-        buttonOK.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e) {onOK();}
-        });
-        buttonCancel.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e) {onCancel();}
-        });
-
-        // call onCancel() when cross is clicked
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        addWindowListener(new WindowAdapter()
-        {
-            public void windowClosing(WindowEvent e)
-            {
-                onCancel();
-            }
-        });
-
-        // call onCancel() on ESCAPE
-        contentPane.registerKeyboardAction(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                onCancel();
-            }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        // -- init form --
 
         addButton.setAction(new AbstractAction("", GUIUtils.MOVE_LEFT_ICON)
         {
@@ -134,27 +104,10 @@ public class ObjectAttributesEditor extends JDialog
         });
     }
 
-    private void onOK()
-    {
-        isOk = true;
-        dispose();
-    }
-
-    private void onCancel()
-    {
-        isOk = false;
-        dispose();
-    }
-
-    public void getData(EventList<Attribute> attributes)
+    @Override
+    public void getData(@NotNull EventList<Attribute> attributes)
     {
         attributes.clear();
         attributes.addAll(attributesClone);
-    }
-
-    public boolean showDialog()
-    {
-        setVisible(true);
-        return isOk;
     }
 }

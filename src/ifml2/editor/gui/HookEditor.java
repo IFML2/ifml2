@@ -11,11 +11,14 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.MessageFormat;
 import java.util.List;
 
-public class HookEditor extends JDialog
+public class HookEditor extends AbstractEditor<Hook>
 {
     private JPanel contentPane;
     private JButton buttonOK;
@@ -32,52 +35,11 @@ public class HookEditor extends JDialog
     private InstructionList instructionListClone; // no need to clone - InstructionList isn't modified here
 
     private static final String HOOK_EDITOR_TITLE = "Перехват";
-    private boolean isOk;
 
     public HookEditor(Window owner, @NotNull final Hook hook, @NotNull List<Action> actionList) throws IFML2EditorException
     {
-        super(owner, HOOK_EDITOR_TITLE, ModalityType.DOCUMENT_MODAL);
-
-        // -- dialog init --
-
-        setContentPane(contentPane);
-        getRootPane().setDefaultButton(buttonOK);
-
-        GUIUtils.packAndCenterWindow(this);
-
-        buttonOK.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                onOK();
-            }
-        });
-        buttonCancel.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                onCancel();
-            }
-        });
-
-        // call onCancel() when cross is clicked
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        addWindowListener(new WindowAdapter()
-        {
-            public void windowClosing(WindowEvent e)
-            {
-                onCancel();
-            }
-        });
-
-        // call onCancel() on ESCAPE
-        contentPane.registerKeyboardAction(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                onCancel();
-            }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        super(owner);
+        initializeEditor(HOOK_EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
 
         // -- form actions init --
 
@@ -174,24 +136,7 @@ public class HookEditor extends JDialog
         });
     }
 
-    private void onOK()
-    {
-        isOk = true;
-        dispose();
-    }
-
-    private void onCancel()
-    {
-        isOk = false;
-        dispose();
-    }
-
-    public boolean showDialog()
-    {
-        setVisible(true);
-        return isOk;
-    }
-
+    @Override
     public void getData(@NotNull Hook hook) throws IFML2EditorException
     {
         hook.setAction((Action) actionCombo.getSelectedItem());
@@ -212,5 +157,7 @@ public class HookEditor extends JDialog
         {
             throw new IFML2EditorException("No hook type selected!");
         }
+
+        hook.getInstructionList().rewriteInstructions(instructionListClone);
     }
 }

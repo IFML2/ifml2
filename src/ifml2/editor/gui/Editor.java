@@ -339,12 +339,10 @@ public class Editor extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                StoryOptionsEditor storyOptionsEditor = new StoryOptionsEditor(Editor.this);
-
-                storyOptionsEditor.setAllData(story.storyOptions, story.getLocations(), story.getProcedures());
+                StoryOptionsEditor storyOptionsEditor = new StoryOptionsEditor(Editor.this, story.storyOptions, story.getLocations(), story.getProcedures());
                 if(storyOptionsEditor.showDialog())
                 {
-                    storyOptionsEditor.getAllData(story.storyOptions);
+                    storyOptionsEditor.getData(story.storyOptions);
                 }
             }
         });
@@ -365,9 +363,8 @@ public class Editor extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                ProceduresEditor proceduresEditor = new ProceduresEditor(Editor.this);
-                proceduresEditor.setAllData(story.getProcedures()); //todo rewrite to ctor
-                proceduresEditor.setVisible(true);
+                ProceduresEditor proceduresEditor = new ProceduresEditor(Editor.this, story.getProcedures());
+                proceduresEditor.showDialog();
             }
         });
         storyMenu.add(new AbstractAction("Редактировать действия...")
@@ -483,12 +480,10 @@ public class Editor extends JFrame
     {
         if(location != null)
         {
-            LocationEditor locationEditor = new LocationEditor(this);
-
-            locationEditor.setAllData(story, location);
+            LocationEditor locationEditor = new LocationEditor(this, story, location);
             if(locationEditor.showDialog())
             {
-                locationEditor.getAllData(location);
+                locationEditor.getData(location);
                 return true;
             }
         }

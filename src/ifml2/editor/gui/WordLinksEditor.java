@@ -4,6 +4,7 @@ import ifml2.GUIUtils;
 import ifml2.editor.IFML2EditorException;
 import ifml2.om.Word;
 import ifml2.om.WordLinks;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -13,11 +14,11 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.Document;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class WordLinksEditor extends JDialog
+public class WordLinksEditor extends AbstractEditor<WordLinks>
 {
     private JPanel contentPane;
     private JButton buttonOK;
@@ -42,46 +43,14 @@ public class WordLinksEditor extends JDialog
     private static final String WRONG_DOC_PROP_SYSTEM_ERROR = "Системная ошибка: неверное свойство case у DocumentEvent.getDocument() в wordDocListener";
 
     private boolean isUpdatingText = false;
-    private HashMap<String, Word> dictionary = null;
     private ArrayList<Word> wordsClone = null;
-    private boolean isOk = false;
 
-    public WordLinksEditor(Window owner)
+    public WordLinksEditor(Window owner, final HashMap<String, Word> dictionary, WordLinks wordLinks)
     {
-        super(owner, DICTIONARY_EDITOR_TITLE,  ModalityType.DOCUMENT_MODAL);
+        super(owner);
+        initializeEditor(DICTIONARY_EDITOR_TITLE, contentPane, buttonOK, null);
 
-        setContentPane(contentPane);
-        getRootPane().setDefaultButton(buttonOK);
-
-        GUIUtils.packAndCenterWindow(this);
-
-        buttonOK.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                onOK();
-            }
-        });
-
-// call onCancel() when cross is clicked
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        addWindowListener(new WindowAdapter()
-        {
-            public void windowClosing(WindowEvent e)
-            {
-                onCancel();
-            }
-        });
-
-// call onCancel() on ESCAPE
-        contentPane.registerKeyboardAction(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                onCancel();
-            }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-
+        // -- init form --
 
         wordList.addListSelectionListener(new ListSelectionListener()
         {
@@ -178,18 +147,18 @@ public class WordLinksEditor extends JDialog
             public void actionPerformed(ActionEvent e)
             {
                 Word word = (Word) wordList.getSelectedValue();
-                if (word != null)
+                if (word != null && JOptionPane.showConfirmDialog(getContentPane(), WORD_DELETION_QUERY_PROMPT) == JOptionPane.YES_OPTION)
                 {
-                    int answer = JOptionPane.showConfirmDialog(getContentPane(), WORD_DELETION_QUERY_PROMPT);
-                    if (answer == JOptionPane.YES_OPTION)
-                    {
-                        //dictionary.values().remove(word);
-                        wordsClone.remove(word);
-                        updateLinksAndMain(word);
-                    }
+                    wordsClone.remove(word);
+                    updateLinksAndMain(word);
                 }
             }
         });
+
+        wordsClone = new ArrayList<Word>(wordLinks.getWords());
+        updateWordLinks(null);
+        updateMainWord();
+        mainWordCombo.setSelectedItem(wordLinks.getMainWord());
     }
 
     private void updateLinksAndMain(Word word)
@@ -270,28 +239,6 @@ public class WordLinksEditor extends JDialog
         }
     }
 
-    private void onOK()
-    {
-        isOk = true;
-        dispose();
-    }
-
-    private void onCancel()
-    {
-        isOk = false;
-        dispose();
-    }
-
-    public void setAllData(HashMap<String, Word> dictionary, WordLinks wordLinks)
-    {
-        this.dictionary = dictionary;
-
-        wordsClone = new ArrayList<Word>(wordLinks.getWords());
-        updateWordLinks(null);
-        updateMainWord();
-        mainWordCombo.setSelectedItem(wordLinks.getMainWord());
-    }
-
     private void updateWordLinks()
     {
         DefaultListModel wordLinksListModel = new DefaultListModel();
@@ -304,16 +251,11 @@ public class WordLinksEditor extends JDialog
 
     //TODO: привести редактор в порядок; сделать транзакционным! позволить редактировать ИП - через обновление HashMap словаря
 
-    public void getData(WordLinks wordLinks)
+    @Override
+    public void getData(@NotNull WordLinks wordLinks)
     {
         wordLinks.getWords().clear();
         wordLinks.getWords().addAll(wordsClone);
         wordLinks.setMainWord((Word) mainWordCombo.getSelectedItem());
-    }
-
-    public boolean showDialog()
-    {
-        setVisible(true);
-        return isOk;
     }
 }

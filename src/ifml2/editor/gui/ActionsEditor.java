@@ -1,14 +1,14 @@
 package ifml2.editor.gui;
 
 import ca.odell.glazedlists.EventList;
-import ifml2.GUIUtils;
+import ifml2.editor.IFML2EditorException;
 import ifml2.om.Action;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 
-public class ActionsEditor extends JDialog
+public class ActionsEditor extends AbstractEditor<Action>
 {
     private JPanel contentPane;
     private JButton buttonOK;
@@ -17,59 +17,15 @@ public class ActionsEditor extends JDialog
 
     public ActionsEditor(Frame owner, EventList<Action> actions)
     {
-        super(owner, ACTIONS_EDITOR_FORM_NAME, ModalityType.DOCUMENT_MODAL);
-
-        setContentPane(contentPane);
-        getRootPane().setDefaultButton(buttonOK);
-
-        GUIUtils.packAndCenterWindow(this);
-
-        buttonOK.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e) {onOK();}
-        });
-
-        buttonCancel.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e) {onCancel();}
-        });
-
-        // call onCancel() when cross is clicked
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        addWindowListener(new WindowAdapter()
-        {
-            public void windowClosing(WindowEvent e)
-            {
-                onCancel();
-            }
-        });
-
-        // call onCancel() on ESCAPE
-        contentPane.registerKeyboardAction(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                onCancel();
-            }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        super(owner);
+        initializeEditor(ACTIONS_EDITOR_FORM_NAME, contentPane, buttonOK, buttonCancel);
 
         // todo form init
     }
 
-    private void onOK()
+    @Override
+    public void getData(@NotNull Action data) throws IFML2EditorException
     {
-        // add your code here
-        dispose();
-    }
-
-    private void onCancel()
-    {
-        // add your code here if necessary
-        dispose();
-    }
-
-    public void showDialog()
-    {
-        setVisible(true);
+        //todo get actions data from editor
     }
 }

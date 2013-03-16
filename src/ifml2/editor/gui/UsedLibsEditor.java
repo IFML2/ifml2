@@ -4,21 +4,22 @@ import ifml2.CommonConstants;
 import ifml2.CommonUtils;
 import ifml2.GUIUtils;
 import ifml2.IFML2Exception;
+import ifml2.editor.IFML2EditorException;
 import ifml2.om.Library;
 import ifml2.om.OMManager;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
-public class UsedLibsEditor extends JDialog
+public class UsedLibsEditor extends AbstractEditor<List<Library>>
 {
-    public static final String USEDLIBS_EDITOR_TITLE = "Используемые библиотеки";
     private JPanel contentPane;
     private JButton buttonOK;
     private JList usedLibsList;
@@ -26,41 +27,14 @@ public class UsedLibsEditor extends JDialog
     private JButton delButton;
     private List<Library> libraries;
 
+    public static final String USED_LIBS_EDITOR_TITLE = "Используемые библиотеки";
+
     public UsedLibsEditor(Window owner)
     {
-        super(owner, USEDLIBS_EDITOR_TITLE, ModalityType.DOCUMENT_MODAL);
+        super(owner);
+        initializeEditor(USED_LIBS_EDITOR_TITLE, contentPane, buttonOK, null);
 
-        setContentPane(contentPane);
-        getRootPane().setDefaultButton(buttonOK);
-
-        GUIUtils.packAndCenterWindow(this);
-
-        buttonOK.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                onOK();
-            }
-        });
-
-// call onCancel() when cross is clicked
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        addWindowListener(new WindowAdapter()
-        {
-            public void windowClosing(WindowEvent e)
-            {
-                onOK();
-            }
-        });
-
-// call onCancel() on ESCAPE
-        contentPane.registerKeyboardAction(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                onOK();
-            }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        // -- nint form --
 
         addButton.setAction(new AbstractAction("Добавить...", GUIUtils.ADD_ELEMENT_ICON)
         {
@@ -146,10 +120,10 @@ public class UsedLibsEditor extends JDialog
         });
     }
 
-    private void onOK()
+    @Override
+    public void getData(@NotNull List<Library> data) throws IFML2EditorException
     {
-// add your code here
-        dispose();
+        //todo transfer to transact model
     }
 
     public void setAllData(List<Library> libraries)

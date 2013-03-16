@@ -2,21 +2,21 @@ package ifml2.editor.gui;
 
 import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ifml2.GUIUtils;
+import ifml2.editor.IFML2EditorException;
 import ifml2.editor.gui.instructions.InstructionTypeEnum;
 import ifml2.om.Procedure;
 import ifml2.vm.instructions.Instruction;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.HashMap;
 
-public class ProceduresEditor extends JDialog
+public class ProceduresEditor extends AbstractEditor<HashMap<String, Procedure>>
 {
-    public static final String PROCEDURES_EDITOR_TITLE = "Процедуры";
     private JPanel contentPane;
     private JButton buttonOK;
     private JList proceduresList;
@@ -26,6 +26,8 @@ public class ProceduresEditor extends JDialog
     private JButton addInstructionButton;
     private JButton editInstructionButton;
     private JButton delInstructionButton;
+
+    public static final String PROCEDURES_EDITOR_TITLE = "Процедуры";
 
     private HashMap<String, Procedure> procedures = null;
 
@@ -41,10 +43,8 @@ public class ProceduresEditor extends JDialog
                 return;
             }
 
-            int answer = JOptionPane.showConfirmDialog(ProceduresEditor.this, "Вы действительно хотите удалить процедуру " + procedure.getName() + "?",
-                    "Удаление процедуры", JOptionPane.YES_NO_OPTION);
-
-            if(answer == 0)
+            if(JOptionPane.showConfirmDialog(ProceduresEditor.this, "Вы действительно хотите удалить процедуру " + procedure.getName() + "?",
+                    "Удаление процедуры", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
             {
                 procedures.values().remove(procedure);
                 updateAllData();
@@ -113,14 +113,12 @@ public class ProceduresEditor extends JDialog
         }
     };
 
-    public ProceduresEditor(Window owner)
+    public ProceduresEditor(Window owner, final HashMap<String, Procedure> procedures)
     {
-        super(owner, PROCEDURES_EDITOR_TITLE, ModalityType.DOCUMENT_MODAL);
+        super(owner);
+        initializeEditor(PROCEDURES_EDITOR_TITLE, contentPane, buttonOK, null);
 
-        setContentPane(contentPane);
-        getRootPane().setDefaultButton(buttonOK);
-
-        GUIUtils.packAndCenterWindow(this);
+        // -- init form --
 
         addProcedureButton.setAction(new AbstractAction("Новая...", GUIUtils.ADD_ELEMENT_ICON)
         {
@@ -145,14 +143,6 @@ public class ProceduresEditor extends JDialog
         editInstructionButton.setAction(editInstructionAction);
         delInstructionButton.setAction(delInstructionAction); 
 
-        buttonOK.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                onOK();
-            }
-        });
-
         proceduresList.addListSelectionListener(new ListSelectionListener()
         {
             @Override
@@ -173,6 +163,15 @@ public class ProceduresEditor extends JDialog
         });
 
         updateActions();
+
+        this.procedures = procedures;
+        updateAllData();
+    }
+
+    @Override
+    public void getData(@NotNull HashMap<String, Procedure> data) throws IFML2EditorException
+    {
+        // todo refactor editor to transact mode
     }
 
     private void updateActions()
@@ -194,17 +193,6 @@ public class ProceduresEditor extends JDialog
         {
             instructionsList.setModel(new DefaultEventListModel<Instruction>(procedure.getInstructions()));
         }
-    }
-
-    private void onOK()
-    {
-        dispose();
-    }
-
-    public void setAllData(HashMap<String, Procedure> procedures)
-    {
-        this.procedures = procedures;
-        updateAllData();
     }
 
     private void updateAllData()

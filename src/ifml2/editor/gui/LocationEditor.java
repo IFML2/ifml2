@@ -4,6 +4,7 @@ import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
 import ifml2.GUIUtils;
 import ifml2.om.*;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -15,7 +16,7 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class LocationEditor extends JDialog
+public class LocationEditor extends AbstractEditor<Location>
 {
     private JPanel contentPane;
     private JButton buttonOK;
@@ -61,62 +62,20 @@ public class LocationEditor extends JDialog
         }
     };
 
-    private static final String LOCATION_EDITOR_FORM_NAME = "Локация";
+    private static final String LOCATION_EDITOR_TITLE = "Локация";
 
-    private boolean isOk = false;
     private boolean toGenerateId = false;
 
     private ArrayList<Item> itemsClone = null;
     private EventList<Attribute> attributesClone = null;
 
-    //private DelItemAction delItemAction = new DelItemAction();
     private Story story = null;
 
-    public LocationEditor(Frame owner)
+    public LocationEditor(Window owner, final Story story, Location location)
     {
-        super(owner, LOCATION_EDITOR_FORM_NAME, ModalityType.DOCUMENT_MODAL);
+        super(owner);
+        initializeEditor(LOCATION_EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
 
-        setContentPane(contentPane);
-        getRootPane().setDefaultButton(buttonOK);
-
-        GUIUtils.packAndCenterWindow(this);
-
-        buttonOK.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                onOK();
-            }
-        });
-
-        buttonCancel.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                onCancel();
-            }
-        });
-
-// call onCancel() when cross is clicked
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        addWindowListener(new WindowAdapter()
-        {
-            public void windowClosing(WindowEvent e)
-            {
-                onCancel();
-            }
-        });
-
-// call onCancel() on ESCAPE
-        contentPane.registerKeyboardAction(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                onCancel();
-            }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-
-        //AddItemAction addItemAction = new AddItemAction();
         addItemButton.setAction(new AbstractAction("Добавить...")
         {
             @Override
@@ -206,6 +165,28 @@ public class LocationEditor extends JDialog
         });
 
         updateActions();
+
+        updateDictionaryLinks(story.getDictionary());
+        //TODO:dictWordCombo.setSelectedItem(location.getWord());
+
+        updateLocationLinks(story.getLocations());
+        northCombo.setSelectedItem(location.getNorth());
+        eastCombo.setSelectedItem(location.getEast());
+        southCombo.setSelectedItem(location.getSouth());
+        westCombo.setSelectedItem(location.getWest());
+
+        itemsClone = new ArrayList<Item>(location.getItems());
+        updateItems();
+
+        attributesClone = GlazedLists.eventList(location.getAttributes());
+        updateAttributes();
+
+        setData(location);
+
+        this.story = story;
+
+        String id = location.getId();
+        toGenerateId = id == null || "".equals(id);
     }
 
     private void updateId()
@@ -221,49 +202,6 @@ public class LocationEditor extends JDialog
         boolean itemIsSelected = itemsList.getSelectedValue() != null;
         editItemAction.setEnabled(itemIsSelected);
         delItemAction.setEnabled(itemIsSelected);
-    }
-
-    private void onOK()
-    {
-        isOk = true;
-        dispose();
-    }
-
-    private void onCancel()
-    {
-        isOk = false;
-        dispose();
-    }
-
-    public boolean showDialog()
-    {
-        setVisible(true);
-        return isOk;
-    }
-
-    public void setAllData(Story story, Location location)
-    {
-        updateDictionaryLinks(story.getDictionary());
-        //TODO:dictWordCombo.setSelectedItem(location.getWord());
-
-        updateLocationLinks(story.getLocations());
-        northCombo.setSelectedItem(location.getNorth());
-        eastCombo.setSelectedItem(location.east);
-        southCombo.setSelectedItem(location.south);
-        westCombo.setSelectedItem(location.west);
-
-        itemsClone = new ArrayList<Item>(location.getItems());
-        updateItems();
-
-        attributesClone = GlazedLists.eventList(location.getAttributes());
-        updateAttributes();
-
-        setData(location);
-
-        this.story = story;
-
-        String id = location.getId();
-        toGenerateId = id == null || "".equals(id);
     }
 
     private void updateAttributes()
@@ -302,21 +240,6 @@ public class LocationEditor extends JDialog
         dictWordCombo.insertItemAt(null, 0);
     }
 
-    public void getAllData(Location location)
-    {
-        getData(location);
-
-        //TODO:location.setWord((Word) dictWordCombo.getSelectedItem());
-
-        location.setNorth((Location) northCombo.getSelectedItem());
-        location.east = (Location) eastCombo.getSelectedItem();
-        location.south = (Location) southCombo.getSelectedItem();
-        location.west = (Location) westCombo.getSelectedItem();
-
-        location.setItems(itemsClone);
-        location.setAttributes(attributesClone);
-    }
-
     void setData(Location data)
     {
         locationNameText.setText(data.getName());
@@ -324,11 +247,20 @@ public class LocationEditor extends JDialog
         descriptionText.setText(data.getDescription());
     }
 
-    void getData(Location data)
+    @Override
+    public void getData(@NotNull Location location)
     {
-        data.setName(locationNameText.getText());
-        data.setId(locationIDText.getText());
-        data.setDescription(descriptionText.getText());
+        location.setNorth((Location) northCombo.getSelectedItem());
+        location.setEast((Location) eastCombo.getSelectedItem());
+        location.setSouth((Location) southCombo.getSelectedItem());
+        location.setWest((Location) westCombo.getSelectedItem());
+
+        location.setItems(itemsClone);
+        location.setAttributes(attributesClone);
+
+        location.setName(locationNameText.getText());
+        location.setId(locationIDText.getText());
+        location.setDescription(descriptionText.getText());
     }
 
     /*

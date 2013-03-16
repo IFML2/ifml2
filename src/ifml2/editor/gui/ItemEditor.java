@@ -14,7 +14,7 @@ import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class ItemEditor extends JDialog
+public class ItemEditor extends AbstractEditor<Item>
 {
     private JPanel contentPane;
     private JButton buttonOK;
@@ -35,7 +35,6 @@ public class ItemEditor extends JDialog
 
     private static final String ITEM_EDITOR_TITLE = "Предмет";
 
-    private boolean isOk = false;
     private Story story = null;
     private boolean toGenerateId = false;
 
@@ -73,48 +72,8 @@ public class ItemEditor extends JDialog
 
     public ItemEditor(Window owner, @NotNull final Story story, @NotNull final Item item)
     {
-        super(owner, ITEM_EDITOR_TITLE, ModalityType.DOCUMENT_MODAL);
-
-        // window tuning
-        setContentPane(contentPane);
-        getRootPane().setDefaultButton(buttonOK);
-
-        GUIUtils.packAndCenterWindow(this);
-        
-        // OK/Cancel buttons
-        buttonOK.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                onOK();
-            }
-        });
-        buttonCancel.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                onCancel();
-            }
-        });
-
-        // call onCancel() when cross is clicked
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        addWindowListener(new WindowAdapter()
-        {
-            public void windowClosing(WindowEvent e)
-            {
-                onCancel();
-            }
-        });
-
-        // call onCancel() on ESCAPE
-        contentPane.registerKeyboardAction(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                onCancel();
-            }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        super(owner);
+        initializeEditor(ITEM_EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
 
         // -- init form --
 
@@ -135,8 +94,7 @@ public class ItemEditor extends JDialog
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                WordLinksEditor wordLinksEditor = new WordLinksEditor(ItemEditor.this);
-                wordLinksEditor.setAllData(ItemEditor.this.story.getDictionary(), wordLinksClone); //todo move to ctor
+                WordLinksEditor wordLinksEditor = new WordLinksEditor(ItemEditor.this, story.getDictionary(), wordLinksClone);
                 if(wordLinksEditor.showDialog())
                 {
                     wordLinksEditor.getData(wordLinksClone);
@@ -306,19 +264,8 @@ public class ItemEditor extends JDialog
         deleteHookAction.setEnabled(hookIsSelected);
     }
 
-    private void onOK()
-    {
-        isOk = true;
-        dispose();
-    }
-
-    private void onCancel()
-    {
-        isOk = false;
-        dispose();
-    }
-
-    public void getData(Item item)
+    @Override
+    public void getData(@NotNull Item item)
     {
         item.setId(idText.getText());
         item.setName(nameText.getText());
@@ -335,7 +282,7 @@ public class ItemEditor extends JDialog
         }
 
         item.setAttributes(attributesClone);
-        item.hooks = hooksClone;
+        item.hooks = hooksClone; // rewrite data in EventList
     }
 
     private void updateId()
@@ -344,11 +291,5 @@ public class ItemEditor extends JDialog
         {
             idText.setText(story.generateIdByName(nameText.getText()));
         }
-    }
-
-    public boolean showDialog()
-    {
-        setVisible(true);
-        return isOk;
     }
 }

@@ -246,14 +246,6 @@ public class DictionaryEditor extends JDialog
         dispose();
     }
 
-    /*public static void main(String[] args)
-    {
-        DictionaryEditor dialog = new DictionaryEditor();
-        dialog.pack();
-        dialog.setVisible(true);
-        System.exit(0);
-    }*/
-
     void setAllData(HashMap<String, Word> dictionary)
     {
         this.dictionary = dictionary;

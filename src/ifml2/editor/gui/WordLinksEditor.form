@@ -38,7 +38,7 @@
                 </constraints>
                 <properties>
                   <labelFor value="75bd5"/>
-                  <text value="&amp;И.П."/>
+                  <text value="И.П."/>
                 </properties>
               </component>
               <component id="c0037" class="javax.swing.JLabel">
@@ -47,7 +47,7 @@
                 </constraints>
                 <properties>
                   <labelFor value="49ca5"/>
-                  <text value="&amp;Р.П."/>
+                  <text value="Р.П."/>
                 </properties>
               </component>
               <component id="49ca5" class="javax.swing.JTextField" binding="rpText">
@@ -64,7 +64,7 @@
                 </constraints>
                 <properties>
                   <labelFor value="613b5"/>
-                  <text value="&amp;Д.П."/>
+                  <text value="Д.П."/>
                 </properties>
               </component>
               <component id="613b5" class="javax.swing.JTextField" binding="dpText">
@@ -81,7 +81,7 @@
                 </constraints>
                 <properties>
                   <labelFor value="2d193"/>
-                  <text value="&amp;В.П."/>
+                  <text value="В.П."/>
                 </properties>
               </component>
               <component id="ffe68" class="javax.swing.JLabel">
@@ -90,7 +90,7 @@
                 </constraints>
                 <properties>
                   <labelFor value="23077"/>
-                  <text value="&amp;Т.П."/>
+                  <text value="Т.П."/>
                 </properties>
               </component>
               <component id="fd02f" class="javax.swing.JLabel">
@@ -99,7 +99,7 @@
                 </constraints>
                 <properties>
                   <labelFor value="eea8c"/>
-                  <text value="&amp;П.П."/>
+                  <text value="П.П."/>
                 </properties>
               </component>
               <component id="2d193" class="javax.swing.JTextField" binding="vpText">

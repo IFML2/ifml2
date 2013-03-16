@@ -34,7 +34,7 @@ public class IfInstrEditor extends AbstractInstrEditor
     public IfInstrEditor(Window owner, @NotNull IfInstruction instruction)
     {
         super(owner);
-        init();
+        initializeEditor(IF_INSTR_EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
 
         // -- init local events
 
@@ -101,37 +101,13 @@ public class IfInstrEditor extends AbstractInstrEditor
     }
 
     @Override
-    protected JButton getButtonCancel()
-    {
-        return buttonCancel;
-    }
-
-    @Override
-    protected JButton getButtonOK()
-    {
-        return buttonOK;
-    }
-
-    @Override
-    protected JPanel getEditorContentPane()
-    {
-        return contentPane;
-    }
-
-    @Override
-    protected String getEditorTitle()
-    {
-        return IF_INSTR_EDITOR_TITLE;
-    }
-
-    @Override
     protected Class<? extends Instruction> getInstrClass()
     {
         return IfInstruction.class;
     }
 
     @Override
-    public void getData(@NotNull Instruction instruction) throws IFML2EditorException
+    public void getInstruction(@NotNull Instruction instruction) throws IFML2EditorException
     {
         super.getData(instruction);
 

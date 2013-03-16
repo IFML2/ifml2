@@ -23,17 +23,23 @@ public class Location extends IFMLObject
 	public Location getNorth() { return north; }
 	public void setNorth(Location north) { this.north = north; }
 
+    private Location east;
 	@XmlElement(name = "east")
 	@XmlIDREF
-	public Location east;
+    public Location getEast() { return east; }
+    public void setEast(Location east) { this.east = east; }
 
+    private Location south;
 	@XmlElement(name = "south")
 	@XmlIDREF
-	public Location south;
+    public Location getSouth() { return south; }
+    public void setSouth(Location south) { this.south = south; }
 
-	@XmlElement(name = "west")
+    private Location west;
+    @XmlElement(name = "west")
 	@XmlIDREF
-	public Location west;
+    public Location getWest() { return west; }
+    public void setWest(Location west) { this.west = west; }
 
     @XmlElement(name = "up")
     @XmlIDREF
@@ -64,7 +70,7 @@ public class Location extends IFMLObject
     {
         if ("север".equalsIgnoreCase(propertyName))
         {
-            return new ObjectValue(getNorth());
+            return new ObjectValue(north);
         }
         else if ("восток".equalsIgnoreCase(propertyName))
         {
