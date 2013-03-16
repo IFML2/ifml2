@@ -2,9 +2,9 @@ package ifml2.editor.gui;
 
 import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ifml2.GUIUtils;
+import ifml2.editor.gui.instructions.InstructionTypeEnum;
 import ifml2.om.Procedure;
 import ifml2.vm.instructions.Instruction;
-import ifml2.vm.instructions.InstructionTypeEnum;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -61,13 +61,13 @@ public class ProceduresEditor extends JDialog
 
             if (procedure != null)
             {
-                InstructionTypeEnum answer = EditorUtils.askInstructionType(ProceduresEditor.this);
+                InstructionTypeEnum instrType = EditorUtils.askInstructionType(ProceduresEditor.this);
 
-                if (answer != null)
+                if (instrType != null)
                 {
                     try
                     {
-                        Instruction instruction = answer.getInstrClass().newInstance();
+                        Instruction instruction = instrType.createInstrInstance();
                         if (EditorUtils.showAssociatedEditor(ProceduresEditor.this, instruction))
                         {
                             procedure.getInstructions().add(instruction);

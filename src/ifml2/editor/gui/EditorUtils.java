@@ -1,16 +1,14 @@
 package ifml2.editor.gui;
 
 import ifml2.GUIUtils;
-import ifml2.editor.gui.instructions.IfInstrEditor;
-import ifml2.editor.gui.instructions.ShowMessageInstrEditor;
-import ifml2.vm.instructions.IfInstruction;
+import ifml2.editor.gui.instructions.AbstractInstrEditor;
+import ifml2.editor.gui.instructions.InstructionTypeEnum;
 import ifml2.vm.instructions.Instruction;
-import ifml2.vm.instructions.InstructionTypeEnum;
-import ifml2.vm.instructions.ShowMessageInstr;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
+import java.text.MessageFormat;
 
 public class EditorUtils
 {
@@ -32,32 +30,24 @@ public class EditorUtils
         try
         {
             InstructionTypeEnum instrType = InstructionTypeEnum.getItemByClass(instruction.getClass());
-
-            switch (instrType)
+            Class<? extends Instruction> instrClass = instrType.getInstrClass();
+            Class<? extends AbstractInstrEditor> editorClass = instrType.getAssociatedEditor();
+            if(editorClass != null)
             {
-                case SHOW_MESSAGE:
-                    ShowMessageInstr showMessageInstr = (ShowMessageInstr) instruction;
-                    ShowMessageInstrEditor showMessageInstrEditor = new ShowMessageInstrEditor(owner, showMessageInstr);
-                    if(showMessageInstrEditor.showDialog())
-                    {
-                        showMessageInstrEditor.getData(showMessageInstr);
-                        return true;
-                    }
-                    break;
-                case IF:
-                    IfInstruction ifInstruction = (IfInstruction) instruction;
-                    IfInstrEditor ifInstrEditor = new IfInstrEditor(owner, ifInstruction);
-                    if(ifInstrEditor.showDialog())
-                    {
-                        ifInstrEditor.getData(ifInstruction);
-                        return true;
-                    }
-                    break;
-                default:
-                    JOptionPane.showMessageDialog(owner, "Инструкция " + instruction.getClass().getSimpleName() + " пока не редактируется");
+                AbstractInstrEditor instrEditor = editorClass.getConstructor(Window.class, instrClass).newInstance(owner, instruction);
+                if(instrEditor.showDialog())
+                {
+                    instrEditor.getData(instruction);
+                    return true;
+                }
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(owner, MessageFormat.format("Инструкция \"{0}\" пока не редактируется",
+                        instrType.getTitle()));
             }
         }
-        catch (Exception e)
+        catch (Throwable e)
         {
             GUIUtils.showErrorMessage(owner, e);
         }

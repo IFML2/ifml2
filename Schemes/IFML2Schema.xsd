@@ -255,13 +255,12 @@
     </complexType>
 
     <complexType name="instructionsType">
-        <!--todo: удалить ненужные инструкции-->
         <choice minOccurs="0" maxOccurs="unbounded">
-            <element name="showLocName" type="ifml2:instructionShowLocNameType"/>
+            <!--element name="showLocName" type="ifml2:instructionShowLocNameType"/-->
             <element name="goToLoc" type="ifml2:instructionGoToLocationType"/>
-            <element name="showItemDesc" type="ifml2:instructionShowItemDescType"/>
-            <element name="showInventory" type="ifml2:instructionShowInventoryType"/>
-            <!--replaced by moveItem-<element name="getItem" type="ifml2:instructionGetItemType"/>-->
+            <!--<element name="showItemDesc" type="ifml2:instructionShowItemDescType"/>-->
+            <!--<element name="showInventory" type="ifml2:instructionShowInventoryType"/>-->
+            <!--<element name="getItem" type="ifml2:instructionGetItemType"/>>-->
             <element name="showMessage" type="ifml2:instructionShowMessageType"/>
             <element name="dropItem" type="ifml2:instructionDropItemType"/>
             <element name="if" type="ifml2:instructionIfType"/>
@@ -314,13 +313,13 @@
         </attribute>
     </complexType>
 
-    <complexType name="instructionShowLocNameType">
+    <!--<complexType name="instructionShowLocNameType">
         <complexContent mixed="false">
             <extension base="ifml2:instructionType">
                 <attribute name="location" type="string" use="required"/>
             </extension>
         </complexContent>
-    </complexType>
+    </complexType>-->
 
     <complexType name="instructionGoToLocationType">
         <complexContent mixed="false">
@@ -389,21 +388,21 @@
         </sequence>
     </complexType>
 
-    <complexType name="instructionShowItemDescType">
+    <!--<complexType name="instructionShowItemDescType">
         <complexContent>
             <extension base="ifml2:instructionType">
                 <attribute name="item" type="string"/>
             </extension>
         </complexContent>
-    </complexType>
+    </complexType>-->
 
-    <complexType name="instructionShowInventoryType">
+    <!--<complexType name="instructionShowInventoryType">
         <complexContent>
             <extension base="ifml2:instructionType"/>
         </complexContent>
-    </complexType>
+    </complexType>-->
 
-    <!--replaced by moveItem-<complexType name="instructionGetItemType">
+    <!--<complexType name="instructionGetItemType">
         <complexContent>
             <extension base="ifml2:instructionType">
                 <attribute name="item" type="string"/>

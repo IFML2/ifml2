@@ -2,6 +2,7 @@ package ifml2.editor.gui;
 
 import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ifml2.GUIUtils;
+import ifml2.editor.IFML2EditorException;
 import ifml2.om.Action;
 import ifml2.om.Hook;
 import ifml2.om.InstructionList;
@@ -33,7 +34,7 @@ public class HookEditor extends JDialog
     private static final String HOOK_EDITOR_TITLE = "Перехват";
     private boolean isOk;
 
-    public HookEditor(Window owner, @NotNull final Hook hook, @NotNull List<Action> actionList)
+    public HookEditor(Window owner, @NotNull final Hook hook, @NotNull List<Action> actionList) throws IFML2EditorException
     {
         super(owner, HOOK_EDITOR_TITLE, ModalityType.DOCUMENT_MODAL);
 
@@ -152,7 +153,7 @@ public class HookEditor extends JDialog
                 insteadRadio.setSelected(true);
                 break;
             default:
-                throw new InternalError(MessageFormat.format("Unknown hook type: {0}", hook.getType()));
+                throw new IFML2EditorException(MessageFormat.format("Unknown hook type: {0}", hook.getType()));
         }
 
         instructionsList.setModel(new DefaultEventListModel<Instruction>(instructionListClone.getInstructions()));
@@ -191,7 +192,7 @@ public class HookEditor extends JDialog
         return isOk;
     }
 
-    public void getData(@NotNull Hook hook)
+    public void getData(@NotNull Hook hook) throws IFML2EditorException
     {
         hook.setAction((Action) actionCombo.getSelectedItem());
         hook.setObjectElement((String) parameterCombo.getSelectedItem());
@@ -209,7 +210,7 @@ public class HookEditor extends JDialog
         }
         else
         {
-            throw new InternalError("No hook type selected!");
+            throw new IFML2EditorException("No hook type selected!");
         }
     }
 }

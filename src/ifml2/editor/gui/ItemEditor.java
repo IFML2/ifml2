@@ -5,6 +5,7 @@ import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ifml2.GUIUtils;
+import ifml2.IFML2Exception;
 import ifml2.om.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -149,11 +150,18 @@ public class ItemEditor extends JDialog
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                Hook hook = new Hook();
-                HookEditor hookEditor = new HookEditor(ItemEditor.this, hook, ItemEditor.this.story.getAllActions());
-                if(hookEditor.showDialog())
+                try
                 {
-                    hooksClone.add(hook);
+                    Hook hook = new Hook();
+                    HookEditor hookEditor = new HookEditor(ItemEditor.this, hook, ItemEditor.this.story.getAllActions());
+                    if(hookEditor.showDialog())
+                    {
+                        hooksClone.add(hook);
+                    }
+                }
+                catch (IFML2Exception ex)
+                {
+                    GUIUtils.showErrorMessage(ItemEditor.this, ex);
                 }
             }
         });
@@ -277,10 +285,17 @@ public class ItemEditor extends JDialog
 
     private void editHook(Hook hook)
     {
-        HookEditor hookEditor = new HookEditor(ItemEditor.this, hook, story.getAllActions());
-        if(hookEditor.showDialog())
+        try
         {
-            hookEditor.getData(hook);
+            HookEditor hookEditor = new HookEditor(ItemEditor.this, hook, story.getAllActions());
+            if(hookEditor.showDialog())
+            {
+                hookEditor.getData(hook);
+            }
+        }
+        catch (IFML2Exception ex)
+        {
+            GUIUtils.showErrorMessage(this, ex);
         }
     }
 

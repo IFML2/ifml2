@@ -1,18 +1,18 @@
 package ifml2.editor.gui.instructions;
 
-import ifml2.GUIUtils;
+import ifml2.editor.IFML2EditorException;
+import ifml2.vm.instructions.Instruction;
 import ifml2.vm.instructions.ShowMessageInstr;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.text.MessageFormat;
 
 import static ifml2.vm.instructions.ShowMessageInstr.MessageTypeEnum.EXPRESSION;
 import static ifml2.vm.instructions.ShowMessageInstr.MessageTypeEnum.TEXT;
 
-public class ShowMessageInstrEditor extends JDialog
+public class ShowMessageInstrEditor extends AbstractInstrEditor
 {
     private JPanel contentPane;
     private JButton buttonOK;
@@ -26,53 +26,12 @@ public class ShowMessageInstrEditor extends JDialog
     private static final String SHOW_MESSAGE_INSTR_EDITOR_TITLE = "Вывести сообщение";
     private static final String TYPE_ERROR = "Message type \"{0}\" is unknown";
 
-    private boolean isOk = false;
-
-    public ShowMessageInstrEditor(Window owner, @NotNull ShowMessageInstr instruction)
+    public ShowMessageInstrEditor(Window owner, @NotNull ShowMessageInstr instruction) throws IFML2EditorException
     {
-        super(owner, SHOW_MESSAGE_INSTR_EDITOR_TITLE, ModalityType.DOCUMENT_MODAL);
+        super(owner);
+        init();
 
-        setContentPane(contentPane);
-        getRootPane().setDefaultButton(buttonOK);
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-
-        GUIUtils.packAndCenterWindow(this);
-
-        buttonOK.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                onOK();
-            }
-        });
-
-        buttonCancel.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                onCancel();
-            }
-        });
-
-// call onCancel() when cross is clicked
-        addWindowListener(new WindowAdapter()
-        {
-            public void windowClosing(WindowEvent e)
-            {
-                onCancel();
-            }
-        });
-
-// call onCancel() on ESCAPE
-        contentPane.registerKeyboardAction(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                onCancel();
-            }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-
-        // -- init form --
+        // -- init form data --
 
         switch (instruction.getType())
         {
@@ -83,7 +42,7 @@ public class ShowMessageInstrEditor extends JDialog
                 exprTypeRadio.setSelected(true);
                 break;
             default:
-                throw new InternalError(MessageFormat.format(TYPE_ERROR, instruction.getType()));
+                throw new IFML2EditorException(MessageFormat.format(TYPE_ERROR, instruction.getType()));
         }
 
         messageText.setText(instruction.getMessage());
@@ -92,42 +51,59 @@ public class ShowMessageInstrEditor extends JDialog
         carriageReturnCheck.setSelected(instruction.getCarriageReturn());
     }
 
-    private void onOK()
+    @Override
+    protected JButton getButtonCancel()
     {
-        isOk = true;
-        dispose();
+        return buttonCancel;
     }
 
-    private void onCancel()
+    @Override
+    protected JButton getButtonOK()
     {
-        isOk = false;
-        dispose();
+        return buttonOK;
     }
 
-    public void getData(ShowMessageInstr data)
+    @Override
+    protected JPanel getEditorContentPane()
     {
+        return contentPane;
+    }
+
+    @Override
+    protected String getEditorTitle()
+    {
+        return SHOW_MESSAGE_INSTR_EDITOR_TITLE;
+    }
+
+    @Override
+    protected Class<? extends Instruction> getInstrClass()
+    {
+        return ShowMessageInstr.class;
+    }
+
+    @Override
+    public void getData(@NotNull Instruction instruction) throws IFML2EditorException
+    {
+        super.getData(instruction);
+
+        ShowMessageInstr showMessageInstr = (ShowMessageInstr) instruction;
+
         if(textTypeRadio.isSelected())
         {
-            data.setType(TEXT);
+            showMessageInstr.setType(TEXT);
         }
         else if(exprTypeRadio.isSelected())
         {
-            data.setType(EXPRESSION);
+            showMessageInstr.setType(EXPRESSION);
         }
         else
         {
-            throw new InternalError("No type is selected!");
+            throw new IFML2EditorException("No type is selected!");
         }
 
-        data.setMessage(messageText.getText());
+        showMessageInstr.setMessage(messageText.getText());
 
-        data.setBeginWithCap(beginWithCapCheck.isSelected());
-        data.setCarriageReturn(carriageReturnCheck.isSelected());
-    }
-
-    public boolean showDialog()
-    {
-        setVisible(true);
-        return isOk;
+        showMessageInstr.setBeginWithCap(beginWithCapCheck.isSelected());
+        showMessageInstr.setCarriageReturn(carriageReturnCheck.isSelected());
     }
 }

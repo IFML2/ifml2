@@ -867,7 +867,7 @@
                         <ifml2:showMessage position="1" type="text" message="Тут нечего брать."/>
                     </ifml2:empty>
                     <ifml2:next>
-                        <ifml2:getItem position="1" item="предмет"/>
+                        <ifml2:moveItem position="1" item="предмет" to="интентарий"/>
                     </ifml2:next>
                 </ifml2:loop>
             </ifml2:procedureBody>

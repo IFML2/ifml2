@@ -2,6 +2,7 @@ package ifml2.editor.gui.instructions;
 
 import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ifml2.GUIUtils;
+import ifml2.editor.IFML2EditorException;
 import ifml2.editor.gui.EditorUtils;
 import ifml2.editor.gui.InstructionsEditor;
 import ifml2.om.InstructionList;
@@ -11,9 +12,11 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
-public class IfInstrEditor extends JDialog
+public class IfInstrEditor extends AbstractInstrEditor
 {
     private JPanel contentPane;
     private JButton buttonOK;
@@ -27,46 +30,13 @@ public class IfInstrEditor extends JDialog
     private static final String IF_INSTR_EDITOR_TITLE = "Проверка условия";
     private InstructionList thenInstructionsClone;
     private InstructionList elseInstructionsClone;
-    private boolean isOk;
 
     public IfInstrEditor(Window owner, @NotNull IfInstruction instruction)
     {
-        super(owner, IF_INSTR_EDITOR_TITLE, ModalityType.DOCUMENT_MODAL);
+        super(owner);
+        init();
 
-        setContentPane(contentPane);
-        getRootPane().setDefaultButton(buttonOK);
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-
-        GUIUtils.packAndCenterWindow(this);
-
-        buttonOK.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e) {onOK();}
-        });
-
-        buttonCancel.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e) {onCancel();}
-        });
-
-        // call onCancel() when cross is clicked
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        addWindowListener(new WindowAdapter()
-        {
-            public void windowClosing(WindowEvent e)
-            {
-                onCancel();
-            }
-        });
-
-        // call onCancel() on ESCAPE
-        contentPane.registerKeyboardAction(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                onCancel();
-            }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        // -- init local events
 
         MouseAdapter mouseAdapter = new MouseAdapter()
         {
@@ -130,26 +100,43 @@ public class IfInstrEditor extends JDialog
         elseInstructionsList.setModel(new DefaultEventListModel<Instruction>(elseInstructionsClone.getInstructions()));
     }
 
-    private void onOK()
+    @Override
+    protected JButton getButtonCancel()
     {
-        isOk = true;
-        dispose();
+        return buttonCancel;
     }
 
-    private void onCancel()
+    @Override
+    protected JButton getButtonOK()
     {
-        isOk = false;
-        dispose();
+        return buttonOK;
     }
 
-    public boolean showDialog()
+    @Override
+    protected JPanel getEditorContentPane()
     {
-        setVisible(true);
-        return isOk;
+        return contentPane;
     }
 
-    public void getData(IfInstruction ifInstruction)
+    @Override
+    protected String getEditorTitle()
     {
+        return IF_INSTR_EDITOR_TITLE;
+    }
+
+    @Override
+    protected Class<? extends Instruction> getInstrClass()
+    {
+        return IfInstruction.class;
+    }
+
+    @Override
+    public void getData(@NotNull Instruction instruction) throws IFML2EditorException
+    {
+        super.getData(instruction);
+
+        IfInstruction ifInstruction = (IfInstruction) instruction;
+
         ifInstruction.setCondition(conditionText.getText());
         ifInstruction.setThenInstructions(thenInstructionsClone);
         ifInstruction.setElseInstructions(elseInstructionsClone);

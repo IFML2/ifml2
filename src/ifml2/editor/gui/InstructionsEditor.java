@@ -3,9 +3,9 @@ package ifml2.editor.gui;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ifml2.GUIUtils;
+import ifml2.editor.gui.instructions.InstructionTypeEnum;
 import ifml2.om.InstructionList;
 import ifml2.vm.instructions.Instruction;
-import ifml2.vm.instructions.InstructionTypeEnum;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -145,7 +145,7 @@ public class InstructionsEditor extends JDialog
                 {
                     try
                     {
-                        Instruction instruction = instrType.getInstrClass().newInstance();
+                        Instruction instruction = instrType.createInstrInstance();
                         if (EditorUtils.showAssociatedEditor(InstructionsEditor.this, instruction))
                         {
                             instructionListClone.getInstructions().add(instruction);
@@ -236,6 +236,8 @@ public class InstructionsEditor extends JDialog
 
     public void getData(@NotNull InstructionList instructionList)
     {
-        instructionList.setInstructions(instructionListClone.getInstructions());
+        EventList<Instruction> instructions = instructionList.getInstructions();
+        instructions.clear();
+        instructions.addAll(instructionListClone.getInstructions());
     }
 }

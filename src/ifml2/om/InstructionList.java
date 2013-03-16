@@ -10,11 +10,11 @@ import javax.xml.bind.annotation.XmlElements;
 public class InstructionList implements Cloneable
 {
     @XmlElements({
-            @XmlElement(name = "showLocName", type = ShowLocNameInstruction.class),
+//            @XmlElement(name = "showLocName", type = ShowLocNameInstruction.class),
             @XmlElement(name = "goToLoc", type = GoToLocInstruction.class),
-            @XmlElement(name = "showItemDesc", type = ShowItemDescInstruction.class),
-            @XmlElement(name = "showInventory", type = ShowInventoryInstruction.class),
-            @XmlElement(name = "getItem", type = GetItemInstruction.class),
+//            @XmlElement(name = "showItemDesc", type = ShowItemDescInstruction.class),
+//            @XmlElement(name = "showInventory", type = ShowInventoryInstruction.class),
+//            @XmlElement(name = "getItem", type = GetItemInstruction.class),
             @XmlElement(name = "showMessage", type = ShowMessageInstr.class),
             @XmlElement(name = "dropItem", type = DropItemInstruction.class),
             @XmlElement(name = "if", type = IfInstruction.class),
@@ -24,10 +24,6 @@ public class InstructionList implements Cloneable
             @XmlElement(name = "setProperty", type = SetPropertyInstruction.class),
             @XmlElement(name = "moveItem", type = MoveItemInstruction.class)
     })
-    public void setInstructions(EventList<Instruction> instructions)
-    {
-        this.instructions = instructions;
-    }
     private EventList<Instruction> instructions = new BasicEventList<Instruction>(); // InstructionList controls its instructions
     public EventList<Instruction> getInstructions() { return instructions; }
 

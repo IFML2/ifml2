@@ -4,14 +4,8 @@ import ifml2.IFML2Exception;
 
 public class IFML2EditorException extends IFML2Exception
 {
-
     public IFML2EditorException(String message)
     {
         super(message);
-    }
-
-    public IFML2EditorException(Exception exception)
-    {
-        super(exception);
     }
 }
