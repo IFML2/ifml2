@@ -59,7 +59,7 @@ public class OMManager
                             if (item.getStartingPosition().getInventory())
                             {
                                 inventory.add(item); //should it be original items
-                                item.setParent(inventory);
+                                item.setContainer(inventory);
                             }
                         }
                     }
@@ -116,7 +116,7 @@ public class OMManager
             {
                 List<Item> items = location.getItems();
                 items.add(item);
-                item.setParent(items);
+                item.setContainer(items);
             }
         }
     }

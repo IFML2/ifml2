@@ -92,7 +92,7 @@ public class Property
                 {
                     if(ifmlObject instanceof Item)
                     {
-                        ((Item) ifmlObject).setParent(collectionItems);
+                        ((Item) ifmlObject).setContainer(collectionItems);
                     }
                 }
                 break;

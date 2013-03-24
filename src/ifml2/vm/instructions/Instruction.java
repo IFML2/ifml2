@@ -117,7 +117,7 @@ public abstract class Instruction implements Cloneable
         return ((BooleanValue) boolValue).value;
     }
 
-    List getCollectionFromExpression(String expression, RunningContext runningContext, String instructionTitle,
+    List<?> getCollectionFromExpression(String expression, RunningContext runningContext, String instructionTitle,
                                      Object parameterName) throws IFML2Exception
     {
         validateParameterForNull(expression, instructionTitle, parameterName);
@@ -129,6 +129,6 @@ public abstract class Instruction implements Cloneable
             throw new IFML2VMException("Тип выражения ({0}) – не Коллекция у инструкции [{1}]", expression, instructionTitle);
         }
 
-        return ((CollectionValue) collectionValue).value;
+        return ((CollectionValue) collectionValue).getValue();
     }
 }

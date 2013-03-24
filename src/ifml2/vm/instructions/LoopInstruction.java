@@ -53,7 +53,7 @@ public class LoopInstruction extends Instruction
     public void run(RunningContext runningContext) throws IFML2Exception
     {
         // get the collection
-        List<IFMLObject> collection = getCollectionFromExpression(collectionExpression, runningContext, getTitle(), "Коллекция");
+        List<IFMLObject> collection = (List<IFMLObject>) getCollectionFromExpression(collectionExpression, runningContext, getTitle(), "Коллекция");
 
         List<IFMLObject> filteredCollection = new ArrayList<IFMLObject>();
 

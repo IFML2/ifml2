@@ -16,6 +16,7 @@ import ifml2.vm.values.BooleanValue;
 import ifml2.vm.values.CollectionValue;
 import ifml2.vm.values.ObjectValue;
 import ifml2.vm.values.Value;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.text.MessageFormat;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.concurrent.Callable;
 
 public class Engine
 {
@@ -343,28 +345,61 @@ public class Engine
         return inventory;
     }
 
-    public Value resolveSymbol(String symbol) throws IFML2VMException
+    private HashMap<String, Callable<? extends Value>> ENGINE_SYMBOLS = new HashMap<String, Callable<? extends Value>>()
+    {
+        {
+            Callable<? extends Value> returnInv = new Callable<Value>()
+            {
+                @Override
+                public Value call() throws Exception
+                {
+                    return new CollectionValue(inventory);
+                }
+            };
+
+            put("инвентарий", returnInv);
+            put("инвентарь", returnInv);
+            put("куча", new Callable<Value>()
+            {
+                @Override
+                public Value call() throws Exception
+                {
+                    return new CollectionValue(new ArrayList<IFMLObject>(story.getObjectsHeap().values()));
+                }
+            });
+            put("словарь", new Callable<Value>()
+            {
+                @Override
+                public Value call() throws Exception
+                {
+                    return new CollectionValue(new ArrayList<Word>(story.getDictionary().values()));
+                }
+            });
+            put("пустота", new Callable<Value>()
+            {
+                @Override
+                public Value call() throws Exception
+                {
+                    return new CollectionValue(abyss);
+                }
+            });
+        }
+    };
+
+    public Value resolveSymbol(@NotNull String symbol) throws IFML2VMException
     {
         String loweredSymbol = symbol.toLowerCase();
 
-        if("инвентарий".equalsIgnoreCase(loweredSymbol) || "инвентарь".equalsIgnoreCase(loweredSymbol))
+        try
         {
-            return new CollectionValue(inventory);
+            if(ENGINE_SYMBOLS.containsKey(loweredSymbol))
+            {
+                return ENGINE_SYMBOLS.get(loweredSymbol).call();
+            }
         }
-
-        if("куча".equalsIgnoreCase(loweredSymbol))
+        catch (Exception e)
         {
-            return new CollectionValue(new ArrayList<String>(story.getObjectsHeap().keySet()));
-        }
-
-        if("словарь".equalsIgnoreCase(loweredSymbol))
-        {
-            return new CollectionValue(new ArrayList<Word>(story.getDictionary().values()));
-        }
-
-        if("пустота".equalsIgnoreCase(loweredSymbol))
-        {
-            return new CollectionValue(abyss);
+            throw new IFML2VMException(e, "  во время вычисления переменной движка {0}", symbol);
         }
 
         if(systemVariables.containsKey(loweredSymbol))

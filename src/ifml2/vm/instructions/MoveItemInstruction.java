@@ -23,9 +23,9 @@ public class MoveItemInstruction extends Instruction
     public void run(RunningContext runningContext) throws IFML2Exception
     {
         Item itemObject = getItemFromExpression(item, runningContext, getTitle(), "предмет", false);
-        assert itemObject.getParent() != null;
+        assert itemObject.getContainer() != null;
 
-        List collection = getCollectionFromExpression(to, runningContext, getTitle(), "куда");
+        List<Item> collection = (List<Item>) getCollectionFromExpression(to, runningContext, getTitle(), "куда");
 
         if(collection.contains(itemObject))
         {
@@ -33,13 +33,13 @@ public class MoveItemInstruction extends Instruction
         }
 
         // move item from parent to new collection
-        itemObject.move(collection);
+        itemObject.moveTo(collection);
     }
 
     @Override
     public String toString()
     {
-        return MessageFormat.format("Перемещение предмета \"{0}\" в локацию или коллекцию \"{1}\"", item, to);
+        return MessageFormat.format("Перемещение предмета \"{0}\" в коллекцию \"{1}\"", item, to);
     }
 
     public static String getTitle()

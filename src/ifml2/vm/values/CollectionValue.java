@@ -4,9 +4,9 @@ import java.util.List;
 
 public class CollectionValue extends Value
 {
-    public final List value;
+    public final List<?> value;
 
-    public CollectionValue(List value)
+    public CollectionValue(List<?> value)
     {
         this.value = value;
     }
@@ -40,7 +40,7 @@ public class CollectionValue extends Value
         return "коллекция";
     }
 
-    public List getValue()
+    public List<?> getValue()
     {
         return value;
     }

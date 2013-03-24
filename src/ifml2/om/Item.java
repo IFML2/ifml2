@@ -22,7 +22,7 @@ public class Item extends IFMLObject implements Cloneable
     private ItemStartingPosition startingPosition = new ItemStartingPosition();
 
     @XmlTransient
-    private List parent;
+    private List<?> container;
 
     public ItemStartingPosition getStartingPosition()
     {
@@ -80,26 +80,26 @@ public class Item extends IFMLObject implements Cloneable
         return null;
     }
 
-    public void setParent(List parent)
+    public void setContainer(List<?> container)
     {
-        this.parent = parent;
+        this.container = container;
     }
 
-    public List getParent()
+    public List<?> getContainer()
     {
-        return parent;
+        return container;
     }
 
-    public void move(List collection)
+    public void moveTo(List<Item> collection)
     {
         // contract
-        assert parent != null;
+        assert container != null;
         assert collection != null;
         //
 
-        parent.remove(this);
+        container.remove(this);
         collection.add(this);
-        parent = collection;
+        container = collection;
     }
 
     public static class ItemStartingPosition implements Cloneable
