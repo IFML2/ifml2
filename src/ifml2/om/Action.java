@@ -38,8 +38,19 @@ public class Action
     @XmlAttribute(name = "name")
     @XmlID
     public void setName(String name) { this.name = name; }
-
     public String getName() { return name; }
+
+    private String description;
+    @XmlAttribute(name = "description")
+    public void setDescription(String description)
+    {
+        this.description = description;
+    }
+    public String getDescription()
+    {
+        return description;
+    }
+
 
     @Override
 	public String toString()
@@ -57,11 +68,12 @@ public class Action
             {
                 if (element instanceof ObjectTemplateElement && element.getParameter() != null)
                 {
-                    parameters.add(element.parameter);
+                    parameters.add(element.getParameter());
                 }
             }
         }
 
         return parameters.toArray();
     }
+
 }

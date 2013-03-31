@@ -76,7 +76,7 @@ public class LocationEditor extends AbstractEditor<Location>
         super(owner);
         initializeEditor(LOCATION_EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
 
-        addItemButton.setAction(new AbstractAction("Добавить...")
+        addItemButton.setAction(new AbstractAction("Добавить...", GUIUtils.NEW_ELEMENT_ICON)
         {
             @Override
             public void actionPerformed(ActionEvent e)
@@ -92,7 +92,7 @@ public class LocationEditor extends AbstractEditor<Location>
         });
         editItemButton.setAction(editItemAction);
         delItemButton.setAction(delItemAction);
-        AbstractAction editAttributesAction = new AbstractAction("Изменить...")
+        editAttributesButton.setAction(new AbstractAction("Изменить...", GUIUtils.EDIT_ELEMENT_ICON)
         {
             @Override
             public void actionPerformed(ActionEvent e)
@@ -103,8 +103,7 @@ public class LocationEditor extends AbstractEditor<Location>
                     updateAttributes();
                 }
             }
-        };
-        editAttributesButton.setAction(editAttributesAction);
+        });
 
         itemsList.addListSelectionListener(new ListSelectionListener()
         {

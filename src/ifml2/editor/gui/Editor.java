@@ -372,7 +372,7 @@ public class Editor extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                ActionsEditor actionsEditor = new ActionsEditor(Editor.this, story.getActions());
+                ActionsEditor actionsEditor = new ActionsEditor(Editor.this, story.getActions(), story.getProcedures());
                 actionsEditor.showDialog();
             }
         });
