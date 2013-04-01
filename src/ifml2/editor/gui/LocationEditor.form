@@ -81,7 +81,7 @@
                     </constraints>
                     <properties>
                       <labelFor value="31c81"/>
-                      <text value="&amp;Север"/>
+                      <text value="Север"/>
                     </properties>
                   </component>
                   <component id="31c81" class="javax.swing.JComboBox" binding="northCombo">
@@ -96,7 +96,7 @@
                     </constraints>
                     <properties>
                       <labelFor value="41c86"/>
-                      <text value="&amp;Восток"/>
+                      <text value="Восток"/>
                     </properties>
                   </component>
                   <component id="41c86" class="javax.swing.JComboBox" binding="eastCombo">
@@ -111,7 +111,7 @@
                     </constraints>
                     <properties>
                       <labelFor value="6100f"/>
-                      <text value="&amp;Юг"/>
+                      <text value="Юг"/>
                     </properties>
                   </component>
                   <component id="6100f" class="javax.swing.JComboBox" binding="southCombo">
@@ -126,7 +126,7 @@
                     </constraints>
                     <properties>
                       <labelFor value="8ed76"/>
-                      <text value="&amp;Запад"/>
+                      <text value="Запад"/>
                     </properties>
                   </component>
                   <component id="8ed76" class="javax.swing.JComboBox" binding="westCombo">
@@ -142,7 +142,7 @@
           <grid id="788c1" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
-              <grid row="0" column="2" row-span="5" col-span="1" vsize-policy="3" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="2" row-span="5" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <visible value="false"/>
@@ -201,7 +201,7 @@
             </constraints>
             <properties>
               <labelFor value="e8ba9"/>
-              <text value="С&amp;ловарь:"/>
+              <text value="Словарь:"/>
               <visible value="false"/>
             </properties>
           </component>
@@ -221,8 +221,7 @@
             </constraints>
             <properties>
               <labelFor value="757f1"/>
-              <text value="&amp;Идентификатор:"/>
-              <visible value="false"/>
+              <text value="Идентификатор:"/>
             </properties>
           </component>
           <component id="757f1" class="javax.swing.JFormattedTextField" binding="locationIDText">
@@ -231,9 +230,7 @@
                 <preferred-size width="277" height="20"/>
               </grid>
             </constraints>
-            <properties>
-              <visible value="false"/>
-            </properties>
+            <properties/>
           </component>
           <component id="7c69d" class="javax.swing.JLabel">
             <constraints>
@@ -241,7 +238,7 @@
             </constraints>
             <properties>
               <labelFor value="6b123"/>
-              <text value="&amp;Название:"/>
+              <text value="Название:"/>
             </properties>
           </component>
           <component id="6b123" class="javax.swing.JTextField" binding="locationNameText">
@@ -260,7 +257,7 @@
             </constraints>
             <properties>
               <labelFor value="e11d5"/>
-              <text value="&amp;Описание:"/>
+              <text value="Описание:"/>
             </properties>
           </component>
           <component id="d22a9" class="javax.swing.JLabel">
@@ -271,7 +268,7 @@
             </constraints>
             <properties>
               <labelFor value="62791"/>
-              <text value="&amp;Переходы"/>
+              <text value="Переходы"/>
             </properties>
           </component>
           <scrollpane id="cec74">

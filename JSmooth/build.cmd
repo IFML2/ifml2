@@ -15,6 +15,7 @@ rem  >> build.log
 xcopy ..\libs distrib\libs\ /E /Y
 rem  >> build.log
 xcopy ..\Tests distrib\Tests\ /E /Y
+copy ..\docs\notes.txt distrib\notes.txt
 
 title Building...
 cd distrib

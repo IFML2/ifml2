@@ -85,7 +85,12 @@
                     <children>
                       <component id="fb43d" class="javax.swing.JList" binding="actionsList">
                         <constraints/>
-                        <properties/>
+                        <properties>
+                          <selectionMode value="0"/>
+                        </properties>
+                        <clientProperties>
+                          <html.disable class="java.lang.Boolean" value="false"/>
+                        </clientProperties>
                       </component>
                     </children>
                   </scrollpane>
