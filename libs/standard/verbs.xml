@@ -215,12 +215,12 @@
                                            message="'В этих условиях, либо из этого положения, либо в данный момент взять и что-либо сделать с(о) ' + предмет.тп + ' невозможно.'"/>
                     </ifml2:reaction>
                 </ifml2:restriction>
-                <!--ifml2:restriction condition="предмет.частьПейзажа">
+                <!--<ifml2:restriction condition="предмет.частьПейзажа">
                     <ifml2:reaction>
                         <ifml2:showMessage position="1" type="expression" beginWithCap="true"
                                            message="предмет.вп + ' взять невозможно ни при каких условиях.'"/>
                     </ifml2:reaction>
-                </ifml2:restriction-->
+                </ifml2:restriction>-->
                 <ifml2:restriction condition="предмет в инвентарий">
                     <ifml2:reaction>
                         <ifml2:showMessage position="1" type="expression" message="предмет.имя + ' уже у Вас.'" beginWithCap="true"/>
@@ -260,6 +260,7 @@
             </ifml2:templates>
             <ifml2:procedureCall procedure="ВыброситьПредмет"/>
         </ifml2:action>
+
         <ifml2:action name="сесть" description="Сесть">
             <ifml2:templates>
                 <ifml2:template>
@@ -867,7 +868,9 @@
                         <ifml2:showMessage position="1" type="text" message="Тут нечего брать."/>
                     </ifml2:empty>
                     <ifml2:next>
+                        <!-- todo заменить на вызов проц-ы Взять-->
                         <ifml2:moveItem position="1" item="предмет" to="интентарий"/>
+                        <!-- todo сообщение о том, что предмет взят -->
                     </ifml2:next>
                 </ifml2:loop>
             </ifml2:procedureBody>
@@ -878,7 +881,9 @@
                 <ifml2:parameter name="предмет"/>
             </ifml2:parameters>
             <ifml2:procedureBody>
-                <ifml2:dropItem position="1" item="предмет"/>
+                <ifml2:moveItem position="1" item="предмет" to="ТекущаяЛокация.Предметы"/>
+                <!--<ifml2:dropItem position="1" item="предмет"/>-->
+                <!-- todo сообщение о том, что предмет выброшен -->
             </ifml2:procedureBody>
         </ifml2:procedure>
 
