@@ -258,6 +258,13 @@
                     <ifml2:objectElement position="2" case="vp" parameter="предмет"/>
                 </ifml2:template>
             </ifml2:templates>
+            <ifml2:restrictions>
+                <ifml2:restriction condition="не предмет в инвентарь">
+                    <ifml2:reaction>
+                        <ifml2:showMessage position="1" type="expression" message="'У Вас нет ' + предмет.рп + '.'"/>
+                    </ifml2:reaction>
+                </ifml2:restriction>
+            </ifml2:restrictions>
             <ifml2:procedureCall procedure="ВыброситьПредмет"/>
         </ifml2:action>
 
@@ -870,7 +877,7 @@
                     <ifml2:next>
                         <!-- todo заменить на вызов проц-ы Взять-->
                         <ifml2:moveItem position="1" item="предмет" to="интентарий"/>
-                        <!-- todo сообщение о том, что предмет взят -->
+                        <ifml2:showMessage position="2" type="expression" message="'Вы взяли ' + предмет.вп + '.'"/>
                     </ifml2:next>
                 </ifml2:loop>
             </ifml2:procedureBody>
@@ -883,7 +890,7 @@
             <ifml2:procedureBody>
                 <ifml2:moveItem position="1" item="предмет" to="ТекущаяЛокация.Предметы"/>
                 <!--<ifml2:dropItem position="1" item="предмет"/>-->
-                <!-- todo сообщение о том, что предмет выброшен -->
+                <ifml2:showMessage position="2" type="expression" message="'Вы выбросили ' + предмет.вп + '.'"/>
             </ifml2:procedureBody>
         </ifml2:procedure>
 
