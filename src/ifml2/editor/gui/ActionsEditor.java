@@ -7,6 +7,7 @@ import ifml2.GUIUtils;
 import ifml2.editor.IFML2EditorException;
 import ifml2.om.Action;
 import ifml2.om.Procedure;
+import ifml2.om.Story;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -25,6 +26,7 @@ public class ActionsEditor extends AbstractEditor<EventList<Action>>
     private JButton addButton;
     private JButton delButton;
     private JButton editButton;
+    private JList libsActionsList;
 
     private static final String ACTIONS_EDITOR_FORM_NAME = "Действия";
 
@@ -32,44 +34,7 @@ public class ActionsEditor extends AbstractEditor<EventList<Action>>
 
     private HashMap<String, Procedure> procedures;
 
-    private final AbstractAction editAction = new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON)
-    {
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            Action action = (Action) actionsList.getSelectedValue();
-            if(action != null)
-            {
-                ActionEditor actionEditor = new ActionEditor(ActionsEditor.this, action, procedures);
-                if(actionEditor.showDialog())
-                {
-                    try
-                    {
-                        actionEditor.getData(action);
-                    }
-                    catch (IFML2EditorException ex)
-                    {
-                        GUIUtils.showErrorMessage(ActionsEditor.this, ex);
-                    }
-                }
-            }
-        }
-    };
-    private final AbstractAction delAction = new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
-    {
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            if(JOptionPane.showConfirmDialog(ActionsEditor.this, "Вы действительно хотите удалить это действие?",
-                    "Удаление действия", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
-            {
-                Action selectedAction = (Action) actionsList.getSelectedValue();
-                actionsClone.remove(selectedAction);
-            }
-        }
-    };
-
-    public ActionsEditor(Window owner, @NotNull EventList<Action> actions, @NotNull final HashMap<String, Procedure> procedures)
+    public ActionsEditor(Window owner, @NotNull EventList<Action> actions, @NotNull final HashMap<String, Procedure> procedures, Story story)
     {
         super(owner);
         initializeEditor(ACTIONS_EDITOR_FORM_NAME, contentPane, buttonOK, buttonCancel);
@@ -99,16 +64,64 @@ public class ActionsEditor extends AbstractEditor<EventList<Action>>
                 }
             }
         });
-        editButton.setAction(editAction);
-        delButton.setAction(delAction);
-
-        // set listeners
-        actionsList.addListSelectionListener(new ListSelectionListener()
+        editButton.setAction(new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON)
         {
-            @Override
-            public void valueChanged(ListSelectionEvent e)
             {
-                UpdateActions();
+                setEnabled(false); // disabled at start
+                actionsList.addListSelectionListener(new ListSelectionListener()
+                {
+                    @Override
+                    public void valueChanged(ListSelectionEvent e)
+                    {
+                        setEnabled(!actionsList.isSelectionEmpty()); // depends on selection
+                    }
+                });
+            }
+
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                Action action = (Action) actionsList.getSelectedValue();
+                if(action != null)
+                {
+                    ActionEditor actionEditor = new ActionEditor(ActionsEditor.this, action, ActionsEditor.this.procedures);
+                    if(actionEditor.showDialog())
+                    {
+                        try
+                        {
+                            actionEditor.getData(action);
+                        }
+                        catch (IFML2EditorException ex)
+                        {
+                            GUIUtils.showErrorMessage(ActionsEditor.this, ex);
+                        }
+                    }
+                }
+            }
+        });
+        delButton.setAction(new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
+        {
+            {
+                setEnabled(false); // disabled at start
+                actionsList.addListSelectionListener(new ListSelectionListener()
+                {
+                    @Override
+                    public void valueChanged(ListSelectionEvent e)
+                    {
+                        setEnabled(!actionsList.isSelectionEmpty()); // depends on selection
+                    }
+                });
+            }
+
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                if(JOptionPane.showConfirmDialog(ActionsEditor.this, "Вы действительно хотите удалить это действие?",
+                        "Удаление действия", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
+                {
+                    Action selectedAction = (Action) actionsList.getSelectedValue();
+                    actionsClone.remove(selectedAction);
+                }
             }
         });
 
@@ -119,17 +132,13 @@ public class ActionsEditor extends AbstractEditor<EventList<Action>>
             actionsClone.add(action);
         }
 
+        // load data
         actionsList.setModel(new DefaultEventListModel<Action>(actionsClone));
+        libsActionsList.setModel(new DefaultEventListModel<Action>(story.getAllActions()));
+
+
         //todo load actions from libs
 
-        UpdateActions();
-    }
-
-    private void UpdateActions()
-    {
-        boolean isActionSelected = !actionsList.isSelectionEmpty();
-        editAction.setEnabled(isActionSelected);
-        delAction.setEnabled(isActionSelected);
     }
 
     @Override

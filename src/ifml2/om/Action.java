@@ -13,7 +13,7 @@ public class Action
 {
     @XmlElementWrapper(name = "templates")
     @XmlElement(name = "template")
-    public final EventList<Template> templates = new BasicEventList<Template>();
+    private final EventList<Template> templates = new BasicEventList<Template>();
     public EventList<Template> getTemplates()
     {
         return templates;

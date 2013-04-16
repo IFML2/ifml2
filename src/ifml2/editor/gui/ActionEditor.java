@@ -1,5 +1,7 @@
 package ifml2.editor.gui;
 
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ifml2.GUIUtils;
 import ifml2.editor.IFML2EditorException;
@@ -27,6 +29,8 @@ public class ActionEditor extends AbstractEditor<Action>
     private JButton addTemplateButton;
     private JButton editTemplateButton;
     private JButton delTemplateButton;
+
+    private final EventList<Template> templatesClone;
 
     public ActionEditor(Window owner, @NotNull Action action, @NotNull HashMap<String, Procedure> procedures)
     {
@@ -79,14 +83,22 @@ public class ActionEditor extends AbstractEditor<Action>
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                //todo
+                if(JOptionPane.showConfirmDialog(ActionEditor.this, "Вы действительно хотите удалить этот шаблон?",
+                        "Удаление шаблона", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
+                {
+                    Template selectedAction = (Template) templatesList.getSelectedValue();
+                    templatesClone.remove(selectedAction);
+                }
             }
         });
+
+        // clone data
+        templatesClone = GlazedLists.eventList(action.getTemplates());
 
         // init form data
         nameText.setText(action.getName());
         descriptionText.setText(action.getDescription());
-        templatesList.setModel(new DefaultEventListModel<Template>(action.templates));
+        templatesList.setModel(new DefaultEventListModel<Template>(templatesClone));
         procedureCallCombo.setModel(new DefaultComboBoxModel(procedures.values().toArray()));
 
         //todo initialize other

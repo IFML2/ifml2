@@ -157,7 +157,7 @@ public class Parser
 
         for(Action action : getStory().getAllActions())
         {
-            for(Template template : action.templates)
+            for(Template template : action.getTemplates())
             {
                 try
                 {

@@ -34,18 +34,22 @@ public class Word
 
         @XmlTransient
         private final String abbreviation;
+        public String getAbbreviation()
+        {
+            return abbreviation;
+        }
+
         @XmlTransient
         private final String questionWord;
+        public String getQuestionWord()
+        {
+            return questionWord;
+        }
 
         GramCaseEnum(String abbreviation, String questionWord)
         {
             this.abbreviation = abbreviation;
             this.questionWord = questionWord;
-        }
-
-        public String getQuestionWord()
-        {
-            return questionWord;
         }
 
         public static GramCaseEnum getValueByAbbr(String abbreviation)

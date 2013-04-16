@@ -17,7 +17,7 @@ public class InstructionList implements Cloneable
 //            @XmlElement(name = "showInventory", type = ShowInventoryInstruction.class),
 //            @XmlElement(name = "getItem", type = GetItemInstruction.class),
             @XmlElement(name = "showMessage", type = ShowMessageInstr.class),
-            @XmlElement(name = "dropItem", type = DropItemInstruction.class),
+//            @XmlElement(name = "dropItem", type = DropItemInstruction.class),
             @XmlElement(name = "if", type = IfInstruction.class),
             @XmlElement(name = "loop", type = LoopInstruction.class),
             @XmlElement(name = "var", type = SetVarInstruction.class),

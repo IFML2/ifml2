@@ -12,7 +12,6 @@ import ifml2.om.xml.xmladapters.UsedLibrariesAdapter;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -123,12 +122,12 @@ public class Story
     public EventList<Action> getActions() { return actions; }
 
     @XmlTransient
-    private List<Action> allActions = null;
-    public List<Action> getAllActions()
+    private EventList<Action> allActions = null;
+    public EventList<Action> getAllActions()
     {
     	if(allActions == null)
     	{
-	    	allActions = new ArrayList<Action>();
+	    	allActions = new BasicEventList<Action>();
 	    	if(actions != null)
 	    	{
 	    		allActions.addAll(getActions());

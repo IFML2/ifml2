@@ -10,6 +10,6 @@ public class ObjectTemplateElement extends TemplateElement
 	@Override
 	public String toString()
 	{
-		return gramCase.toString();
+		return gramCase.getAbbreviation();
 	}
 }

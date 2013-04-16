@@ -27,4 +27,10 @@ public class Template
     {
         return elements.get(index);
     }
+
+    @Override
+    public String toString()
+    {
+        return elements.toString();
+    }
 }
