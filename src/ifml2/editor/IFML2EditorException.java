@@ -8,4 +8,9 @@ public class IFML2EditorException extends IFML2Exception
     {
         super(message);
     }
+
+    public IFML2EditorException(String message, Object... arguments)
+    {
+        super(message, arguments);
+    }
 }

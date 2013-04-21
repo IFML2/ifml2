@@ -171,22 +171,22 @@ public class Parser
                 {
                     if(lastException == null
                                 || (lastException instanceof IFML2ParseException
-                                    && e.isMoreFull((IFML2ParseException) lastException, template.size())))
+                                    && e.isMoreFull((IFML2ParseException) lastException, template.getSize())))
                     {
                         lastException = new IFML2ParseException(MessageFormat.format(
                                 "Я бы понял, если бы вы сказали \"{0}\", но я не понял вот эту часть фразы: \"{1}\".",
                                 convertFittedToString(e.getFittedFormalElements()), e.getPhraseRest()), // convert phrase rest to normal string
-                                e.getUsedWords(), template.size());
+                                e.getUsedWords(), template.getSize());
                     }
                 }
                 catch (IFML2ParseException e)
                 {
                     if(lastException == null
                                 || (lastException instanceof IFML2ParseException
-                                    && e.isMoreFull((IFML2ParseException) lastException, template.size())))
+                                    && e.isMoreFull((IFML2ParseException) lastException, template.getSize())))
                     {
                         lastException = e;
-                        ((IFML2ParseException) lastException).setTemplateSize(template.size());
+                        ((IFML2ParseException) lastException).setTemplateSize(template.getSize());
                     }
                 }
                 catch (IFML2Exception e)
@@ -242,8 +242,7 @@ public class Parser
                 FittedSynonym fittedSynonym = (FittedSynonym) fittedFormalElement;
                 formalElement = new FormalElement(fittedSynonym.synonym, fittedSynonym.parameter);
             }
-            else
-            if(fittedFormalElement instanceof FittedObjects)
+            else if(fittedFormalElement instanceof FittedObjects)
             {
                 FittedObjects fittedObjects = (FittedObjects) fittedFormalElement;
                 formalElement = new FormalElement(fittedObjects.objects.get(0), fittedObjects.parameter);
@@ -500,7 +499,7 @@ public class Parser
 
         if(templateElement instanceof LiteralTemplateElement)
         {
-            for(String synonym : ((LiteralTemplateElement) templateElement).synonyms)
+            for(String synonym : ((LiteralTemplateElement) templateElement).getSynonyms())
             {
                 FittedFormalElement fittedFormalElement = new FittedSynonym(synonym, templateElement.parameter);
                 try
@@ -529,7 +528,7 @@ public class Parser
 
         else if(templateElement instanceof ObjectTemplateElement)
         {
-            Word.GramCaseEnum gramCase = ((ObjectTemplateElement) templateElement).gramCase;
+            Word.GramCaseEnum gramCase = ((ObjectTemplateElement) templateElement).getGramCase();
 
             FitObjectWithPhraseResult fitObjectWithPhraseResult = fitObjectWithPhrase(gramCase, phrase);
             ArrayList<IFMLObject> objects = fitObjectWithPhraseResult.getObjects();
@@ -709,12 +708,12 @@ public class Parser
         {
             if(templateElement instanceof LiteralTemplateElement)
             {
-                result += ' ' + ((LiteralTemplateElement) templateElement).synonyms.get(0);
+                result += ' ' + ((LiteralTemplateElement) templateElement).getSynonyms().get(0);
             }
             else
             if(templateElement instanceof ObjectTemplateElement)
             {
-                result += ' ' + ((ObjectTemplateElement) templateElement).gramCase.getQuestionWord();
+                result += ' ' + ((ObjectTemplateElement) templateElement).getGramCase().getQuestionWord();
             }
             else
             {

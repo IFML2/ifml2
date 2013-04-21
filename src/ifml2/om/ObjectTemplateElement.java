@@ -5,7 +5,11 @@ import javax.xml.bind.annotation.XmlAttribute;
 public class ObjectTemplateElement extends TemplateElement
 {
     @XmlAttribute(name = "case")
-    public Word.GramCaseEnum gramCase;
+    private Word.GramCaseEnum gramCase = Word.GramCaseEnum.IP;
+    public Word.GramCaseEnum getGramCase()
+    {
+        return gramCase;
+    }
 
 	@Override
 	public String toString()

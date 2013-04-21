@@ -6,9 +6,9 @@ import ca.odell.glazedlists.EventList;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 
-public class Template
+public class Template implements Cloneable
 {
-    private final EventList<TemplateElement> elements = new BasicEventList<TemplateElement>();
+    private EventList<TemplateElement> elements = new BasicEventList<TemplateElement>();
     @XmlElements({
             @XmlElement(name = "literalElement", type = LiteralTemplateElement.class),
             @XmlElement(name = "objectElement", type = ObjectTemplateElement.class)
@@ -18,7 +18,7 @@ public class Template
         return elements;
     }
 
-    public int size()
+    public int getSize()
     {
         return elements.size();
     }
@@ -29,8 +29,29 @@ public class Template
     }
 
     @Override
+    public Template clone() throws CloneNotSupportedException
+    {
+        // basic shallow copy
+        Template clone = (Template) super.clone();
+
+        // clone and copy elements
+        clone.elements = new BasicEventList<TemplateElement>();
+        for(TemplateElement templateElement : elements)
+        {
+            clone.elements.add(templateElement.clone());
+        }
+
+        return clone;
+    }
+
+    @Override
     public String toString()
     {
         return elements.toString();
+    }
+
+    public void setElements(EventList<TemplateElement> elements)
+    {
+        this.elements = elements;
     }
 }

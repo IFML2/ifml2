@@ -15,6 +15,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.HashMap;
 
 public class ActionEditor extends AbstractEditor<Action>
@@ -43,7 +45,12 @@ public class ActionEditor extends AbstractEditor<Action>
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                //todo
+                Template template = new Template();
+                if(editTemplate(template))
+                {
+                    templatesClone.add(template);
+                    templatesList.setSelectedValue(template, true);
+                }
             }
         });
         editTemplateButton.setAction(new AbstractAction("Изменить...", GUIUtils.EDIT_ELEMENT_ICON)
@@ -63,7 +70,11 @@ public class ActionEditor extends AbstractEditor<Action>
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                //todo
+                Template template = (Template) templatesList.getSelectedValue();
+                if(template != null)
+                {
+                    editTemplate(template);
+                }
             }
         });
         delTemplateButton.setAction(new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
@@ -92,6 +103,23 @@ public class ActionEditor extends AbstractEditor<Action>
             }
         });
 
+        // listeners
+        templatesList.addMouseListener(new MouseAdapter()
+        {
+            @Override
+            public void mouseClicked(MouseEvent e)
+            {
+                if(e.getClickCount() == 2)
+                {
+                    Template template = (Template) templatesList.getSelectedValue();
+                    if(template != null)
+                    {
+                        editTemplate(template);
+                    }
+                }
+            }
+        });
+
         // clone data
         templatesClone = GlazedLists.eventList(action.getTemplates());
 
@@ -102,6 +130,24 @@ public class ActionEditor extends AbstractEditor<Action>
         procedureCallCombo.setModel(new DefaultComboBoxModel(procedures.values().toArray()));
 
         //todo initialize other
+    }
+
+    private boolean editTemplate(@NotNull Template template)
+    {
+        TemplateEditor templateEditor = new TemplateEditor(this, template);
+        if(templateEditor.showDialog())
+        {
+            try
+            {
+                templateEditor.getData(template);
+            }
+            catch (IFML2EditorException e)
+            {
+                GUIUtils.showErrorMessage(this, e);
+            }
+            return true;
+        }
+        return false;
     }
 
     @Override

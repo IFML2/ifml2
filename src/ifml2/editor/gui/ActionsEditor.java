@@ -15,6 +15,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.HashMap;
 
 public class ActionsEditor extends AbstractEditor<EventList<Action>>
@@ -48,19 +50,10 @@ public class ActionsEditor extends AbstractEditor<EventList<Action>>
             public void actionPerformed(ActionEvent e)
             {
                 Action action = new Action();
-                ActionEditor actionEditor = new ActionEditor(ActionsEditor.this, action, procedures);
-                if(actionEditor.showDialog())
+                if(editAction(action))
                 {
-                    try
-                    {
-                        actionEditor.getData(action);
-                        actionsClone.add(action);
-                        actionsList.setSelectedValue(action, true);
-                    }
-                    catch (IFML2EditorException ex)
-                    {
-                        GUIUtils.showErrorMessage(ActionsEditor.this, ex);
-                    }
+                    actionsClone.add(action);
+                    actionsList.setSelectedValue(action, true);
                 }
             }
         });
@@ -84,18 +77,7 @@ public class ActionsEditor extends AbstractEditor<EventList<Action>>
                 Action action = (Action) actionsList.getSelectedValue();
                 if(action != null)
                 {
-                    ActionEditor actionEditor = new ActionEditor(ActionsEditor.this, action, ActionsEditor.this.procedures);
-                    if(actionEditor.showDialog())
-                    {
-                        try
-                        {
-                            actionEditor.getData(action);
-                        }
-                        catch (IFML2EditorException ex)
-                        {
-                            GUIUtils.showErrorMessage(ActionsEditor.this, ex);
-                        }
-                    }
+                    editAction(action);
                 }
             }
         });
@@ -125,6 +107,23 @@ public class ActionsEditor extends AbstractEditor<EventList<Action>>
             }
         });
 
+        // listeners
+        actionsList.addMouseListener(new MouseAdapter()
+        {
+            @Override
+            public void mouseClicked(MouseEvent e)
+            {
+                if(e.getClickCount() == 2)
+                {
+                    Action action = (Action) actionsList.getSelectedValue();
+                    if(action != null)
+                    {
+                        editAction(action);
+                    }
+                }
+            }
+        });
+
         // clone data
         actionsClone = new BasicEventList<Action>();
         for(Action action : actions)
@@ -135,10 +134,24 @@ public class ActionsEditor extends AbstractEditor<EventList<Action>>
         // load data
         actionsList.setModel(new DefaultEventListModel<Action>(actionsClone));
         libsActionsList.setModel(new DefaultEventListModel<Action>(story.getAllActions()));
+    }
 
-
-        //todo load actions from libs
-
+    private boolean editAction(@NotNull Action action)
+    {
+        ActionEditor actionEditor = new ActionEditor(this, action, procedures);
+        if(actionEditor.showDialog())
+        {
+            try
+            {
+                actionEditor.getData(action);
+                return true;
+            }
+            catch (IFML2EditorException ex)
+            {
+                GUIUtils.showErrorMessage(this, ex);
+            }
+        }
+        return false;
     }
 
     @Override
