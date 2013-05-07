@@ -1,5 +1,6 @@
 package ifml2.editor.gui;
 
+import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ifml2.GUIUtils;
 import ifml2.editor.IFML2EditorException;
@@ -14,6 +15,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.Collections;
 
 public class TemplateEditor extends AbstractEditor<Template>
 {
@@ -103,7 +105,18 @@ public class TemplateEditor extends AbstractEditor<Template>
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                //todo
+                TemplateElement selectedElement = (TemplateElement) templateList.getSelectedValue();
+                if(selectedElement != null)
+                {
+                    try
+                    {
+                        editElement(selectedElement);
+                    }
+                    catch (IFML2EditorException ex)
+                    {
+                        GUIUtils.showErrorMessage(TemplateEditor.this, ex);
+                    }
+                }
             }
         });
         delButton.setAction(new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
@@ -123,7 +136,14 @@ public class TemplateEditor extends AbstractEditor<Template>
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                //todo
+                TemplateElement selectedElement = (TemplateElement) templateList.getSelectedValue();
+                if (selectedElement != null)
+                {
+                    if (GUIUtils.showDeleteConfirmDialog(TemplateEditor.this, "шаблон", "шаблона"))
+                    {
+                        templateClone.getElements().remove(selectedElement);
+                    }
+                }
             }
         });
         upButton.setAction(new AbstractAction("", GUIUtils.UP_ICON)
@@ -143,7 +163,12 @@ public class TemplateEditor extends AbstractEditor<Template>
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                //todo
+                int selIdx = templateList.getSelectedIndex();
+                if(selIdx > 0)
+                {
+                    Collections.swap(templateClone.getElements(), selIdx, selIdx - 1);
+                    templateList.setSelectedIndex(selIdx - 1);
+                }
             }
         });
         downButton.setAction(new AbstractAction("", GUIUtils.DOWN_ICON)
@@ -163,7 +188,13 @@ public class TemplateEditor extends AbstractEditor<Template>
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                //todo
+                int selIdx = templateList.getSelectedIndex();
+                EventList<TemplateElement> instructions = templateClone.getElements();
+                if(selIdx < instructions.size() - 1)
+                {
+                    Collections.swap(instructions, selIdx, selIdx + 1);
+                    templateList.setSelectedIndex(selIdx + 1);
+                }
             }
         });
 

@@ -128,6 +128,7 @@ public class ActionEditor extends AbstractEditor<Action>
         descriptionText.setText(action.getDescription());
         templatesList.setModel(new DefaultEventListModel<Template>(templatesClone));
         procedureCallCombo.setModel(new DefaultComboBoxModel(procedures.values().toArray()));
+        procedureCallCombo.setSelectedItem(action.getProcedureCall().getProcedure());
 
         //todo initialize other
     }
