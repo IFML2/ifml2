@@ -19,7 +19,10 @@ copy ..\docs\notes.txt distrib\notes.txt
 
 title Building...
 cd distrib
-"%ProgramFiles%\JSmooth 0.9.9-7\jsmoothcmd.exe" IFML2.jsmooth
+rem "%ProgramFiles%\JSmooth 0.9.9-7\jsmoothcmd.exe" IFML2.jsmooth
+echo *************************************************
+echo *** Start JSmooth manually and build project! ***
+echo *************************************************
 rem  >> ..\build.log
 
 rem echo %errorlevel%
