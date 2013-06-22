@@ -28,7 +28,7 @@ public class Action
     }
 
 	@XmlElement(name="procedureCall")
-	public ProcedureCall procedureCall;
+	public ProcedureCall procedureCall = new ProcedureCall();
     public ProcedureCall getProcedureCall()
     {
         return procedureCall;
