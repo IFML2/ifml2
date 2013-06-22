@@ -289,7 +289,7 @@ public class ItemEditor extends AbstractEditor<Item>
     {
         if(toGenerateId)
         {
-            idText.setText(story.generateIdByName(nameText.getText()));
+            idText.setText(story.generateIdByName(nameText.getText(), Item.class));
         }
     }
 }
