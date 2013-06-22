@@ -212,7 +212,7 @@ public class LocationEditor extends JDialog
     {
         if(toGenerateId)
         {
-            locationIDText.setText(story.generateIdByName(locationNameText.getText()));
+            locationIDText.setText(story.generateIdByName(locationNameText.getText(), Location.class));
         }
     }
 

@@ -8,6 +8,8 @@ import ifml2.CommonUtils;
 import ifml2.om.xml.xmladapters.DictionaryAdapter;
 import ifml2.om.xml.xmladapters.ProceduresAdapter;
 import ifml2.om.xml.xmladapters.UsedLibrariesAdapter;
+import org.jetbrains.annotations.NotNull;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -24,6 +26,7 @@ public class Story
     @Override
     public Story clone() throws CloneNotSupportedException
     {
+        //noinspection UnnecessaryLocalVariable
         Story clone = (Story) super.clone(); // todo check subscriptions made in anonymous constructor
        /* clone.actions = GlazedLists.eventList(actions);
         clone.dictionary = new HashMap<String, Word>(dictionary);
@@ -35,6 +38,7 @@ public class Story
         return clone;
     }
 
+    @SuppressWarnings("FieldCanBeLocal")
     @XmlAttribute(name = "id")
     @XmlID
     private String id = "story";
@@ -85,10 +89,10 @@ public class Story
                             }
                         }
                     }
-                    for(Location location : locations)
+                    /*for(Location location : locations)
                     {
                         //todo: delete links from north, south etc.
-                    }
+                    }*/
                 }
             }
         });
@@ -193,7 +197,7 @@ public class Story
         return MessageFormat.format("История \"{0}\"", id);
     }
 
-    public String generateIdByName(String name)
+    public String generateIdByName(String name, @NotNull Class forClass)
     {
         if(name == null || "".equals(name))
         {
@@ -209,14 +213,30 @@ public class Story
             camelCaseId += CommonUtils.uppercaseFirstLetter(word);
         }
 
-        String id = camelCaseId;
+        String classedId = camelCaseId;
+
+        // adding type postfix for more uniqueness (avoiding JAXB collection typing bug JAXB-546)
+        if(Location.class.equals(forClass))
+        {
+            classedId += "Лок";
+        }
+        else if(Item.class.equals(forClass))
+        {
+            classedId += "Пред";
+        }
+        else
+        {
+            throw new NotImplementedException();
+        }
+
+        String id = classedId;
 
         int counter = 1;
         while(objectsHeap.containsKey(id.toLowerCase())
                 || dictionary.containsKey(id.toLowerCase())
                 || procedures.containsKey(id.toLowerCase()))
         {
-            id = camelCaseId + counter;
+            id = classedId + counter;
             counter++;
         }
 
@@ -267,5 +287,17 @@ public class Story
     public boolean IsShowStartLocDesc()
     {
         return storyOptions.getStartLocationOption().getShowStartLocDesc();
+    }
+
+    public void addLocation(@NotNull Location location)
+    {
+        locations.add(location);
+        objectsHeap.put(location.getId().toLowerCase(), location);
+    }
+
+    public void addItem(@NotNull Item item)
+    {
+        items.add(item);
+        objectsHeap.put(item.getId().toLowerCase(), item);
     }
 }

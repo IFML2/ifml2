@@ -287,7 +287,7 @@ public class OMManager
                 {
                     for(Object object : get(name))
                     {
-                        if(object != null && (object.getClass().equals(aClass) || aClass == Object.class)) //todo remove Object after JAXB fix
+                        if(object != null && (object.getClass().equals(aClass) || aClass == Object.class)) //todo remove Object after JAXB fix of JAXB-546
                         {
                             if(aClass == Object.class)
                             {
@@ -306,7 +306,7 @@ public class OMManager
                 {
                     for(Object object : get(name))
                     {
-                        if(object != null && (object.getClass().equals(aClass) || aClass == Object.class)) //todo remove Object after JAXB fix
+                        if(object != null && (object.getClass().equals(aClass) || aClass == Object.class)) //todo remove Object after JAXB fix of JAXB-546
                         {
                             if(aClass == Object.class)
                             {

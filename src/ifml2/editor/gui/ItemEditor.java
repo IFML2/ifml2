@@ -327,7 +327,7 @@ public class ItemEditor extends JDialog
     {
         if(toGenerateId)
         {
-            idText.setText(story.generateIdByName(nameText.getText()));
+            idText.setText(story.generateIdByName(nameText.getText(), Item.class));
         }
     }
 

@@ -47,7 +47,7 @@ public class Editor extends JFrame
             Location location = new Location();
             if(editLocation(location))
             {
-                story.getLocations().add(location);
+                story.addLocation(location);
                 reloadDataInForm();
                 locationsList.setSelectedValue(location, true);
             }
@@ -139,7 +139,7 @@ public class Editor extends JFrame
                 Item item = new Item();
                 if(editItem(item))
                 {
-                    story.getItems().add(item);
+                    story.addItem(item);
                     reloadDataInForm();
                     itemsList.setSelectedValue(item, true);
                 }
