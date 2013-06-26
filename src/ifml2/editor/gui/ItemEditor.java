@@ -108,18 +108,10 @@ public class ItemEditor extends AbstractEditor<Item>
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                try
+                Hook hook = new Hook();
+                if(editHook(hook))
                 {
-                    Hook hook = new Hook();
-                    HookEditor hookEditor = new HookEditor(ItemEditor.this, hook, ItemEditor.this.story.getAllActions());
-                    if(hookEditor.showDialog())
-                    {
-                        hooksClone.add(hook);
-                    }
-                }
-                catch (IFML2Exception ex)
-                {
-                    GUIUtils.showErrorMessage(ItemEditor.this, ex);
+                    hooksClone.add(hook);
                 }
             }
         });
@@ -241,20 +233,15 @@ public class ItemEditor extends AbstractEditor<Item>
         UpdateHookActions();
     }
 
-    private void editHook(Hook hook)
+    private boolean editHook(Hook hook)
     {
-        try
+        HookEditor hookEditor = new HookEditor(ItemEditor.this, hook, story.getAllActions());
+        if(hookEditor.showDialog())
         {
-            HookEditor hookEditor = new HookEditor(ItemEditor.this, hook, story.getAllActions());
-            if(hookEditor.showDialog())
-            {
-                hookEditor.getData(hook);
-            }
+            hookEditor.getData(hook);
+            return true;
         }
-        catch (IFML2Exception ex)
-        {
-            GUIUtils.showErrorMessage(this, ex);
-        }
+        return false;
     }
 
     private void UpdateHookActions()
