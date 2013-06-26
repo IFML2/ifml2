@@ -150,8 +150,7 @@ public class ItemEditor extends JDialog
             public void actionPerformed(ActionEvent e)
             {
                 Hook hook = new Hook();
-                HookEditor hookEditor = new HookEditor(ItemEditor.this, hook, ItemEditor.this.story.getAllActions());
-                if(hookEditor.showDialog())
+                if(editHook(hook))
                 {
                     hooksClone.add(hook);
                 }
@@ -275,13 +274,15 @@ public class ItemEditor extends JDialog
         UpdateHookActions();
     }
 
-    private void editHook(Hook hook)
+    private boolean editHook(Hook hook)
     {
         HookEditor hookEditor = new HookEditor(ItemEditor.this, hook, story.getAllActions());
         if(hookEditor.showDialog())
         {
             hookEditor.getData(hook);
+            return true;
         }
+        return false;
     }
 
     private void UpdateHookActions()
