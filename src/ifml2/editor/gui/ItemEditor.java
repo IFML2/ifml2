@@ -235,11 +235,18 @@ public class ItemEditor extends AbstractEditor<Item>
 
     private boolean editHook(Hook hook)
     {
+        try
+        {
         HookEditor hookEditor = new HookEditor(ItemEditor.this, hook, story.getAllActions());
         if(hookEditor.showDialog())
         {
             hookEditor.getData(hook);
             return true;
+        }
+        }
+        catch (IFML2Exception e)
+        {
+            GUIUtils.showErrorMessage(this, e);
         }
         return false;
     }
