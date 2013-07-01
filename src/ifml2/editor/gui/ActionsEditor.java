@@ -1,8 +1,6 @@
 package ifml2.editor.gui;
 
-import ca.odell.glazedlists.EventList;
 import ifml2.GUIUtils;
-import ifml2.om.Action;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,7 +13,7 @@ public class ActionsEditor extends JDialog
     private JButton buttonCancel;
     private static final String ACTIONS_EDITOR_FORM_NAME = "Действия";
 
-    public ActionsEditor(Frame owner, EventList<Action> actions)
+    public ActionsEditor(Frame owner)
     {
         super(owner, ACTIONS_EDITOR_FORM_NAME, ModalityType.DOCUMENT_MODAL);
 
@@ -68,8 +66,9 @@ public class ActionsEditor extends JDialog
         dispose();
     }
 
-    public void showDialog()
+    public boolean showDialog()
     {
         setVisible(true);
+        return false;
     }
 }

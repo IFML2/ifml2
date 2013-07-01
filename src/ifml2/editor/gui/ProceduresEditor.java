@@ -10,8 +10,7 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.util.HashMap;
 
 public class ProceduresEditor extends JDialog
@@ -27,7 +26,9 @@ public class ProceduresEditor extends JDialog
     private JButton editInstructionButton;
     private JButton delInstructionButton;
 
-    private HashMap<String, Procedure> procedures = null;
+    private HashMap<String, Procedure> procedures = null; // todo rewrite using transactional model
+
+    private boolean isOk = false;
 
     private final AbstractAction delProcedureAction = new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
     {
@@ -51,7 +52,6 @@ public class ProceduresEditor extends JDialog
             }
         }
     };
-
     private final AbstractAction addInstructionAction = new AbstractAction("Добавить...", GUIUtils.ADD_ELEMENT_ICON)
     {
         @Override
@@ -113,7 +113,7 @@ public class ProceduresEditor extends JDialog
         }
     };
 
-    public ProceduresEditor(Window owner)
+    public ProceduresEditor(Window owner, HashMap<String, Procedure> procedures)
     {
         super(owner, PROCEDURES_EDITOR_TITLE, ModalityType.DOCUMENT_MODAL);
 
@@ -121,6 +121,25 @@ public class ProceduresEditor extends JDialog
         getRootPane().setDefaultButton(buttonOK);
 
         GUIUtils.packAndCenterWindow(this);
+
+        // call onOK() when cross is clicked
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter()
+        {
+            public void windowClosing(WindowEvent e)
+            {
+                onOK();
+            }
+        });
+
+        // call onOK() on ESCAPE
+        contentPane.registerKeyboardAction(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                onOK();
+            }
+        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
         addProcedureButton.setAction(new AbstractAction("Новая...", GUIUtils.ADD_ELEMENT_ICON)
         {
@@ -133,7 +152,7 @@ public class ProceduresEditor extends JDialog
                 if(procedureName != null && !"".equals(procedureName))
                 {
                     Procedure procedure = new Procedure(procedureName);
-                    procedures.put(procedureName, procedure);
+                    ProceduresEditor.this.procedures.put(procedureName, procedure);
                     updateAllData();
                     proceduresList.setSelectedValue(procedure, true);
                 }
@@ -173,6 +192,11 @@ public class ProceduresEditor extends JDialog
         });
 
         updateActions();
+
+        // set data in form
+
+        this.procedures = procedures;
+        updateAllData();
     }
 
     private void updateActions()
@@ -198,13 +222,8 @@ public class ProceduresEditor extends JDialog
 
     private void onOK()
     {
+        isOk = true;
         dispose();
-    }
-
-    public void setAllData(HashMap<String, Procedure> procedures)
-    {
-        this.procedures = procedures;
-        updateAllData();
     }
 
     private void updateAllData()
@@ -215,5 +234,11 @@ public class ProceduresEditor extends JDialog
             proceduresListModel.addElement(procedure);
         }
         proceduresList.setModel(proceduresListModel);
+    }
+
+    public boolean showDialog()
+    {
+        setVisible(true);
+        return isOk;
     }
 }
