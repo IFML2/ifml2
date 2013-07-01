@@ -1,5 +1,6 @@
 package ifml2.editor.gui;
 
+import ca.odell.glazedlists.EventList;
 import ifml2.CommonConstants;
 import ifml2.CommonUtils;
 import ifml2.GUIUtils;
@@ -24,9 +25,12 @@ public class UsedLibsEditor extends JDialog
     private JList usedLibsList;
     private JButton addButton;
     private JButton delButton;
-    private List<Library> libraries;
 
-    public UsedLibsEditor(Window owner)
+    private List<Library> libraries; // todo rewrite using transactional model
+
+    private boolean isOk = false;
+
+    public UsedLibsEditor(Window owner, EventList<Library> libraries)
     {
         super(owner, USEDLIBS_EDITOR_TITLE, ModalityType.DOCUMENT_MODAL);
 
@@ -43,7 +47,7 @@ public class UsedLibsEditor extends JDialog
             }
         });
 
-// call onCancel() when cross is clicked
+        // call onOK() when cross is clicked
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter()
         {
@@ -53,7 +57,7 @@ public class UsedLibsEditor extends JDialog
             }
         });
 
-// call onCancel() on ESCAPE
+        // call onOK() on ESCAPE
         contentPane.registerKeyboardAction(new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -94,10 +98,10 @@ public class UsedLibsEditor extends JDialog
                     URI selectedFile = libFileChooser.getSelectedFile().toURI();
                     relativePath = librariesDirectoryURI.relativize(selectedFile).getPath();
                 }
-                catch (IOException e1)
+                catch (IOException ex)
                 {
                     JOptionPane.showMessageDialog(UsedLibsEditor.this, "Произошла ошибка во время загрузки библиотеки: \n"
-                            + e1.getMessage(), "Ошибка при загрузке", JOptionPane.ERROR_MESSAGE);
+                            + ex.getMessage(), "Ошибка при загрузке", JOptionPane.ERROR_MESSAGE);
 
                     return;
                 }
@@ -106,7 +110,7 @@ public class UsedLibsEditor extends JDialog
                 try
                 {
                     library = OMManager.loadLibrary(relativePath);
-                    libraries.add(library);
+                    UsedLibsEditor.this.libraries.add(library);
                 }
                 catch (IFML2Exception error)
                 {
@@ -116,7 +120,7 @@ public class UsedLibsEditor extends JDialog
                     return;
                 }
 
-                setAllData(libraries);
+                setAllData(UsedLibsEditor.this.libraries);
 
                 if (library != null)
                 {
@@ -138,17 +142,20 @@ public class UsedLibsEditor extends JDialog
                             JOptionPane.YES_NO_OPTION);
                     if(answer == 0)
                     {
-                        libraries.remove(usedLib);
-                        setAllData(libraries);
+                        UsedLibsEditor.this.libraries.remove(usedLib);
+                        setAllData(UsedLibsEditor.this.libraries);
                     }
                 }
             }
         });
+
+        // load data in form
+        setAllData(libraries);
     }
 
     private void onOK()
     {
-// add your code here
+        isOk = true;
         dispose();
     }
 
@@ -161,5 +168,11 @@ public class UsedLibsEditor extends JDialog
             usedLibsListModel.addElement(library);
         }
         usedLibsList.setModel(usedLibsListModel);
+    }
+
+    public boolean showDialog()
+    {
+        setVisible(true);
+        return isOk;
     }
 }
