@@ -1,5 +1,6 @@
 package ifml2.editor.gui;
 
+import ca.odell.glazedlists.EventList;
 import ifml2.CommonConstants;
 import ifml2.CommonUtils;
 import ifml2.GUIUtils;
@@ -20,21 +21,21 @@ import java.util.List;
 
 public class UsedLibsEditor extends AbstractEditor<List<Library>>
 {
+    public static final String USEDLIBS_EDITOR_TITLE = "Используемые библиотеки";
     private JPanel contentPane;
     private JButton buttonOK;
     private JList usedLibsList;
     private JButton addButton;
     private JButton delButton;
-    private List<Library> libraries;
 
-    public static final String USED_LIBS_EDITOR_TITLE = "Используемые библиотеки";
+    private List<Library> libraries; // todo rewrite using transactional model
 
-    public UsedLibsEditor(Window owner)
+    public UsedLibsEditor(Window owner, EventList<Library> libraries)
     {
         super(owner);
-        initializeEditor(USED_LIBS_EDITOR_TITLE, contentPane, buttonOK, null);
+        initializeEditor(USEDLIBS_EDITOR_TITLE, contentPane, buttonOK, null);
 
-        // -- nint form --
+        // -- Init form --
 
         addButton.setAction(new AbstractAction("Добавить...", GUIUtils.ADD_ELEMENT_ICON)
         {
@@ -68,10 +69,10 @@ public class UsedLibsEditor extends AbstractEditor<List<Library>>
                     URI selectedFile = libFileChooser.getSelectedFile().toURI();
                     relativePath = librariesDirectoryURI.relativize(selectedFile).getPath();
                 }
-                catch (IOException e1)
+                catch (IOException ex)
                 {
                     JOptionPane.showMessageDialog(UsedLibsEditor.this, "Произошла ошибка во время загрузки библиотеки: \n"
-                            + e1.getMessage(), "Ошибка при загрузке", JOptionPane.ERROR_MESSAGE);
+                            + ex.getMessage(), "Ошибка при загрузке", JOptionPane.ERROR_MESSAGE);
 
                     return;
                 }
@@ -80,7 +81,7 @@ public class UsedLibsEditor extends AbstractEditor<List<Library>>
                 try
                 {
                     library = OMManager.loadLibrary(relativePath);
-                    libraries.add(library);
+                    UsedLibsEditor.this.libraries.add(library);
                 }
                 catch (IFML2Exception error)
                 {
@@ -90,7 +91,7 @@ public class UsedLibsEditor extends AbstractEditor<List<Library>>
                     return;
                 }
 
-                setAllData(libraries);
+                setAllData(UsedLibsEditor.this.libraries);
 
                 if (library != null)
                 {
@@ -112,12 +113,15 @@ public class UsedLibsEditor extends AbstractEditor<List<Library>>
                             JOptionPane.YES_NO_OPTION);
                     if(answer == 0)
                     {
-                        libraries.remove(usedLib);
-                        setAllData(libraries);
+                        UsedLibsEditor.this.libraries.remove(usedLib);
+                        setAllData(UsedLibsEditor.this.libraries);
                     }
                 }
             }
         });
+
+        // load data in form
+        setAllData(libraries);
     }
 
     @Override
