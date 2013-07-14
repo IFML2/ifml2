@@ -4,10 +4,8 @@ import ifml2.CommonConstants;
 import ifml2.CommonUtils;
 import ifml2.GUIUtils;
 import ifml2.engine.Engine;
-import ifml2.engine.EngineVersion;
 import ifml2.interfaces.GUIInterface;
 import ifml2.om.IFML2LoadXmlException;
-import ifml2.om.Story;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
@@ -92,26 +90,6 @@ public class GUIPlayer extends JFrame
         startFromFile(getStoryFileNameForPlay(args));
     }
 
-    /*public static void startFromOM(Story story)
-    {
-        GUIPlayer guiPlayer = new GUIPlayer();
-        guiPlayer.setVisible(true);
-        guiPlayer.loadFromOM(story);
-    }*/
-
-    private void loadFromOM(Story story)
-    {
-        try
-        {
-            engine.setStory(story);
-            engine.initGame();
-        }
-        catch (Throwable e)
-        {
-            ReportError(e, "Ошибка при загрузке истории!");
-        }
-    }
-
     private void loadStory(String storyFile)
     {
         this.storyFile = storyFile;
@@ -153,7 +131,7 @@ public class GUIPlayer extends JFrame
 
     private GUIPlayer()
     {
-        super("ЯРИЛ 2.0 " + EngineVersion.IFML_ENGINE_VERSION);
+        super("ЯРИЛ 2.0 " + Engine.IFML_ENGINE_VERSION);
 
         initEngine();
 

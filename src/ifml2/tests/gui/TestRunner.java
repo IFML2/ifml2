@@ -3,7 +3,7 @@ package ifml2.tests.gui;
 import ifml2.CommonConstants;
 import ifml2.CommonUtils;
 import ifml2.GUIUtils;
-import ifml2.engine.EngineVersion;
+import ifml2.engine.Engine;
 import ifml2.interfaces.Interface;
 import ifml2.tests.IFMLTestPlan;
 import ifml2.tests.TestManager;
@@ -34,7 +34,7 @@ public class TestRunner extends JFrame
 
     public TestRunner()
     {
-        super("ЯРИЛ 2.0 Тестер " + EngineVersion.IFML_ENGINE_VERSION);
+        super("ЯРИЛ 2.0 Тестер " + Engine.IFML_ENGINE_VERSION);
         setContentPane(mainPanel);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         GUIUtils.packAndCenterWindow(this);

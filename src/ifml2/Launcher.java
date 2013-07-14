@@ -1,7 +1,7 @@
 package ifml2;
 
 import ifml2.editor.gui.Editor;
-import ifml2.engine.EngineVersion;
+import ifml2.engine.Engine;
 import ifml2.players.guiplayer.GUIPlayer;
 import ifml2.tests.gui.TestRunner;
 import org.apache.log4j.Logger;
@@ -65,7 +65,7 @@ public class Launcher
                     return "Тестер";
                 }
             };
-            Object answer = JOptionPane.showInputDialog(null, "Что запустить?", "ЯРИЛ 2.0 " + EngineVersion.IFML_ENGINE_VERSION,
+            Object answer = JOptionPane.showInputDialog(null, "Что запустить?", "ЯРИЛ 2.0 " + Engine.IFML_ENGINE_VERSION,
                     JOptionPane.QUESTION_MESSAGE, null, new Object[]{playerOption, editorOption, testerOption}, playerOption);
             if(playerOption.equals(answer))
             {

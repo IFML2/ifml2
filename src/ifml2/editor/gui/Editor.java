@@ -4,7 +4,7 @@ import ifml2.CommonConstants;
 import ifml2.CommonUtils;
 import ifml2.GUIUtils;
 import ifml2.IFML2Exception;
-import ifml2.engine.EngineVersion;
+import ifml2.engine.Engine;
 import ifml2.om.Item;
 import ifml2.om.Location;
 import ifml2.om.OMManager;
@@ -59,7 +59,7 @@ public class Editor extends JFrame
      */
     private void updateTitle()
     {
-        String IFML_EDITOR_VERSION = "ЯРИЛ 2.0 (" + EngineVersion.IFML_ENGINE_VERSION + ") Редактор" + (isStoryEdited ? " - история не сохранена" : "");
+        String IFML_EDITOR_VERSION = "ЯРИЛ 2.0 (" + Engine.IFML_ENGINE_VERSION + ") Редактор" + (isStoryEdited ? " - история не сохранена" : "");
         setTitle(IFML_EDITOR_VERSION);
     }
 
@@ -470,7 +470,7 @@ public class Editor extends JFrame
             public void actionPerformed(ActionEvent e)
             {
                 ProceduresEditor proceduresEditor = new ProceduresEditor(Editor.this, story.getProcedures());
-                if(proceduresEditor.showDialog())
+                if (proceduresEditor.showDialog())
                 {
                     setStoryEdited();
                 }
