@@ -326,7 +326,10 @@ public class WordLinksEditor extends JDialog
         this.dictionary = dictionary;
 
         wordsClone = new ArrayList<Word>(wordLinks.getWords());
-        updateWordLinks(null);
+
+        Word firstWord = wordsClone.size() > 0 ? wordsClone.get(0) : null;
+        updateWordLinks(firstWord);
+
         updateMainWord();
         mainWordCombo.setSelectedItem(wordLinks.getMainWord());
     }
