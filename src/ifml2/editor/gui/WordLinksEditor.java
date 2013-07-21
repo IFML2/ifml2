@@ -21,6 +21,9 @@ import java.util.HashMap;
 
 public class WordLinksEditor extends AbstractEditor<WordLinks>
 {
+    public static final String NEW_WORD_ACTION = "Новое...";
+    public static final String DELETE_WORD_ACTION = "Удалить";
+    public static final String MAIN_WORD_MUST_BE_SET_ERROR_MESSAGE_DIALOG = "Основное слово не установлено. Его необходимо установить.";
     private JPanel contentPane;
     private JButton buttonOK;
     private JList wordList;
@@ -38,10 +41,12 @@ public class WordLinksEditor extends AbstractEditor<WordLinks>
     private static final String DICTIONARY_EDITOR_TITLE = "Словарь";
     private static final String CASE_DOC_PROPERTY = "case";
     private static final String WORD_IP_QUERY_PROMPT = "Именительный падеж:";
-    private static final String DUPLICATED_WORD_ERROR_MESSAGE = "Такое слово уже есть в словаре, оно будет использовано";
-    private static final String DUPLICATED_WORD_ERROR_DIALOG_TITLE = "Дубликат";
+    private static final String DUPLICATED_WORD_INFO_MESSAGE = "Такое слово уже есть в словаре, оно будет использовано";
+    private static final String DUPLICATED_WORD_INFO_DIALOG_TITLE = "Дубликат";
     private static final String WORD_DELETION_QUERY_PROMPT = "Вы уверены, что хотите удалить это слово из словаря?";
     private static final String WRONG_DOC_PROP_SYSTEM_ERROR = "Системная ошибка: неверное свойство case у DocumentEvent.getDocument() в wordDocListener";
+    private static final String SET_MAIN_WORD_QUERY_PROMPT = "Основное слово ещё не установлено. Установить только что добавленное?";
+    private static final String SET_MAIN_WORD_DIALOG_TITLE = "Установка основного слова";
 
     private boolean isUpdatingText = false;
     private ArrayList<Word> wordsClone = null;
@@ -115,7 +120,7 @@ public class WordLinksEditor extends AbstractEditor<WordLinks>
         ppText.getDocument().putProperty(CASE_DOC_PROPERTY, Word.GramCaseEnum.PP);
         ppText.getDocument().addDocumentListener(wordDocListener);
 
-        newWordButton.setAction(new AbstractAction("Новое...", GUIUtils.ADD_ELEMENT_ICON)
+        newWordButton.setAction(new AbstractAction(NEW_WORD_ACTION, GUIUtils.ADD_ELEMENT_ICON)
         {
             @Override
             public void actionPerformed(ActionEvent e)
@@ -126,7 +131,7 @@ public class WordLinksEditor extends AbstractEditor<WordLinks>
                     Word word = new Word(newWordIp);
                     if (dictionary.containsKey(newWordIp))
                     {
-                        JOptionPane.showMessageDialog(WordLinksEditor.this, DUPLICATED_WORD_ERROR_MESSAGE, DUPLICATED_WORD_ERROR_DIALOG_TITLE,
+                        JOptionPane.showMessageDialog(WordLinksEditor.this, DUPLICATED_WORD_INFO_MESSAGE, DUPLICATED_WORD_INFO_DIALOG_TITLE,
                                 JOptionPane.INFORMATION_MESSAGE);
                         word = dictionary.get(newWordIp);
                     }
@@ -136,11 +141,21 @@ public class WordLinksEditor extends AbstractEditor<WordLinks>
                     }
                     wordsClone.add(word);
                     updateLinksAndMain(word);
+
+                    // set main word in case it isn't set
+                    if(mainWordCombo.getSelectedItem() == null)
+                    {
+                        if (JOptionPane.showConfirmDialog(WordLinksEditor.this, SET_MAIN_WORD_QUERY_PROMPT, SET_MAIN_WORD_DIALOG_TITLE, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) ==
+                                JOptionPane.YES_OPTION)
+                        {
+                            mainWordCombo.setSelectedItem(word);
+                        }
+                    }
                 }
             }
         });
 
-        delWordButton.setAction(new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
+        delWordButton.setAction(new AbstractAction(DELETE_WORD_ACTION, GUIUtils.DEL_ELEMENT_ICON)
         {
             @Override
             public void actionPerformed(ActionEvent e)
