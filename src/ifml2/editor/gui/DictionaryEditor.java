@@ -56,7 +56,7 @@ public class DictionaryEditor extends JDialog
             }
         });
 
-// call onCancel() when cross is clicked
+        // call onCancel() when cross is clicked
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter()
         {
@@ -66,7 +66,7 @@ public class DictionaryEditor extends JDialog
             }
         });
 
-// call onCancel() on ESCAPE
+        // call onCancel() on ESCAPE
         contentPane.registerKeyboardAction(new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -94,9 +94,9 @@ public class DictionaryEditor extends JDialog
                 {
                     updateCurrentWord(e.getDocument());
                 }
-                catch (IFML2EditorException e1)
+                catch (IFML2EditorException ex)
                 {
-                    GUIUtils.showErrorMessage(DictionaryEditor.this, e1);
+                    GUIUtils.showErrorMessage(DictionaryEditor.this, ex);
                 }
             }
 
@@ -107,9 +107,9 @@ public class DictionaryEditor extends JDialog
                 {
                     updateCurrentWord(e.getDocument());
                 }
-                catch (IFML2EditorException e1)
+                catch (IFML2EditorException ex)
                 {
-                    GUIUtils.showErrorMessage(DictionaryEditor.this, e1);
+                    GUIUtils.showErrorMessage(DictionaryEditor.this, ex);
                 }
             }
 
@@ -245,14 +245,6 @@ public class DictionaryEditor extends JDialog
     {
         dispose();
     }
-
-    /*public static void main(String[] args)
-    {
-        DictionaryEditor dialog = new DictionaryEditor();
-        dialog.pack();
-        dialog.setVisible(true);
-        System.exit(0);
-    }*/
 
     void setAllData(HashMap<String, Word> dictionary)
     {
