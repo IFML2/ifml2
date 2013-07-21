@@ -288,4 +288,20 @@ public class WordLinksEditor extends AbstractEditor<WordLinks>
         wordLinks.getWords().addAll(wordsClone);
         wordLinks.setMainWord((Word) mainWordCombo.getSelectedItem());
     }
+
+    @Override
+    protected boolean validateData()
+    {
+        // check if main word is set
+        if(mainWordCombo.getSelectedItem() == null)
+        {
+            JOptionPane.showMessageDialog(this, MAIN_WORD_MUST_BE_SET_ERROR_MESSAGE_DIALOG, SET_MAIN_WORD_DIALOG_TITLE, JOptionPane.ERROR_MESSAGE);
+            mainWordCombo.requestFocusInWindow();
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
 }
