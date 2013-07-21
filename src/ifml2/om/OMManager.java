@@ -269,23 +269,28 @@ public class OMManager
 
             public void addBinding(String name, Object object)
             {
-                if(containsKey(name))
+                // add name in lower case
+                String loweredName = name.toLowerCase();
+
+                if(containsKey(loweredName))
                 {
-                    get(name).add(object);
+                    get(loweredName).add(object);
                 }
                 else
                 {
                     ArrayList<Object> arrayList = new ArrayList<Object>();
                     arrayList.add(object);
-                    put(name, arrayList);
+                    put(loweredName, arrayList);
                 }
             }
 
             public boolean containsKeyOfClass(String name, Class aClass)
             {
-                if(containsKey(name))
+                String loweredName = name.toLowerCase();
+
+                if(containsKey(loweredName))
                 {
-                    for(Object object : get(name))
+                    for(Object object : get(loweredName))
                     {
                         if(object != null && (object.getClass().equals(aClass) || aClass == Object.class)) //todo remove Object after JAXB fix of JAXB-546
                         {
@@ -302,9 +307,11 @@ public class OMManager
 
             public Object getObjectOfClass(String name, Class aClass)
             {
-                if(containsKey(name))
+                String loweredName = name.toLowerCase();
+
+                if(containsKey(loweredName))
                 {
-                    for(Object object : get(name))
+                    for(Object object : get(loweredName))
                     {
                         if(object != null && (object.getClass().equals(aClass) || aClass == Object.class)) //todo remove Object after JAXB fix of JAXB-546
                         {
