@@ -12,6 +12,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -128,15 +129,13 @@ public class WordLinksEditor extends AbstractEditor<WordLinks>
                         JOptionPane.showMessageDialog(WordLinksEditor.this, DUPLICATED_WORD_ERROR_MESSAGE, DUPLICATED_WORD_ERROR_DIALOG_TITLE,
                                 JOptionPane.INFORMATION_MESSAGE);
                         word = dictionary.get(newWordIp);
-                        wordsClone.add(word);
-                        updateLinksAndMain(word);
                     }
                     else
                     {
                         dictionary.put(newWordIp, word);
-                        wordsClone.add(word);
-                        updateLinksAndMain(word);
                     }
+                    wordsClone.add(word);
+                    updateLinksAndMain(word);
                 }
             }
         });
@@ -182,34 +181,50 @@ public class WordLinksEditor extends AbstractEditor<WordLinks>
 
     private void updateCurrentWord(Document document) throws IFML2EditorException
     {
+        if (isUpdatingText)
+        {
+            return;
+        }
+
         Word word = (Word) wordList.getSelectedValue();
         if(word != null)
         {
-            if(isUpdatingText)
+
+            String text = null;
+            try
             {
-                return;
+                text = document.getText(0, document.getLength());
+            }
+            catch (BadLocationException e)
+            {
+                GUIUtils.showErrorMessage(WordLinksEditor.this, e);
+            }
+
+            if (text != null)
+            {
+                text = text.trim();
             }
 
             Word.GramCaseEnum gramCase = (Word.GramCaseEnum) document.getProperty(CASE_DOC_PROPERTY);
             switch (gramCase)
             {
                 case IP:
-                    word.ip = ipText.getText();
+                    word.ip = text;
                     break;
                 case RP:
-                    word.rp = rpText.getText();
+                    word.rp = text;
                     break;
                 case DP:
-                    word.dp = dpText.getText();
+                    word.dp = text;
                     break;
                 case VP:
-                    word.vp = vpText.getText();
+                    word.vp = text;
                     break;
                 case TP:
-                    word.tp = tpText.getText();
+                    word.tp = text;
                     break;
                 case PP:
-                    word.pp = ppText.getText();
+                    word.pp = text;
                     break;
                 default:
                     throw new IFML2EditorException(WRONG_DOC_PROP_SYSTEM_ERROR);
@@ -219,9 +234,9 @@ public class WordLinksEditor extends AbstractEditor<WordLinks>
 
     private void repaintCurrentWord(Word word)
     {
+        isUpdatingText = true;
         try
         {
-            isUpdatingText = true;
             if(word != null)
             {
                 casesPanel.setBorder(new TitledBorder(word.ip));
