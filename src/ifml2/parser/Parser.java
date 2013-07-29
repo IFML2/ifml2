@@ -501,7 +501,7 @@ public class Parser
         {
             for(String synonym : ((LiteralTemplateElement) templateElement).getSynonyms())
             {
-                FittedFormalElement fittedFormalElement = new FittedSynonym(synonym, templateElement.parameter);
+                FittedFormalElement fittedFormalElement = new FittedSynonym(synonym, templateElement.getParameter());
                 try
                 {
                     int usedWordsQty = fitSynonymWithPhrase(synonym, phrase);
@@ -549,7 +549,7 @@ public class Parser
             }
             else
             {*/
-            return new TemplateElementFitResult(new FittedObjects(objects, gramCase, templateElement.parameter), usedWordsQty);
+            return new TemplateElementFitResult(new FittedObjects(objects, gramCase, templateElement.getParameter()), usedWordsQty);
             /*}*/
         }
         else

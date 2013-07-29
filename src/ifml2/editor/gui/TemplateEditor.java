@@ -4,10 +4,7 @@ import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ifml2.GUIUtils;
 import ifml2.editor.IFML2EditorException;
-import ifml2.om.LiteralTemplateElement;
-import ifml2.om.ObjectTemplateElement;
-import ifml2.om.Template;
-import ifml2.om.TemplateElement;
+import ifml2.om.*;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -15,6 +12,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Collections;
 
 public class TemplateEditor extends AbstractEditor<Template>
@@ -32,11 +31,14 @@ public class TemplateEditor extends AbstractEditor<Template>
     private static final String EDITOR_TITLE = "Шаблон";
 
     private Template templateClone;
+    private Procedure procedure;
 
-    public TemplateEditor(Window owner, @NotNull Template template)
+    public TemplateEditor(Window owner, @NotNull Template template, Procedure procedure)
     {
         super(owner);
         initializeEditor(EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
+
+        this.procedure = procedure;
 
         // init actions
         addButton.setAction(new AbstractAction("Добавить...", GUIUtils.ADD_ELEMENT_ICON)
@@ -198,6 +200,30 @@ public class TemplateEditor extends AbstractEditor<Template>
             }
         });
 
+        // listeners
+        templateList.addMouseListener(new MouseAdapter()
+        {
+            @Override
+            public void mouseClicked(MouseEvent e)
+            {
+                if(e.getClickCount() == 2)
+                {
+                    TemplateElement selectedElement = (TemplateElement) templateList.getSelectedValue();
+                    if(selectedElement != null)
+                    {
+                        try
+                        {
+                            editElement(selectedElement);
+                        }
+                        catch (IFML2EditorException ex)
+                        {
+                            GUIUtils.showErrorMessage(TemplateEditor.this, ex);
+                        }
+                    }
+                }
+            }
+        });
+
         // elements
         try
         {
@@ -218,7 +244,7 @@ public class TemplateEditor extends AbstractEditor<Template>
         if(element instanceof LiteralTemplateElement)
         {
             LiteralTemplateElement literalElement = (LiteralTemplateElement) element;
-            LiteralElementEditor literalElementEditor = new LiteralElementEditor(this, literalElement);
+            LiteralElementEditor literalElementEditor = new LiteralElementEditor(this, literalElement, procedure);
             if(literalElementEditor.showDialog())
             {
                 literalElementEditor.getData(literalElement);
@@ -228,7 +254,7 @@ public class TemplateEditor extends AbstractEditor<Template>
         else if(element instanceof ObjectTemplateElement)
         {
             ObjectTemplateElement objectElement = (ObjectTemplateElement) element;
-            ObjectElementEditor objectElementEditor = new ObjectElementEditor(this, objectElement);
+            ObjectElementEditor objectElementEditor = new ObjectElementEditor(this, objectElement, procedure);
             if(objectElementEditor.showDialog())
             {
                 objectElementEditor.getData(objectElement);

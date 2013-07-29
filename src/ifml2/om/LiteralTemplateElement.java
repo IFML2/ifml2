@@ -18,11 +18,11 @@ public class LiteralTemplateElement extends TemplateElement
 	@Override
 	public String toString()
 	{
-		return (synonyms != null ? synonyms.toString() : "");
+		return (synonyms != null ? synonyms.toString() : "") + (parameter != null ? " => " + parameter : "");
 	}
 
     @Override
-    protected LiteralTemplateElement clone() throws CloneNotSupportedException
+    public LiteralTemplateElement clone() throws CloneNotSupportedException
     {
         // basic shallow copy
         LiteralTemplateElement clone = (LiteralTemplateElement) super.clone();

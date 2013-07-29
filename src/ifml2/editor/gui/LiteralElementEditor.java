@@ -2,18 +2,27 @@ package ifml2.editor.gui;
 
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
+import ca.odell.glazedlists.swing.DefaultEventComboBoxModel;
 import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ifml2.GUIUtils;
 import ifml2.editor.IFML2EditorException;
 import ifml2.om.LiteralTemplateElement;
+import ifml2.om.Parameter;
+import ifml2.om.Procedure;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 public class LiteralElementEditor extends AbstractEditor<LiteralTemplateElement>
 {
+    private static final String EDITOR_TITLE = "Литерал";
+    private static final String PARAMETER_MUST_BE_SET_ERROR_MESSAGE_DIALOG = "Если выставлена галочка передачи параметра, то параметр должен быть выбран.";
+    private static final String SET_PARAMETER_DIALOG_TITLE = "Параметр не задан";
+    private final EventList<String> synonymsClone;
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
@@ -21,12 +30,10 @@ public class LiteralElementEditor extends AbstractEditor<LiteralTemplateElement>
     private JButton addButton;
     private JButton editButton;
     private JButton delButton;
+    private JComboBox comboParameter;
+    private JCheckBox checkUseParameter;
 
-    private final EventList<String> synonymsClone;
-
-    private static final String EDITOR_TITLE = "Литерал";
-
-    public LiteralElementEditor(Window owner, LiteralTemplateElement element)
+    public LiteralElementEditor(Window owner, LiteralTemplateElement element, Procedure procedure)
     {
         super(owner);
         initializeEditor(EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
@@ -38,7 +45,7 @@ public class LiteralElementEditor extends AbstractEditor<LiteralTemplateElement>
             public void actionPerformed(ActionEvent e)
             {
                 String synonym = JOptionPane.showInputDialog(LiteralElementEditor.this, "Введите синоним:");
-                if(synonym != null && !"".equals(synonym))
+                if (synonym != null && !"".equals(synonym))
                 {
                     synonymsClone.add(synonym);
                     synonymsList.setSelectedValue(synonym, true);
@@ -75,10 +82,20 @@ public class LiteralElementEditor extends AbstractEditor<LiteralTemplateElement>
             public void actionPerformed(ActionEvent e)
             {
                 String selectedSynonym = (String) synonymsList.getSelectedValue();
-                if(selectedSynonym != null && GUIUtils.showDeleteConfirmDialog(LiteralElementEditor.this, "синоним", "синонима"))
+                if (selectedSynonym != null && GUIUtils.showDeleteConfirmDialog(LiteralElementEditor.this, "синоним", "синонима"))
                 {
                     synonymsClone.remove(selectedSynonym);
                 }
+            }
+        });
+
+        // add listeners
+        checkUseParameter.addItemListener(new ItemListener()
+        {
+            @Override
+            public void itemStateChanged(ItemEvent e)
+            {
+                comboParameter.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
             }
         });
 
@@ -87,6 +104,37 @@ public class LiteralElementEditor extends AbstractEditor<LiteralTemplateElement>
 
         // load data
         synonymsList.setModel(new DefaultEventListModel<String>(synonymsClone));
+
+        if (procedure != null)
+        {
+            comboParameter.setModel(new DefaultEventComboBoxModel<Parameter>(procedure.getParameters()));
+        }
+        String parameter = element.getParameter();
+        if (procedure != null && parameter != null)
+        {
+            checkUseParameter.setSelected(true);
+            comboParameter.setSelectedItem(procedure.getParameterByName(parameter));
+        }
+        else
+        {
+            checkUseParameter.setSelected(false);
+        }
+    }
+
+    @Override
+    protected boolean validateData()
+    {
+        // check if check box is set then parameter is selected
+        if(checkUseParameter.isSelected() && comboParameter.getSelectedItem() == null)
+        {
+            JOptionPane.showMessageDialog(this, PARAMETER_MUST_BE_SET_ERROR_MESSAGE_DIALOG, SET_PARAMETER_DIALOG_TITLE, JOptionPane.ERROR_MESSAGE);
+            comboParameter.requestFocusInWindow();
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
 
     @Override
@@ -95,5 +143,7 @@ public class LiteralElementEditor extends AbstractEditor<LiteralTemplateElement>
         EventList<String> synonyms = data.getSynonyms();
         synonyms.clear();
         synonyms.addAll(synonymsClone);
+        Parameter selectedItem = (Parameter) comboParameter.getSelectedItem();
+        data.setParameter(checkUseParameter.isSelected() && selectedItem != null ? selectedItem.toString() : null);
     }
 }

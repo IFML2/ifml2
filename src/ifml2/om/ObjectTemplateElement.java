@@ -14,6 +14,13 @@ public class ObjectTemplateElement extends TemplateElement
 	@Override
 	public String toString()
 	{
-		return gramCase.getAbbreviation();
+		return gramCase.getAbbreviation() + (parameter != null ? " => " + parameter : "");
 	}
+
+    @Override
+    public ObjectTemplateElement clone() throws CloneNotSupportedException
+    {
+        // basic shallow copy
+        return (ObjectTemplateElement) super.clone();
+    }
 }

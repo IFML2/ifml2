@@ -7,16 +7,19 @@ public class TemplateElement implements Cloneable
 	@XmlAttribute(name="position")
 	public int position;
 
+    protected String parameter;
     @XmlAttribute(name = "parameter")
-    public String parameter;
-
     public String getParameter()
     {
         return parameter;
     }
+    public void setParameter(String parameter)
+    {
+        this.parameter = parameter;
+    }
 
     @Override
-    protected TemplateElement clone() throws CloneNotSupportedException
+    public TemplateElement clone() throws CloneNotSupportedException
     {
         return (TemplateElement) super.clone();
     }

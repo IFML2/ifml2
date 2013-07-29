@@ -9,25 +9,39 @@ import javax.xml.bind.annotation.*;
 @XmlRootElement(name="procedure")
 public class Procedure
 {
+    public Parameter getParameterByName(String parameterName)
+    {
+        for(Parameter parameter : parameters)
+        {
+            if(parameter.getName().equalsIgnoreCase(parameterName))
+            {
+                return parameter;
+            }
+        }
+
+        return null;
+    }
+
     @XmlEnum
     public enum SystemProcedureEnum
     {
         @XmlEnumValue(value = "showLocName")
         SHOW_LOC_NAME
     }
-	private String name;
 
     @XmlAttribute(name="name")
-	@XmlID
-    void setName(String name) { this.name = name; }
+    @XmlID
+    private String name;
     public String getName() { return name; }
+
     @XmlAttribute(name = "inheritsSystemProcedure")
     private final SystemProcedureEnum inheritsSystemProcedure = null;
-
     public SystemProcedureEnum getInheritsSystemProcedure() { return inheritsSystemProcedure; }
+
+    private EventList<Parameter> parameters = new BasicEventList<Parameter>();
     @XmlElementWrapper(name = "parameters")
     @XmlElement(name = "parameter")
-    private EventList<Parameter> parameters = new BasicEventList<Parameter>();
+    public EventList<Parameter> getParameters() { return parameters; }
 
     @XmlElementWrapper(name = "procedureVariables")
     @XmlElement(name = "procedureVariable")
@@ -46,7 +60,7 @@ public class Procedure
     public Procedure(String name)
     {
         this();
-        setName(name);
+        this.name = name;
     }
 
     private Procedure()

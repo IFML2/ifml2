@@ -135,18 +135,19 @@ public class ActionEditor extends AbstractEditor<Action>
 
     private boolean editTemplate(@NotNull Template template)
     {
-        TemplateEditor templateEditor = new TemplateEditor(this, template);
+        Procedure selectedProcedure = (Procedure) procedureCallCombo.getSelectedItem();
+        TemplateEditor templateEditor = new TemplateEditor(this, template, selectedProcedure);
         if(templateEditor.showDialog())
         {
             try
             {
                 templateEditor.getData(template);
+                return true;
             }
             catch (IFML2EditorException e)
             {
                 GUIUtils.showErrorMessage(this, e);
             }
-            return true;
         }
         return false;
     }

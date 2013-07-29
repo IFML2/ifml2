@@ -63,6 +63,12 @@ public class Word
             }
             return null;
         }
+
+        @Override
+        public String toString()
+        {
+            return abbreviation;
+        }
     }
 
     // todo перевести на HashMap<GramCase, string>
