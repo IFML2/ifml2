@@ -13,9 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.*;
 
 public class LiteralElementEditor extends AbstractEditor<LiteralTemplateElement>
 {
@@ -61,15 +59,7 @@ public class LiteralElementEditor extends AbstractEditor<LiteralTemplateElement>
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                String selectedSynonym = (String) synonymsList.getSelectedValue();
-                if (selectedSynonym != null)
-                {
-                    String editedSynonym = JOptionPane.showInputDialog(LiteralElementEditor.this, "Исправьте синоним:", selectedSynonym);
-                    if (editedSynonym != null && !"".equals(editedSynonym))
-                    {
-                        synonymsClone.set(synonymsList.getSelectedIndex(), editedSynonym);
-                    }
-                }
+                editCurrentSynonym();
             }
         });
         delButton.setAction(new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
@@ -89,13 +79,24 @@ public class LiteralElementEditor extends AbstractEditor<LiteralTemplateElement>
             }
         });
 
-        // add listeners
+        // listeners
         checkUseParameter.addItemListener(new ItemListener()
         {
             @Override
             public void itemStateChanged(ItemEvent e)
             {
                 comboParameter.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+            }
+        });
+        synonymsList.addMouseListener(new MouseAdapter()
+        {
+            @Override
+            public void mouseClicked(MouseEvent e)
+            {
+                if(e.getClickCount() == 2)
+                {
+                    editCurrentSynonym();
+                }
             }
         });
 
@@ -118,6 +119,19 @@ public class LiteralElementEditor extends AbstractEditor<LiteralTemplateElement>
         else
         {
             checkUseParameter.setSelected(false);
+        }
+    }
+
+    private void editCurrentSynonym()
+    {
+        String selectedSynonym = (String) synonymsList.getSelectedValue();
+        if (selectedSynonym != null)
+        {
+            String editedSynonym = JOptionPane.showInputDialog(this, "Исправьте синоним:", selectedSynonym);
+            if (editedSynonym != null && !"".equals(editedSynonym))
+            {
+                synonymsClone.set(synonymsList.getSelectedIndex(), editedSynonym);
+            }
         }
     }
 
