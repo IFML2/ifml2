@@ -17,6 +17,8 @@ import java.awt.event.ItemListener;
 public class ObjectElementEditor extends AbstractEditor<ObjectTemplateElement>
 {
     private static final String EDITOR_TITLE = "Объект";
+    private static final String PARAMETER_MUST_BE_SET_ERROR_MESSAGE_DIALOG = "Если выставлена галочка передачи параметра, то параметр должен быть выбран.";
+    private static final String SET_PARAMETER_DIALOG_TITLE = "Параметр не задан";
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
@@ -29,8 +31,6 @@ public class ObjectElementEditor extends AbstractEditor<ObjectTemplateElement>
     {
         super(owner);
         initializeEditor(EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
-
-        //todo
 
         // add listeners
         checkUseParameter.addItemListener(new ItemListener()
@@ -74,8 +74,26 @@ public class ObjectElementEditor extends AbstractEditor<ObjectTemplateElement>
     }
 
     @Override
+    protected boolean validateData()
+    {
+        // check if check box is set then parameter is selected
+        if(checkUseParameter.isSelected() && comboParameter.getSelectedItem() == null)
+        {
+            JOptionPane.showMessageDialog(this, PARAMETER_MUST_BE_SET_ERROR_MESSAGE_DIALOG, SET_PARAMETER_DIALOG_TITLE, JOptionPane.ERROR_MESSAGE);
+            comboParameter.requestFocusInWindow();
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    @Override
     public void getData(@NotNull ObjectTemplateElement data) throws IFML2EditorException
     {
-        //todo
+        data.setGramCase((Word.GramCaseEnum) comboCase.getSelectedItem());
+        Parameter selectedItem = (Parameter) comboParameter.getSelectedItem();
+        data.setParameter(checkUseParameter.isSelected() && selectedItem != null ? selectedItem.toString() : null);
     }
 }

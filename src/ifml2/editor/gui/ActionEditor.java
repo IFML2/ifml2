@@ -31,6 +31,9 @@ public class ActionEditor extends AbstractEditor<Action>
     private JButton addTemplateButton;
     private JButton editTemplateButton;
     private JButton delTemplateButton;
+    private JList restrictionsList;
+    private JButton upButton;
+    private JButton downButton;
 
     private final EventList<Template> templatesClone;
 
@@ -155,6 +158,13 @@ public class ActionEditor extends AbstractEditor<Action>
     @Override
     public void getData(@NotNull Action data) throws IFML2EditorException
     {
-        //todo
+        data.setName(nameText.getText());
+        data.setDescription(descriptionText.getText());
+
+        EventList<Template> templates = data.getTemplates();
+        templates.clear();
+        templates.addAll(templatesClone);
+
+        data.getProcedureCall().setProcedure((Procedure) procedureCallCombo.getSelectedItem());
     }
 }

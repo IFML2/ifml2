@@ -47,7 +47,18 @@ public class Template implements Cloneable
     @Override
     public String toString()
     {
-        return elements.toString();
+        String result = "";
+        for(TemplateElement element : elements)
+        {
+            if(result.length() > 0)
+            {
+                result += " + ";
+            }
+
+            result += element.getSimpleView();
+        }
+
+        return result;
     }
 
     public void setElements(EventList<TemplateElement> elements)

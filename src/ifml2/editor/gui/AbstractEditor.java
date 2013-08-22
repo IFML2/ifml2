@@ -8,6 +8,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+/**
+ * Common abstract ancestor for all editors.
+ * Usage:
+ * Create descendant JDialog with needed type. In constructor first of all call super(owner) and  initializeEditor().
+ * Implement getData() where fill data object with data from editor.
+ * Implement validateData() if you need validation.
+ * @param <T> Edited object type.
+ */
 public abstract class AbstractEditor<T> extends JDialog
 {
     private boolean isOk;

@@ -18,7 +18,7 @@ public class LiteralTemplateElement extends TemplateElement
 	@Override
 	public String toString()
 	{
-		return (synonyms != null ? synonyms.toString() : "") + (parameter != null ? " => " + parameter : "");
+		return (synonyms != null ? getSimpleView() : "") + (parameter != null ? " => " + parameter : "");
 	}
 
     @Override
@@ -31,5 +31,23 @@ public class LiteralTemplateElement extends TemplateElement
         clone.synonyms = GlazedLists.eventList(synonyms);
 
         return clone;
+    }
+
+    @Override
+    public String getSimpleView()
+    {
+        String result = "";
+
+        for (String synonym : synonyms)
+        {
+            if(result.length() > 0)
+            {
+                result += " | ";
+            }
+
+            result += "\"" + synonym + "\"";
+        }
+
+        return "{ " + result + " }";
     }
 }

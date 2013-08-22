@@ -2,7 +2,7 @@ package ifml2.om;
 
 import javax.xml.bind.annotation.XmlAttribute;
 
-public class TemplateElement implements Cloneable
+public abstract class TemplateElement implements Cloneable
 {
 	@XmlAttribute(name="position")
 	public int position;
@@ -23,4 +23,6 @@ public class TemplateElement implements Cloneable
     {
         return (TemplateElement) super.clone();
     }
+
+    public abstract String getSimpleView();
 }
