@@ -14,49 +14,62 @@ public class Action
     @XmlElementWrapper(name = "templates")
     @XmlElement(name = "template")
     private final EventList<Template> templates = new BasicEventList<Template>();
+    @XmlElement(name = "procedureCall")
+    public ProcedureCall procedureCall = new ProcedureCall();
+    private EventList<Restriction> restrictions = new BasicEventList<Restriction>();
+    private String name;
+    private String description;
+
     public EventList<Template> getTemplates()
     {
         return templates;
     }
 
-    @XmlElementWrapper(name = "restrictions")
-    @XmlElement(name = "restriction")
-    private final EventList<Restriction> restrictions = new BasicEventList<Restriction>();
     public EventList<Restriction> getRestrictions()
     {
         return restrictions;
     }
 
-	@XmlElement(name="procedureCall")
-	public ProcedureCall procedureCall = new ProcedureCall();
+    @XmlElementWrapper(name = "restrictions")
+    @XmlElement(name = "restriction")
+    public void setRestrictions(EventList<Restriction> restrictions)
+    {
+        this.restrictions = restrictions;
+    }
+
     public ProcedureCall getProcedureCall()
     {
         return procedureCall;
     }
 
-    private String name;
+    public String getName()
+    {
+        return name;
+    }
+
     @XmlAttribute(name = "name")
     @XmlID
-    public void setName(String name) { this.name = name; }
-    public String getName() { return name; }
-
-    private String description;
-    @XmlAttribute(name = "description")
-    public void setDescription(String description)
+    public void setName(String name)
     {
-        this.description = description;
+        this.name = name;
     }
+
     public String getDescription()
     {
         return description;
     }
 
+    @XmlAttribute(name = "description")
+    public void setDescription(String description)
+    {
+        this.description = description;
+    }
 
     @Override
-	public String toString()
-	{
-		return name;
-	}
+    public String toString()
+    {
+        return name;
+    }
 
     public Object[] getAllParameters()
     {

@@ -316,6 +316,8 @@ public class ActionEditor extends AbstractEditor<Action>
         templates.addAll(templatesClone);
 
         data.getProcedureCall().setProcedure((Procedure) procedureCallCombo.getSelectedItem());
+
+        data.setRestrictions(restrictionsClone);
     }
 
     @Override
