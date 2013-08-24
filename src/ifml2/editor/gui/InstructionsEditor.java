@@ -34,7 +34,7 @@ public class InstructionsEditor extends AbstractEditor<InstructionList>
     // data to clone
     private InstructionList instructionListClone;
 
-    private final AbstractAction editInstrAction = new AbstractAction("Изменить...", GUIUtils.EDIT_ELEMENT_ICON)
+    private final AbstractAction editInstrAction = new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON)
     {
         @Override
         public void actionPerformed(ActionEvent e)

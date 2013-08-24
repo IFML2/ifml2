@@ -3,6 +3,7 @@ package ifml2.editor.gui;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ifml2.GUIUtils;
+import ifml2.editor.DataNotValidException;
 import ifml2.editor.IFML2EditorException;
 import ifml2.om.*;
 import org.jetbrains.annotations.NotNull;
@@ -90,7 +91,7 @@ public class TemplateEditor extends AbstractEditor<Template>
                 }
             }
         });
-        editButton.setAction(new AbstractAction("Изменить...", GUIUtils.EDIT_ELEMENT_ICON)
+        editButton.setAction(new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON)
         {
             {
                 setEnabled(false); // disabled at start
@@ -266,6 +267,15 @@ public class TemplateEditor extends AbstractEditor<Template>
             throw new IFML2EditorException("Неизвестный тип элемента шаблона: {0}", element.getClass());
         }
         return false;
+    }
+
+    @Override
+    protected void validateData() throws DataNotValidException
+    {
+        if(templateClone.getSize() == 0)
+        {
+            throw new DataNotValidException("В шаблоне нет элементов!", templateList);
+        }
     }
 
     @Override

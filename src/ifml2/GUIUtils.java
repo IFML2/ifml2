@@ -43,7 +43,7 @@ public class GUIUtils
      */
     public static boolean showDeleteConfirmDialog(Component owner, String objectName, String objectNameRP)
     {
-        return JOptionPane.showConfirmDialog(owner, MessageFormat.format("Вы действительно хотите удалить этот {0}?", objectName),
+        return JOptionPane.showConfirmDialog(owner, MessageFormat.format("Вы действительно хотите удалить этот {0}?", objectName), // todo: этот should be by gender
                 MessageFormat.format("Удаление {0}", objectNameRP), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION;
     }
 

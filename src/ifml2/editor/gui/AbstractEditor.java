@@ -1,6 +1,7 @@
 package ifml2.editor.gui;
 
 import ifml2.GUIUtils;
+import ifml2.editor.DataNotValidException;
 import ifml2.editor.IFML2EditorException;
 import org.jetbrains.annotations.NotNull;
 
@@ -73,16 +74,17 @@ public abstract class AbstractEditor<T> extends JDialog
             {
                 onCancel();
             }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
     }
 
     /**
      * Validate input date in case of pressing OK button. Returns true by default. Override for custom logic.
-     * @return true if data is valid and false otherwise.
+     * Overriding: if data is incorrect throw DataNotValidException.
+     * @see DataNotValidException
      */
-    protected boolean validateData()
+    protected void validateData() throws DataNotValidException
     {
-        return true;
+        // do nothing - everything is correct by default
     }
 
     /**
@@ -94,10 +96,20 @@ public abstract class AbstractEditor<T> extends JDialog
 
     private void onOK()
     {
-        if(validateData())
+        try
         {
+            validateData();
             isOk = true;
             dispose();
+        }
+        catch (DataNotValidException e)
+        {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Данные не верны", JOptionPane.ERROR_MESSAGE);
+            Component componentForFocus = e.getComponentForFocus();
+            if (componentForFocus != null)
+            {
+                componentForFocus.requestFocusInWindow();
+            }
         }
     }
 

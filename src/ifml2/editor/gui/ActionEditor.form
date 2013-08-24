@@ -231,19 +231,19 @@
                     </clientProperties>
                     <border type="none"/>
                     <children>
-                      <component id="8a8ba" class="javax.swing.JButton">
+                      <component id="8a8ba" class="javax.swing.JButton" binding="addRestrictionButton">
                         <constraints/>
                         <properties>
                           <text value="Добавить..."/>
                         </properties>
                       </component>
-                      <component id="f1b7a" class="javax.swing.JButton">
+                      <component id="f1b7a" class="javax.swing.JButton" binding="editRestrictionButton">
                         <constraints/>
                         <properties>
                           <text value="Изменить..."/>
                         </properties>
                       </component>
-                      <component id="4a7a7" class="javax.swing.JButton">
+                      <component id="4a7a7" class="javax.swing.JButton" binding="delRestrictionButton">
                         <constraints/>
                         <properties>
                           <text value="Удалить"/>
@@ -266,13 +266,13 @@
                     </clientProperties>
                     <border type="none"/>
                     <children>
-                      <component id="5af47" class="javax.swing.JButton" binding="upButton">
+                      <component id="5af47" class="javax.swing.JButton" binding="upRestrictionButton">
                         <constraints/>
                         <properties>
                           <text value="Button"/>
                         </properties>
                       </component>
-                      <component id="6896e" class="javax.swing.JButton" binding="downButton">
+                      <component id="6896e" class="javax.swing.JButton" binding="downRestrictionButton">
                         <constraints/>
                         <properties>
                           <text value="Button"/>

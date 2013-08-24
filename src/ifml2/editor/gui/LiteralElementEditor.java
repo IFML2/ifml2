@@ -5,6 +5,7 @@ import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.swing.DefaultEventComboBoxModel;
 import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ifml2.GUIUtils;
+import ifml2.editor.DataNotValidException;
 import ifml2.editor.IFML2EditorException;
 import ifml2.om.LiteralTemplateElement;
 import ifml2.om.Parameter;
@@ -19,7 +20,6 @@ public class LiteralElementEditor extends AbstractEditor<LiteralTemplateElement>
 {
     private static final String EDITOR_TITLE = "Литерал";
     private static final String PARAMETER_MUST_BE_SET_ERROR_MESSAGE_DIALOG = "Если выставлена галочка передачи параметра, то параметр должен быть выбран.";
-    private static final String SET_PARAMETER_DIALOG_TITLE = "Параметр не задан";
     private final EventList<String> synonymsClone;
     private JPanel contentPane;
     private JButton buttonOK;
@@ -136,18 +136,12 @@ public class LiteralElementEditor extends AbstractEditor<LiteralTemplateElement>
     }
 
     @Override
-    protected boolean validateData()
+    protected void validateData() throws DataNotValidException
     {
         // check if check box is set then parameter is selected
         if(checkUseParameter.isSelected() && comboParameter.getSelectedItem() == null)
         {
-            JOptionPane.showMessageDialog(this, PARAMETER_MUST_BE_SET_ERROR_MESSAGE_DIALOG, SET_PARAMETER_DIALOG_TITLE, JOptionPane.ERROR_MESSAGE);
-            comboParameter.requestFocusInWindow();
-            return false;
-        }
-        else
-        {
-            return true;
+            throw new DataNotValidException(PARAMETER_MUST_BE_SET_ERROR_MESSAGE_DIALOG, comboParameter);
         }
     }
 

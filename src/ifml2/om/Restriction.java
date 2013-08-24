@@ -5,11 +5,29 @@ import javax.xml.bind.annotation.XmlElement;
 
 public class Restriction
 {
-    @XmlAttribute(name = "condition")
-    private String condition;
-    public String getCondition() { return condition; }
-
     @XmlElement(name = "reaction")
     private final InstructionList reaction = new InstructionList();
-    public InstructionList getReaction() { return reaction; }
+    private String condition;
+
+    @Override
+    public String toString()
+    {
+        return condition;
+    }
+
+    public String getCondition()
+    {
+        return condition;
+    }
+
+    @XmlAttribute(name = "condition")
+    public void setCondition(String condition)
+    {
+        this.condition = condition;
+    }
+
+    public InstructionList getReaction()
+    {
+        return reaction;
+    }
 }

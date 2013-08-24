@@ -92,7 +92,7 @@ public class LocationEditor extends AbstractEditor<Location>
         });
         editItemButton.setAction(editItemAction);
         delItemButton.setAction(delItemAction);
-        editAttributesButton.setAction(new AbstractAction("Изменить...", GUIUtils.EDIT_ELEMENT_ICON)
+        editAttributesButton.setAction(new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON)
         {
             @Override
             public void actionPerformed(ActionEvent e)

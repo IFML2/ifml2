@@ -44,7 +44,7 @@ public class ItemEditor extends AbstractEditor<Item>
     private EventList<Hook> hooksClone = null;
 
     // updated actions
-    private final AbstractAction editHookAction = new AbstractAction("Изменить...", GUIUtils.EDIT_ELEMENT_ICON)
+    private final AbstractAction editHookAction = new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON)
     {
         @Override()
         public void actionPerformed(ActionEvent e)
@@ -77,7 +77,7 @@ public class ItemEditor extends AbstractEditor<Item>
 
         // -- init form --
 
-        editAttributesButton.setAction(new AbstractAction("Изменить...", GUIUtils.EDIT_ELEMENT_ICON)
+        editAttributesButton.setAction(new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON)
         {
             @Override
             public void actionPerformed(ActionEvent e)
@@ -89,7 +89,7 @@ public class ItemEditor extends AbstractEditor<Item>
                 }
             }
         });
-        editWordsButton.setAction(new AbstractAction("Изменить...", GUIUtils.EDIT_ELEMENT_ICON)
+        editWordsButton.setAction(new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON)
         {
             @Override
             public void actionPerformed(ActionEvent e)

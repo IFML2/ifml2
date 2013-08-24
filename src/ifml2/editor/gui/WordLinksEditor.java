@@ -1,6 +1,7 @@
 package ifml2.editor.gui;
 
 import ifml2.GUIUtils;
+import ifml2.editor.DataNotValidException;
 import ifml2.editor.IFML2EditorException;
 import ifml2.om.Word;
 import ifml2.om.WordLinks;
@@ -293,18 +294,12 @@ public class WordLinksEditor extends AbstractEditor<WordLinks>
     }
 
     @Override
-    protected boolean validateData()
+    protected void validateData() throws DataNotValidException
     {
         // check if main word is set
         if(mainWordCombo.getSelectedItem() == null)
         {
-            JOptionPane.showMessageDialog(this, MAIN_WORD_MUST_BE_SET_ERROR_MESSAGE_DIALOG, SET_MAIN_WORD_DIALOG_TITLE, JOptionPane.ERROR_MESSAGE);
-            mainWordCombo.requestFocusInWindow();
-            return false;
-        }
-        else
-        {
-            return true;
+            throw new DataNotValidException(MAIN_WORD_MUST_BE_SET_ERROR_MESSAGE_DIALOG, mainWordCombo);
         }
     }
 }

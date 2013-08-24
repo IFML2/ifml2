@@ -2,6 +2,7 @@ package ifml2.editor.gui;
 
 import ca.odell.glazedlists.swing.DefaultEventComboBoxModel;
 import ifml2.GUIUtils;
+import ifml2.editor.DataNotValidException;
 import ifml2.editor.IFML2EditorException;
 import ifml2.om.ObjectTemplateElement;
 import ifml2.om.Parameter;
@@ -18,7 +19,6 @@ public class ObjectElementEditor extends AbstractEditor<ObjectTemplateElement>
 {
     private static final String EDITOR_TITLE = "Объект";
     private static final String PARAMETER_MUST_BE_SET_ERROR_MESSAGE_DIALOG = "Если выставлена галочка передачи параметра, то параметр должен быть выбран.";
-    private static final String SET_PARAMETER_DIALOG_TITLE = "Параметр не задан";
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
@@ -74,18 +74,12 @@ public class ObjectElementEditor extends AbstractEditor<ObjectTemplateElement>
     }
 
     @Override
-    protected boolean validateData()
+    protected void validateData() throws DataNotValidException
     {
         // check if check box is set then parameter is selected
         if(checkUseParameter.isSelected() && comboParameter.getSelectedItem() == null)
         {
-            JOptionPane.showMessageDialog(this, PARAMETER_MUST_BE_SET_ERROR_MESSAGE_DIALOG, SET_PARAMETER_DIALOG_TITLE, JOptionPane.ERROR_MESSAGE);
-            comboParameter.requestFocusInWindow();
-            return false;
-        }
-        else
-        {
-            return true;
+            throw new DataNotValidException(PARAMETER_MUST_BE_SET_ERROR_MESSAGE_DIALOG, comboParameter);
         }
     }
 
