@@ -31,7 +31,6 @@ public class Engine
     public static final String ENGINE_VERSION = "Прототип 10 выпуск 4";
 
     public static final FormatLogger LOG = FormatLogger.getLogger(Engine.class);
-    public static final String IFML_ENGINE_VERSION = "Прототип 10 выпуск 3 фикс 3";
 
     private Interface gameInterface = null;
 	private Story story = null;
