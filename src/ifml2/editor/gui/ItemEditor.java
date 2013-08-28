@@ -270,6 +270,10 @@ public class ItemEditor extends AbstractEditor<Item>
     @Override
     protected void validateData() throws DataNotValidException
     {
+        if(nameText.getText().trim().length() == 0)
+        {
+            throw new DataNotValidException("У предмета должно быть задано имя.", nameText);
+        }
         if (wordLinksClone.getWords().size() == 0)
         {
             throw new DataNotValidException("У предмета не задан словарь.", editWordsButton);
@@ -279,8 +283,8 @@ public class ItemEditor extends AbstractEditor<Item>
     @Override
     public void getData(@NotNull Item item)
     {
-        item.setId(idText.getText());
-        item.setName(nameText.getText());
+        item.setId(idText.getText().trim());
+        item.setName(nameText.getText().trim());
         item.setDescription(descText.getText());
 
         item.setWordLinks(wordLinksClone);

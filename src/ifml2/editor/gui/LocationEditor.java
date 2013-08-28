@@ -3,6 +3,7 @@ package ifml2.editor.gui;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
 import ifml2.GUIUtils;
+import ifml2.editor.DataNotValidException;
 import ifml2.om.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,6 +19,7 @@ import java.util.HashMap;
 
 public class LocationEditor extends AbstractEditor<Location>
 {
+    private static final String LOCATION_EDITOR_TITLE = "Локация";
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
@@ -35,40 +37,9 @@ public class LocationEditor extends AbstractEditor<Location>
     private JButton editItemButton;
     private JButton editAttributesButton;
     private JList attributesList;
-
-    private final AbstractAction editItemAction = new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON)
-    {
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            editItem((Item) itemsList.getSelectedValue());
-        }
-    };
-    private final AbstractAction delItemAction = new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
-    {
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            Item item = (Item) itemsList.getSelectedValue();
-            if(item != null)
-            {
-                int answer = JOptionPane.showConfirmDialog(LocationEditor.this, "Вы уверены, что хотите удалить этот предмет?");
-                if(answer == 0)
-                {
-                    itemsClone.remove(item);
-                    updateItems();
-                }
-            }
-        }
-    };
-
-    private static final String LOCATION_EDITOR_TITLE = "Локация";
-
     private boolean toGenerateId = false;
-
     private ArrayList<Item> itemsClone = null;
     private EventList<Attribute> attributesClone = null;
-
     private Story story = null;
 
     public LocationEditor(Window owner, final Story story, Location location)
@@ -82,7 +53,7 @@ public class LocationEditor extends AbstractEditor<Location>
             public void actionPerformed(ActionEvent e)
             {
                 Item item = new Item();
-                if(editItem(item))
+                if (editItem(item))
                 {
                     itemsClone.add(item);
                     updateItems();
@@ -90,27 +61,65 @@ public class LocationEditor extends AbstractEditor<Location>
                 }
             }
         });
-        editItemButton.setAction(editItemAction);
-        delItemButton.setAction(delItemAction);
+        editItemButton.setAction(new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON)
+        {
+            {
+                setEnabled(false); // disabled at start
+                itemsList.addListSelectionListener(new ListSelectionListener()
+                {
+                    @Override
+                    public void valueChanged(ListSelectionEvent e)
+                    {
+                        setEnabled(!itemsList.isSelectionEmpty()); // depends on selection
+                    }
+                });
+            }
+
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                editItem((Item) itemsList.getSelectedValue());
+            }
+        });
+        delItemButton.setAction(new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
+        {
+            {
+                setEnabled(false); // disabled at start
+                itemsList.addListSelectionListener(new ListSelectionListener()
+                {
+                    @Override
+                    public void valueChanged(ListSelectionEvent e)
+                    {
+                        setEnabled(!itemsList.isSelectionEmpty()); // depends on selection
+                    }
+                });
+            }
+
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                Item item = (Item) itemsList.getSelectedValue();
+                if (item != null)
+                {
+                    int answer = JOptionPane.showConfirmDialog(LocationEditor.this, "Вы уверены, что хотите удалить этот предмет?");
+                    if (answer == 0)
+                    {
+                        itemsClone.remove(item);
+                        updateItems();
+                    }
+                }
+            }
+        });
         editAttributesButton.setAction(new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON)
         {
             @Override
             public void actionPerformed(ActionEvent e)
             {
                 ObjectAttributesEditor objectAttributesEditor = new ObjectAttributesEditor(LocationEditor.this, attributesClone, story);
-                if(objectAttributesEditor.showDialog())
+                if (objectAttributesEditor.showDialog())
                 {
                     updateAttributes();
                 }
-            }
-        });
-
-        itemsList.addListSelectionListener(new ListSelectionListener()
-        {
-            @Override
-            public void valueChanged(ListSelectionEvent e)
-            {
-                updateActions();
             }
         });
 
@@ -119,10 +128,10 @@ public class LocationEditor extends AbstractEditor<Location>
             @Override
             public void mouseClicked(MouseEvent e)
             {
-                if(e.getClickCount() == 2)
+                if (e.getClickCount() == 2)
                 {
                     Item item = (Item) itemsList.getSelectedValue();
-                    if(item != null)
+                    if (item != null)
                     {
                         editItem(item);
                     }
@@ -156,14 +165,12 @@ public class LocationEditor extends AbstractEditor<Location>
             @Override
             public void keyTyped(KeyEvent e)
             {
-                if(e.getKeyChar() != '\0')
+                if (e.getKeyChar() != '\0')
                 {
                     toGenerateId = false;
                 }
             }
         });
-
-        updateActions();
 
         updateDictionaryLinks(story.getDictionary());
         //TODO:dictWordCombo.setSelectedItem(location.getWord());
@@ -190,17 +197,10 @@ public class LocationEditor extends AbstractEditor<Location>
 
     private void updateId()
     {
-        if(toGenerateId)
+        if (toGenerateId)
         {
             locationIDText.setText(story.generateIdByName(locationNameText.getText(), Location.class));
         }
-    }
-
-    private void updateActions()
-    {
-        boolean itemIsSelected = itemsList.getSelectedValue() != null;
-        editItemAction.setEnabled(itemIsSelected);
-        delItemAction.setEnabled(itemIsSelected);
     }
 
     private void updateAttributes()
@@ -211,7 +211,7 @@ public class LocationEditor extends AbstractEditor<Location>
     private void updateItems()
     {
         DefaultListModel itemsListModel = new DefaultListModel();
-        for(Item item : itemsClone)
+        for (Item item : itemsClone)
         {
             itemsListModel.addElement(item);
         }
@@ -246,6 +246,30 @@ public class LocationEditor extends AbstractEditor<Location>
         descriptionText.setText(data.getDescription());
     }
 
+    private boolean editItem(Item item)
+    {
+        if (item != null)
+        {
+            ItemEditor itemEditor = new ItemEditor(LocationEditor.this, story, item);
+            if (itemEditor.showDialog())
+            {
+                itemEditor.getData(item);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    protected void validateData() throws DataNotValidException
+    {
+        if (locationNameText.getText().trim().length() == 0)
+        {
+            throw new DataNotValidException("У локации должно быть задано имя.", locationNameText);
+        }
+    }
+
     @Override
     public void getData(@NotNull Location location)
     {
@@ -257,8 +281,8 @@ public class LocationEditor extends AbstractEditor<Location>
         location.setItems(itemsClone);
         location.setAttributes(attributesClone);
 
-        location.setName(locationNameText.getText());
-        location.setId(locationIDText.getText());
+        location.setName(locationNameText.getText().trim());
+        location.setId(locationIDText.getText().trim());
         location.setDescription(descriptionText.getText());
     }
 
@@ -308,19 +332,4 @@ public class LocationEditor extends AbstractEditor<Location>
         }
     }
     */
-
-    private boolean editItem(Item item)
-    {
-        if(item != null)
-        {
-            ItemEditor itemEditor = new ItemEditor(LocationEditor.this, story, item);
-            if(itemEditor.showDialog())
-            {
-                itemEditor.getData(item);
-                return true;
-            }
-        }
-
-        return false;
-    }
 }
