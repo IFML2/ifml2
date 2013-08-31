@@ -17,9 +17,12 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
+import javax.xml.bind.ValidationEvent;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.text.MessageFormat;
 import java.util.Arrays;
 
@@ -333,10 +336,11 @@ public class Editor extends JFrame
                     progressBar.setVisible(true);
                     Editor.this.setStory(OMManager.loadStoryFromXmlFile(storyFile, false).getStory());
                 }
-                catch (IFML2Exception e)
+                catch (Throwable e)
                 {
                     LOG.error("Error while loading story!", e);
-                    GUIUtils.showErrorMessage(Editor.this, e);
+                    ReportError(e, "Ошибка при загрузке истории!");
+                    //GUIUtils.showErrorMessage(Editor.this, e);
                 }
                 finally
                 {
@@ -346,6 +350,29 @@ public class Editor extends JFrame
                 }
             }
         }.start();
+    }
+
+    private void ReportError(Throwable exception, String message)
+    {
+        exception.printStackTrace();
+        LOG.error(message, exception);
+        String errorMessage = "";
+        if (exception instanceof IFML2LoadXmlException)
+        {
+            errorMessage += "\nВ файле истории есть ошибки:";
+            for (ValidationEvent validationEvent : ((IFML2LoadXmlException) exception).getEvents())
+            {
+                errorMessage += MessageFormat.format("\n\"{0}\" at {1},{2}", validationEvent.getMessage(),
+                        validationEvent.getLocator().getLineNumber(), validationEvent.getLocator().getColumnNumber());
+            }
+        }
+        else
+        {
+            StringWriter stringWriter = new StringWriter();
+            exception.printStackTrace(new PrintWriter(stringWriter));
+            errorMessage += MessageFormat.format("\nПроизошла ошибка: {0}", stringWriter.toString());
+        }
+        JOptionPane.showMessageDialog(this, errorMessage, "Произошла ошибка", JOptionPane.ERROR_MESSAGE);
     }
 
     private JMenuBar createMainMenu()

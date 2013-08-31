@@ -94,6 +94,13 @@
             <attributes/>
             <description>Узкий луч света прорывается сквозь щель в камнях. Можно видеть только каменое дно и три выхода: на восток, юг и запад.</description>
             <words/>
+            <hooks>
+                <hook type="instead" action="осмотреться">
+                    <instructions>
+                        <showMessage position="1" type="text" message="Перекрыто!"/>
+                    </instructions>
+                </hook>
+            </hooks>
             <east>ЗавалЛок</east>
             <south>ЮжныйЗал</south>
             <west>ЗападныйЗал</west>

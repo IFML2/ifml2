@@ -131,7 +131,7 @@ public class Engine
 
         if (story.getLocations().isEmpty())
         {
-            throw new IFML2Exception("Локаций нет");
+            throw new IFML2Exception("Локаций нет.");
         }
 
         // load global vars
@@ -188,11 +188,11 @@ public class Engine
 
         if (story.getStartLocation() != null)
         {
-            setCurrentLocation(getStory().getStartLocation());
+            setCurrentLocation(story.getStartLocation());
         }
         else
         {
-            setCurrentLocation(getStory().getAnyLocation());
+            setCurrentLocation(story.getAnyLocation());
         }
 
         if (story.IsShowStartLocDesc())
@@ -234,9 +234,10 @@ public class Engine
         try
         {
             parseResult = parser.parse(trimmedCommand);
+            Action action = parseResult.getAction();
 
             // check restrictions
-            for (Restriction restriction : parseResult.getAction().getRestrictions())
+            for (Restriction restriction : action.getRestrictions())
             {
                 try
                 {
@@ -244,7 +245,7 @@ public class Engine
                     Value isRestricted = ExpressionCalculator.calculate(runningContext, restriction.getCondition());
                     if (!(isRestricted instanceof BooleanValue))
                     {
-                        throw new IFML2Exception("Выражение (%s) условия ограничения действия \"%s\" не логического типа.", restriction.getCondition(), parseResult.getAction());
+                        throw new IFML2Exception("Выражение (%s) условия ограничения действия \"%s\" не логического типа.", restriction.getCondition(), action);
                     }
                     if (((BooleanValue) isRestricted).getValue()) // if condition is true, run reaction
                     {
@@ -254,7 +255,7 @@ public class Engine
                 }
                 catch (IFML2Exception e)
                 {
-                    throw new IFML2Exception(e, "{0}\n  при вычислении ограничения \"{1}\" действия \"{2}\"", e.getMessage(), restriction.getCondition(), parseResult.getAction());
+                    throw new IFML2Exception(e, "{0}\n  при вычислении ограничения \"{1}\" действия \"{2}\"", e.getMessage(), restriction.getCondition(), action);
                 }
             }
 
@@ -273,7 +274,7 @@ public class Engine
                     Item item = (Item) formalElement.getObject();
                     for (Hook hook : item.getHooks())
                     {
-                        if (parseResult.getAction().equals(hook.getAction()) && formalElement.getParameterName().equalsIgnoreCase(hook.getObjectElement()))
+                        if (action.equals(hook.getAction()) && formalElement.getParameterName().equalsIgnoreCase(hook.getObjectElement()))
                         {
                             // if INSTEAD - remove all other hooks and take only this one
                             if (Hook.HookTypeEnum.INSTEAD.equals(hook.getType()))
@@ -335,7 +336,7 @@ public class Engine
                 // action hasn't been fired yet - fire it
                 if (!isActionFired)
                 {
-                    virtualMachine.runProcedure(parseResult.getAction(), parseResult.getFormalElements());
+                    virtualMachine.runProcedure(action, parseResult.getFormalElements());
                 }
             }
         }

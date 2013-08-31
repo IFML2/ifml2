@@ -4,16 +4,27 @@ import javax.xml.bind.annotation.*;
 
 public class Hook
 {
+    @XmlElement(name = "instructions")
+    public final InstructionList instructionList = new InstructionList();
     private Action action;
+    private String objectElement = "";
+    private HookTypeEnum type = HookTypeEnum.INSTEAD; // default value for new hook in editors
+
+    public Action getAction()
+    {
+        return action;
+    }
+
     @XmlAttribute(name = "action")
     @XmlIDREF
     public void setAction(Action action)
     {
         this.action = action;
     }
-    public Action getAction()
+
+    public String getObjectElement()
     {
-        return action;
+        return objectElement;
     }
 
     @XmlAttribute(name = "objectElement")
@@ -21,10 +32,10 @@ public class Hook
     {
         this.objectElement = objectElement;
     }
-    private String objectElement;
-    public String getObjectElement()
+
+    public HookTypeEnum getType()
     {
-        return objectElement;
+        return type;
     }
 
     @XmlAttribute(name = "type")
@@ -32,18 +43,16 @@ public class Hook
     {
         this.type = type;
     }
-    private HookTypeEnum type = HookTypeEnum.INSTEAD; // default value for new hook in editors
-    public HookTypeEnum getType()
-    {
-        return type;
-    }
-
-    @XmlElement(name = "instructions")
-    public final InstructionList instructionList = new InstructionList();
 
     public InstructionList getInstructionList()
     {
         return instructionList;
+    }
+
+    @Override
+    public String toString()
+    {
+        return String.format("%s: %s (%s)", action, objectElement, type.ruName);
     }
 
     @XmlEnum
@@ -55,7 +64,6 @@ public class Hook
         AFTER(1, "после"),
         @XmlEnumValue(value = "instead")
         INSTEAD(2, "вместо");
-
         public final int sortValue;
         public final String ruName;
 
@@ -64,11 +72,5 @@ public class Hook
             this.sortValue = sortValue;
             this.ruName = ruName;
         }
-    }
-
-    @Override
-    public String toString()
-    {
-        return String.format("%s: %s (%s)", action, objectElement, type.ruName);
     }
 }

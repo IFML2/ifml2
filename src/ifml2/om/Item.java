@@ -14,13 +14,13 @@ import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlTransient;
 import java.util.List;
 
-import static ifml2.om.xml.XmlSchemaConstants.*;
+import static ifml2.om.xml.XmlSchemaConstants.ITEM_STARTING_POSITION_ELEMENT;
+import static ifml2.om.xml.XmlSchemaConstants.STARTING_POSITION_INVENTORY_ELEMENT;
 
 public class Item extends IFMLObject implements Cloneable
 {
     @XmlElement(name = ITEM_STARTING_POSITION_ELEMENT)
     private ItemStartingPosition startingPosition = new ItemStartingPosition();
-
     @XmlTransient
     private List<?> container;
 
@@ -28,10 +28,6 @@ public class Item extends IFMLObject implements Cloneable
     {
         return startingPosition;
     }
-
-    @XmlElementWrapper(name = ITEM_HOOKS_ELEMENT)
-    @XmlElement(name = ITEM_HOOK_ELEMENT)
-    public EventList<Hook> hooks = new BasicEventList<Hook>();
 
     public EventList<Hook> getHooks()
     {
@@ -53,15 +49,16 @@ public class Item extends IFMLObject implements Cloneable
 //    }
 
     @Override
-	public String toString()
-	{
-		return getName();
-	}
+    public String toString()
+    {
+        return getName();
+    }
 
-    /***
+    /**
      * Just runs appropriate trigger
-     * @return Value returned by trigger
+     *
      * @param virtualMachine Virtual Machine
+     * @return Value returned by trigger
      */
     public Value getAccessibleContent(VirtualMachine virtualMachine) throws IFML2Exception
     {
@@ -71,7 +68,7 @@ public class Item extends IFMLObject implements Cloneable
         for (Role role : getRoles())
         {
             Trigger trigger = role.getRoleDefinition().getTrigger(Trigger.TriggerTypeEnum.GET_ACCESSIBLE_CONTENT);
-            if(trigger != null)
+            if (trigger != null)
             {
                 return virtualMachine.runTrigger(trigger, this);
             }
@@ -80,14 +77,14 @@ public class Item extends IFMLObject implements Cloneable
         return null;
     }
 
-    public void setContainer(List<?> container)
-    {
-        this.container = container;
-    }
-
     public List<?> getContainer()
     {
         return container;
+    }
+
+    public void setContainer(List<?> container)
+    {
+        this.container = container;
     }
 
     public void moveTo(List<Item> collection)
@@ -102,8 +99,23 @@ public class Item extends IFMLObject implements Cloneable
         container = collection;
     }
 
+    @Override
+    public Item clone() throws CloneNotSupportedException
+    {
+        Item clone = (Item) super.clone();
+        clone.startingPosition = startingPosition.clone();
+        clone.hooks = GlazedLists.eventList(hooks);
+        return clone;
+    }
+
     public static class ItemStartingPosition implements Cloneable
     {
+        private boolean inventory = false;
+        @XmlElementWrapper(name = XmlSchemaConstants.STARTING_POSITION_LOCATIONS_ELEMENT)
+        @XmlElement(name = XmlSchemaConstants.STARTING_POSITION_LOCATION_ELEMENT)
+        @XmlIDREF
+        private EventList<Location> locations = new BasicEventList<Location>();
+
         @Override
         public ItemStartingPosition clone() throws CloneNotSupportedException
         {
@@ -112,34 +124,20 @@ public class Item extends IFMLObject implements Cloneable
             return clone;
         }
 
-        private boolean inventory = false;
-        @XmlElement(name = STARTING_POSITION_INVENTORY_ELEMENT)
         public boolean getInventory()
         {
             return inventory;
         }
+
+        @XmlElement(name = STARTING_POSITION_INVENTORY_ELEMENT)
         public void setInventory(boolean inventory)
         {
             this.inventory = inventory;
         }
 
-        @XmlElementWrapper(name = XmlSchemaConstants.STARTING_POSITION_LOCATIONS_ELEMENT)
-        @XmlElement(name = XmlSchemaConstants.STARTING_POSITION_LOCATION_ELEMENT)
-        @XmlIDREF
-        private EventList<Location> locations = new BasicEventList<Location>();
-
         public EventList<Location> getLocations()
         {
             return locations;
         }
-    }
-
-    @Override
-    public Item clone() throws CloneNotSupportedException
-    {
-        Item clone = (Item) super.clone();
-        clone.startingPosition = startingPosition.clone();
-        clone.hooks = GlazedLists.eventList(hooks);
-        return clone;
     }
 }

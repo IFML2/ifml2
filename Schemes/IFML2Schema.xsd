@@ -44,11 +44,12 @@
     </complexType>
 
     <complexType name="objectType">
-        <all>
+        <all minOccurs="1" maxOccurs="1">
             <element name="description" type="string" minOccurs="0" maxOccurs="1"/>
             <element name="attributes" type="ifml2:attributesType" minOccurs="0" maxOccurs="1"/>
             <element name="words" type="ifml2:wordsLinksType" minOccurs="0" maxOccurs="1"/>
             <element name="roles" type="ifml2:rolesLinksType" minOccurs="0" maxOccurs="1"/>
+            <element name="hooks" type="ifml2:hooksType" minOccurs="0" maxOccurs="1"/>
         </all>
         <attribute name="id" type="ID" use="required"/>
         <attribute name="name" type="string" use="required"/>
@@ -97,14 +98,14 @@
     <complexType name="locationType">
         <complexContent>
             <extension base="ifml2:objectType">
-                <sequence>
+                <all minOccurs="1" maxOccurs="1">
                     <element name="north" type="ifml2:idType" minOccurs="0" maxOccurs="1"/>
                     <element name="east" type="ifml2:idType" minOccurs="0" maxOccurs="1"/>
                     <element name="south" type="ifml2:idType" minOccurs="0" maxOccurs="1"/>
                     <element name="west" type="ifml2:idType" minOccurs="0" maxOccurs="1"/>
                     <element name="up" type="ifml2:idType" minOccurs="0" maxOccurs="1"/>
                     <element name="down" type="ifml2:idType" minOccurs="0" maxOccurs="1"/>
-                </sequence>
+                </all>
             </extension>
         </complexContent>
     </complexType>
@@ -332,10 +333,9 @@
     <complexType name="itemType">
         <complexContent>
             <extension base="ifml2:objectType">
-                <sequence>
+                <all minOccurs="1" maxOccurs="1">
                     <element name="startingPosition" type="ifml2:itemStartingPositionType" minOccurs="0" maxOccurs="1"/>
-                    <element name="hooks" type="ifml2:hooksType" minOccurs="0" maxOccurs="1"/>
-                </sequence>
+                </all>
             </extension>
         </complexContent>
     </complexType>
@@ -363,9 +363,9 @@
         <sequence>
             <element name="instructions" type="ifml2:instructionsType" maxOccurs="1"/>
         </sequence>
-        <attribute name="action" type="string" use="required"/>
-        <attribute name="objectElement" type="string" use="required"/>
         <attribute name="type" type="ifml2:hookEnumType" use="required"/>
+        <attribute name="action" type="string" use="required"/>
+        <attribute name="objectElement" type="string" use="optional"/> <!-- action template parameter name for item hooks -->
     </complexType>
 
     <simpleType name="hookEnumType">
@@ -387,28 +387,6 @@
             <element name="item" type="ifml2:itemType" maxOccurs="unbounded" minOccurs="0"/>
         </sequence>
     </complexType>
-
-    <!--<complexType name="instructionShowItemDescType">
-        <complexContent>
-            <extension base="ifml2:instructionType">
-                <attribute name="item" type="string"/>
-            </extension>
-        </complexContent>
-    </complexType>-->
-
-    <!--<complexType name="instructionShowInventoryType">
-        <complexContent>
-            <extension base="ifml2:instructionType"/>
-        </complexContent>
-    </complexType>-->
-
-    <!--<complexType name="instructionGetItemType">
-        <complexContent>
-            <extension base="ifml2:instructionType">
-                <attribute name="item" type="string"/>
-            </extension>
-        </complexContent>
-    </complexType>-->
 
     <complexType name="instructionShowMessageType">
         <complexContent>

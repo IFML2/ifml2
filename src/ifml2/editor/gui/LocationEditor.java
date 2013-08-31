@@ -286,6 +286,8 @@ public class LocationEditor extends AbstractEditor<Location>
         location.setDescription(descriptionText.getText());
     }
 
+
+    //region Item in location actions
     /*
     private class AddItemAction extends AbstractAction
     {
@@ -332,4 +334,5 @@ public class LocationEditor extends AbstractEditor<Location>
         }
     }
     */
+    //endregion
 }
