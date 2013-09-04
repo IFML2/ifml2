@@ -52,7 +52,7 @@ public class Hook
     @Override
     public String toString()
     {
-        return String.format("%s: %s (%s)", action, objectElement, type.ruName);
+        return String.format("%s: %s (%s)", action, objectElement != null ? objectElement : "", type.getRuName());
     }
 
     @XmlEnum
@@ -65,12 +65,17 @@ public class Hook
         @XmlEnumValue(value = "instead")
         INSTEAD(2, "вместо");
         public final int sortValue;
-        public final String ruName;
+        private String ruName;
 
         HookTypeEnum(int sortValue, String ruName)
         {
             this.sortValue = sortValue;
             this.ruName = ruName;
+        }
+
+        public String getRuName()
+        {
+            return ruName;
         }
     }
 }

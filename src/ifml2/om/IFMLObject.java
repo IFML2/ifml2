@@ -132,11 +132,11 @@ public class IFMLObject implements Cloneable
         // test system properties
         if (NAME_PROPERTY_LITERAL.equalsIgnoreCase(propertyName))
         {
-            return new TextValue(getName());
+            return new TextValue(name);
         }
         if (DESCRIPTION_PROPERTY_LITERAL.equalsIgnoreCase(propertyName))
         {
-            return new TextValue(getDescription());
+            return new TextValue(description);
         }
 
         // test gram cases

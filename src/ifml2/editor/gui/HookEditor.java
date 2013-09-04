@@ -1,5 +1,9 @@
 package ifml2.editor.gui;
 
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.FilterList;
+import ca.odell.glazedlists.matchers.Matcher;
+import ca.odell.glazedlists.swing.DefaultEventComboBoxModel;
 import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ifml2.GUIUtils;
 import ifml2.editor.IFML2EditorException;
@@ -16,7 +20,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.MessageFormat;
-import java.util.List;
 
 public class HookEditor extends AbstractEditor<Hook>
 {
@@ -36,7 +39,7 @@ public class HookEditor extends AbstractEditor<Hook>
 
     private static final String HOOK_EDITOR_TITLE = "Перехват";
 
-    public HookEditor(Window owner, @NotNull final Hook hook, @NotNull List<Action> actionList) throws IFML2EditorException
+    public HookEditor(Window owner, @NotNull Hook hook, @NotNull EventList<Action> actionList, final boolean areObjectHooks) throws IFML2EditorException
     {
         super(owner);
         initializeEditor(HOOK_EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
@@ -67,6 +70,13 @@ public class HookEditor extends AbstractEditor<Hook>
         }
 
         //  -- form init --
+
+        // check object hooks or not
+        if(!areObjectHooks)
+        {
+            parameterCombo.setVisible(false);
+        }
+
         // load parameters and current parameter after action select
         actionCombo.addActionListener(new ActionListener()
         {
@@ -79,16 +89,30 @@ public class HookEditor extends AbstractEditor<Hook>
                 if (prevSelectedAction != selectedAction)
                 {
                     prevSelectedAction = selectedAction;
-                    parameterCombo.setModel(new DefaultComboBoxModel(selectedAction.getAllParameters()));
-                    if (parameterCombo.getItemCount() > 0) // if there are elements ...
+                    if (parameterCombo.isVisible())
                     {
-                        parameterCombo.setSelectedIndex(0); // ... select first element
+                        parameterCombo.setModel(new DefaultComboBoxModel(selectedAction.getAllParameters()));
+                        if (parameterCombo.getItemCount() > 0) // if there are elements ...
+                        {
+                            parameterCombo.setSelectedIndex(0); // ... select first element
+                        }
                     }
                 }
-                hook.setAction(selectedAction);
             }
         });
-        actionCombo.setModel(new DefaultComboBoxModel(actionList.toArray()));
+
+        // filter actions due to areObjectHooks
+        //actionCombo.setModel(new DefaultComboBoxModel(actionList.toArray()));
+        actionCombo.setModel(new DefaultEventComboBoxModel<Action>(new FilterList<Action>(actionList, new Matcher<Action>()
+        {
+            @Override
+            public boolean matches(Action item)
+            {
+                return areObjectHooks && item.getAllParameters().length > 0 || !areObjectHooks;
+            }
+        })));
+
+
         if(hook.getAction() != null)
         {
             actionCombo.setSelectedItem(hook.getAction()); // select hook's action

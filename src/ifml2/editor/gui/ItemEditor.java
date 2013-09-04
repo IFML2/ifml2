@@ -86,7 +86,6 @@ public class ItemEditor extends AbstractEditor<Item>
                 }
             }
         });
-
         editHookButton.setAction(new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON)
         {
             {
@@ -245,7 +244,7 @@ public class ItemEditor extends AbstractEditor<Item>
     {
         try
         {
-            HookEditor hookEditor = new HookEditor(ItemEditor.this, hook, story.getAllActions());
+            HookEditor hookEditor = new HookEditor(ItemEditor.this, hook, story.getAllActions(), true);
             if (hookEditor.showDialog())
             {
                 hookEditor.getData(hook);
@@ -298,6 +297,6 @@ public class ItemEditor extends AbstractEditor<Item>
         }
 
         item.setAttributes(attributesClone);
-        item.hooks = hooksClone; // rewrite data in EventList
+        item.hooks = GlazedLists.eventList(hooksClone); // rewrite data in EventList
     }
 }

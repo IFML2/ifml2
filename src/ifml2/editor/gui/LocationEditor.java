@@ -2,7 +2,9 @@ package ifml2.editor.gui;
 
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
+import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ifml2.GUIUtils;
+import ifml2.IFML2Exception;
 import ifml2.editor.DataNotValidException;
 import ifml2.om.*;
 import org.jetbrains.annotations.NotNull;
@@ -37,10 +39,15 @@ public class LocationEditor extends AbstractEditor<Location>
     private JButton editItemButton;
     private JButton editAttributesButton;
     private JList attributesList;
+    private JButton addHookButton;
+    private JButton editHookButton;
+    private JButton deleteHookButton;
+    private JList hooksList;
     private boolean toGenerateId = false;
     private ArrayList<Item> itemsClone = null;
     private EventList<Attribute> attributesClone = null;
     private Story story = null;
+    private EventList<Hook> hooksClone = null;
 
     public LocationEditor(Window owner, final Story story, Location location)
     {
@@ -123,6 +130,69 @@ public class LocationEditor extends AbstractEditor<Location>
             }
         });
 
+        // hooks
+        addHookButton.setAction(new AbstractAction("Добавить...", GUIUtils.ADD_ELEMENT_ICON)
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                Hook hook = new Hook();
+                if (editHook(hook))
+                {
+                    hooksClone.add(hook);
+                }
+            }
+        });
+        editHookButton.setAction(new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON)
+        {
+            {
+                setEnabled(false); // initially disabled
+                hooksList.addListSelectionListener(new ListSelectionListener()
+                {
+                    @Override
+                    public void valueChanged(ListSelectionEvent e)
+                    {
+                        setEnabled(!hooksList.isSelectionEmpty()); // dependent from selection
+                    }
+                });
+            }
+
+            @Override()
+            public void actionPerformed(ActionEvent e)
+            {
+                Hook selectedHook = (Hook) hooksList.getSelectedValue();
+                if (selectedHook != null)
+                {
+                    editHook(selectedHook);
+                }
+            }
+        });
+        deleteHookButton.setAction(new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
+        {
+            {
+                setEnabled(false); // initially disabled
+                hooksList.addListSelectionListener(new ListSelectionListener()
+                {
+                    @Override
+                    public void valueChanged(ListSelectionEvent e)
+                    {
+                        setEnabled(!hooksList.isSelectionEmpty()); // dependent from selection
+                    }
+                });
+            }
+
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                Hook selectedHook = (Hook) hooksList.getSelectedValue();
+                if (selectedHook != null && JOptionPane.showConfirmDialog(LocationEditor.this, "Вы действительно хотите удалить выбранный перехват?",
+                        "Удаление перехвата", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
+                {
+                    hooksClone.remove(selectedHook);
+                }
+            }
+        });
+
         itemsList.addMouseListener(new MouseAdapter()
         {
             @Override
@@ -193,6 +263,43 @@ public class LocationEditor extends AbstractEditor<Location>
 
         String id = location.getId();
         toGenerateId = id == null || "".equals(id);
+
+        // set hooks
+        hooksClone = GlazedLists.eventList(location.hooks);
+        hooksList.addMouseListener(new MouseAdapter()
+        {
+            @Override
+            public void mouseClicked(MouseEvent e)
+            {
+                if (e.getClickCount() == 2)
+                {
+                    Hook selectedHook = (Hook) hooksList.getSelectedValue();
+                    if (selectedHook != null)
+                    {
+                        editHook(selectedHook);
+                    }
+                }
+            }
+        });
+        hooksList.setModel(new DefaultEventListModel<Hook>(hooksClone));
+    }
+
+    private boolean editHook(Hook hook)
+    {
+        try
+        {
+            HookEditor hookEditor = new HookEditor(LocationEditor.this, hook, story.getAllActions(), false);
+            if (hookEditor.showDialog())
+            {
+                hookEditor.getData(hook);
+                return true;
+            }
+        }
+        catch (IFML2Exception e)
+        {
+            GUIUtils.showErrorMessage(this, e);
+        }
+        return false;
     }
 
     private void updateId()
@@ -284,6 +391,7 @@ public class LocationEditor extends AbstractEditor<Location>
         location.setName(locationNameText.getText().trim());
         location.setId(locationIDText.getText().trim());
         location.setDescription(descriptionText.getText());
+        location.hooks = GlazedLists.eventList(hooksClone); // rewrite data in EventList
     }
 
 
