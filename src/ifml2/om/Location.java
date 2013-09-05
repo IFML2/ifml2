@@ -133,11 +133,9 @@ public class Location extends IFMLObject
         }
     }
 
-    @XmlElement(name = "up")
-    @XmlIDREF
-    public void setUp(Location up)
+    public Location getDown()
     {
-        this.up = up;
+        return down;
     }
 
     @XmlElement(name = "down")
@@ -145,5 +143,17 @@ public class Location extends IFMLObject
     public void setDown(Location down)
     {
         this.down = down;
+    }
+
+    public Location getUp()
+    {
+        return up;
+    }
+
+    @XmlElement(name = "up")
+    @XmlIDREF
+    public void setUp(Location up)
+    {
+        this.up = up;
     }
 }

@@ -62,7 +62,7 @@
         <border type="none"/>
         <children>
           <grid id="c7297" layout-manager="GridLayoutManager" row-count="6" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-            <margin top="0" left="0" bottom="0" right="0"/>
+            <margin top="4" left="4" bottom="4" right="4"/>
             <constraints>
               <tabbedpane title="Основные свойства"/>
             </constraints>
@@ -330,7 +330,7 @@
             </children>
           </grid>
           <grid id="4e1d8" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-            <margin top="0" left="0" bottom="0" right="0"/>
+            <margin top="4" left="4" bottom="4" right="4"/>
             <constraints>
               <tabbedpane title="Перехваты действий"/>
             </constraints>

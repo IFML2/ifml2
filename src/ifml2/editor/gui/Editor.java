@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.MessageFormat;
-import java.util.Arrays;
 
 public class Editor extends JFrame
 {
@@ -277,11 +276,11 @@ public class Editor extends JFrame
     }
 
     /**
-     * Updates Editor's title - including story modificator asterisk (*)
+     * Updates Editor's title - including story modification asterisk (*)
      */
     private void updateTitle()
     {
-        String IFML_EDITOR_VERSION = "ЯРИЛ 2.0 (" + Engine.ENGINE_VERSION + ") Редактор" + (isStoryEdited ? " - история не сохранена" : "");
+        String IFML_EDITOR_VERSION = "ЯРИЛ 2.0 Редактор " + Engine.ENGINE_VERSION + (isStoryEdited ? " - * история не сохранена" : "");
         setTitle(IFML_EDITOR_VERSION);
     }
 
@@ -352,14 +351,14 @@ public class Editor extends JFrame
         }.start();
     }
 
-    private void ReportError(Throwable exception, String message)
+    private void ReportError(Throwable exception, String dialogTitle)
     {
         exception.printStackTrace();
-        LOG.error(message, exception);
+        LOG.error(dialogTitle, exception);
         String errorMessage = "";
         if (exception instanceof IFML2LoadXmlException)
         {
-            errorMessage += "\nВ файле истории есть ошибки:";
+            errorMessage += "В файле истории есть ошибки:";
             for (ValidationEvent validationEvent : ((IFML2LoadXmlException) exception).getEvents())
             {
                 errorMessage += MessageFormat.format("\n\"{0}\" at {1},{2}", validationEvent.getMessage(),
@@ -370,9 +369,9 @@ public class Editor extends JFrame
         {
             StringWriter stringWriter = new StringWriter();
             exception.printStackTrace(new PrintWriter(stringWriter));
-            errorMessage += MessageFormat.format("\nПроизошла ошибка: {0}", stringWriter.toString());
+            errorMessage += stringWriter.toString();
         }
-        JOptionPane.showMessageDialog(this, errorMessage, "Произошла ошибка", JOptionPane.ERROR_MESSAGE);
+        GUIUtils.showMemoDialog(this, "Произошла ошибка", errorMessage);
     }
 
     private JMenuBar createMainMenu()
@@ -457,6 +456,7 @@ public class Editor extends JFrame
                 catch (IFML2Exception ex)
                 {
                     JOptionPane.showMessageDialog(Editor.this, "Ошибка во время сохранения истории: " + ex.getMessage());
+                    ReportError(ex, "Ошибка во время сохранения истории");
                 }
             }
         });
@@ -543,8 +543,7 @@ public class Editor extends JFrame
                 }
                 catch (Throwable ex)
                 {
-                    JOptionPane.showMessageDialog(Editor.this,
-                            MessageFormat.format("Ошибка во время сохранения истории во временный файл: {0}", Arrays.toString(ex.getStackTrace())));
+                    ReportError(ex, "Ошибка во время сохранения истории во временный файл");
                 }
             }
         });

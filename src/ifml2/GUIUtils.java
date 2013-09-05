@@ -1,5 +1,6 @@
 package ifml2;
 
+import ifml2.editor.gui.ShowMemoDialog;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -12,6 +13,20 @@ import java.text.MessageFormat;
 
 public class GUIUtils
 {
+    public static final Icon ADD_ELEMENT_ICON = getEditorIcon("Add24.gif");
+    public static final Icon EDIT_ELEMENT_ICON = getEditorIcon("Edit24.gif");
+    public static final Icon DEL_ELEMENT_ICON = getEditorIcon("Delete24.gif");
+    public static final Icon NEW_ELEMENT_ICON = getEditorIcon("New24.gif");
+    public static final Icon OPEN_ICON = getEditorIcon("Open24.gif");
+    public static final Icon SAVE_ICON = getEditorIcon("Save24.gif");
+    public static final Icon PREFERENCES_ICON = getEditorIcon("Preferences24.gif");
+    public static final Icon PLAY_ICON = getEditorIcon("Play24.gif");
+    public static final Icon MOVE_LEFT_ICON = getEditorIcon("Back24.gif");
+    public static final Icon MOVE_RIGHT_ICON = getEditorIcon("Forward24.gif");
+    public static final Icon UP_ICON = getEditorIcon("Up24.gif");
+    public static final Icon DOWN_ICON = getEditorIcon("Down24.gif");
+    private static final String IFML2_EDITOR_GUI_IMAGES = "/ifml2/editor/gui/images/";
+
     public static void packAndCenterWindow(@NotNull Window window)
     {
         window.pack();
@@ -21,8 +36,8 @@ public class GUIUtils
         // Determine the new location of the window
         int w = window.getSize().width;
         int h = window.getSize().height;
-        int x = (dim.width-w) / 2;
-        int y = (dim.height-h) / 2;
+        int x = (dim.width - w) / 2;
+        int y = (dim.height - h) / 2;
         // Move the window
         window.setLocation(x, y);
     }
@@ -36,8 +51,9 @@ public class GUIUtils
 
     /**
      * Shows delete confirmation dialog.
-     * @param owner Owner window for dialog.
-     * @param objectName Object name being deleted.
+     *
+     * @param owner        Owner window for dialog.
+     * @param objectName   Object name being deleted.
      * @param objectNameRP Object name being deleted in "Roditelniy" (Genitive) case. Answer the question: "Deletion of what?".
      * @return true if user pressed YES.
      */
@@ -50,8 +66,9 @@ public class GUIUtils
     /**
      * Make AbstractAction dependent from JList selection: enable then something is selected and vise versa.
      * Firstly initializes action state via current selection state. Secondary creates list selection listener.
+     *
      * @param action AbstractAction to make dependent.
-     * @param list JList to direct action state.
+     * @param list   JList to direct action state.
      */
     public static void makeActionDependentFromJList(@NotNull final AbstractAction action, @NotNull final JList list)
     {
@@ -69,21 +86,13 @@ public class GUIUtils
         });
     }
 
-    private static final String IFML2_EDITOR_GUI_IMAGES = "/ifml2/editor/gui/images/";
     private static ImageIcon getEditorIcon(String fileName)
     {
         return new ImageIcon(GUIUtils.class.getResource(IFML2_EDITOR_GUI_IMAGES + fileName));
     }
-    public static final Icon ADD_ELEMENT_ICON = getEditorIcon("Add24.gif");
-    public static final Icon EDIT_ELEMENT_ICON = getEditorIcon("Edit24.gif");
-    public static final Icon DEL_ELEMENT_ICON = getEditorIcon("Delete24.gif");
-    public static final Icon NEW_ELEMENT_ICON = getEditorIcon("New24.gif");
-    public static final Icon OPEN_ICON = getEditorIcon("Open24.gif");
-    public static final Icon SAVE_ICON = getEditorIcon("Save24.gif");
-    public static final Icon PREFERENCES_ICON = getEditorIcon("Preferences24.gif");
-    public static final Icon PLAY_ICON = getEditorIcon("Play24.gif");
-    public static final Icon MOVE_LEFT_ICON = getEditorIcon("Back24.gif");
-    public static final Icon MOVE_RIGHT_ICON = getEditorIcon("Forward24.gif");
-    public static final Icon UP_ICON = getEditorIcon("Up24.gif");
-    public static final Icon DOWN_ICON = getEditorIcon("Down24.gif");
+
+    public static void showMemoDialog(Window owner, String title, String message)
+    {
+        new ShowMemoDialog(owner, title, message);
+    }
 }
