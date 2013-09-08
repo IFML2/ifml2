@@ -58,15 +58,15 @@ public class LoopInstruction extends Instruction
         List<IFMLObject> filteredCollection = new ArrayList<IFMLObject>();
 
         // iterate the collection and filter it
-        if(conditionExpression != null && !"".equals(conditionExpression))
+        if (conditionExpression != null && !"".equals(conditionExpression))
         {
-            for(IFMLObject element : collection)
+            for (IFMLObject element : collection)
             {
                 runningContext.setVariable(Variable.VariableScope.LOCAL, elementName, new ObjectValue(element));
 
                 Boolean condition = getBooleanFromExpression(conditionExpression, runningContext, getTitle(), "Условие");
 
-                if(condition)
+                if (condition)
                 {
                     filteredCollection.add(element);
                 }
@@ -87,7 +87,7 @@ public class LoopInstruction extends Instruction
         switch (elementsQuantity)
         {
             case 0:
-                if(emptyInstructions != null)
+                if (emptyInstructions != null)
                 {
                     virtualMachine.runInstructionList(emptyInstructions, runningContext, true, true);
                 }
@@ -95,22 +95,22 @@ public class LoopInstruction extends Instruction
 
             case 1:
                 runningContext.setVariable(Variable.VariableScope.LOCAL, elementName, new ObjectValue(filteredCollection.get(0)));
-                if(aloneInstructions != null)
+                if (aloneInstructions != null)
                 {
                     virtualMachine.runInstructionList(aloneInstructions, runningContext, true, true);
                     break;
                 }
-                if(firstInstructions != null)
+                if (firstInstructions != null)
                 {
                     virtualMachine.runInstructionList(firstInstructions, runningContext, true, true);
                     break;
                 }
-                if(nextInstructions != null)
+                if (nextInstructions != null)
                 {
                     virtualMachine.runInstructionList(nextInstructions, runningContext, true, true);
                     break;
                 }
-                if(lastInstructions != null)
+                if (lastInstructions != null)
                 {
                     virtualMachine.runInstructionList(lastInstructions, runningContext, true, true);
                     break;
@@ -118,35 +118,35 @@ public class LoopInstruction extends Instruction
                 break;
 
             default:
-                for(int index = 0; index <= elementsQuantity - 1; index++)
+                for (int index = 0; index <= elementsQuantity - 1; index++)
                 {
                     runningContext.setVariable(Variable.VariableScope.LOCAL, elementName, new ObjectValue(filteredCollection.get(index)));
-                    
-                    if(index == 0) // first element
+
+                    if (index == 0) // first element
                     {
-                        if(firstInstructions != null)
+                        if (firstInstructions != null)
                         {
                             virtualMachine.runInstructionList(firstInstructions, runningContext, true, true);
                         }
-                        else if(nextInstructions != null)
+                        else if (nextInstructions != null)
                         {
                             virtualMachine.runInstructionList(nextInstructions, runningContext, true, true);
                         }
                     }
-                    else if(index == elementsQuantity - 1) // last element
+                    else if (index == elementsQuantity - 1) // last element
                     {
-                        if(lastInstructions != null)
+                        if (lastInstructions != null)
                         {
                             virtualMachine.runInstructionList(lastInstructions, runningContext, true, true);
                         }
-                        else if(nextInstructions != null)
+                        else if (nextInstructions != null)
                         {
                             virtualMachine.runInstructionList(nextInstructions, runningContext, true, true);
                         }
                     }
                     else // other elements
                     {
-                        if(nextInstructions != null)
+                        if (nextInstructions != null)
                         {
                             virtualMachine.runInstructionList(nextInstructions, runningContext, true, true);
                         }

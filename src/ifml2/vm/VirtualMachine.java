@@ -86,7 +86,7 @@ public class VirtualMachine
         }
     }
 
-    public void runProcedure(Action action, List<FormalElement> formalElements) throws IFML2Exception
+    public void runAction(Action action, List<FormalElement> formalElements) throws IFML2Exception
     {
         runProcedure(action.getProcedureCall().getProcedure(), formalElements);
     }
