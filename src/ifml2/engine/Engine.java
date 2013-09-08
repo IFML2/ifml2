@@ -21,9 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 public class Engine
@@ -206,15 +205,18 @@ public class Engine
 
     public boolean executeGamerCommand(String gamerCommand)
     {
-        if ("помощь".equalsIgnoreCase(gamerCommand) || "помоги".equalsIgnoreCase(gamerCommand) ||
-                "помогите".equalsIgnoreCase(gamerCommand) || "help".equalsIgnoreCase(gamerCommand) ||
-                "info".equalsIgnoreCase(gamerCommand))
+        String trimmedCommand = gamerCommand.trim();
+
+        // check help command
+        if ("помощь".equalsIgnoreCase(trimmedCommand) || "помоги".equalsIgnoreCase(trimmedCommand) ||
+                "помогите".equalsIgnoreCase(trimmedCommand) || "help".equalsIgnoreCase(trimmedCommand) ||
+                "info".equalsIgnoreCase(trimmedCommand) || "инфо".equalsIgnoreCase(trimmedCommand))
         {
-            outTextLn("Попробуйте одну из команд: " + getStory().getAllActions());
+            outTextLn("Попробуйте одну из команд: " + story.getAllActions());
             return true;
         }
 
-        String trimmedCommand = gamerCommand.trim();
+        // check debug command
         if (trimmedCommand.length() > 0 && trimmedCommand.charAt(0) == '?')
         {
             String expression = trimmedCommand.substring(1);
@@ -235,110 +237,42 @@ public class Engine
         {
             parseResult = parser.parse(trimmedCommand);
             Action action = parseResult.getAction();
+            List<FormalElement> formalElements = parseResult.getFormalElements();
 
             // check restrictions
-            for (Restriction restriction : action.getRestrictions())
+            if (checkActionRestrictions(action, formalElements))
             {
-                try
-                {
-                    RunningContext runningContext = new RunningContext(parseResult.getFormalElements(), virtualMachine);
-                    Value isRestricted = ExpressionCalculator.calculate(runningContext, restriction.getCondition());
-                    if (!(isRestricted instanceof BooleanValue))
-                    {
-                        throw new IFML2Exception("Выражение (%s) условия ограничения действия \"%s\" не логического типа.", restriction.getCondition(), action);
-                    }
-                    if (((BooleanValue) isRestricted).getValue()) // if condition is true, run reaction
-                    {
-                        virtualMachine.runInstructionList(restriction.getReaction(), runningContext, false, false);
-                        return true;
-                    }
-                }
-                catch (IFML2Exception e)
-                {
-                    throw new IFML2Exception(e, "{0}\n  при вычислении ограничения \"{1}\" действия \"{2}\"", e.getMessage(), restriction.getCondition(), action);
-                }
+                return true;
             }
 
             // check hooks & run procedure
+            HashMap<Hook.HookTypeEnum, List<Hook>> objectHooks = collectObjectHooks(action, formalElements);
+            HashMap<Hook.HookTypeEnum, List<Hook>> locationHooks = collectLocationHooks(action);
 
-            // todo: refactor: put hooks search in method
-
-            ArrayList<Hook> firingHooks = new ArrayList<Hook>();
-            Hook insteadHook = null;
-
-            mainLoop:
-            for (FormalElement formalElement : parseResult.getFormalElements())
+            // if there are INSTEAD hooks then fire them and finish
+            if (objectHooks.get(Hook.HookTypeEnum.INSTEAD).size() > 0 || locationHooks.get(Hook.HookTypeEnum.INSTEAD).size() > 0)
             {
-                if (FormalElement.FormalElementTypeEnum.OBJECT.equals(formalElement.getType()) && formalElement.getObject() instanceof Item)
+                // fire object hooks
+                for (Hook hook : objectHooks.get(Hook.HookTypeEnum.INSTEAD))
                 {
-                    Item item = (Item) formalElement.getObject();
-                    for (Hook hook : item.getHooks())
-                    {
-                        if (action.equals(hook.getAction()) && formalElement.getParameterName().equalsIgnoreCase(hook.getObjectElement()))
-                        {
-                            // if INSTEAD - remove all other hooks and take only this one
-                            if (Hook.HookTypeEnum.INSTEAD.equals(hook.getType()))
-                            {
-                                insteadHook = hook;
-                                break mainLoop;
-                            }
-                            else
-                            {
-                                firingHooks.add(hook);
-                            }
-                        }
-                    }
+                    virtualMachine.runHook(hook, formalElements);
                 }
-            }
+                // fire location hooks
+                for (Hook hook : locationHooks.get(Hook.HookTypeEnum.INSTEAD))
+                {
+                    virtualMachine.runHook(hook, formalElements);
+                }
 
-            // if there is INSTEAD hook then fire it and finish
-            if (insteadHook != null)
-            {
-                virtualMachine.runHook(insteadHook, parseResult.formalElements);
+                // ... and finish
                 return true;
             }
-            else
-            {
-                // sort BEFORE, INSTEAD, AFTER
-                Collections.sort(firingHooks, new Comparator<Hook>()
-                {
-                    @Override
-                    public int compare(Hook firstHook, Hook secondHook)
-                    {
-                        return firstHook.getType().sortValue - secondHook.getType().sortValue;
-                    }
-                });
 
-                // todo: refactor: divide hooks on two collections (BEFORE and AFTER) then run BEFORE, action and AFTER
-
-                boolean isActionFired = false;
-
-                for (Hook hook : firingHooks)
-                {
-                    // if it's BEFORE - fire it
-                    if (Hook.HookTypeEnum.BEFORE.equals(hook.getType()))
-                    {
-                        virtualMachine.runHook(hook, parseResult.formalElements);
-                    }
-                    else if (Hook.HookTypeEnum.AFTER.equals(hook.getType()))
-                    {
-                        // if it's AFTER but action isn't fired yet - fire action ...
-                        if (!isActionFired)
-                        {
-                            virtualMachine.runProcedure(parseResult.action.procedureCall.getProcedure(), parseResult.formalElements);
-                            isActionFired = true;
-                        }
-                        // ... and fire AFTER hook
-                        virtualMachine.runHook(hook, parseResult.formalElements);
-                    }
-                }
-
-                // action hasn't been fired yet - fire it
-                if (!isActionFired)
-                {
-                    virtualMachine.runProcedure(action, parseResult.getFormalElements());
-                }
-            }
+            // fire BEFORE hooks
+            fireBeforeHooks(formalElements, objectHooks, locationHooks);
+            // fire action
+            virtualMachine.runAction(action, formalElements);
+            // fire AFTER hooks
+            fireAfterHooks(formalElements, objectHooks, locationHooks);
         }
         catch (IFML2VMException e)
         {
@@ -350,6 +284,113 @@ public class Engine
         }
 
         return true;
+    }
+
+    private void fireAfterHooks(List<FormalElement> formalElements, HashMap<Hook.HookTypeEnum, List<Hook>> objectHooks, HashMap<Hook.HookTypeEnum, List<Hook>> locationHooks) throws IFML2Exception
+    {
+        // ... object hooks
+        for (Hook hook : objectHooks.get(Hook.HookTypeEnum.AFTER))
+        {
+            virtualMachine.runHook(hook, formalElements);
+        }
+        // ... and location hooks
+        for (Hook hook : locationHooks.get(Hook.HookTypeEnum.AFTER))
+        {
+            virtualMachine.runHook(hook, formalElements);
+        }
+    }
+
+    private void fireBeforeHooks(List<FormalElement> formalElements, HashMap<Hook.HookTypeEnum, List<Hook>> objectHooks, HashMap<Hook.HookTypeEnum, List<Hook>> locationHooks) throws IFML2Exception
+    {
+        // ... object hooks
+        for (Hook hook : objectHooks.get(Hook.HookTypeEnum.BEFORE))
+        {
+            virtualMachine.runHook(hook, formalElements);
+        }
+        // ... and location hooks
+        for (Hook hook : locationHooks.get(Hook.HookTypeEnum.BEFORE))
+        {
+            virtualMachine.runHook(hook, formalElements);
+        }
+    }
+
+    private HashMap<Hook.HookTypeEnum, List<Hook>> collectLocationHooks(Action action)
+    {
+        // create HashMap with all location hooks
+        HashMap<Hook.HookTypeEnum, List<Hook>> locationHooks = new HashMap<Hook.HookTypeEnum, List<Hook>>()
+        {
+            {
+                put(Hook.HookTypeEnum.BEFORE, new ArrayList<Hook>());
+                put(Hook.HookTypeEnum.INSTEAD, new ArrayList<Hook>());
+                put(Hook.HookTypeEnum.AFTER, new ArrayList<Hook>());
+            }
+        };
+
+        // collect current location hooks
+        for (Hook hook : getCurrentLocation().hooks)
+        {
+            if (action.equals(hook.getAction()))
+            {
+                locationHooks.get(hook.getType()).add(hook);
+            }
+        }
+        return locationHooks;
+    }
+
+    private HashMap<Hook.HookTypeEnum, List<Hook>> collectObjectHooks(Action action, List<FormalElement> formalElements)
+    {
+        // create HashMap with all object hooks
+        HashMap<Hook.HookTypeEnum, List<Hook>> objectHooks = new HashMap<Hook.HookTypeEnum, List<Hook>>()
+        {
+            {
+                put(Hook.HookTypeEnum.BEFORE, new ArrayList<Hook>());
+                put(Hook.HookTypeEnum.INSTEAD, new ArrayList<Hook>());
+                put(Hook.HookTypeEnum.AFTER, new ArrayList<Hook>());
+            }
+        };
+
+        // collect all object hooks
+        for (FormalElement formalElement : formalElements)
+        {
+            if (FormalElement.FormalElementTypeEnum.OBJECT.equals(formalElement.getType()) && formalElement.getObject() instanceof Item)
+            {
+                Item item = (Item) formalElement.getObject();
+                for (Hook hook : item.getHooks())
+                {
+                    if (action.equals(hook.getAction()) && formalElement.getParameterName().equalsIgnoreCase(hook.getObjectElement()))
+                    {
+                        objectHooks.get(hook.getType()).add(hook);
+                    }
+                }
+            }
+        }
+        return objectHooks;
+    }
+
+    private boolean checkActionRestrictions(Action action, List<FormalElement> formalElements) throws IFML2Exception
+    {
+        for (Restriction restriction : action.getRestrictions())
+        {
+            try
+            {
+                RunningContext runningContext = new RunningContext(formalElements, virtualMachine);
+                Value isRestricted = ExpressionCalculator.calculate(runningContext, restriction.getCondition());
+                if (!(isRestricted instanceof BooleanValue))
+                {
+                    throw new IFML2Exception("Выражение (%s) условия ограничения действия \"%s\" не логического типа.", restriction.getCondition(), action);
+                }
+                if (((BooleanValue) isRestricted).getValue()) // if condition is true, run reaction
+                {
+                    virtualMachine.runInstructionList(restriction.getReaction(), runningContext, false, false);
+                    return true;
+                }
+            }
+            catch (IFML2Exception e)
+            {
+                throw new IFML2Exception(e, "{0}\n  при вычислении ограничения \"{1}\" действия \"{2}\"", e.getMessage(), restriction.getCondition(), action);
+            }
+        }
+        return false;
     }
 
     public Story getStory()
