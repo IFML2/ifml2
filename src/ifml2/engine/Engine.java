@@ -27,7 +27,7 @@ import java.util.concurrent.Callable;
 
 public class Engine
 {
-    public static final String ENGINE_VERSION = "Прототип 10 выпуск 4 правка 1";
+    public static final String ENGINE_VERSION = "Прототип 10 выпуск 4 правка 2";
     public static final FormatLogger LOG = FormatLogger.getLogger(Engine.class);
     public final HashMap<String, Value> globalVariables = new HashMap<String, Value>();
     private final Parser parser = new Parser(this);
