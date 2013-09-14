@@ -156,4 +156,9 @@ public class Location extends IFMLObject
     {
         this.up = up;
     }
+
+    public static String getClassName()
+    {
+        return "Локация";
+    }
 }

@@ -5,6 +5,7 @@ import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.event.ListEvent;
 import ca.odell.glazedlists.event.ListEventListener;
 import ifml2.CommonUtils;
+import ifml2.IFML2Exception;
 import ifml2.om.xml.xmladapters.DictionaryAdapter;
 import ifml2.om.xml.xmladapters.ProceduresAdapter;
 import ifml2.om.xml.xmladapters.UsedLibrariesAdapter;
@@ -22,6 +23,16 @@ import static ifml2.om.xml.XmlSchemaConstants.*;
 @XmlRootElement(name = "story")
 public class Story
 {
+    @XmlTransient
+    private static HashMap<Class, String> CLASSES_NAMES = new HashMap<Class, String>()
+    {
+        {
+            put(Location.class, Location.getClassName());
+            put(Item.class, Item.getClassName());
+            put(Word.class, Word.getClassName());
+        }
+    };
+
     @Override
     public Story clone() throws CloneNotSupportedException
     {
@@ -37,7 +48,7 @@ public class Story
         return clone;
     }
 
-    @SuppressWarnings("FieldCanBeLocal")
+    @SuppressWarnings("FieldCanBeLocal") // todo remove suppress after JAXB bug is fixed
     @XmlAttribute(name = "id")
     @XmlID
     private String id = "story";
@@ -231,15 +242,40 @@ public class Story
         String id = classedId;
 
         int counter = 1;
-        while(objectsHeap.containsKey(id.toLowerCase())
-                || dictionary.containsKey(id.toLowerCase())
-                || procedures.containsKey(id.toLowerCase()))
+        while(findObjectById(id) != null)
         {
             id = classedId + counter;
             counter++;
         }
 
         return id;
+    }
+
+    /**
+     * Returns object by ID
+     * @param id object id
+     * @return object if found, null otherwise
+     */
+    public Object findObjectById(String id)
+    {
+        String loweredId = id.toLowerCase();
+
+        if(objectsHeap.containsKey(loweredId))
+        {
+            return objectsHeap.get(loweredId);
+        }
+
+        if(dictionary.containsKey(loweredId))
+        {
+            return dictionary.get(loweredId);
+        }
+
+        if(procedures.containsKey(loweredId))
+        {
+            return procedures.get(loweredId);
+        }
+
+        return null;
     }
 
     public Procedure getSystemInheritorProcedure(Procedure.SystemProcedureEnum systemProcedure)
@@ -298,5 +334,17 @@ public class Story
     {
         items.add(item);
         objectsHeap.put(item.getId().toLowerCase(), item);
+    }
+
+    public String getObjectClassName(@NotNull Object object) throws IFML2Exception
+    {
+        Class objectClass = object.getClass();
+
+        if(CLASSES_NAMES.containsKey(objectClass))
+        {
+            return CLASSES_NAMES.get(objectClass);
+        }
+
+        throw new IFML2Exception("Имя для класса {0} не определено в системе.", objectClass);
     }
 }

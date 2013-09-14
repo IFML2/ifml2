@@ -16,6 +16,11 @@ public class Word
         this.ip = ip;
     }
 
+    public static String getClassName()
+    {
+        return "Словарная запись";
+    }
+
     @XmlEnum
     public enum GramCaseEnum
 	{

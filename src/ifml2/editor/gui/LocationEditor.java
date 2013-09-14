@@ -16,6 +16,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.*;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -48,11 +49,14 @@ public class LocationEditor extends AbstractEditor<Location>
     private EventList<Attribute> attributesClone = null;
     private Story story = null;
     private EventList<Hook> hooksClone = null;
+    private Location location;
 
     public LocationEditor(Window owner, final Story story, Location location)
     {
         super(owner);
         initializeEditor(LOCATION_EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
+
+        this.location = location;
 
         addItemButton.setAction(new AbstractAction("Добавить...", GUIUtils.NEW_ELEMENT_ICON)
         {
@@ -257,7 +261,9 @@ public class LocationEditor extends AbstractEditor<Location>
         attributesClone = GlazedLists.eventList(location.getAttributes());
         updateAttributes();
 
-        setData(location);
+        locationNameText.setText(location.getName());
+        locationIDText.setText(location.getId());
+        descriptionText.setText(location.getDescription());
 
         this.story = story;
 
@@ -346,13 +352,6 @@ public class LocationEditor extends AbstractEditor<Location>
         dictWordCombo.insertItemAt(null, 0);
     }
 
-    void setData(Location data)
-    {
-        locationNameText.setText(data.getName());
-        locationIDText.setText(data.getId());
-        descriptionText.setText(data.getDescription());
-    }
-
     private boolean editItem(Item item)
     {
         if (item != null)
@@ -371,9 +370,33 @@ public class LocationEditor extends AbstractEditor<Location>
     @Override
     protected void validateData() throws DataNotValidException
     {
+        // check name
         if (locationNameText.getText().trim().length() == 0)
         {
             throw new DataNotValidException("У локации должно быть задано имя.", locationNameText);
+        }
+
+        // check id
+        String id = locationIDText.getText().trim();
+        if (id.length() == 0)
+        {
+            throw new DataNotValidException("У локации должен быть задан идентификатор.", locationIDText);
+        }
+
+        Object object = story.findObjectById(id);
+        if (object != null && !object.equals(location))
+        {
+            String className = null;
+            try
+            {
+                className = story.getObjectClassName(object);
+            }
+            catch (IFML2Exception e)
+            {
+                GUIUtils.showErrorMessage(this, e);
+            }
+            throw new DataNotValidException("У локации должен быть уникальный идентификатор - не пересекаться с другими локациями, предметами и словарём.\n" +
+                    MessageFormat.format("Найден другой объект с тем же идентификатором: \"{0}\" типа \"{1}\".", object, className), locationIDText);
         }
     }
 

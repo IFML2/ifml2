@@ -14,6 +14,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.text.MessageFormat;
 
 public class ItemEditor extends AbstractEditor<Item>
 {
@@ -40,11 +41,14 @@ public class ItemEditor extends AbstractEditor<Item>
     private EventList<Attribute> attributesClone = null;
     private WordLinks wordLinksClone = null;
     private EventList<Hook> hooksClone = null;
+    private Item item;
 
     public ItemEditor(Window owner, @NotNull final Story story, @NotNull final Item item)
     {
         super(owner);
         initializeEditor(ITEM_EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
+
+        this.item = item;
 
         // -- init form --
 
@@ -269,13 +273,39 @@ public class ItemEditor extends AbstractEditor<Item>
     @Override
     protected void validateData() throws DataNotValidException
     {
-        if(nameText.getText().trim().length() == 0)
+        //check name
+        if (nameText.getText().trim().length() == 0)
         {
             throw new DataNotValidException("У предмета должно быть задано имя.", nameText);
         }
+
+        // check dictionary
         if (wordLinksClone.getWords().size() == 0)
         {
             throw new DataNotValidException("У предмета не задан словарь.", editWordsButton);
+        }
+
+        // check id
+        String id = idText.getText().trim();
+        if (id.length() == 0)
+        {
+            throw new DataNotValidException("У предмета должен быть задан идентификатор.", idText);
+        }
+
+        Object object = story.findObjectById(id);
+        if (object != null && !object.equals(item))
+        {
+            String className = null;
+            try
+            {
+                className = story.getObjectClassName(object);
+            }
+            catch (IFML2Exception e)
+            {
+                GUIUtils.showErrorMessage(this, e);
+            }
+            throw new DataNotValidException("У предмета должен быть уникальный идентификатор - не пересекаться с другими локациями, предметами и словарём.\n" +
+                    MessageFormat.format("Найден другой объект с тем же идентификатором: \"{0}\" типа \"{1}\".", object, className), idText);
         }
     }
 

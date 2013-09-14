@@ -108,6 +108,11 @@ public class Item extends IFMLObject implements Cloneable
         return clone;
     }
 
+    public static String getClassName()
+    {
+        return "Предмет";
+    }
+
     public static class ItemStartingPosition implements Cloneable
     {
         private boolean inventory = false;
