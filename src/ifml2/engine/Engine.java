@@ -29,7 +29,7 @@ public class Engine
 {
     public static final String ENGINE_VERSION = "Прототип 10 выпуск 4 правка 2";
     public static final FormatLogger LOG = FormatLogger.getLogger(Engine.class);
-    public final HashMap<String, Value> globalVariables = new HashMap<String, Value>();
+    private final HashMap<String, Value> globalVariables = new HashMap<String, Value>();
     private final Parser parser = new Parser(this);
     private final VirtualMachine virtualMachine = new VirtualMachine();
     private final HashMap<String, Value> systemVariables = new HashMap<String, Value>();

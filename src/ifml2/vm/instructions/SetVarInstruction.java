@@ -12,36 +12,23 @@ import java.text.MessageFormat;
 public class SetVarInstruction extends Instruction
 {
     private String name;
-
-    @XmlAttribute(name = "name")
-    public void setName(String name)
-    {
-        this.name = name;
-    }
-
     private String value;
 
-    @XmlAttribute(name = "value")
-    public void setValue(String value)
+    public static String getTitle()
     {
-        this.value = value;
+        return "Установить переменную";
     }
 
     @Override
     public void run(RunningContext runningContext) throws IFML2Exception
     {
-        runningContext.setContextVariable(name, ExpressionCalculator.calculate(runningContext,  value));
+        runningContext.setContextVariable(name, ExpressionCalculator.calculate(runningContext, value));
     }
 
     @Override
     public String toString()
     {
-        return MessageFormat.format("Установить переменной \"{0}\" значение {1}", name,  value);
-    }
-
-    public static String getTitle()
-    {
-        return "Установить переменную";
+        return MessageFormat.format("Установить переменной \"{0}\" значение {1}", name, value);
     }
 
     public String getName()
@@ -49,8 +36,20 @@ public class SetVarInstruction extends Instruction
         return name;
     }
 
+    @XmlAttribute(name = "name")
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
     public String getValue()
     {
         return value;
+    }
+
+    @XmlAttribute(name = "value")
+    public void setValue(String value)
+    {
+        this.value = value;
     }
 }

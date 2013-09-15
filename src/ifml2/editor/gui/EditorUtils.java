@@ -21,7 +21,8 @@ public class EditorUtils
 
     /**
      * Shows editor associated for given instruction and update it if closed by Ok button.
-     * @param owner Dialog-owner of showing editor
+     *
+     * @param owner       Dialog-owner of showing editor
      * @param instruction Instruction to edit
      * @return true if Ok button was pressed and instruction was updated and false in other case
      */
@@ -32,10 +33,10 @@ public class EditorUtils
             InstructionTypeEnum instrType = InstructionTypeEnum.getItemByClass(instruction.getClass());
             Class<? extends Instruction> instrClass = instrType.getInstrClass();
             Class<? extends AbstractInstrEditor> editorClass = instrType.getAssociatedEditor();
-            if(editorClass != null)
+            if (editorClass != null)
             {
                 AbstractInstrEditor instrEditor = editorClass.getConstructor(Window.class, instrClass).newInstance(owner, instruction);
-                if(instrEditor.showDialog())
+                if (instrEditor.showDialog())
                 {
                     instrEditor.getInstruction(instruction);
                     return true;

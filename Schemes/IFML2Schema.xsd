@@ -314,14 +314,6 @@
         </attribute>
     </complexType>
 
-    <!--<complexType name="instructionShowLocNameType">
-        <complexContent mixed="false">
-            <extension base="ifml2:instructionType">
-                <attribute name="location" type="string" use="required"/>
-            </extension>
-        </complexContent>
-    </complexType>-->
-
     <complexType name="instructionGoToLocationType">
         <complexContent mixed="false">
             <extension base="ifml2:instructionType">

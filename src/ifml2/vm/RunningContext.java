@@ -12,8 +12,6 @@ import java.util.List;
 
 public class RunningContext
 {
-    private VirtualMachine virtualMachine = null;
-
     private final HashMap<Variable.VariableScope, HashMap<String, Variable>> variables = new HashMap<Variable.VariableScope, HashMap<String, Variable>>()
     {
         {
@@ -22,6 +20,7 @@ public class RunningContext
             put(Variable.VariableScope.GLOBAL, new HashMap<String, Variable>());
         }
     }; //todo create properties for all the scopes
+    private VirtualMachine virtualMachine = null;
     private Value returnValue;
     private IFMLObject defaultObject;
 
@@ -29,9 +28,9 @@ public class RunningContext
     {
         this(virtualMachine);
 
-        for(FormalElement parameter : parameters)
+        for (FormalElement parameter : parameters)
         {
-            if(parameter.parameterName == null)
+            if (parameter.parameterName == null)
             {
                 continue;
             }
@@ -71,22 +70,22 @@ public class RunningContext
         returnValue = runningContext.returnValue;
     }
 
-    public Value resolveSymbol(String symbol) throws IFML2VMException 
+    public Value resolveSymbol(String symbol) throws IFML2VMException
     {
         String loweredSymbol = symbol.toLowerCase();
 
         // check context variables
         Value value = getContextVariable(loweredSymbol);
-        if(value != null)
+        if (value != null)
         {
             return value;
         }
 
         // check default object
-        if(defaultObject != null)
+        if (defaultObject != null)
         {
             value = defaultObject.tryGetMemberValue(loweredSymbol, this);
-            if(value != null)
+            if (value != null)
             {
                 return value;
             }
@@ -99,13 +98,13 @@ public class RunningContext
     private Value getContextVariable(String name)
     {
         Value value = getVariable(Variable.VariableScope.LOCAL, name);
-        if(value != null)
+        if (value != null)
         {
             return value;
         }
 
         value = getVariable(Variable.VariableScope.PROCEDURE, name);
-        if(value != null)
+        if (value != null)
         {
             return value;
         }
@@ -115,7 +114,7 @@ public class RunningContext
 
     public Value getVariable(Variable.VariableScope scope, String name)
     {
-        if(variables.get(scope).containsKey(name.toLowerCase()))
+        if (variables.get(scope).containsKey(name.toLowerCase()))
         {
             return variables.get(scope).get(name.toLowerCase()).value;
         }
@@ -131,7 +130,7 @@ public class RunningContext
     {
         String loweredName = name.toLowerCase();
         HashMap<String, Variable> variableHashMap = variables.get(scope);
-        if(variableHashMap.containsKey(loweredName))
+        if (variableHashMap.containsKey(loweredName))
         {
             variableHashMap.remove(loweredName);
         }
@@ -145,15 +144,15 @@ public class RunningContext
     public void setContextVariable(String name, Value value)
     {
         String loweredName = name.toLowerCase();
-        if(variables.get(Variable.VariableScope.LOCAL).containsKey(loweredName))
+        if (variables.get(Variable.VariableScope.LOCAL).containsKey(loweredName))
         {
             setVariable(Variable.VariableScope.LOCAL, name, value);
         }
-        else if(variables.get(Variable.VariableScope.PROCEDURE).containsKey(loweredName))
+        else if (variables.get(Variable.VariableScope.PROCEDURE).containsKey(loweredName))
         {
             setVariable(Variable.VariableScope.PROCEDURE, name, value);
         }
-        else if(variables.get(Variable.VariableScope.GLOBAL).containsKey(loweredName))
+        else if (variables.get(Variable.VariableScope.GLOBAL).containsKey(loweredName))
         {
             setVariable(Variable.VariableScope.GLOBAL, name, value);
         }
@@ -161,11 +160,6 @@ public class RunningContext
         {
             setVariable(Variable.VariableScope.LOCAL, name, value);
         }
-    }
-
-    public void setReturnValue(Value returnValue)
-    {
-        this.returnValue = returnValue;
     }
 
     public void setDefaultObject(IFMLObject defaultObject)
@@ -178,17 +172,8 @@ public class RunningContext
         return returnValue;
     }
 
-    /*public IFMLObject getObjectByName(String name)
+    public void setReturnValue(Value returnValue)
     {
-        Story story = getStory();
-        String loweredName = name.toLowerCase();
-        if(story.getObjectsHeap().containsKey(loweredName))
-        {
-            return story.getObjectsHeap().get(loweredName);
-        }
-        else
-        {
-            return null;
-        }
-    }*/
+        this.returnValue = returnValue;
+    }
 }

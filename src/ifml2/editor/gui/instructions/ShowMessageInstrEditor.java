@@ -14,6 +14,8 @@ import static ifml2.vm.instructions.ShowMessageInstr.MessageTypeEnum.TEXT;
 
 public class ShowMessageInstrEditor extends AbstractInstrEditor
 {
+    private static final String SHOW_MESSAGE_INSTR_EDITOR_TITLE = "Вывести сообщение";
+    private static final String TYPE_ERROR = "Message type \"{0}\" is unknown";
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
@@ -22,9 +24,6 @@ public class ShowMessageInstrEditor extends AbstractInstrEditor
     private JRadioButton exprTypeRadio;
     private JCheckBox beginWithCapCheck;
     private JCheckBox carriageReturnCheck;
-
-    private static final String SHOW_MESSAGE_INSTR_EDITOR_TITLE = "Вывести сообщение";
-    private static final String TYPE_ERROR = "Message type \"{0}\" is unknown";
 
     public ShowMessageInstrEditor(Window owner, @NotNull ShowMessageInstr instruction) throws IFML2EditorException
     {
@@ -64,11 +63,11 @@ public class ShowMessageInstrEditor extends AbstractInstrEditor
 
         ShowMessageInstr showMessageInstr = (ShowMessageInstr) instruction;
 
-        if(textTypeRadio.isSelected())
+        if (textTypeRadio.isSelected())
         {
             showMessageInstr.setType(TEXT);
         }
-        else if(exprTypeRadio.isSelected())
+        else if (exprTypeRadio.isSelected())
         {
             showMessageInstr.setType(EXPRESSION);
         }

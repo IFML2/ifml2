@@ -1,9 +1,11 @@
 package ifml2.editor.gui;
 
 import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.swing.DefaultEventComboBoxModel;
 import ifml2.om.Location;
 import ifml2.om.Procedure;
 import ifml2.om.StoryOptions;
+import ifml2.vm.instructions.SetVarInstruction;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -12,14 +14,14 @@ import java.util.HashMap;
 
 public class StoryOptionsEditor extends AbstractEditor<StoryOptions>
 {
+    private final static String STORY_OPTIONS_EDITOR_FORM_NAME = "Настройка истории";
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
     private JComboBox startLocCombo;
     private JComboBox startProcedureCombo;
     private JCheckBox showStartLocDescCheck;
-
-    private final static String STORY_OPTIONS_EDITOR_FORM_NAME = "Настройка истории";
+    private JList varsList;
 
     public StoryOptionsEditor(Window owner, StoryOptions storyOptions, EventList<Location> locations, HashMap<String, Procedure> procedures)
     {
@@ -30,19 +32,21 @@ public class StoryOptionsEditor extends AbstractEditor<StoryOptions>
 
         startProcedureCombo.setModel(new DefaultComboBoxModel(procedures.values().toArray()));
         startProcedureCombo.insertItemAt(null, 0);
-        startProcedureCombo.setSelectedItem(storyOptions.startProcedureOption.procedure);
+        startProcedureCombo.setSelectedItem(storyOptions.getStartProcedureOption().getProcedure());
 
         startLocCombo.setModel(new DefaultComboBoxModel(locations.toArray()));
-        startLocCombo.setSelectedItem(storyOptions.startLocationOption.location);
+        startLocCombo.setSelectedItem(storyOptions.getStartLocationOption().getLocation());
 
-        showStartLocDescCheck.setSelected(storyOptions.startLocationOption.showStartLocDesc);
+        showStartLocDescCheck.setSelected(storyOptions.getStartLocationOption().getShowStartLocDesc());
+
+        varsList.setModel(new DefaultEventComboBoxModel<SetVarInstruction>(storyOptions.getVars()));
     }
 
     @Override
     public void getData(@NotNull StoryOptions data)
     {
-        data.startLocationOption.location = (Location) startLocCombo.getSelectedItem();
-        data.startLocationOption.showStartLocDesc = showStartLocDescCheck.isSelected();
-        data.startProcedureOption.procedure = (Procedure) startProcedureCombo.getSelectedItem();
+        data.getStartLocationOption().setLocation((Location) startLocCombo.getSelectedItem());
+        data.getStartLocationOption().setShowStartLocDesc(showStartLocDescCheck.isSelected());
+        data.getStartProcedureOption().setProcedure((Procedure) startProcedureCombo.getSelectedItem());
     }
 }

@@ -25,14 +25,13 @@ public class VirtualMachine
             put(SystemIdentifiers.FALSE_BOOL_LITERAL, new BooleanValue(false));
         }
     };
-
     private final HashMap<Procedure.SystemProcedureEnum, Procedure> inheritedSystemProcedures = new HashMap<Procedure.SystemProcedureEnum, Procedure>()
     {
         @Override
         public Procedure get(Object key)
         {
             // lazy initialization
-            if(!containsKey(key))
+            if (!containsKey(key))
             {
                 Procedure inheritor = engine.getStory().getSystemInheritorProcedure((SystemProcedureEnum) key);
                 put((SystemProcedureEnum) key, inheritor);
@@ -44,10 +43,17 @@ public class VirtualMachine
             }
         }
     };
+    private Engine engine;
 
-	private Engine engine;
-    public Engine getEngine() { return engine; }
-    public void setEngine(Engine engine) { this.engine = engine; }
+    public Engine getEngine()
+    {
+        return engine;
+    }
+
+    public void setEngine(Engine engine)
+    {
+        this.engine = engine;
+    }
 
     public void runProcedure(Procedure procedure, List<FormalElement> parameters) throws IFML2Exception
     {
@@ -68,10 +74,10 @@ public class VirtualMachine
 
     private void saveGlobalVariables(RunningContext runningContext)
     {
-        for(Map.Entry<String, Value> var : engine.globalVariables.entrySet())
+        for (Map.Entry<String, Value> var : engine.getGlobalVariables().entrySet())
         {
             Value value = runningContext.getVariable(Variable.VariableScope.GLOBAL, var.getKey());
-            if(value != null)
+            if (value != null)
             {
                 engine.getGlobalVariables().put(var.getKey(), value);
             }
@@ -80,7 +86,7 @@ public class VirtualMachine
 
     private void loadGlobalVariables(RunningContext runningContext)
     {
-        for(Map.Entry<String, Value> var : engine.globalVariables.entrySet())
+        for (Map.Entry<String, Value> var : engine.getGlobalVariables().entrySet())
         {
             runningContext.setVariable(Variable.VariableScope.GLOBAL, var.getKey(), var.getValue());
         }
@@ -121,7 +127,7 @@ public class VirtualMachine
         RunningContext instructionRunningContext;
         instructionRunningContext = encloseContext ? new RunningContext(runningContext) : runningContext;
 
-        for(Instruction instruction : instructionList.getInstructions())
+        for (Instruction instruction : instructionList.getInstructions())
         {
             instruction.virtualMachine = this;
             try
@@ -135,7 +141,7 @@ public class VirtualMachine
             }
         }
 
-        if(returnResult && runningContext != instructionRunningContext)
+        if (returnResult && runningContext != instructionRunningContext)
         {
             runningContext.setReturnValue(instructionRunningContext.getReturnValue());
         }
@@ -164,22 +170,22 @@ public class VirtualMachine
 
     private void saveProcedureVariables(RunningContext runningContext, Procedure procedure)
     {
-        for(ProcedureVariable procedureVariable : procedure.getVariables())
+        for (ProcedureVariable procedureVariable : procedure.getVariables())
         {
             Value value = runningContext.getVariable(Variable.VariableScope.PROCEDURE, procedureVariable.getName());
-            if(value != null)
+            if (value != null)
             {
                 procedureVariable.setValue(value);
             }
         }
     }
 
-	public void showLocName(Location location) throws IFML2Exception
+    public void showLocName(Location location) throws IFML2Exception
     {
-		// test if inherited
+        // test if inherited
         Procedure inheritor = inheritedSystemProcedures.get(SystemProcedureEnum.SHOW_LOC_NAME);
 
-        if(inheritor != null)
+        if (inheritor != null)
         {
             // inherited! run inheritor
             runProcedure(inheritor);
@@ -189,26 +195,26 @@ public class VirtualMachine
             // not inherited! do as usual...
             getEngine().outTextLn(location.getName());
             getEngine().outTextLn(location.getDescription());
-            if(location.getItems().size() > 0)
+            if (location.getItems().size() > 0)
             {
                 String objectsList = convertObjectsToString(location.getItems());
                 getEngine().outTextLn("А также тут " + objectsList);
             }
         }
-	}
+    }
 
-	public void showInventory()
-	{
-		if(engine.getInventory().size() > 0)
-		{
+    public void showInventory()
+    {
+        if (engine.getInventory().size() > 0)
+        {
             String objectsList = convertObjectsToString(engine.getInventory());
             engine.outTextLn("У Вас при себе " + objectsList);
-		}
-		else
-		{
+        }
+        else
+        {
             engine.outTextLn("А у Вас ничего нет.");
-		}
-	}
+        }
+    }
 
     private String convertObjectsToString(List<Item> inventory)
     {
@@ -216,22 +222,21 @@ public class VirtualMachine
 
         Iterator<Item> iterator = inventory.iterator();
 
-        while(iterator.hasNext())
+        while (iterator.hasNext())
         {
             String itemName = iterator.next().getName();
 
-            if("".equals(result)) // it's the first word
+            if ("".equals(result)) // it's the first word
             {
                 result = itemName;
             }
-            else
-            if(iterator.hasNext()) // there is an another word after that
+            else if (iterator.hasNext()) // there is an another word after that
             {
                 result += ", " + itemName;
             }
             else // it's the last word
             {
-               result += " и " + itemName;
+                result += " и " + itemName;
             }
         }
 
@@ -244,7 +249,7 @@ public class VirtualMachine
     {
         String loweredSymbol = symbol.toLowerCase();
 
-        if(systemConstants.containsKey(loweredSymbol))
+        if (systemConstants.containsKey(loweredSymbol))
         {
             return systemConstants.get(loweredSymbol);
         }
