@@ -176,4 +176,25 @@ public class RunningContext
     {
         this.returnValue = returnValue;
     }
+
+    public Variable.VariableScope getVariableScopeByName(String variableName)
+    {
+        String loweredName = variableName.toLowerCase();
+        if (variables.get(Variable.VariableScope.LOCAL).containsKey(loweredName))
+        {
+            return Variable.VariableScope.LOCAL;
+        }
+        else if (variables.get(Variable.VariableScope.PROCEDURE).containsKey(loweredName))
+        {
+            return Variable.VariableScope.PROCEDURE;
+        }
+        else if (variables.get(Variable.VariableScope.GLOBAL).containsKey(loweredName))
+        {
+            return Variable.VariableScope.GLOBAL;
+        }
+        else
+        {
+            return null;
+        }
+    }
 }
