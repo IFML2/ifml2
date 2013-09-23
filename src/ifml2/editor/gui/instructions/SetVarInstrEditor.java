@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class SetVarInstrEditor extends AbstractInstrEditor
 {
@@ -17,11 +19,21 @@ public class SetVarInstrEditor extends AbstractInstrEditor
     private JButton buttonCancel;
     private JTextField nameText;
     private JTextField valueText;
+    private JLabel typeLabel;
 
     public SetVarInstrEditor(Window owner, SetVarInstruction instruction)
     {
         super(owner);
         initializeEditor(SET_VAR_EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
+
+        nameText.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                typeLabel.setText("test");
+            }
+        });
 
         // -- init form data --
 
