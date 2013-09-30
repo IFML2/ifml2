@@ -63,7 +63,9 @@
                 <preferred-size width="150" height="-1"/>
               </grid>
             </constraints>
-            <properties/>
+            <properties>
+              <visible value="true"/>
+            </properties>
           </component>
           <component id="7edfc" class="javax.swing.JTextField" binding="valueText">
             <constraints>
@@ -80,6 +82,7 @@
             <properties>
               <labelFor value="9f9bb"/>
               <text value="Имя переменной:"/>
+              <visible value="true"/>
             </properties>
           </component>
           <component id="7febf" class="javax.swing.JLabel">
@@ -117,6 +120,7 @@
             </constraints>
             <properties>
               <text value="Вид (определяется автоматически по имени):"/>
+              <visible value="false"/>
             </properties>
           </component>
           <grid id="9c840" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
@@ -124,10 +128,12 @@
             <constraints>
               <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
-            <properties/>
+            <properties>
+              <visible value="false"/>
+            </properties>
             <border type="etched"/>
             <children>
-              <component id="b44c1" class="javax.swing.JLabel" binding="typeLabel">
+              <component id="b44c1" class="javax.swing.JLabel">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                 </constraints>

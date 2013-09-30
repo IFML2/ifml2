@@ -17,9 +17,7 @@ public class StoryOptions
     private final StartProcedureOption startProcedureOption = new StartProcedureOption();
     @XmlElement(name = "storyDescription")
     private final StoryDescription storyDescription = new StoryDescription();
-    @XmlElementWrapper(name = "globalVars")
-    @XmlElement(name = "var")
-    private final EventList<SetVarInstruction> vars = new BasicEventList<SetVarInstruction>();
+    private EventList<SetVarInstruction> vars = new BasicEventList<SetVarInstruction>();
 
     public StartLocationOption getStartLocationOption()
     {
@@ -39,6 +37,13 @@ public class StoryOptions
     public EventList<SetVarInstruction> getVars()
     {
         return vars;
+    }
+
+    @XmlElementWrapper(name = "globalVars")
+    @XmlElement(name = "var")
+    public void setVars(EventList<SetVarInstruction> vars)
+    {
+        this.vars = vars;
     }
 
     public static class StartLocationOption

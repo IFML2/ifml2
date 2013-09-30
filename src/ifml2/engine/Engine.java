@@ -137,7 +137,7 @@ public class Engine
         globalVariables.clear();
         for (SetVarInstruction varInstruction : story.getStoryOptions().getVars())
         {
-            Value value = ExpressionCalculator.calculate(new RunningContext(virtualMachine), varInstruction.getValue());
+            Value value = ExpressionCalculator.calculate(virtualMachine.createGlobalRunningContext(), varInstruction.getValue());
             globalVariables.put(varInstruction.getName(), value);
         }
 
@@ -159,7 +159,7 @@ public class Engine
                     }
 
                     // calculate property
-                    property.evaluateFromPrimaryExpression(new RunningContext(virtualMachine));
+                    property.evaluateFromPrimaryExpression(virtualMachine.createGlobalRunningContext());
                 }
             }
         }
@@ -210,7 +210,7 @@ public class Engine
         // check help command
         if ("помощь".equalsIgnoreCase(trimmedCommand) || "помоги".equalsIgnoreCase(trimmedCommand) ||
                 "помогите".equalsIgnoreCase(trimmedCommand) || "help".equalsIgnoreCase(trimmedCommand) ||
-                "info".equalsIgnoreCase(trimmedCommand) || "инфо".equalsIgnoreCase(trimmedCommand))
+                "info".equalsIgnoreCase(trimmedCommand) || "инфо".equalsIgnoreCase(trimmedCommand)) // todo refactor to List.contains() or something similar
         {
             outTextLn("Попробуйте одну из команд: " + story.getAllActions());
             return true;
@@ -222,7 +222,7 @@ public class Engine
             String expression = trimmedCommand.substring(1);
             try
             {
-                Value value = ExpressionCalculator.calculate(new RunningContext(virtualMachine), expression);
+                Value value = ExpressionCalculator.calculate(virtualMachine.createGlobalRunningContext(), expression);
                 outTextLn(MessageFormat.format("[ОТЛАДКА] ({0}) {1}", value.getClass().getSimpleName(), value));
             }
             catch (IFML2Exception e)

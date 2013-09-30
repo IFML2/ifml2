@@ -55,23 +55,6 @@ public class VirtualMachine
         this.engine = engine;
     }
 
-    public void runProcedure(Procedure procedure, List<FormalElement> parameters) throws IFML2Exception
-    {
-        try
-        {
-            RunningContext runningContext = new RunningContext(parameters, this);
-            loadGlobalVariables(runningContext);
-            loadProcedureVariables(runningContext, procedure);
-            runInstructionList(procedure.getProcedureBody(), runningContext, false, true);
-            saveProcedureVariables(runningContext, procedure);
-            saveGlobalVariables(runningContext);
-        }
-        catch (IFML2VMException e)
-        {
-            throw new IFML2VMException(e, "{0}\n  в процедуре \"{1}\"", e.getMessage(), procedure.getName());
-        }
-    }
-
     private void saveGlobalVariables(RunningContext runningContext)
     {
         for (Map.Entry<String, Value> var : engine.getGlobalVariables().entrySet())
@@ -102,16 +85,34 @@ public class VirtualMachine
         try
         {
             RunningContext runningContext = new RunningContext(this);
-            loadGlobalVariables(runningContext);
-            loadProcedureVariables(runningContext, procedure);
-            runInstructionList(procedure.getProcedureBody(), runningContext, false, true);
-            saveProcedureVariables(runningContext, procedure);
-            saveGlobalVariables(runningContext);
+            runProcedureInContext(procedure, runningContext);
         }
         catch (IFML2VMException e)
         {
             throw new IFML2VMException(e, "{0}\n  в процедуре \"{1}\"", e.getMessage(), procedure.getName());
         }
+    }
+
+    public void runProcedure(Procedure procedure, List<FormalElement> parameters) throws IFML2Exception
+    {
+        try
+        {
+            RunningContext runningContext = new RunningContext(parameters, this);
+            runProcedureInContext(procedure, runningContext);
+        }
+        catch (IFML2VMException e)
+        {
+            throw new IFML2VMException(e, "{0}\n  в процедуре \"{1}\"", e.getMessage(), procedure.getName());
+        }
+    }
+
+    private void runProcedureInContext(Procedure procedure, RunningContext runningContext) throws IFML2Exception
+    {
+        loadGlobalVariables(runningContext);
+        loadProcedureVariables(runningContext, procedure);
+        runInstructionList(procedure.getProcedureBody(), runningContext, false, true);
+        saveProcedureVariables(runningContext, procedure);
+        saveGlobalVariables(runningContext);
     }
 
     public void runHook(Hook hook, List<FormalElement> formalElements) throws IFML2Exception
@@ -265,5 +266,17 @@ public class VirtualMachine
         runInstructionList(trigger.getInstructions(), runningContext, false, true);
 
         return runningContext.getReturnValue();
+    }
+
+    /**
+     * Creates new RunningContext and loads it with global variables.
+     *
+     * @return New RunningContext loaded with global variables.
+     */
+    public RunningContext createGlobalRunningContext()
+    {
+        RunningContext runningContext = new RunningContext(this);
+        loadGlobalVariables(runningContext);
+        return runningContext;
     }
 }
