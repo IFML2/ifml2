@@ -15,9 +15,13 @@ public class MoveItemInstruction extends Instruction
 {
     @XmlAttribute(name = "item")
     String item;
-
     @XmlAttribute(name = "to")
     String to;
+
+    public static String getTitle()
+    {
+        return "Переместить предмет";
+    }
 
     @Override
     public void run(RunningContext runningContext) throws IFML2Exception
@@ -27,7 +31,7 @@ public class MoveItemInstruction extends Instruction
 
         List<Item> collection = (List<Item>) getCollectionFromExpression(to, runningContext, getTitle(), "куда");
 
-        if(collection.contains(itemObject))
+        if (collection.contains(itemObject))
         {
             throw new IFML2Exception(CommonUtils.uppercaseFirstLetter(itemObject.getName()) + " уже там.");
         }
@@ -39,11 +43,6 @@ public class MoveItemInstruction extends Instruction
     @Override
     public String toString()
     {
-        return MessageFormat.format("Перемещение предмета \"{0}\" в коллекцию \"{1}\"", item, to);
-    }
-
-    public static String getTitle()
-    {
-        return "Перемещение предмета";
+        return MessageFormat.format("Переместить предмет \"{0}\" в коллекцию \"{1}\"", item, to);
     }
 }

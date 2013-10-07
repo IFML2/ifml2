@@ -8,12 +8,8 @@ import java.text.MessageFormat;
 
 public enum InstructionTypeEnum
 {
-    //SHOW_LOC_NAME (ShowLocNameInstruction.class, editorClass),
-    //SHOW_ITEM_DESC (ShowItemDescInstruction.class, editorClass),
-    //SHOW_INVENTORY (ShowInventoryInstruction.class, editorClass),
     SHOW_MESSAGE(ShowMessageInstr.class, ShowMessageInstrEditor.class),
     GO_TO_LOCATION(GoToLocInstruction.class, null), //todo set Editor class
-    //GET_ITEM (GetItemInstruction.class, editorClass),
     IF(IfInstruction.class, IfInstrEditor.class),
     LOOP(LoopInstruction.class, null), //todo set Editor class
     SET_VAR(SetVarInstruction.class, SetVarInstrEditor.class),

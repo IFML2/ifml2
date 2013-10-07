@@ -14,7 +14,7 @@ import static ifml2.vm.instructions.ShowMessageInstr.MessageTypeEnum.TEXT;
 
 public class ShowMessageInstrEditor extends AbstractInstrEditor
 {
-    private static final String SHOW_MESSAGE_INSTR_EDITOR_TITLE = "Вывести сообщение";
+    private static final String SHOW_MESSAGE_INSTR_EDITOR_TITLE = ShowMessageInstr.getTitle();
     private static final String TYPE_ERROR = "Message type \"{0}\" is unknown";
     private JPanel contentPane;
     private JButton buttonOK;

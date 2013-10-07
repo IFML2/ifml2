@@ -7,6 +7,7 @@ import ifml2.IFML2Exception;
 import ifml2.om.xml.XmlSchemaConstants;
 import ifml2.vm.VirtualMachine;
 import ifml2.vm.values.Value;
+import org.jetbrains.annotations.NotNull;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -87,11 +88,10 @@ public class Item extends IFMLObject implements Cloneable
         this.container = container;
     }
 
-    public void moveTo(List<Item> collection)
+    public void moveTo(@NotNull List<Item> collection)
     {
         // contract
         assert container != null;
-        assert collection != null;
         //
 
         container.remove(this);

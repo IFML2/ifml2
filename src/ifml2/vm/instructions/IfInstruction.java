@@ -12,33 +12,42 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class IfInstruction extends Instruction
 {
     private String condition;
-    @XmlAttribute(name = "condition")
+    private InstructionList thenInstructions = new InstructionList();
+    private InstructionList elseInstructions = new InstructionList();
+
+    public static String getTitle()
+    {
+        return "Проверить условие";
+    }
+
     public String getCondition()
     {
         return condition;
     }
+
+    @XmlAttribute(name = "condition")
     public void setCondition(String condition)
     {
         this.condition = condition;
     }
 
-    private InstructionList thenInstructions = new InstructionList();
-    @XmlElement(name = "then")
     public InstructionList getThenInstructions()
     {
         return thenInstructions;
     }
+
+    @XmlElement(name = "then")
     public void setThenInstructions(InstructionList thenInstructions)
     {
         this.thenInstructions = thenInstructions;
     }
 
-    private InstructionList elseInstructions = new InstructionList();
-    @XmlElement(name = "else")
     public InstructionList getElseInstructions()
     {
         return elseInstructions;
     }
+
+    @XmlElement(name = "else")
     public void setElseInstructions(InstructionList elseInstructions)
     {
         this.elseInstructions = elseInstructions;
@@ -49,7 +58,7 @@ public class IfInstruction extends Instruction
     {
         boolean conditionValue = getBooleanFromExpression(condition, runningContext, getTitle(), "Условие");
 
-        if(conditionValue)
+        if (conditionValue)
         {
             virtualMachine.runInstructionList(thenInstructions, runningContext, true, conditionValue);
         }
@@ -62,11 +71,6 @@ public class IfInstruction extends Instruction
     @Override
     public String toString()
     {
-        return "Проверка условия: " + condition;
-    }
-
-    public static String getTitle()
-    {
-        return "Проверка условия";
+        return "Проверить условие: " + condition;
     }
 }

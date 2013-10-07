@@ -18,6 +18,7 @@ import java.awt.event.MouseEvent;
 
 public class IfInstrEditor extends AbstractInstrEditor
 {
+    private static final String IF_INSTR_EDITOR_TITLE = IfInstruction.getTitle();
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
@@ -26,8 +27,6 @@ public class IfInstrEditor extends AbstractInstrEditor
     private JButton editElseButton;
     private JList thenInstructionsList;
     private JList elseInstructionsList;
-
-    private static final String IF_INSTR_EDITOR_TITLE = "Проверка условия";
     private InstructionList thenInstructionsClone;
     private InstructionList elseInstructionsClone;
 
@@ -64,7 +63,7 @@ public class IfInstrEditor extends AbstractInstrEditor
             public void actionPerformed(ActionEvent e)
             {
                 InstructionsEditor instructionsEditor = new InstructionsEditor(IfInstrEditor.this, thenInstructionsClone);
-                if(instructionsEditor.showDialog())
+                if (instructionsEditor.showDialog())
                 {
                     instructionsEditor.getData(thenInstructionsClone);
                 }
@@ -76,7 +75,7 @@ public class IfInstrEditor extends AbstractInstrEditor
             public void actionPerformed(ActionEvent e)
             {
                 InstructionsEditor instructionsEditor = new InstructionsEditor(IfInstrEditor.this, elseInstructionsClone);
-                if(instructionsEditor.showDialog())
+                if (instructionsEditor.showDialog())
                 {
                     instructionsEditor.getData(elseInstructionsClone);
                 }

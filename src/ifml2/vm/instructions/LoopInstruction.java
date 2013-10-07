@@ -17,37 +17,35 @@ import java.util.List;
 @XmlRootElement(name = "loop")
 public class LoopInstruction extends Instruction
 {
+    @XmlElement(name = "empty")
+    private final
+    InstructionList emptyInstructions = null;
+    @XmlElement(name = "alone")
+    private final
+    InstructionList aloneInstructions = null;
+    @XmlElement(name = "first")
+    private final
+    InstructionList firstInstructions = null;
+    @XmlElement(name = "next")
+    private final
+    InstructionList nextInstructions = null;
+    @XmlElement(name = "last")
+    private final
+    InstructionList lastInstructions = null;
     @XmlAttribute(name = "collection")
     private
     String collectionExpression;
-
     @XmlAttribute(name = "element")
     private
     String elementName;
-
     @XmlAttribute(name = "condition")
     private
     String conditionExpression;
 
-    @XmlElement(name = "empty")
-    private final
-    InstructionList emptyInstructions = null;
-
-    @XmlElement(name = "alone")
-    private final
-    InstructionList aloneInstructions = null;
-
-    @XmlElement(name = "first")
-    private final
-    InstructionList firstInstructions = null;
-
-    @XmlElement(name = "next")
-    private final
-    InstructionList nextInstructions = null;
-
-    @XmlElement(name = "last")
-    private final
-    InstructionList lastInstructions = null;
+    public static String getTitle()
+    {
+        return "Цикл";
+    }
 
     @Override
     public void run(RunningContext runningContext) throws IFML2Exception
@@ -160,10 +158,5 @@ public class LoopInstruction extends Instruction
     public String toString()
     {
         return MessageFormat.format("Цикл: для каждого \"{0}\" из \"{1}\" с учётом \"{2}\"", elementName, collectionExpression, conditionExpression);
-    }
-
-    public static String getTitle()
-    {
-        return "Цикл";
     }
 }
