@@ -13,10 +13,8 @@ import java.util.List;
 @XmlRootElement(name = "moveItem")
 public class MoveItemInstruction extends Instruction
 {
-    @XmlAttribute(name = "item")
-    String item;
-    @XmlAttribute(name = "to")
-    String to;
+    private String itemExpr;
+    private String toCollectionExpr;
 
     public static String getTitle()
     {
@@ -26,23 +24,45 @@ public class MoveItemInstruction extends Instruction
     @Override
     public void run(RunningContext runningContext) throws IFML2Exception
     {
-        Item itemObject = getItemFromExpression(item, runningContext, getTitle(), "предмет", false);
-        assert itemObject.getContainer() != null;
+        Item item = getItemFromExpression(itemExpr, runningContext, getTitle(), "предмет", false);
+        assert item.getContainer() != null;
 
-        List<Item> collection = (List<Item>) getCollectionFromExpression(to, runningContext, getTitle(), "куда");
+        List<Item> collection = (List<Item>) getCollectionFromExpression(toCollectionExpr, runningContext, getTitle(), "куда");
 
-        if (collection.contains(itemObject))
+        if (collection.contains(item))
         {
-            throw new IFML2Exception(CommonUtils.uppercaseFirstLetter(itemObject.getName()) + " уже там.");
+            throw new IFML2Exception(CommonUtils.uppercaseFirstLetter(item.getName()) + " уже там.");
         }
 
         // move item from parent to new collection
-        itemObject.moveTo(collection);
+        item.moveTo(collection);
     }
 
     @Override
     public String toString()
     {
-        return MessageFormat.format("Переместить предмет \"{0}\" в коллекцию \"{1}\"", item, to);
+        return MessageFormat.format("Переместить предмет \"{0}\" в коллекцию \"{1}\"", itemExpr, toCollectionExpr);
+    }
+
+    public String getItemExpr()
+    {
+        return itemExpr;
+    }
+
+    @XmlAttribute(name = "item")
+    public void setItemExpr(String itemExpr)
+    {
+        this.itemExpr = itemExpr;
+    }
+
+    public String getToCollectionExpr()
+    {
+        return toCollectionExpr;
+    }
+
+    @XmlAttribute(name = "to")
+    public void setToCollectionExpr(String toCollectionExpr)
+    {
+        this.toCollectionExpr = toCollectionExpr;
     }
 }

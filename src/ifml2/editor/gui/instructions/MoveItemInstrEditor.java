@@ -14,19 +14,17 @@ public class MoveItemInstrEditor extends AbstractInstrEditor
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
-    private JComboBox itemCombo;
-    private JComboBox toCombo;
+    private JTextField itemExprText;
+    private JTextField toCollectionExprText;
 
     public MoveItemInstrEditor(Window owner, MoveItemInstruction instruction)
     {
         super(owner);
         initializeEditor(MOVE_ITEM_EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
 
-        // load all available data
-        //todo
-
         // load data
-        //todo itemCombo.
+        itemExprText.setText(instruction.getItemExpr());
+        toCollectionExprText.setText(instruction.getToCollectionExpr());
     }
 
     @Override
@@ -41,6 +39,7 @@ public class MoveItemInstrEditor extends AbstractInstrEditor
         getData(instruction);
 
         MoveItemInstruction moveItemInstruction = (MoveItemInstruction) instruction;
-        //todo
+        moveItemInstruction.setItemExpr(itemExprText.getText());
+        moveItemInstruction.setToCollectionExpr(toCollectionExprText.getText());
     }
 }

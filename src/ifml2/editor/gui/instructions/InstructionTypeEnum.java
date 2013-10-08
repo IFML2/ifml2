@@ -13,7 +13,7 @@ public enum InstructionTypeEnum
     IF(IfInstruction.class, IfInstrEditor.class),
     LOOP(LoopInstruction.class, null), //todo set Editor class
     SET_VAR(SetVarInstruction.class, SetVarInstrEditor.class),
-    MOVE_ITEM(MoveItemInstruction.class, null); //todo set Editor class
+    MOVE_ITEM(MoveItemInstruction.class, MoveItemInstrEditor.class);
     private Class<? extends Instruction> instrClass;
     private String title;
     private Class<? extends AbstractInstrEditor> editorClass;
