@@ -9,7 +9,7 @@ import java.text.MessageFormat;
 public enum InstructionTypeEnum
 {
     SHOW_MESSAGE(ShowMessageInstr.class, ShowMessageInstrEditor.class),
-    GO_TO_LOCATION(GoToLocInstruction.class, null), //todo set Editor class
+    GO_TO_LOCATION(GoToLocInstruction.class, GoToLocInstrEditor.class),
     IF(IfInstruction.class, IfInstrEditor.class),
     LOOP(LoopInstruction.class, null), //todo set Editor class
     SET_VAR(SetVarInstruction.class, SetVarInstrEditor.class),

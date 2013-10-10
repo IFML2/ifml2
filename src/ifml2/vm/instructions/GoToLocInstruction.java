@@ -11,8 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class GoToLocInstruction extends Instruction
 {
     @XmlAttribute(name = "location")
-    private
-    String locationExpression;
+    private String locationExpr;
 
     public static String getTitle()
     {
@@ -22,7 +21,7 @@ public class GoToLocInstruction extends Instruction
     @Override
     public void run(RunningContext runningContext) throws IFML2Exception
     {
-        Location location = getLocationFromExpression(locationExpression, runningContext, getTitle(), "Локация", true);
+        Location location = getLocationFromExpression(locationExpr, runningContext, getTitle(), "Локация", true);
 
         if (location == null)
         {

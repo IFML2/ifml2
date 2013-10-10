@@ -547,8 +547,8 @@ public class ExpressionCalculator
             }
             else
             {
-                throw new IFML2ExpressionException("Системный сбой: в стеке значений осталось не одно значение!" +
-                        "\nСтек операторов: {0}\nСтек значений: {1}", operatorStack, valueStack);
+                throw new IFML2ExpressionException("Системный сбой: в стеке значений осталось не одно (а {2}) значение!" +
+                        "\nСтек операторов: {0}\nСтек значений: {1}", operatorStack, valueStack, valueStack.size());
             }
         }
 
