@@ -1,6 +1,5 @@
 package ifml2.editor.gui;
 
-import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.matchers.Matcher;
 import ca.odell.glazedlists.swing.DefaultEventComboBoxModel;
@@ -10,6 +9,7 @@ import ifml2.editor.IFML2EditorException;
 import ifml2.om.Action;
 import ifml2.om.Hook;
 import ifml2.om.InstructionList;
+import ifml2.om.Story;
 import ifml2.vm.instructions.Instruction;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,7 +39,7 @@ public class HookEditor extends AbstractEditor<Hook>
 
     private static final String HOOK_EDITOR_TITLE = "Перехват";
 
-    public HookEditor(Window owner, @NotNull Hook hook, @NotNull EventList<Action> actionList, final boolean areObjectHooks) throws IFML2EditorException
+    public HookEditor(Window owner, @NotNull Hook hook, final boolean areObjectHooks, final Story.DataHelper storyDataHelper) throws IFML2EditorException
     {
         super(owner);
         initializeEditor(HOOK_EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
@@ -51,7 +51,8 @@ public class HookEditor extends AbstractEditor<Hook>
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                InstructionsEditor instructionsEditor = new InstructionsEditor(HookEditor.this, instructionListClone);
+                InstructionsEditor instructionsEditor = new InstructionsEditor(HookEditor.this, instructionListClone,
+                                                                               storyDataHelper);
                 if(instructionsEditor.showDialog())
                 {
                     instructionsEditor.getData(instructionListClone);
@@ -103,7 +104,7 @@ public class HookEditor extends AbstractEditor<Hook>
 
         // filter actions due to areObjectHooks
         //actionCombo.setModel(new DefaultComboBoxModel(actionList.toArray()));
-        actionCombo.setModel(new DefaultEventComboBoxModel<Action>(new FilterList<Action>(actionList, new Matcher<Action>()
+        actionCombo.setModel(new DefaultEventComboBoxModel<Action>(new FilterList<Action>(storyDataHelper.getAllActions(), new Matcher<Action>()
         {
             @Override
             public boolean matches(Action item)
@@ -153,7 +154,7 @@ public class HookEditor extends AbstractEditor<Hook>
                     Instruction instruction = (Instruction) instructionsList.getSelectedValue();
                     if (instruction != null)
                     {
-                        EditorUtils.showAssociatedEditor(HookEditor.this, instruction);
+                        EditorUtils.showAssociatedEditor(HookEditor.this, instruction, storyDataHelper);
                     }
                 }
             }

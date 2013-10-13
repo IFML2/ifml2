@@ -13,45 +13,64 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "showMessage")
 public class ShowMessageInstr extends Instruction
 {
-    @XmlEnum
-    public enum MessageTypeEnum
+    private MessageTypeEnum type = MessageTypeEnum.TEXT; // default type
+    private Boolean carriageReturn = true;
+    private Boolean beginWithCap = false;
+    private String messageExpr;
+
+    public static String getTitle()
     {
-        @XmlEnumValue(value = "text")
-        TEXT,
-        @XmlEnumValue(value = "expression")
-        EXPRESSION
+        return "Вывести сообщение";
     }
 
-    private MessageTypeEnum type = MessageTypeEnum.TEXT; // default type
-    @XmlAttribute(name="type")
     public MessageTypeEnum getType()
     {
         return type;
     }
+
+    @XmlAttribute(name = "type")
     public void setType(MessageTypeEnum type)
     {
         this.type = type;
     }
 
-    private Boolean carriageReturn = true;
+    public Boolean getCarriageReturn()
+    {
+        return carriageReturn;
+    }
+
     @XmlAttribute(name = "carriageReturn")
-    public Boolean getCarriageReturn() { return carriageReturn; }
-    public void setCarriageReturn(Boolean carriageReturn) { this.carriageReturn = carriageReturn; }
+    public void setCarriageReturn(Boolean carriageReturn)
+    {
+        this.carriageReturn = carriageReturn;
+    }
 
-    private Boolean beginWithCap = false;
+    public Boolean getBeginWithCap()
+    {
+        return beginWithCap;
+    }
+
     @XmlAttribute(name = "beginWithCap")
-    public Boolean getBeginWithCap() { return beginWithCap; }
-    public void setBeginWithCap(Boolean beginWithCap) { this.beginWithCap = beginWithCap; }
+    public void setBeginWithCap(Boolean beginWithCap)
+    {
+        this.beginWithCap = beginWithCap;
+    }
 
-    private String message;
-    @XmlAttribute(name="message")
-    public String getMessage() { return message; }
-    public void setMessage(String message) { this.message = message; }
+    public String getMessageExpr()
+    {
+        return messageExpr;
+    }
+
+    @XmlAttribute(name = "message")
+    public void setMessageExpr(String messageExpr)
+    {
+        this.messageExpr = messageExpr;
+    }
 
     @Override
     public String toString()
     {
-        return "Вывести сообщение: " + getMessage();
+        return "Вывести сообщение: " + messageExpr;
     }
 
     @Override
@@ -62,30 +81,34 @@ public class ShowMessageInstr extends Instruction
         switch (type)
         {
             case TEXT:
-                message = getMessage();
+                message = messageExpr;
                 break;
             case EXPRESSION:
-                message = ExpressionCalculator.calculate(runningContext, getMessage()).toString();
+                message = ExpressionCalculator.calculate(runningContext, messageExpr).toString();
                 break;
         }
 
-        if(beginWithCap)
+        if (beginWithCap)
         {
             message = CommonUtils.uppercaseFirstLetter(message);
         }
 
-        if(carriageReturn)
+        if (carriageReturn)
         {
-            virtualMachine.getEngine().outTextLn(message);
+            virtualMachine.outTextLn(message);
         }
         else
         {
-            virtualMachine.getEngine().outText(message);
+            virtualMachine.outText(message);
         }
     }
 
-    public static String getTitle()
+    @XmlEnum
+    public enum MessageTypeEnum
     {
-        return "Вывести сообщение";
+        @XmlEnumValue(value = "text")
+        TEXT,
+        @XmlEnumValue(value = "expression")
+        EXPRESSION
     }
 }

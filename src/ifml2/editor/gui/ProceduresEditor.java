@@ -5,6 +5,7 @@ import ifml2.GUIUtils;
 import ifml2.editor.IFML2EditorException;
 import ifml2.editor.gui.instructions.InstructionTypeEnum;
 import ifml2.om.Procedure;
+import ifml2.om.Story;
 import ifml2.vm.instructions.Instruction;
 import org.jetbrains.annotations.NotNull;
 
@@ -52,6 +53,7 @@ public class ProceduresEditor extends AbstractEditor<HashMap<String, Procedure>>
         }
     };
 
+    private Story.DataHelper storyDataHelper;
     private final AbstractAction addInstructionAction = new AbstractAction("Добавить...", GUIUtils.ADD_ELEMENT_ICON)
     {
         @Override
@@ -68,7 +70,7 @@ public class ProceduresEditor extends AbstractEditor<HashMap<String, Procedure>>
                     try
                     {
                         Instruction instruction = instrType.createInstrInstance();
-                        if (EditorUtils.showAssociatedEditor(ProceduresEditor.this, instruction))
+                        if (EditorUtils.showAssociatedEditor(ProceduresEditor.this, instruction, storyDataHelper))
                         {
                             procedure.getInstructions().add(instruction);
                             updateSelectedProcedure();
@@ -90,7 +92,7 @@ public class ProceduresEditor extends AbstractEditor<HashMap<String, Procedure>>
         {
             Instruction instruction = (Instruction) instructionsList.getSelectedValue();
 
-            if (instruction != null && EditorUtils.showAssociatedEditor(ProceduresEditor.this, instruction))
+            if (instruction != null && EditorUtils.showAssociatedEditor(ProceduresEditor.this, instruction, storyDataHelper))
             {
                 updateSelectedProcedure();
             }
@@ -113,10 +115,11 @@ public class ProceduresEditor extends AbstractEditor<HashMap<String, Procedure>>
         }
     };
 
-    public ProceduresEditor(Window owner, final HashMap<String, Procedure> procedures)
+    public ProceduresEditor(Window owner, final HashMap<String, Procedure> procedures, Story.DataHelper storyDataHelper)
     {
         super(owner);
         initializeEditor(PROCEDURES_EDITOR_TITLE, contentPane, buttonOK, null);
+        this.storyDataHelper = storyDataHelper;
 
         // -- init form --
 

@@ -7,9 +7,7 @@ import ifml2.GUIUtils;
 import ifml2.editor.DataNotValidException;
 import ifml2.editor.IFML2EditorException;
 import ifml2.om.Action;
-import ifml2.om.Procedure;
-import ifml2.om.Restriction;
-import ifml2.om.Template;
+import ifml2.om.*;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -20,7 +18,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Collections;
-import java.util.HashMap;
 
 public class ActionEditor extends AbstractEditor<Action>
 {
@@ -42,10 +39,12 @@ public class ActionEditor extends AbstractEditor<Action>
     private JButton addRestrictionButton;
     private JButton editRestrictionButton;
     private JButton delRestrictionButton;
+    private Story.DataHelper storyDataHelper;
 
-    public ActionEditor(Window owner, @NotNull Action action, @NotNull HashMap<String, Procedure> procedures)
+    public ActionEditor(Window owner, @NotNull Action action, Story.DataHelper storyDataHelper)
     {
         super(owner);
+        this.storyDataHelper = storyDataHelper;
         initializeEditor("Действие", contentPane, buttonOK, buttonCancel);
 
         // init actions and listeners
@@ -104,7 +103,8 @@ public class ActionEditor extends AbstractEditor<Action>
             public void actionPerformed(ActionEvent e)
             {
                 if (JOptionPane.showConfirmDialog(ActionEditor.this, "Вы действительно хотите удалить этот шаблон?",
-                        "Удаление шаблона", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
+                                                  "Удаление шаблона", JOptionPane.YES_NO_OPTION,
+                                                  JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
                 {
                     Template selectedAction = (Template) templatesList.getSelectedValue();
                     templatesClone.remove(selectedAction);
@@ -166,7 +166,8 @@ public class ActionEditor extends AbstractEditor<Action>
             public void actionPerformed(ActionEvent e)
             {
                 Restriction restriction = (Restriction) restrictionsList.getSelectedValue();
-                if (restriction != null && GUIUtils.showDeleteConfirmDialog(ActionEditor.this, "ограничение", "ограничения"))
+                if (restriction != null &&
+                    GUIUtils.showDeleteConfirmDialog(ActionEditor.this, "ограничение", "ограничения"))
                 {
                     restrictionsClone.remove(restriction);
                 }
@@ -206,7 +207,8 @@ public class ActionEditor extends AbstractEditor<Action>
                     @Override
                     public void valueChanged(ListSelectionEvent e)
                     {
-                        setEnabled(restrictionsList.getSelectedIndex() < restrictionsList.getModel().getSize() - 1); // depends on selection and list length
+                        setEnabled(restrictionsList.getSelectedIndex() <
+                                   restrictionsList.getModel().getSize() - 1); // depends on selection and list length
                     }
                 });
             }
@@ -263,14 +265,14 @@ public class ActionEditor extends AbstractEditor<Action>
         nameText.setText(action.getName());
         descriptionText.setText(action.getDescription());
         templatesList.setModel(new DefaultEventListModel<Template>(templatesClone));
-        procedureCallCombo.setModel(new DefaultComboBoxModel(procedures.values().toArray()));
+        procedureCallCombo.setModel(new DefaultComboBoxModel(storyDataHelper.getProcedures().values().toArray()));
         procedureCallCombo.setSelectedItem(action.getProcedureCall().getProcedure());
         restrictionsList.setModel(new DefaultEventListModel<Restriction>(restrictionsClone));
     }
 
     private boolean editRestriction(Restriction restriction)
     {
-        RestrictionEditor restrictionEditor = new RestrictionEditor(this, restriction);
+        RestrictionEditor restrictionEditor = new RestrictionEditor(this, restriction, storyDataHelper);
         if (restrictionEditor.showDialog())
         {
             try
@@ -323,7 +325,7 @@ public class ActionEditor extends AbstractEditor<Action>
     @Override
     protected void validateData() throws DataNotValidException
     {
-        if(nameText.getText().trim().length() == 0)
+        if (nameText.getText().trim().length() == 0)
         {
             throw new DataNotValidException("У действия должно быть имя!", nameText);
         }

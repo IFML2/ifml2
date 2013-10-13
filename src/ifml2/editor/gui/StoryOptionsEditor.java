@@ -6,6 +6,7 @@ import ca.odell.glazedlists.swing.DefaultEventComboBoxModel;
 import ifml2.GUIUtils;
 import ifml2.om.Location;
 import ifml2.om.Procedure;
+import ifml2.om.Story;
 import ifml2.om.StoryOptions;
 import ifml2.vm.instructions.SetVarInstruction;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +16,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.util.HashMap;
 
 public class StoryOptionsEditor extends AbstractEditor<StoryOptions>
 {
@@ -32,7 +32,7 @@ public class StoryOptionsEditor extends AbstractEditor<StoryOptions>
     private JButton editVarButton;
     private JButton delVarbutton;
 
-    public StoryOptionsEditor(Window owner, StoryOptions storyOptions, EventList<Location> locations, HashMap<String, Procedure> procedures)
+    public StoryOptionsEditor(Window owner, StoryOptions storyOptions, final Story.DataHelper storyDataHelper)
     {
         super(owner);
         initializeEditor(STORY_OPTIONS_EDITOR_FORM_NAME, contentPane, buttonOK, buttonCancel);
@@ -47,7 +47,7 @@ public class StoryOptionsEditor extends AbstractEditor<StoryOptions>
             public void actionPerformed(ActionEvent e)
             {
                 SetVarInstruction setVarInstruction = new SetVarInstruction();
-                if(EditorUtils.showAssociatedEditor(StoryOptionsEditor.this, setVarInstruction))
+                if(EditorUtils.showAssociatedEditor(StoryOptionsEditor.this, setVarInstruction, storyDataHelper))
                 {
 
                     varsClone.add(setVarInstruction);
@@ -73,7 +73,7 @@ public class StoryOptionsEditor extends AbstractEditor<StoryOptions>
                 SetVarInstruction setVarInstruction = (SetVarInstruction) varsList.getSelectedValue();
                 if(setVarInstruction != null)
                 {
-                    EditorUtils.showAssociatedEditor(StoryOptionsEditor.this, setVarInstruction);
+                    EditorUtils.showAssociatedEditor(StoryOptionsEditor.this, setVarInstruction, storyDataHelper);
                 }
             }
         });
@@ -103,11 +103,11 @@ public class StoryOptionsEditor extends AbstractEditor<StoryOptions>
 
         // -- init form --
 
-        startProcedureCombo.setModel(new DefaultComboBoxModel(procedures.values().toArray()));
+        startProcedureCombo.setModel(new DefaultComboBoxModel(storyDataHelper.getProcedures().values().toArray()));
         startProcedureCombo.insertItemAt(null, 0);
         startProcedureCombo.setSelectedItem(storyOptions.getStartProcedureOption().getProcedure());
 
-        startLocCombo.setModel(new DefaultComboBoxModel(locations.toArray()));
+        startLocCombo.setModel(new DefaultComboBoxModel(storyDataHelper.getLocations().toArray()));
         startLocCombo.setSelectedItem(storyOptions.getStartLocationOption().getLocation());
 
         showStartLocDescCheck.setSelected(storyOptions.getStartLocationOption().getShowStartLocDesc());

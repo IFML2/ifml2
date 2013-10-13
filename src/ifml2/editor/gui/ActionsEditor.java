@@ -1,12 +1,11 @@
 package ifml2.editor.gui;
 
-import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ifml2.GUIUtils;
 import ifml2.editor.IFML2EditorException;
 import ifml2.om.Action;
-import ifml2.om.Procedure;
 import ifml2.om.Story;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,10 +16,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.HashMap;
 
 public class ActionsEditor extends AbstractEditor<EventList<Action>>
 {
+    private static final String ACTIONS_EDITOR_FORM_NAME = "Действия";
+    private final EventList<Action> actionsClone;
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
@@ -29,19 +29,13 @@ public class ActionsEditor extends AbstractEditor<EventList<Action>>
     private JButton delButton;
     private JButton editButton;
     private JList libsActionsList;
+    private Story.DataHelper storyDataHelper;
 
-    private static final String ACTIONS_EDITOR_FORM_NAME = "Действия";
-
-    private final EventList<Action> actionsClone;
-
-    private HashMap<String, Procedure> procedures;
-
-    public ActionsEditor(Window owner, @NotNull EventList<Action> actions, @NotNull final HashMap<String, Procedure> procedures, Story story)
+    public ActionsEditor(Window owner, Story.DataHelper storyDataHelper)
     {
         super(owner);
+        this.storyDataHelper = storyDataHelper;
         initializeEditor(ACTIONS_EDITOR_FORM_NAME, contentPane, buttonOK, buttonCancel);
-
-        this.procedures = procedures;
 
         // set actions
         addButton.setAction(new AbstractAction("Добавить...", GUIUtils.ADD_ELEMENT_ICON)
@@ -50,7 +44,7 @@ public class ActionsEditor extends AbstractEditor<EventList<Action>>
             public void actionPerformed(ActionEvent e)
             {
                 Action action = new Action();
-                if(editAction(action))
+                if (editAction(action))
                 {
                     actionsClone.add(action);
                     actionsList.setSelectedValue(action, true);
@@ -75,7 +69,7 @@ public class ActionsEditor extends AbstractEditor<EventList<Action>>
             public void actionPerformed(ActionEvent e)
             {
                 Action action = (Action) actionsList.getSelectedValue();
-                if(action != null)
+                if (action != null)
                 {
                     editAction(action);
                 }
@@ -98,8 +92,9 @@ public class ActionsEditor extends AbstractEditor<EventList<Action>>
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                if(JOptionPane.showConfirmDialog(ActionsEditor.this, "Вы действительно хотите удалить это действие?",
-                        "Удаление действия", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
+                if (JOptionPane.showConfirmDialog(ActionsEditor.this, "Вы действительно хотите удалить это действие?",
+                                                  "Удаление действия", JOptionPane.YES_NO_OPTION,
+                                                  JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
                 {
                     Action selectedAction = (Action) actionsList.getSelectedValue();
                     actionsClone.remove(selectedAction);
@@ -113,10 +108,10 @@ public class ActionsEditor extends AbstractEditor<EventList<Action>>
             @Override
             public void mouseClicked(MouseEvent e)
             {
-                if(e.getClickCount() == 2)
+                if (e.getClickCount() == 2)
                 {
                     Action action = (Action) actionsList.getSelectedValue();
-                    if(action != null)
+                    if (action != null)
                     {
                         editAction(action);
                     }
@@ -125,21 +120,17 @@ public class ActionsEditor extends AbstractEditor<EventList<Action>>
         });
 
         // clone data
-        actionsClone = new BasicEventList<Action>();
-        for(Action action : actions)
-        {
-            actionsClone.add(action);
-        }
+        actionsClone = GlazedLists.eventList(storyDataHelper.getActions());
 
         // load data
         actionsList.setModel(new DefaultEventListModel<Action>(actionsClone));
-        libsActionsList.setModel(new DefaultEventListModel<Action>(story.getAllActions()));
+        libsActionsList.setModel(new DefaultEventListModel<Action>(storyDataHelper.getAllActions()));
     }
 
     private boolean editAction(@NotNull Action action)
     {
-        ActionEditor actionEditor = new ActionEditor(this, action, procedures);
-        if(actionEditor.showDialog())
+        ActionEditor actionEditor = new ActionEditor(this, action, storyDataHelper);
+        if (actionEditor.showDialog())
         {
             try
             {

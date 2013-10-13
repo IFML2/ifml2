@@ -6,6 +6,7 @@ import ifml2.editor.DataNotValidException;
 import ifml2.editor.IFML2EditorException;
 import ifml2.om.InstructionList;
 import ifml2.om.Restriction;
+import ifml2.om.Story;
 import ifml2.vm.instructions.Instruction;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,18 +34,18 @@ public class RestrictionEditor extends AbstractEditor<Restriction>
         }
     }
 
-    public RestrictionEditor(Window owner, Restriction restriction)
+    public RestrictionEditor(Window owner, Restriction restriction, final Story.DataHelper storyDataHelper)
     {
         super(owner);
         initializeEditor(EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
 
         // set listeners
-        editReactionButton.setAction(new AbstractAction("Редактировать инструкции...")
+        editReactionButton.setAction(new AbstractAction("Редактировать инструкции...", GUIUtils.EDIT_ELEMENT_ICON)
         {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                InstructionsEditor instructionsEditor = new InstructionsEditor(RestrictionEditor.this, reactionClone);
+                InstructionsEditor instructionsEditor = new InstructionsEditor(RestrictionEditor.this, reactionClone, storyDataHelper);
                 if(instructionsEditor.showDialog())
                 {
                     instructionsEditor.getData(reactionClone);

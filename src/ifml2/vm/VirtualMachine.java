@@ -138,7 +138,8 @@ public class VirtualMachine
             catch (IFML2VMException e)
             {
                 throw new IFML2VMException(e, "{0}\n  в инструкции #{1} ({2})", e.getMessage(),
-                        instructionList.getInstructions().indexOf(instruction) + 1, instruction.toString());
+                                           instructionList.getInstructions().indexOf(instruction) + 1,
+                                           instruction.toString());
             }
         }
 
@@ -164,7 +165,7 @@ public class VirtualMachine
             catch (IFML2Exception e)
             {
                 throw new IFML2VMException(e, "{0}\n  при инициализации переменной процедуры \"{1}\"", e.getMessage(),
-                        procedureVariable.getName());
+                                           procedureVariable.getName());
             }
         }
     }
@@ -183,7 +184,7 @@ public class VirtualMachine
 
     public void showLocName(Location location) throws IFML2Exception
     {
-        // test if inherited
+        // check if inherited
         Procedure inheritor = inheritedSystemProcedures.get(SystemProcedureEnum.SHOW_LOC_NAME);
 
         if (inheritor != null)
@@ -194,12 +195,12 @@ public class VirtualMachine
         else
         {
             // not inherited! do as usual...
-            getEngine().outTextLn(location.getName());
-            getEngine().outTextLn(location.getDescription());
+            engine.outTextLn(location.getName());
+            engine.outTextLn(location.getDescription());
             if (location.getItems().size() > 0)
             {
                 String objectsList = convertObjectsToString(location.getItems());
-                getEngine().outTextLn("А также тут " + objectsList);
+                engine.outTextLn("А также тут " + objectsList);
             }
         }
     }
@@ -278,5 +279,25 @@ public class VirtualMachine
         RunningContext runningContext = new RunningContext(this);
         loadGlobalVariables(runningContext);
         return runningContext;
+    }
+
+    public void setCurrentLocation(Location location)
+    {
+        engine.setCurrentLocation(location);
+    }
+
+    public Story getStory()
+    {
+        return engine.getStory();
+    }
+
+    public void outTextLn(String text)
+    {
+        engine.outTextLn(text);
+    }
+
+    public void outText(String text)
+    {
+        engine.outText(text);
     }
 }

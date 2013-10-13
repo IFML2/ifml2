@@ -6,6 +6,7 @@ import ifml2.editor.IFML2EditorException;
 import ifml2.editor.gui.EditorUtils;
 import ifml2.editor.gui.InstructionsEditor;
 import ifml2.om.InstructionList;
+import ifml2.om.Story;
 import ifml2.vm.instructions.IfInstruction;
 import ifml2.vm.instructions.Instruction;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +31,7 @@ public class IfInstrEditor extends AbstractInstrEditor
     private InstructionList thenInstructionsClone;
     private InstructionList elseInstructionsClone;
 
-    public IfInstrEditor(Window owner, @NotNull IfInstruction instruction)
+    public IfInstrEditor(Window owner, @NotNull IfInstruction instruction, final Story.DataHelper storyDataHelper)
     {
         super(owner);
         initializeEditor(IF_INSTR_EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
@@ -48,7 +49,7 @@ public class IfInstrEditor extends AbstractInstrEditor
                     Instruction instruction = (Instruction) source.getSelectedValue();
                     if (instruction != null)
                     {
-                        EditorUtils.showAssociatedEditor(IfInstrEditor.this, instruction);
+                        EditorUtils.showAssociatedEditor(IfInstrEditor.this, instruction, storyDataHelper);
                     }
                 }
             }
@@ -62,7 +63,7 @@ public class IfInstrEditor extends AbstractInstrEditor
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                InstructionsEditor instructionsEditor = new InstructionsEditor(IfInstrEditor.this, thenInstructionsClone);
+                InstructionsEditor instructionsEditor = new InstructionsEditor(IfInstrEditor.this, thenInstructionsClone, storyDataHelper);
                 if (instructionsEditor.showDialog())
                 {
                     instructionsEditor.getData(thenInstructionsClone);
@@ -74,7 +75,7 @@ public class IfInstrEditor extends AbstractInstrEditor
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                InstructionsEditor instructionsEditor = new InstructionsEditor(IfInstrEditor.this, elseInstructionsClone);
+                InstructionsEditor instructionsEditor = new InstructionsEditor(IfInstrEditor.this, elseInstructionsClone, storyDataHelper);
                 if (instructionsEditor.showDialog())
                 {
                     instructionsEditor.getData(elseInstructionsClone);

@@ -5,6 +5,7 @@ import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ifml2.GUIUtils;
 import ifml2.editor.gui.instructions.InstructionTypeEnum;
 import ifml2.om.InstructionList;
+import ifml2.om.Story;
 import ifml2.vm.instructions.Instruction;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,6 +35,7 @@ public class InstructionsEditor extends AbstractEditor<InstructionList>
     // data to clone
     private InstructionList instructionListClone;
 
+    private Story.DataHelper storyDataHelper;
     private final AbstractAction editInstrAction = new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON)
     {
         @Override
@@ -42,7 +44,7 @@ public class InstructionsEditor extends AbstractEditor<InstructionList>
             Instruction selectedInstr = (Instruction) instructionsList.getSelectedValue();
             if(selectedInstr != null)
             {
-                EditorUtils.showAssociatedEditor(InstructionsEditor.this, selectedInstr);
+                EditorUtils.showAssociatedEditor(InstructionsEditor.this, selectedInstr, storyDataHelper);
             }
         }
     };
@@ -90,9 +92,10 @@ public class InstructionsEditor extends AbstractEditor<InstructionList>
         }
     };
 
-    public InstructionsEditor(Window owner, final InstructionList instructionList)
+    public InstructionsEditor(Window owner, final InstructionList instructionList, final Story.DataHelper storyDataHelper)
     {
         super(owner);
+        this.storyDataHelper = storyDataHelper;
         initializeEditor(INSTR_EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
 
         // -- form actions init --
@@ -108,7 +111,7 @@ public class InstructionsEditor extends AbstractEditor<InstructionList>
                     try
                     {
                         Instruction instruction = instrType.createInstrInstance();
-                        if (EditorUtils.showAssociatedEditor(InstructionsEditor.this, instruction))
+                        if (EditorUtils.showAssociatedEditor(InstructionsEditor.this, instruction, storyDataHelper))
                         {
                             instructionListClone.getInstructions().add(instruction);
                             instructionsList.setSelectedValue(instruction, true);
@@ -157,7 +160,7 @@ public class InstructionsEditor extends AbstractEditor<InstructionList>
                     Instruction instruction = (Instruction) instructionsList.getSelectedValue();
                     if(instruction != null)
                     {
-                        EditorUtils.showAssociatedEditor(InstructionsEditor.this, instruction);
+                        EditorUtils.showAssociatedEditor(InstructionsEditor.this, instruction, storyDataHelper);
                     }
                 }
             }

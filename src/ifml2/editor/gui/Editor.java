@@ -41,7 +41,7 @@ public class Editor extends JFrame
             if (editLocation(location))
             {
                 story.addLocation(location);
-                setStoryEdited();
+                markStoryEdited();
                 reloadDataInForm();
                 locationsList.setSelectedValue(location, true);
             }
@@ -67,7 +67,7 @@ public class Editor extends JFrame
                         "Удаление локации", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE))
                 {
                     story.getLocations().remove(location);
-                    setStoryEdited();
+                    markStoryEdited();
                     reloadDataInForm();
                 }
             }
@@ -81,7 +81,7 @@ public class Editor extends JFrame
             Item item = (Item) itemsList.getSelectedValue();
             if (editItem(item))
             {
-                setStoryEdited();
+                markStoryEdited();
                 reloadDataInForm();
                 itemsList.setSelectedValue(item, true);
             }
@@ -99,7 +99,7 @@ public class Editor extends JFrame
                         "Удаление предмета", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
                 {
                     story.getItems().remove(item);
-                    setStoryEdited();
+                    markStoryEdited();
                     reloadDataInForm();
                 }
             }
@@ -172,7 +172,7 @@ public class Editor extends JFrame
                 if (editItem(item))
                 {
                     story.addItem(item);
-                    setStoryEdited();
+                    markStoryEdited();
                     reloadDataInForm();
                     itemsList.setSelectedValue(item, true);
                 }
@@ -270,7 +270,7 @@ public class Editor extends JFrame
         updateTitle();
     }
 
-    private void setStoryEdited()
+    private void markStoryEdited()
     {
         setStoryEdited(true);
     }
@@ -468,11 +468,12 @@ public class Editor extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                StoryOptionsEditor storyOptionsEditor = new StoryOptionsEditor(Editor.this, story.storyOptions, story.getLocations(), story.getProcedures());
+                StoryOptionsEditor storyOptionsEditor = new StoryOptionsEditor(Editor.this, story.getStoryOptions(),
+                                                                               story.getDataHelper());
                 if (storyOptionsEditor.showDialog())
                 {
-                    setStoryEdited();
-                    storyOptionsEditor.getData(story.storyOptions);
+                    markStoryEdited();
+                    storyOptionsEditor.getData(story.getStoryOptions());
                 }
             }
         });
@@ -485,7 +486,7 @@ public class Editor extends JFrame
                 UsedLibsEditor usedLibsEditor = new UsedLibsEditor(Editor.this, story.getLibraries());
                 if (usedLibsEditor.showDialog())
                 {
-                    setStoryEdited();
+                    markStoryEdited();
                 }
             }
         });
@@ -495,10 +496,10 @@ public class Editor extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                ProceduresEditor proceduresEditor = new ProceduresEditor(Editor.this, story.getProcedures());
+                ProceduresEditor proceduresEditor = new ProceduresEditor(Editor.this, story.getProcedures(), story.getDataHelper());
                 if (proceduresEditor.showDialog())
                 {
-                    setStoryEdited();
+                    markStoryEdited();
                 }
             }
         });
@@ -508,7 +509,7 @@ public class Editor extends JFrame
             public void actionPerformed(ActionEvent e)
             {
                 EventList<Action> actions = story.getActions();
-                ActionsEditor actionsEditor = new ActionsEditor(Editor.this, actions, story.getProcedures(), story);
+                ActionsEditor actionsEditor = new ActionsEditor(Editor.this, story.getDataHelper());
                 if (actionsEditor.showDialog())
                 {
                     try
@@ -519,7 +520,7 @@ public class Editor extends JFrame
                     {
                         GUIUtils.showErrorMessage(Editor.this, ex);
                     }
-                    setStoryEdited();
+                    markStoryEdited();
                 }
             }
         });
@@ -625,11 +626,11 @@ public class Editor extends JFrame
     {
         if (location != null)
         {
-            LocationEditor locationEditor = new LocationEditor(this, story, location);
+            LocationEditor locationEditor = new LocationEditor(this, location, story.getDataHelper());
             if (locationEditor.showDialog())
             {
                 locationEditor.getData(location);
-                setStoryEdited();
+                markStoryEdited();
                 return true;
             }
         }
@@ -693,7 +694,7 @@ public class Editor extends JFrame
     {
         if (item != null)
         {
-            ItemEditor itemEditor = new ItemEditor(this, story, item);
+            ItemEditor itemEditor = new ItemEditor(this, item, story.getDataHelper());
             if (itemEditor.showDialog())
             {
                 itemEditor.getData(item);

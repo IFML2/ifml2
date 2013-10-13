@@ -35,17 +35,18 @@ public class ItemEditor extends AbstractEditor<Item>
     private JButton addHookButton;
     private JButton editHookButton;
     private JButton deleteHookButton;
-    private Story story = null;
     private boolean toGenerateId = false;
     // clones
     private EventList<Attribute> attributesClone = null;
     private WordLinks wordLinksClone = null;
     private EventList<Hook> hooksClone = null;
     private Item item;
+    private Story.DataHelper storyDataHelper;
 
-    public ItemEditor(Window owner, @NotNull final Story story, @NotNull final Item item)
+    public ItemEditor(Window owner, @NotNull final Item item, final Story.DataHelper storyDataHelper)
     {
         super(owner);
+        this.storyDataHelper = storyDataHelper;
         initializeEditor(ITEM_EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
 
         this.item = item;
@@ -57,7 +58,9 @@ public class ItemEditor extends AbstractEditor<Item>
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                ObjectAttributesEditor objectAttributesEditor = new ObjectAttributesEditor(ItemEditor.this, attributesClone, ItemEditor.this.story);
+                ObjectAttributesEditor objectAttributesEditor = new ObjectAttributesEditor(ItemEditor.this,
+                                                                                           attributesClone,
+                                                                                           storyDataHelper);
                 if (objectAttributesEditor.showDialog())
                 {
                     objectAttributesEditor.getData(attributesClone);
@@ -69,7 +72,8 @@ public class ItemEditor extends AbstractEditor<Item>
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                WordLinksEditor wordLinksEditor = new WordLinksEditor(ItemEditor.this, story.getDictionary(), wordLinksClone);
+                WordLinksEditor wordLinksEditor = new WordLinksEditor(ItemEditor.this, storyDataHelper.getDictionary(),
+                                                                      wordLinksClone);
                 if (wordLinksEditor.showDialog())
                 {
                     wordLinksEditor.getData(wordLinksClone);
@@ -132,8 +136,12 @@ public class ItemEditor extends AbstractEditor<Item>
             public void actionPerformed(ActionEvent e)
             {
                 Hook selectedHook = (Hook) hooksList.getSelectedValue();
-                if (selectedHook != null && JOptionPane.showConfirmDialog(ItemEditor.this, "Вы действительно хотите удалить выбранный перехват?",
-                        "Удаление перехвата", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
+                if (selectedHook != null && JOptionPane.showConfirmDialog(ItemEditor.this,
+                                                                          "Вы действительно хотите удалить выбранный перехват?",
+                                                                          "Удаление перехвата",
+                                                                          JOptionPane.YES_NO_OPTION,
+                                                                          JOptionPane.QUESTION_MESSAGE) ==
+                                            JOptionPane.YES_OPTION)
                 {
                     hooksClone.remove(selectedHook);
                 }
@@ -141,7 +149,6 @@ public class ItemEditor extends AbstractEditor<Item>
         });
 
         // set common variables
-        this.story = story;
         String id = item.getId();
         toGenerateId = id == null || "".equals(id);
 
@@ -202,15 +209,16 @@ public class ItemEditor extends AbstractEditor<Item>
         // set item in inventory
         itemInInventoryCheck.setSelected(item.getStartingPosition().getInventory());
         // set item in locations
-        itemInLocationsList.setModel(new DefaultEventListModel<Location>(story.getLocations()));
-        DefaultEventSelectionModel<Location> selectionModel = new DefaultEventSelectionModel<Location>(story.getLocations());
+        itemInLocationsList.setModel(new DefaultEventListModel<Location>(storyDataHelper.getLocations()));
+        DefaultEventSelectionModel<Location> selectionModel = new DefaultEventSelectionModel<Location>(
+                storyDataHelper.getLocations());
         itemInLocationsList.setSelectionModel(selectionModel);
         selectionModel.setValueIsAdjusting(true);
         try
         {
             for (Location startLocation : item.getStartingPosition().getLocations())
             {
-                int index = story.getLocations().indexOf(startLocation);
+                int index = storyDataHelper.getLocations().indexOf(startLocation);
                 selectionModel.addSelectionInterval(index, index);
             }
         }
@@ -248,7 +256,7 @@ public class ItemEditor extends AbstractEditor<Item>
     {
         try
         {
-            HookEditor hookEditor = new HookEditor(ItemEditor.this, hook, story.getAllActions(), true);
+            HookEditor hookEditor = new HookEditor(ItemEditor.this, hook, true, storyDataHelper);
             if (hookEditor.showDialog())
             {
                 hookEditor.getData(hook);
@@ -266,7 +274,7 @@ public class ItemEditor extends AbstractEditor<Item>
     {
         if (toGenerateId)
         {
-            idText.setText(story.generateIdByName(nameText.getText(), Item.class));
+            idText.setText(storyDataHelper.generateIdByName(nameText.getText(), Item.class));
         }
     }
 
@@ -292,20 +300,22 @@ public class ItemEditor extends AbstractEditor<Item>
             throw new DataNotValidException("У предмета должен быть задан идентификатор.", idText);
         }
 
-        Object object = story.findObjectById(id);
+        Object object = storyDataHelper.findObjectById(id);
         if (object != null && !object.equals(item))
         {
             String className = null;
             try
             {
-                className = story.getObjectClassName(object);
+                className = storyDataHelper.getObjectClassName(object);
             }
             catch (IFML2Exception e)
             {
                 GUIUtils.showErrorMessage(this, e);
             }
-            throw new DataNotValidException("У предмета должен быть уникальный идентификатор - не пересекаться с другими локациями, предметами и словарём.\n" +
-                    MessageFormat.format("Найден другой объект с тем же идентификатором: \"{0}\" типа \"{1}\".", object, className), idText);
+            throw new DataNotValidException(
+                    "У предмета должен быть уникальный идентификатор - не пересекаться с другими локациями, предметами и словарём.\n" +
+                    MessageFormat.format("Найден другой объект с тем же идентификатором: \"{0}\" типа \"{1}\".", object,
+                                         className), idText);
         }
     }
 

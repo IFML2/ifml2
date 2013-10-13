@@ -138,7 +138,7 @@ public class RunningContext
 
     public Story getStory()
     {
-        return virtualMachine.getEngine().getStory();
+        return virtualMachine.getStory();
     }
 
     public void setContextVariable(String name, Value value)

@@ -259,11 +259,8 @@
         <choice minOccurs="0" maxOccurs="unbounded">
             <!--element name="showLocName" type="ifml2:instructionShowLocNameType"/-->
             <element name="goToLoc" type="ifml2:instructionGoToLocationType"/>
-            <!--<element name="showItemDesc" type="ifml2:instructionShowItemDescType"/>-->
             <!--<element name="showInventory" type="ifml2:instructionShowInventoryType"/>-->
-            <!--<element name="getItem" type="ifml2:instructionGetItemType"/>>-->
             <element name="showMessage" type="ifml2:instructionShowMessageType"/>
-            <!--element name="dropItem" type="ifml2:instructionDropItemType"/-->
             <element name="if" type="ifml2:instructionIfType"/>
             <element name="loop" type="ifml2:instructionLoopType"/>
             <element name="var" type="ifml2:instructionSetVarType"/>

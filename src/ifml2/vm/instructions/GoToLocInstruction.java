@@ -10,8 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "goToLoc")
 public class GoToLocInstruction extends Instruction
 {
-    @XmlAttribute(name = "location")
-    private String locationExpr;
+    private String locationExpr = "";
 
     public static String getTitle()
     {
@@ -28,9 +27,26 @@ public class GoToLocInstruction extends Instruction
             throw new IFML2Exception("Туда нельзя пройти.");
         }
 
-        virtualMachine.getEngine().setCurrentLocation(location);
+        virtualMachine.setCurrentLocation(location);
 
-        // run sho loc name instruction
+        // run show loc name instruction
         virtualMachine.showLocName(location);
+    }
+
+    public String getLocationExpr()
+    {
+        return locationExpr;
+    }
+
+    @XmlAttribute(name = "location")
+    public void setLocationExpr(String locationExpr)
+    {
+        this.locationExpr = locationExpr;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Перейти в локацию: " + locationExpr;
     }
 }

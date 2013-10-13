@@ -301,7 +301,6 @@
                                     <then>
                                         <showMessage position="1" type="text" message="Вы срубили одну лиану киркой!"/>
                                         <moveItem position="2" item="CтволЗасохшейЛианы" to="инвентарий"/>
-                                        <!--<getItem position="2" item="CтволЗасохшейЛианы"/>-->
                                         <var position="3" name="СрубилЛиану" value="да"/>
                                     </then>
                                     <else>
@@ -408,7 +407,6 @@
                     <then>
                         <goToLoc position="1" location="Растительность"/>
                         <moveItem position="2" item="КиркаПред" to="инвентарий"/>
-                        <!--<getItem position="2" item="КиркаПред"/>-->
                     </then>
                     <else>
                         <showMessage position="1" type="text" message="Не знаю такой отладочной команды."/>

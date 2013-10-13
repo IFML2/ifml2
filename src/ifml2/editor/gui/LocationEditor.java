@@ -47,13 +47,14 @@ public class LocationEditor extends AbstractEditor<Location>
     private boolean toGenerateId = false;
     private ArrayList<Item> itemsClone = null;
     private EventList<Attribute> attributesClone = null;
-    private Story story = null;
     private EventList<Hook> hooksClone = null;
     private Location location;
+    private Story.DataHelper storyDataHelper;
 
-    public LocationEditor(Window owner, final Story story, Location location)
+    public LocationEditor(Window owner, Location location, final Story.DataHelper storyDataHelper)
     {
         super(owner);
+        this.storyDataHelper = storyDataHelper;
         initializeEditor(LOCATION_EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
 
         this.location = location;
@@ -112,7 +113,8 @@ public class LocationEditor extends AbstractEditor<Location>
                 Item item = (Item) itemsList.getSelectedValue();
                 if (item != null)
                 {
-                    int answer = JOptionPane.showConfirmDialog(LocationEditor.this, "Вы уверены, что хотите удалить этот предмет?");
+                    int answer = JOptionPane
+                            .showConfirmDialog(LocationEditor.this, "Вы уверены, что хотите удалить этот предмет?");
                     if (answer == 0)
                     {
                         itemsClone.remove(item);
@@ -126,7 +128,9 @@ public class LocationEditor extends AbstractEditor<Location>
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                ObjectAttributesEditor objectAttributesEditor = new ObjectAttributesEditor(LocationEditor.this, attributesClone, story);
+                ObjectAttributesEditor objectAttributesEditor = new ObjectAttributesEditor(LocationEditor.this,
+                                                                                           attributesClone,
+                                                                                           storyDataHelper);
                 if (objectAttributesEditor.showDialog())
                 {
                     updateAttributes();
@@ -189,8 +193,12 @@ public class LocationEditor extends AbstractEditor<Location>
             public void actionPerformed(ActionEvent e)
             {
                 Hook selectedHook = (Hook) hooksList.getSelectedValue();
-                if (selectedHook != null && JOptionPane.showConfirmDialog(LocationEditor.this, "Вы действительно хотите удалить выбранный перехват?",
-                        "Удаление перехвата", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
+                if (selectedHook != null && JOptionPane.showConfirmDialog(LocationEditor.this,
+                                                                          "Вы действительно хотите удалить выбранный перехват?",
+                                                                          "Удаление перехвата",
+                                                                          JOptionPane.YES_NO_OPTION,
+                                                                          JOptionPane.QUESTION_MESSAGE) ==
+                                            JOptionPane.YES_OPTION)
                 {
                     hooksClone.remove(selectedHook);
                 }
@@ -246,10 +254,10 @@ public class LocationEditor extends AbstractEditor<Location>
             }
         });
 
-        updateDictionaryLinks(story.getDictionary());
+        updateDictionaryLinks(storyDataHelper.getDictionary());
         //TODO:dictWordCombo.setSelectedItem(location.getWord());
 
-        updateLocationLinks(story.getLocations());
+        updateLocationLinks(storyDataHelper.getLocations());
         northCombo.setSelectedItem(location.getNorth());
         eastCombo.setSelectedItem(location.getEast());
         southCombo.setSelectedItem(location.getSouth());
@@ -264,8 +272,6 @@ public class LocationEditor extends AbstractEditor<Location>
         locationNameText.setText(location.getName());
         locationIDText.setText(location.getId());
         descriptionText.setText(location.getDescription());
-
-        this.story = story;
 
         String id = location.getId();
         toGenerateId = id == null || "".equals(id);
@@ -294,7 +300,7 @@ public class LocationEditor extends AbstractEditor<Location>
     {
         try
         {
-            HookEditor hookEditor = new HookEditor(LocationEditor.this, hook, story.getAllActions(), false);
+            HookEditor hookEditor = new HookEditor(LocationEditor.this, hook, false, storyDataHelper);
             if (hookEditor.showDialog())
             {
                 hookEditor.getData(hook);
@@ -312,7 +318,7 @@ public class LocationEditor extends AbstractEditor<Location>
     {
         if (toGenerateId)
         {
-            locationIDText.setText(story.generateIdByName(locationNameText.getText(), Location.class));
+            locationIDText.setText(storyDataHelper.generateIdByName(locationNameText.getText(), Location.class));
         }
     }
 
@@ -356,7 +362,7 @@ public class LocationEditor extends AbstractEditor<Location>
     {
         if (item != null)
         {
-            ItemEditor itemEditor = new ItemEditor(LocationEditor.this, story, item);
+            ItemEditor itemEditor = new ItemEditor(LocationEditor.this, item, storyDataHelper);
             if (itemEditor.showDialog())
             {
                 itemEditor.getData(item);
@@ -383,20 +389,22 @@ public class LocationEditor extends AbstractEditor<Location>
             throw new DataNotValidException("У локации должен быть задан идентификатор.", locationIDText);
         }
 
-        Object object = story.findObjectById(id);
+        Object object = storyDataHelper.findObjectById(id);
         if (object != null && !object.equals(location))
         {
             String className = null;
             try
             {
-                className = story.getObjectClassName(object);
+                className = storyDataHelper.getObjectClassName(object);
             }
             catch (IFML2Exception e)
             {
                 GUIUtils.showErrorMessage(this, e);
             }
-            throw new DataNotValidException("У локации должен быть уникальный идентификатор - не пересекаться с другими локациями, предметами и словарём.\n" +
-                    MessageFormat.format("Найден другой объект с тем же идентификатором: \"{0}\" типа \"{1}\".", object, className), locationIDText);
+            throw new DataNotValidException(
+                    "У локации должен быть уникальный идентификатор - не пересекаться с другими локациями, предметами и словарём.\n" +
+                    MessageFormat.format("Найден другой объект с тем же идентификатором: \"{0}\" типа \"{1}\".", object,
+                                         className), locationIDText);
         }
     }
 

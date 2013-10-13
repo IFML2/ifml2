@@ -729,8 +729,6 @@
                 <ifml2:parameter name="предмет"/>
             </ifml2:parameters>
             <ifml2:procedureBody>
-                <!--trying avoid standard mechanism-ifml2:showItemDesc position="1" item="предмет"/-->
-                <!--ifml2:showMessage position="1" type="expression" message="предмет.имя" beginWithCap="true" carriageReturn="false"/-->
                 <ifml2:if position="2" condition="предмет.открываемый">
                     <ifml2:then>
                         <ifml2:if position="1" condition="предмет.открыт">
@@ -889,7 +887,6 @@
             </ifml2:parameters>
             <ifml2:procedureBody>
                 <ifml2:moveItem position="1" item="предмет" to="ТекущаяЛокация.Предметы"/>
-                <!--<ifml2:dropItem position="1" item="предмет"/>-->
                 <ifml2:showMessage position="2" type="expression" message="'Вы выбросили ' + предмет.вп + '.'"/>
             </ifml2:procedureBody>
         </ifml2:procedure>

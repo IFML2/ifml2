@@ -30,7 +30,7 @@ public class ObjectAttributesEditor extends AbstractEditor<EventList<Attribute>>
 
     private EventList<Attribute> attributesClone = null;
 
-    public ObjectAttributesEditor(Window owner, @NotNull EventList<Attribute> attributes, @NotNull Story story)
+    public ObjectAttributesEditor(Window owner, @NotNull EventList<Attribute> attributes, @NotNull Story.DataHelper storyDataHelper)
     {
         super(owner);
         initializeEditor(OBJECT_ATTRIBUTES_EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
@@ -84,7 +84,7 @@ public class ObjectAttributesEditor extends AbstractEditor<EventList<Attribute>>
         Vector<Vector<Object>> data = new Vector<Vector<Object>>();
         //TODO: iterate through story attributes
         // iterate through libs attributes
-        for(Library library : story.getLibraries())
+        for(Library library : storyDataHelper.getLibraries())
         {
             for(Attribute attribute : library.attributes)
             {

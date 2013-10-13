@@ -44,7 +44,7 @@ public class ShowMessageInstrEditor extends AbstractInstrEditor
                 throw new IFML2EditorException(MessageFormat.format(TYPE_ERROR, instruction.getType()));
         }
 
-        messageText.setText(instruction.getMessage());
+        messageText.setText(instruction.getMessageExpr());
 
         beginWithCapCheck.setSelected(instruction.getBeginWithCap());
         carriageReturnCheck.setSelected(instruction.getCarriageReturn());
@@ -76,7 +76,7 @@ public class ShowMessageInstrEditor extends AbstractInstrEditor
             throw new IFML2EditorException("No type is selected!");
         }
 
-        showMessageInstr.setMessage(messageText.getText());
+        showMessageInstr.setMessageExpr(messageText.getText());
 
         showMessageInstr.setBeginWithCap(beginWithCapCheck.isSelected());
         showMessageInstr.setCarriageReturn(carriageReturnCheck.isSelected());

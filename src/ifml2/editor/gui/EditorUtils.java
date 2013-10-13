@@ -1,32 +1,38 @@
 package ifml2.editor.gui;
 
 import ifml2.GUIUtils;
+import ifml2.editor.IFML2EditorException;
 import ifml2.editor.gui.instructions.AbstractInstrEditor;
 import ifml2.editor.gui.instructions.InstructionTypeEnum;
+import ifml2.om.Story;
 import ifml2.vm.instructions.Instruction;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Type;
 import java.text.MessageFormat;
 
 public class EditorUtils
 {
     public static InstructionTypeEnum askInstructionType(Dialog owner)
     {
-        return (InstructionTypeEnum) JOptionPane.showInputDialog(owner, "Выберите тип инструкции",
-                "Новая инструкция", JOptionPane.QUESTION_MESSAGE, null, InstructionTypeEnum.values(),
-                InstructionTypeEnum.SHOW_MESSAGE);
+        return (InstructionTypeEnum) JOptionPane
+                .showInputDialog(owner, "Выберите тип инструкции", "Новая инструкция", JOptionPane.QUESTION_MESSAGE,
+                                 null, InstructionTypeEnum.values(), InstructionTypeEnum.SHOW_MESSAGE);
     }
 
     /**
      * Shows editor associated for given instruction and update it if closed by Ok button.
      *
-     * @param owner       Dialog-owner of showing editor
-     * @param instruction Instruction to edit
+     * @param owner           Dialog-owner of showing editor
+     * @param instruction     Instruction to edit
+     * @param storyDataHelper Story.DataHelper for acquiring additional data
      * @return true if Ok button was pressed and instruction was updated and false in other case
      */
-    public static boolean showAssociatedEditor(Dialog owner, @NotNull Instruction instruction)
+    public static boolean showAssociatedEditor(Dialog owner, @NotNull Instruction instruction, Story.DataHelper storyDataHelper)
     {
         try
         {
@@ -35,17 +41,52 @@ public class EditorUtils
             Class<? extends AbstractInstrEditor> editorClass = instrType.getAssociatedEditor();
             if (editorClass != null)
             {
-                AbstractInstrEditor instrEditor = editorClass.getConstructor(Window.class, instrClass).newInstance(owner, instruction);
-                if (instrEditor.showDialog())
+                for (Constructor<?> constructor : editorClass.getConstructors())
                 {
-                    instrEditor.getInstruction(instruction);
-                    return true;
+                    AbstractInstrEditor instrEditor = null;
+                    Type[] parameterTypes = constructor.getGenericParameterTypes();
+                    try
+                    {
+                        int length = parameterTypes.length;
+                        if (length >= 2 && parameterTypes[0].equals(Window.class) &&
+                            parameterTypes[1].equals(instrClass))
+                        {
+                            if (length == 2)
+                            {
+                                instrEditor = (AbstractInstrEditor) constructor.newInstance(owner, instruction);
+                            }
+                            else if (length == 3 && parameterTypes[2].equals(Story.DataHelper.class))
+                            {
+                                instrEditor = (AbstractInstrEditor) constructor
+                                        .newInstance(owner, instruction, storyDataHelper);
+                            }
+                        }
+                    }
+                    catch (InvocationTargetException e)
+                    {
+                        throw e.getTargetException();
+                    }
+
+                    if (instrEditor != null)
+                    {
+                        if (instrEditor.showDialog())
+                        {
+                            instrEditor.getInstruction(instruction);
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
                 }
+                throw new IFML2EditorException("Для инструкции {0} не найден подходящий редактор (конструктор)",
+                                               instrType.getTitle());
             }
             else
             {
-                JOptionPane.showMessageDialog(owner, MessageFormat.format("Инструкция \"{0}\" пока не редактируется",
-                        instrType.getTitle()));
+                JOptionPane.showMessageDialog(owner, MessageFormat
+                        .format("Инструкция \"{0}\" пока не редактируется", instrType.getTitle()));
             }
         }
         catch (Throwable e)
