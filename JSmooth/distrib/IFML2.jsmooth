@@ -6,7 +6,6 @@
 <JVMSearchPath>jdkpath</JVMSearchPath>
 <JVMSearchPath>exepath</JVMSearchPath>
 <JVMSearchPath>jview</JVMSearchPath>
-<arguments></arguments>
 <classPath>..\..\out\artifacts\ifml2\ifml2.jar</classPath>
 <classPath>..\..\out\artifacts\ifml2\glazedlists_java15-1.9-20110828.184933-10.jar</classPath>
 <classPath>..\..\out\artifacts\ifml2\log4j-1.2.17.jar</classPath>

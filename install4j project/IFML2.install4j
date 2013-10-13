@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="5.1.6" transformSequenceNumber="4">
-  <directoryPresets config="C:/Users/realsonic/Documents/ЯРИЛ 2.0/ifml2 project/out/artifacts/ifml2/annotations.jar" />
-  <application name="ЯРИЛ 2.0" distributionSourceDir="" applicationId="3169-8645-0418-5303" mediaDir="C:/Users/realsonic/Documents/ЯРИЛ 2.0/ifml2 project/install4j project" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="9" lzmaCompression="true" pack200Compression="true" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="true" shortName="${compiler:sys.fullName}" publisher="TOY Soft" publisherWeb="http://toysoft.narod.ru" version="P10.3.3" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" installerName="" javaMinVersion="1.6" javaMaxVersion="1.6" allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
+  <directoryPresets config="../../../../Documents/ЯРИЛ 2.0/ifml2 project/log4j.xml" />
+  <application name="ЯРИЛ 2.0" distributionSourceDir="" applicationId="3169-8645-0418-5303" mediaDir="./" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="9" lzmaCompression="true" pack200Compression="true" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="true" shortName="${compiler:sys.fullName}" publisher="TOY Soft" publisherWeb="http://toysoft.narod.ru" version="P10.4.2" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" installerName="" javaMinVersion="1.6" javaMaxVersion="1.6" allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="true" languageSelectionInPrincipalLanguage="false">
       <principalLanguage id="ru" customLocalizationFile="" />
       <additionalLanguages>
@@ -32,7 +32,7 @@
       <mountPoint id="88" root="87" location="" mode="755" />
     </mountPoints>
     <entries>
-      <dirEntry mountPoint="23" file="C:/Users/realsonic/Documents/ЯРИЛ 2.0/ifml2 project/libs" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="libs" excludeSuffixes="" dirMode="755" overrideDirMode="false">
+      <dirEntry mountPoint="23" file="../libs" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="libs" excludeSuffixes="" dirMode="755" overrideDirMode="false">
         <exclude>
           <entry location=".svn" fileType="regular" />
           <entry location="standard/.svn" fileType="regular" />
@@ -41,12 +41,12 @@
           <entry location="standard/verbs.xml.old.20120219" fileType="regular" />
         </exclude>
       </dirEntry>
-      <fileEntry mountPoint="23" file="C:/Users/realsonic/Documents/ЯРИЛ 2.0/ifml2 project/out/artifacts/IFML2/IFML2.jar" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
-      <fileEntry mountPoint="23" file="C:/Users/realsonic/Documents/ЯРИЛ 2.0/ifml2 project/lib/glazedlists_java15-1.9-20110828.184933-10.jar" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
-      <fileEntry mountPoint="23" file="C:/Users/realsonic/Documents/ЯРИЛ 2.0/ifml2 project/lib/apache-log4j-1.2.17/log4j-1.2.17.jar" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
-      <fileEntry mountPoint="23" file="C:/Users/realsonic/Documents/ЯРИЛ 2.0/ifml2 project/docs/notes.txt" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
-      <fileEntry mountPoint="23" file="C:/Users/realsonic/Documents/ЯРИЛ 2.0/ifml2 project/log4j.xml" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
-      <dirEntry mountPoint="34" file="C:/Users/realsonic/Documents/ЯРИЛ 2.0/ifml2 project/Games" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="Games" excludeSuffixes="*.zip" dirMode="755" overrideDirMode="false">
+      <fileEntry mountPoint="23" file="../out/artifacts/IFML2/IFML2.jar" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
+      <fileEntry mountPoint="23" file="../lib/glazedlists_java15-1.9-20110828.184933-10.jar" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
+      <fileEntry mountPoint="23" file="../lib/apache-log4j-1.2.17/log4j-1.2.17.jar" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
+      <fileEntry mountPoint="23" file="../docs/notes.txt" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
+      <fileEntry mountPoint="23" file="../log4j.xml" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
+      <dirEntry mountPoint="34" file="../Games" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="Games" excludeSuffixes="*.zip" dirMode="755" overrideDirMode="false">
         <exclude>
           <entry location=".svn" fileType="regular" />
           <entry location="1.xml" fileType="regular" />
@@ -56,7 +56,7 @@
           <entry location="Тайна заброшенного храма 1.xml" fileType="regular" />
         </exclude>
       </dirEntry>
-      <dirEntry mountPoint="88" file="C:/Users/realsonic/Documents/ЯРИЛ 2.0/ifml2 project/tests" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="Tests" excludeSuffixes="" dirMode="755" overrideDirMode="false">
+      <dirEntry mountPoint="88" file="../tests" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="Tests" excludeSuffixes="" dirMode="755" overrideDirMode="false">
         <exclude>
           <entry location=".svn" fileType="regular" />
         </exclude>
@@ -539,7 +539,7 @@
       <excludedComponents />
       <includedDownloadableComponents />
     </windows>
-    <windows name="Windows with JRE 6" id="37" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}_with_java6_${compiler:sys.date}" installDir="${compiler:sys.publisher}\${compiler:sys.fullName}" overridePrincipalLanguage="false" jreBitType="32" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="windows-x86-1.6.0_38" manualJREEntry="false" bundleType="1" jreURL="" jreShared="true" directDownload="false" installOnlyIfNecessary="true" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
+    <windows name="Windows with JRE 6" id="37" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}_j6_${compiler:sys.date}" installDir="${compiler:sys.publisher}\${compiler:sys.fullName}" overridePrincipalLanguage="false" jreBitType="32" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="windows-x86-1.6.0_45" manualJREEntry="false" bundleType="1" jreURL="" jreShared="true" directDownload="false" installOnlyIfNecessary="true" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
       <excludedLaunchers />
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />

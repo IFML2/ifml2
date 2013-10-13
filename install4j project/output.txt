@@ -1,3 +1,3 @@
 # List of generated media files. The columns are tab-separated:
 # id | media file type | display name | media file path
-37	windows	Windows with JRE 6	C:\Users\realsonic\Documents\ЯРИЛ 2.0\ifml2 project\install4j project\ЯРИЛ_2_0_windows_P10_3_3_with_java6_20130722.exe
+37	windows	Windows with JRE 6	C:\Users\realsonic\dev\ЯРИЛ 2.0\ifml2 project\install4j project\ЯРИЛ_2_0_windows_P10_4_2_j6_20130930.exe
