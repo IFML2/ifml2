@@ -114,11 +114,6 @@ public class Engine
         outText(text + "\n");
     }
 
-    public void outTextLn(String text, Object... arguments)
-    {
-        outTextLn(MessageFormat.format(text, arguments));
-    }
-
     public void initGame() throws IFML2Exception
     {
         LOG.info("Initializing game...");
