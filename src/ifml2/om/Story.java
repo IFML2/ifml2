@@ -436,5 +436,26 @@ public class Story
         {
             return procedures;
         }
+
+        public EventList<Item> getItems()
+        {
+            return items;
+        }
+
+        public Item findItemById(@NotNull String id)
+        {
+            String loweredId = id.trim().toLowerCase();
+
+            if (objectsHeap.containsKey(loweredId))
+            {
+                IFMLObject object = objectsHeap.get(loweredId);
+                if (object instanceof Item)
+                {
+                    return (Item) object;
+                }
+            }
+
+            return null;
+        }
     }
 }

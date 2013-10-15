@@ -13,8 +13,8 @@ import java.util.List;
 @XmlRootElement(name = "moveItem")
 public class MoveItemInstruction extends Instruction
 {
-    private String itemExpr;
-    private String toCollectionExpr;
+    private String itemExpr = "";
+    private String toCollectionExpr = "";
 
     public static String getTitle()
     {

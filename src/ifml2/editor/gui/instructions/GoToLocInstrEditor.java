@@ -64,7 +64,7 @@ public class GoToLocInstrEditor extends AbstractInstrEditor
 
         // detect if location expression is location id
         Location location = storyDataHelper.findLocationById(locationExpr);
-        if(location != null) // location by id is found
+        if(location != null || "".equals(locationExpr)) // location by id is found or expression is empty
         {
             locRadio.setSelected(true);
             locationsCombo.setSelectedItem(location);
@@ -106,7 +106,7 @@ public class GoToLocInstrEditor extends AbstractInstrEditor
         {
             throw new DataNotValidException("Не выбрана локация.", locationsCombo);
         }
-        if(exprRadio.isSelected() && "".equalsIgnoreCase(locExprText.getText().trim()))
+        if(exprRadio.isSelected() && "".equals(locExprText.getText().trim()))
         {
             throw new DataNotValidException("Не введено выражение.", locExprText);
         }
