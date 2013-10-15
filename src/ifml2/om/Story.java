@@ -49,7 +49,7 @@ public class Story
     @XmlElement(name = LOCATIONS_LOCATION_ELEMENT)
     private EventList<Location> locations = new BasicEventList<Location>();
 
-    // subscribe to location changes for items update
+    // subscribe to location changes for object tree update
     {
         locations.addListEventListener(new ListEventListener<Location>()
         {
@@ -58,6 +58,7 @@ public class Story
             {
                 while (listChanges.next() && listChanges.getType() == ListEvent.DELETE)
                 {
+                    // delete from items
                     for (Item item : items)
                     {
                         EventList<Location> startLocations = item.getStartingPosition().getLocations();
@@ -69,10 +70,36 @@ public class Story
                             }
                         }
                     }
-                    /*for(Location location : locations)
+
+                    // delete from locations
+                    for(Location location : locations)
                     {
-                        //todo: delete links from north, south etc.
-                    }*/
+                        if(!locations.contains(location.getNorth()))
+                        {
+                            location.setNorth(null);
+                        }
+                        if(!locations.contains(location.getEast()))
+                        {
+                            location.setEast(null);
+                        }
+                        if(!locations.contains(location.getSouth()))
+                        {
+                            location.setSouth(null);
+                        }
+                        if(!locations.contains(location.getWest()))
+                        {
+                            location.setWest(null);
+                        }
+                        if(!locations.contains(location.getUp()))
+                        {
+                            location.setUp(null);
+                        }
+                        if(!locations.contains(location.getDown()))
+                        {
+                            location.setDown(null);
+                        }
+                        //todo: delete links from semi-directions (NE, NW, ...)
+                    }
                 }
             }
         });
