@@ -7,7 +7,6 @@
       <sourceFolder url="file://$MODULE_DIR$/unittests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/.idea" />
       <excludeFolder url="file://$MODULE_DIR$/JSmooth" />
-      <excludeFolder url="file://$MODULE_DIR$/install4j project" />
       <excludeFolder url="file://$MODULE_DIR$/install4j project/old" />
       <excludeFolder url="file://$MODULE_DIR$/launch4j" />
       <excludeFolder url="file://$MODULE_DIR$/lib" />
