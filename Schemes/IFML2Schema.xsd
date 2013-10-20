@@ -50,6 +50,7 @@
             <element name="words" type="ifml2:wordsLinksType" minOccurs="0" maxOccurs="1"/>
             <element name="roles" type="ifml2:rolesLinksType" minOccurs="0" maxOccurs="1"/>
             <element name="hooks" type="ifml2:hooksType" minOccurs="0" maxOccurs="1"/>
+            <element name="properties" type="ifml2:propertiesType" minOccurs="0" maxOccurs="1"/>
         </all>
         <attribute name="id" type="ID" use="required"/>
         <attribute name="name" type="string" use="required"/>
@@ -170,11 +171,11 @@
     </complexType>
 
     <complexType name="actionType">
-        <sequence>
+        <all>
             <element minOccurs="1" maxOccurs="1" name="templates" type="ifml2:templatesType"/>
             <element minOccurs="0" maxOccurs="1" name="restrictions" type="ifml2:restrictions"/>
             <element minOccurs="1" maxOccurs="1" name="procedureCall" type="ifml2:procedureCallType"/>
-        </sequence>
+        </all>
         <attribute name="name" type="string" use="required"/>
         <attribute name="description" type="string" use="optional"/>
     </complexType>

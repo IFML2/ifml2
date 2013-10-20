@@ -874,7 +874,7 @@
                     </ifml2:empty>
                     <ifml2:next>
                         <!-- todo заменить на вызов проц-ы Взять-->
-                        <ifml2:moveItem position="1" item="предмет" to="интентарий"/>
+                        <ifml2:moveItem position="1" item="предмет" to="инвентарий"/>
                         <ifml2:showMessage position="2" type="expression" message="'Вы взяли ' + предмет.вп + '.'"/>
                     </ifml2:next>
                 </ifml2:loop>

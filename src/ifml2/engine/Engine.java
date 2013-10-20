@@ -234,12 +234,6 @@ public class Engine
             Action action = parseResult.getAction();
             List<FormalElement> formalElements = parseResult.getFormalElements();
 
-            // check restrictions
-            if (checkActionRestrictions(action, formalElements))
-            {
-                return true;
-            }
-
             // check hooks & run procedure
             HashMap<Hook.HookTypeEnum, List<Hook>> objectHooks = collectObjectHooks(action, formalElements);
             HashMap<Hook.HookTypeEnum, List<Hook>> locationHooks = collectLocationHooks(action);
@@ -259,6 +253,12 @@ public class Engine
                 }
 
                 // ... and finish
+                return true;
+            }
+
+            // check restrictions
+            if (checkActionRestrictions(action, formalElements))
+            {
                 return true;
             }
 
