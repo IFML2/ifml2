@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <updateDescriptor baseUrl="">
-  <entry targetMediaFileId="37" updatableVersionMin="" updatableVersionMax="" fileName="ЯРИЛ_2_0_windows_P10_4_3_j6_20131016.exe" newVersion="P10.4.3" newMediaFileId="37" fileSize="18460672" bundledJre="windows-x86-1.6.0_45" archive="false">
+  <entry targetMediaFileId="37" updatableVersionMin="" updatableVersionMax="" fileName="ЯРИЛ_2_0_windows_DEVELOPER_BUILD_j6_20131020.exe" newVersion="DEVELOPER BUILD" newMediaFileId="37" fileSize="18461184" bundledJre="windows-x86-1.6.0_45" archive="false">
     <comment language="ru" />
     <comment language="en" />
   </entry>
