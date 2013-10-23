@@ -142,7 +142,7 @@ public class TemplateEditor extends AbstractEditor<Template>
                 TemplateElement selectedElement = (TemplateElement) templateList.getSelectedValue();
                 if (selectedElement != null)
                 {
-                    if (GUIUtils.showDeleteConfirmDialog(TemplateEditor.this, "шаблон", "шаблона"))
+                    if (GUIUtils.showDeleteConfirmDialog(TemplateEditor.this, "шаблон", "шаблона", Word.GenderEnum.MASCULINE))
                     {
                         templateClone.getElements().remove(selectedElement);
                     }

@@ -1,6 +1,7 @@
 package ifml2;
 
 import ifml2.editor.gui.ShowMemoDialog;
+import ifml2.om.Word;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -46,21 +47,39 @@ public class GUIUtils
     {
         StringWriter stringWriter = new StringWriter();
         exception.printStackTrace(new PrintWriter(stringWriter));
-        JOptionPane.showMessageDialog(parentComponent, stringWriter.toString(), "Произошла ошибка!", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(parentComponent, stringWriter.toString(), "Произошла ошибка!",
+                                      JOptionPane.ERROR_MESSAGE);
     }
 
     /**
      * Shows delete confirmation dialog.
      *
      * @param owner        Owner window for dialog.
-     * @param objectName   Object name being deleted.
-     * @param objectNameRP Object name being deleted in "Roditelniy" (Genitive) case. Answer the question: "Deletion of what?".
+     * @param objectNameVP Object name being deleted in "Vinitelniy" (Accusative) case. Answers the question: "Delete what?".
+     * @param objectNameRP Object name being deleted in "Roditelniy" (Genitive) case. Answers the question: "Deletion of what?".
+     * @param gender       Gender of word.
      * @return true if user pressed YES.
      */
-    public static boolean showDeleteConfirmDialog(Component owner, String objectName, String objectNameRP)
+    public static boolean showDeleteConfirmDialog(Component owner, String objectNameVP, String objectNameRP, Word.GenderEnum gender)
     {
-        return JOptionPane.showConfirmDialog(owner, MessageFormat.format("Вы действительно хотите удалить этот {0}?", objectName), // todo: этот should be by gender
-                MessageFormat.format("Удаление {0}", objectNameRP), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION;
+        String thisGendered = "";
+        switch (gender)
+        {
+            case MASCULINE:
+                thisGendered = "этот";
+                break;
+            case FEMININE:
+                thisGendered = "эту";
+                break;
+            case NEUTER:
+                thisGendered = "это";
+                break;
+        }
+        String question = MessageFormat.format("Вы действительно хотите удалить {0} {1}?", thisGendered, objectNameVP);
+        String title = MessageFormat.format("Удаление {0}", objectNameRP);
+
+        return JOptionPane.YES_OPTION == JOptionPane
+                .showConfirmDialog(owner, question, title, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
     }
 
     /**
