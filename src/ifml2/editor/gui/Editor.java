@@ -47,8 +47,21 @@ public class Editor extends JFrame
             }
         }
     };
-    private final AbstractAction editLocationAction = new AbstractAction(EDIT_LOCATION_ACTION_NAME, GUIUtils.EDIT_ELEMENT_ICON)
+    private final AbstractAction editLocationAction = new AbstractAction(EDIT_LOCATION_ACTION_NAME,
+                                                                         GUIUtils.EDIT_ELEMENT_ICON)
     {
+        {
+            setEnabled(false); // disabled at start
+            locationsList.addListSelectionListener(new ListSelectionListener()
+            {
+                @Override
+                public void valueChanged(ListSelectionEvent e)
+                {
+                    setEnabled(!locationsList.isSelectionEmpty()); // depends on selection
+                }
+            });
+        }
+
         @Override
         public void actionPerformed(ActionEvent e)
         {
@@ -57,48 +70,27 @@ public class Editor extends JFrame
     };
     private final AbstractAction delLocationAction = new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
     {
+        {
+            setEnabled(false); // disabled at start
+            locationsList.addListSelectionListener(new ListSelectionListener()
+            {
+                @Override
+                public void valueChanged(ListSelectionEvent e)
+                {
+                    setEnabled(!locationsList.isSelectionEmpty()); // depends on selection
+                }
+            });
+        }
+
         @Override
         public void actionPerformed(ActionEvent e)
         {
             Location location = (Location) locationsList.getSelectedValue();
             if (location != null)
             {
-                if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(Editor.this, "Вы уверены, что хотите удалить эту локацию?",
-                        "Удаление локации", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE))
+                if (GUIUtils.showDeleteConfirmDialog(Editor.this, "локацию", "локации", Word.GenderEnum.FEMININE))
                 {
                     story.getLocations().remove(location);
-                    markStoryEdited();
-                    reloadDataInForm();
-                }
-            }
-        }
-    };
-    private final AbstractAction editItemAction = new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON)
-    {
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            Item item = (Item) itemsList.getSelectedValue();
-            if (editItem(item))
-            {
-                markStoryEdited();
-                reloadDataInForm();
-                itemsList.setSelectedValue(item, true);
-            }
-        }
-    };
-    private final AbstractAction delItemAction = new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
-    {
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            Item item = (Item) itemsList.getSelectedValue();
-            if (item != null)
-            {
-                if (JOptionPane.showConfirmDialog(Editor.this, "Вы уверены, что хотите удалить этот предмет?",
-                        "Удаление предмета", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
-                {
-                    story.getItems().remove(item);
                     markStoryEdited();
                     reloadDataInForm();
                 }
@@ -178,8 +170,61 @@ public class Editor extends JFrame
                 }
             }
         });
-        editItemButton.setAction(editItemAction);
-        delItemButton.setAction(delItemAction);
+        editItemButton.setAction(new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON)
+        {
+            {
+                setEnabled(false); // disabled at start
+                itemsList.addListSelectionListener(new ListSelectionListener()
+                {
+                    @Override
+                    public void valueChanged(ListSelectionEvent e)
+                    {
+                        setEnabled(!itemsList.isSelectionEmpty()); // depends on selection
+                    }
+                });
+            }
+
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                Item item = (Item) itemsList.getSelectedValue();
+                if (editItem(item))
+                {
+                    markStoryEdited();
+                    reloadDataInForm();
+                    itemsList.setSelectedValue(item, true);
+                }
+            }
+        });
+        delItemButton.setAction(new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
+        {
+            {
+                setEnabled(false); // disabled at start
+                itemsList.addListSelectionListener(new ListSelectionListener()
+                {
+                    @Override
+                    public void valueChanged(ListSelectionEvent e)
+                    {
+                        setEnabled(!itemsList.isSelectionEmpty()); // depends on selection
+                    }
+                });
+            }
+
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                Item item = (Item) itemsList.getSelectedValue();
+                if (item != null)
+                {
+                    if (GUIUtils.showDeleteConfirmDialog(Editor.this, "предмет", "предмета", Word.GenderEnum.MASCULINE))
+                    {
+                        story.getItems().remove(item);
+                        markStoryEdited();
+                        reloadDataInForm();
+                    }
+                }
+            }
+        });
 
         final JPopupMenu locationPopupMenu = createPopupMenus();
 
@@ -223,26 +268,6 @@ public class Editor extends JFrame
                 }
             }
         });
-
-        locationsList.addListSelectionListener(new ListSelectionListener()
-        {
-            @Override
-            public void valueChanged(ListSelectionEvent e)
-            {
-                updateActions();
-            }
-        });
-
-        itemsList.addListSelectionListener(new ListSelectionListener()
-        {
-            @Override
-            public void valueChanged(ListSelectionEvent e)
-            {
-                updateActions();
-            }
-        });
-
-        updateActions();
     }
 
     public static void main(String[] args)
@@ -280,25 +305,16 @@ public class Editor extends JFrame
      */
     private void updateTitle()
     {
-        String IFML_EDITOR_VERSION = "ЯРИЛ 2.0 Редактор " + Engine.ENGINE_VERSION + (isStoryEdited ? " - * история не сохранена" : "");
+        String IFML_EDITOR_VERSION =
+                "ЯРИЛ 2.0 Редактор " + Engine.ENGINE_VERSION + (isStoryEdited ? " - * история не сохранена" : "");
         setTitle(IFML_EDITOR_VERSION);
     }
 
     private int askAboutSavingStory()
     {
-        return JOptionPane.showConfirmDialog(Editor.this, "Вы хотите сохранить историю перед выходом?",
-                "История не сохранена", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-    }
-
-    private void updateActions()
-    {
-        Object selectedLoc = locationsList.getSelectedValue();
-        editLocationAction.setEnabled(selectedLoc != null);
-        delLocationAction.setEnabled(selectedLoc != null);
-
-        Object selectedItem = itemsList.getSelectedValue();
-        editItemAction.setEnabled(selectedItem != null);
-        delItemAction.setEnabled(selectedItem != null);
+        return JOptionPane
+                .showConfirmDialog(Editor.this, "Вы хотите сохранить историю перед выходом?", "История не сохранена",
+                                   JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
     }
 
     private void reloadDataInForm()
@@ -362,7 +378,8 @@ public class Editor extends JFrame
             for (ValidationEvent validationEvent : ((IFML2LoadXmlException) exception).getEvents())
             {
                 errorMessage += MessageFormat.format("\n\"{0}\" at {1},{2}", validationEvent.getMessage(),
-                        validationEvent.getLocator().getLineNumber(), validationEvent.getLocator().getColumnNumber());
+                                                     validationEvent.getLocator().getLineNumber(),
+                                                     validationEvent.getLocator().getColumnNumber());
             }
         }
         else
@@ -455,7 +472,8 @@ public class Editor extends JFrame
                 }
                 catch (IFML2Exception ex)
                 {
-                    JOptionPane.showMessageDialog(Editor.this, "Ошибка во время сохранения истории: " + ex.getMessage());
+                    JOptionPane
+                            .showMessageDialog(Editor.this, "Ошибка во время сохранения истории: " + ex.getMessage());
                     ReportError(ex, "Ошибка во время сохранения истории");
                 }
             }
@@ -496,7 +514,8 @@ public class Editor extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                ProceduresEditor proceduresEditor = new ProceduresEditor(Editor.this, story.getProcedures(), story.getDataHelper());
+                ProceduresEditor proceduresEditor = new ProceduresEditor(Editor.this, story.getProcedures(),
+                                                                         story.getDataHelper());
                 if (proceduresEditor.showDialog())
                 {
                     markStoryEdited();
@@ -671,7 +690,8 @@ public class Editor extends JFrame
             @Override
             public boolean accept(File file)
             {
-                return file.isDirectory() || file.getName().toLowerCase().endsWith(CommonConstants.STORY_EXTENSION) || !file.exists();
+                return file.isDirectory() || file.getName().toLowerCase().endsWith(CommonConstants.STORY_EXTENSION) ||
+                       !file.exists();
             }
         });
 

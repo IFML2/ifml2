@@ -4,10 +4,7 @@ import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.swing.DefaultEventComboBoxModel;
 import ifml2.GUIUtils;
-import ifml2.om.Location;
-import ifml2.om.Procedure;
-import ifml2.om.Story;
-import ifml2.om.StoryOptions;
+import ifml2.om.*;
 import ifml2.vm.instructions.SetVarInstruction;
 import org.jetbrains.annotations.NotNull;
 
@@ -94,7 +91,8 @@ public class StoryOptionsEditor extends AbstractEditor<StoryOptions>
             public void actionPerformed(ActionEvent e)
             {
                 SetVarInstruction setVarInstruction = (SetVarInstruction) varsList.getSelectedValue();
-                if(setVarInstruction != null && GUIUtils.showDeleteConfirmDialog(StoryOptionsEditor.this, "глобальную переменную", "глобальной переменной"))
+                if(setVarInstruction != null && GUIUtils.showDeleteConfirmDialog(StoryOptionsEditor.this, "глобальную переменную", "глобальной переменной",
+                                                                                 Word.GenderEnum.FEMININE))
                 {
                     varsClone.remove(setVarInstruction);
                 }

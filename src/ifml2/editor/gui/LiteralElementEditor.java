@@ -10,6 +10,7 @@ import ifml2.editor.IFML2EditorException;
 import ifml2.om.LiteralTemplateElement;
 import ifml2.om.Parameter;
 import ifml2.om.Procedure;
+import ifml2.om.Word;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -72,7 +73,8 @@ public class LiteralElementEditor extends AbstractEditor<LiteralTemplateElement>
             public void actionPerformed(ActionEvent e)
             {
                 String selectedSynonym = (String) synonymsList.getSelectedValue();
-                if (selectedSynonym != null && GUIUtils.showDeleteConfirmDialog(LiteralElementEditor.this, "синоним", "синонима"))
+                if (selectedSynonym != null && GUIUtils.showDeleteConfirmDialog(LiteralElementEditor.this, "синоним", "синонима",
+                                                                                Word.GenderEnum.MASCULINE))
                 {
                     synonymsClone.remove(selectedSynonym);
                 }

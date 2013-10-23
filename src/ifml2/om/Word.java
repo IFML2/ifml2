@@ -146,4 +146,11 @@ public class Word
                 throw new AssertionError("Лишний enum в Word.getFormByGramCase()!");
 		}
 	}
+
+    public static enum GenderEnum
+    {
+        MASCULINE,
+        FEMININE,
+        NEUTER
+    }
 }
