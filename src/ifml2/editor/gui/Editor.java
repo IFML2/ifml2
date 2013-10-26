@@ -317,7 +317,7 @@ public class Editor extends JFrame
                                    JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
     }
 
-    private void reloadDataInForm()
+    private void reloadDataInForm() //todo refactor this -- remake to glazed lists
     {
         // locations
         DefaultListModel locationsListModel = new DefaultListModel();

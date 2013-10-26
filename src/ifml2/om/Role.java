@@ -15,14 +15,15 @@ public class Role
     @XmlAttribute(name = ROLE_NAME_ATTRIBUTE)
     @XmlIDREF
     private RoleDefinition roleDefinition;
+    @XmlElementWrapper(name = ROLE_PROPERTIES_ELEMENT)
+    @XmlElement(name = ROLE_PROPERTY_ELEMENT)
+    private EventList<Property> properties = new BasicEventList<Property>();
+
     public RoleDefinition getRoleDefinition()
     {
         return roleDefinition;
     }
 
-    @XmlElementWrapper(name = ROLE_PROPERTIES_ELEMENT)
-    @XmlElement(name = ROLE_PROPERTY_ELEMENT)
-    private EventList<Property> properties = new BasicEventList<Property>();
     public EventList<Property> getProperties()
     {
         return properties;
@@ -31,7 +32,7 @@ public class Role
     @Override
     public String toString()
     {
-        return "роль " + (roleDefinition != null ? roleDefinition.getName() : "не задана");
+        return /*"роль " + */(roleDefinition != null ? roleDefinition.getName() : "не задана");
     }
 
     public String getName()
@@ -42,14 +43,14 @@ public class Role
 
     public Property tryFindPropertyByDefinition(PropertyDefinition propertyDefinition)
     {
-        if(propertyDefinition == null)
+        if (propertyDefinition == null)
         {
             return null;
         }
 
-        for(Property property : properties)
+        for (Property property : properties)
         {
-            if(propertyDefinition.getName().equalsIgnoreCase(property.getName()))
+            if (propertyDefinition.getName().equalsIgnoreCase(property.getName()))
             {
                 return property;
             }
@@ -60,9 +61,9 @@ public class Role
 
     public Property getPropertyByName(String name)
     {
-        for(Property property : properties)
+        for (Property property : properties)
         {
-            if(property.getName().equalsIgnoreCase(name))
+            if (property.getName().equalsIgnoreCase(name))
             {
                 return property;
             }

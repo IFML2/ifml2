@@ -2,6 +2,7 @@ package ifml2.editor.gui;
 
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
+import ca.odell.glazedlists.swing.DefaultEventComboBoxModel;
 import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ifml2.GUIUtils;
@@ -19,6 +20,7 @@ import java.text.MessageFormat;
 public class ItemEditor extends AbstractEditor<Item>
 {
     private static final String ITEM_EDITOR_TITLE = "Предмет";
+    private EventList<Role> rolesClone = null;
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
@@ -35,13 +37,17 @@ public class ItemEditor extends AbstractEditor<Item>
     private JButton addHookButton;
     private JButton editHookButton;
     private JButton deleteHookButton;
+    private JList rolesList;
+    private JButton addRoleButton;
+    private JButton editRoleButton;
+    private JButton delRoleButton;
     private boolean toGenerateId = false;
+    private Item item;
+    private Story.DataHelper storyDataHelper;
     // clones
     private EventList<Attribute> attributesClone = null;
     private WordLinks wordLinksClone = null;
     private EventList<Hook> hooksClone = null;
-    private Item item;
-    private Story.DataHelper storyDataHelper;
 
     public ItemEditor(Window owner, @NotNull final Item item, final Story.DataHelper storyDataHelper)
     {
@@ -78,6 +84,56 @@ public class ItemEditor extends AbstractEditor<Item>
                 {
                     wordLinksEditor.getData(wordLinksClone);
                 }
+            }
+        });
+
+        // roles
+        addRoleButton.setAction(new AbstractAction("Добавить...", GUIUtils.ADD_ELEMENT_ICON)
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                //todo  addRoleButton
+            }
+        });
+        editRoleButton.setAction(new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON)
+        {
+            {
+                setEnabled(false); // initially disabled
+                rolesList.addListSelectionListener(new ListSelectionListener()
+                {
+                    @Override
+                    public void valueChanged(ListSelectionEvent e)
+                    {
+                        setEnabled(!rolesList.isSelectionEmpty()); // dependent from selection
+                    }
+                });
+            }
+
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                //todo editRoleButton
+            }
+        });
+        delRoleButton.setAction(new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
+        {
+            {
+                setEnabled(false); // initially disabled
+                rolesList.addListSelectionListener(new ListSelectionListener()
+                {
+                    @Override
+                    public void valueChanged(ListSelectionEvent e)
+                    {
+                        setEnabled(!rolesList.isSelectionEmpty()); // dependent from selection
+                    }
+                });
+            }
+
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                //todo   delRoleButton
             }
         });
 
@@ -231,6 +287,10 @@ public class ItemEditor extends AbstractEditor<Item>
         // set attributes
         attributesClone = GlazedLists.eventList(item.getAttributes());
         attributesList.setModel(new DefaultEventListModel<Attribute>(attributesClone));
+
+        // set roles
+        rolesClone = GlazedLists.eventList(item.getRoles());
+        rolesList.setModel(new DefaultEventComboBoxModel<Role>(rolesClone));
 
         // set hooks
         hooksClone = GlazedLists.eventList(item.hooks);

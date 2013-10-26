@@ -260,6 +260,60 @@
               </component>
             </children>
           </grid>
+          <grid id="85adc" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="4" left="4" bottom="4" right="4"/>
+            <constraints>
+              <tabbedpane title="Роли"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <scrollpane id="502b8">
+                <constraints>
+                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="d4ec7" class="javax.swing.JList" binding="rolesList">
+                    <constraints/>
+                    <properties/>
+                  </component>
+                </children>
+              </scrollpane>
+              <toolbar id="882be">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                    <preferred-size width="-1" height="20"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <floatable value="false"/>
+                </properties>
+                <border type="none"/>
+                <children>
+                  <component id="114ee" class="javax.swing.JButton" binding="addRoleButton">
+                    <constraints/>
+                    <properties>
+                      <text value="&amp;Добавить..."/>
+                    </properties>
+                  </component>
+                  <component id="878df" class="javax.swing.JButton" binding="editRoleButton">
+                    <constraints/>
+                    <properties>
+                      <text value="Изм&amp;енить..."/>
+                    </properties>
+                  </component>
+                  <component id="1482e" class="javax.swing.JButton" binding="delRoleButton">
+                    <constraints/>
+                    <properties>
+                      <text value="&amp;Удалить"/>
+                    </properties>
+                  </component>
+                </children>
+              </toolbar>
+            </children>
+          </grid>
           <grid id="c4cff" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="4" left="4" bottom="4" right="4"/>
             <constraints>
