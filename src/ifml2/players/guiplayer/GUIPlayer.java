@@ -11,6 +11,8 @@ import org.apache.log4j.Logger;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.xml.bind.ValidationEvent;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -26,6 +28,8 @@ public class GUIPlayer extends JFrame
     private JPanel mainPanel;
     private JTextField commandText;
     private JTextArea logTextArea;
+    private JScrollPane scrollPane;
+    private JLabel nextlabel;
     private GUIInterface guiInterface;
     private Engine engine;
     private ListIterator<String> historyIterator = commandHistory.listIterator();
@@ -91,7 +95,27 @@ public class GUIPlayer extends JFrame
             }
         });
 
-        commandText.requestFocus();
+        final JScrollBar verticalScrollBar = scrollPane.getVerticalScrollBar();
+        verticalScrollBar.addAdjustmentListener(new AdjustmentListener()
+        {
+            @Override
+            public void adjustmentValueChanged(AdjustmentEvent e)
+            {
+                if(!verticalScrollBar.getValueIsAdjusting())
+                {
+                    if(verticalScrollBar.getValue() + verticalScrollBar.getModel().getExtent() < verticalScrollBar.getMaximum())
+                    {
+                        nextlabel.setVisible(true);
+                    }
+                    else
+                    {
+                        nextlabel.setVisible(false);
+                    }
+                }
+            }
+        });
+
+        commandText.requestFocusInWindow();
     }
 
     private static String getStoryFileNameForPlay(String[] args)
@@ -163,7 +187,7 @@ public class GUIPlayer extends JFrame
 
     private void initEngine()
     {
-        guiInterface = new GUIInterface(logTextArea, commandText);
+        guiInterface = new GUIInterface(logTextArea, commandText, scrollPane);
         engine = new Engine(guiInterface);
     }
 
