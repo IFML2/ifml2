@@ -4,7 +4,7 @@ import ifml2.CommonConstants;
 import ifml2.CommonUtils;
 import ifml2.GUIUtils;
 import ifml2.engine.Engine;
-import ifml2.interfaces.Interface;
+import ifml2.players.GameInterface;
 import ifml2.tests.IFMLTestPlan;
 import ifml2.tests.TestManager;
 
@@ -155,7 +155,7 @@ public class TestRunner extends JFrame
                     startButton.setEnabled(false);
                     try
                     {
-                        testManager.run(new Interface()
+                        testManager.run(new GameInterface()
                         {
                             @Override
                             public void outputText(String text)

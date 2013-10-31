@@ -3,10 +3,10 @@ package ifml2.engine;
 import ifml2.FormatLogger;
 import ifml2.IFML2Exception;
 import ifml2.SystemIdentifiers;
-import ifml2.interfaces.Interface;
 import ifml2.om.*;
 import ifml2.parser.FormalElement;
 import ifml2.parser.Parser;
+import ifml2.players.GameInterface;
 import ifml2.vm.ExpressionCalculator;
 import ifml2.vm.IFML2VMException;
 import ifml2.vm.RunningContext;
@@ -33,7 +33,7 @@ public class Engine
     private final Parser parser = new Parser(this);
     private final VirtualMachine virtualMachine = new VirtualMachine();
     private final HashMap<String, Value> systemVariables = new HashMap<String, Value>();
-    private Interface gameInterface = null;
+    private GameInterface gameInterface = null;
     private Story story = null;
     private ArrayList<Item> inventory = new ArrayList<Item>();
     private ArrayList<Item> abyss = new ArrayList<Item>();
@@ -78,7 +78,7 @@ public class Engine
         }
     };
 
-    public Engine(Interface gameInterface)
+    public Engine(GameInterface gameInterface)
     {
         this.gameInterface = gameInterface;
         virtualMachine.setEngine(this);

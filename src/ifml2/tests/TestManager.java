@@ -2,7 +2,7 @@ package ifml2.tests;
 
 import ifml2.IFML2Exception;
 import ifml2.engine.Engine;
-import ifml2.interfaces.Interface;
+import ifml2.players.GameInterface;
 
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
@@ -16,7 +16,7 @@ import java.util.Date;
 
 public class TestManager
 {
-    private Interface uiInterface;
+    private GameInterface uiInterface;
 
     ArrayList<IFMLTestPlan> getTestPlans()
     {
@@ -81,13 +81,13 @@ public class TestManager
         testsListDataListeners.remove(listDataListener);
     }
 
-    public void run(Interface uiInterface)
+    public void run(GameInterface uiInterface)
     {
         this.uiInterface = uiInterface;
 
         log("=== Запуск тестов ===");
         final String[] outText = {""};
-        Engine engine = new Engine(new Interface()
+        Engine engine = new Engine(new GameInterface()
         {
             @Override
             public void outputText(String text)

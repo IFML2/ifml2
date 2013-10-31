@@ -4,20 +4,21 @@ import ifml2.CommonConstants;
 import ifml2.CommonUtils;
 import ifml2.GUIUtils;
 import ifml2.engine.Engine;
-import ifml2.interfaces.GUIInterface;
 import ifml2.om.IFML2LoadXmlException;
+import ifml2.players.GameInterface;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.text.BadLocationException;
 import javax.xml.bind.ValidationEvent;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.ListIterator;
 
@@ -29,17 +30,68 @@ public class GUIPlayer extends JFrame
     private JTextField commandText;
     private JTextArea logTextArea;
     private JScrollPane scrollPane;
-    private JLabel nextlabel;
-    private GUIInterface guiInterface;
-    private Engine engine;
+    //private JLabel nextLabel;
+    private GameInterface guiInterface = new GameInterface()
+    {
+        @Override
+        public void outputText(String text)
+        {
+            logTextArea.append(text);
+        }
+
+        @Override
+        public String inputText()
+        {
+            String command = commandText.getText();
+            commandText.setText("");
+            outputText("\n");
+
+            // prepare for scrolling to command
+            Rectangle startLocation;
+            int lastLine = logTextArea.getLineCount() - 1;
+            try
+            {
+                startLocation = logTextArea.modelToView(logTextArea.getLineStartOffset(lastLine));
+            }
+            catch (BadLocationException e)
+            {
+                LOG.error("Error while scrolling JTextArea", e);
+                throw new RuntimeException(e);
+            }
+
+            // echo command
+            outputText("> " + command + "\n");
+
+            // scroll to inputted command
+            final Point viewPosition = new Point(startLocation.x, startLocation.y);
+            SwingUtilities.invokeLater(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    JViewport viewPort = scrollPane.getViewport();
+                    viewPort.setEnabled(false); // disable viewPort to avoid flickering
+                    try
+                    {
+                        viewPort.setViewPosition(viewPosition);
+                    }
+                    finally
+                    {
+                        viewPort.setEnabled(true); // enable to repaint
+                    }
+                }
+            });
+
+            return command;
+        }
+    };
+    private Engine engine = new Engine(guiInterface);
     private ListIterator<String> historyIterator = commandHistory.listIterator();
     private String storyFile;
 
-    private GUIPlayer()
+    private GUIPlayer(String fileName)
     {
         super("ЯРИЛ 2.0 Плеер " + Engine.ENGINE_VERSION);
-
-        initEngine();
 
         setContentPane(mainPanel);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -56,9 +108,27 @@ public class GUIPlayer extends JFrame
                 // command entry
                 if (KeyEvent.VK_ENTER == key)
                 {
+                    // test if just enter + scroll bar isn't at the bottom
+                    BoundedRangeModel scrollModel = scrollPane.getVerticalScrollBar().getModel();
+                    int value = scrollModel.getValue();
+                    int extent = scrollModel.getExtent();
+                    boolean isNotAtTheBottom = value + extent < scrollModel.getMaximum();
+                    if ("".equals(commandText.getText().trim()) && isNotAtTheBottom)
+                    {
+                        scrollModel.setValue(value + extent); // scroll to next page
+                        return;
+                    }
+
                     try
                     {
                         String gamerCommand = guiInterface.inputText();
+
+                        if ("".equals(gamerCommand.trim()))
+                        {
+                            guiInterface.outputText("Введите что-нибудь.\n");
+                            return;
+                        }
+
                         updateHistory(gamerCommand);
 
                         if ("заново!".equalsIgnoreCase(gamerCommand))
@@ -74,28 +144,24 @@ public class GUIPlayer extends JFrame
                     catch (Throwable ex)
                     {
                         ReportError(ex, "Ошибка при перезапуске истории!");
-//                        logTextArea.append(MessageFormat.format("Системная ошибка: {0}\n{1}", ex.getMessage(), Arrays.toString(ex.getStackTrace())));
-//                        ex.printStackTrace();
                     }
                 }
-
                 else
                     // history prev callback
                     if (KeyEvent.VK_UP == key || KeyEvent.VK_KP_UP == key)
                     {
-                        commandText.setText(getHistoryPrev());
+                        commandText.setText(goHistoryPrev());
                     }
-
                     else
                         // history next callback
                         if (KeyEvent.VK_DOWN == key || KeyEvent.VK_KP_DOWN == key)
                         {
-                            commandText.setText(getHistoryNext());
+                            commandText.setText(goHistoryNext());
                         }
             }
         });
 
-        final JScrollBar verticalScrollBar = scrollPane.getVerticalScrollBar();
+        /*final JScrollBar verticalScrollBar = scrollPane.getVerticalScrollBar();
         verticalScrollBar.addAdjustmentListener(new AdjustmentListener()
         {
             @Override
@@ -105,20 +171,23 @@ public class GUIPlayer extends JFrame
                 {
                     if(verticalScrollBar.getValue() + verticalScrollBar.getModel().getExtent() < verticalScrollBar.getMaximum())
                     {
-                        nextlabel.setVisible(true);
+                        nextLabel.setVisible(true);
                     }
                     else
                     {
-                        nextlabel.setVisible(false);
+                        nextLabel.setVisible(false);
                     }
                 }
             }
-        });
+        });*/
 
+        setVisible(true);
         commandText.requestFocusInWindow();
+
+        loadStory(fileName);
     }
 
-    private static String getStoryFileNameForPlay(String[] args)
+    private static String acquireStoryFileNameForPlay(String[] args)
     {
         String storyFile;
 
@@ -134,7 +203,8 @@ public class GUIPlayer extends JFrame
             else
             {
                 JOptionPane.showMessageDialog(null, "Файл истории \"" + storyFile + "\" не найден.\n" +
-                        "Файл будет выбран вручную.", "Файл не найден", JOptionPane.ERROR_MESSAGE);
+                                                    "Файл будет выбран вручную.", "Файл не найден",
+                                              JOptionPane.ERROR_MESSAGE);
             }
         }
 
@@ -166,29 +236,19 @@ public class GUIPlayer extends JFrame
 
     public static void main(String[] args)
     {
-        startFromFile(getStoryFileNameForPlay(args));
+        startFromFile(acquireStoryFileNameForPlay(args));
     }
 
     public static void startFromFile(String fileName)
     {
-        GUIPlayer guiPlayer = new GUIPlayer();
-
         if (fileName != null)
         {
-            guiPlayer.setVisible(true);
-            guiPlayer.loadStory(fileName);
+            new GUIPlayer(fileName);
         }
         else
         {
-            JOptionPane.showMessageDialog(guiPlayer, "История не выбрана, Плеер завершает свою работу");
-            guiPlayer.dispose();
+            JOptionPane.showMessageDialog(null, "История не выбрана, Плеер завершает свою работу");
         }
-    }
-
-    private void initEngine()
-    {
-        guiInterface = new GUIInterface(logTextArea, commandText, scrollPane);
-        engine = new Engine(guiInterface);
     }
 
     private void loadStory(String storyFile)
@@ -218,40 +278,27 @@ public class GUIPlayer extends JFrame
             guiInterface.outputText("\nВ файле истории есть ошибки:");
             for (ValidationEvent validationEvent : ((IFML2LoadXmlException) exception).getEvents())
             {
-                guiInterface.outputText("\n\"{0}\" at {1},{2}", validationEvent.getMessage(),
-                        validationEvent.getLocator().getLineNumber(), validationEvent.getLocator().getColumnNumber());
+                guiInterface.outputText(MessageFormat.format("\n\"{0}\" at {1},{2}", validationEvent.getMessage(),
+                                                             validationEvent.getLocator().getLineNumber(),
+                                                             validationEvent.getLocator().getColumnNumber()));
             }
         }
         else
         {
             StringWriter stringWriter = new StringWriter();
             exception.printStackTrace(new PrintWriter(stringWriter));
-            guiInterface.outputText("\nПроизошла ошибка: {0}", stringWriter.toString());
+            guiInterface.outputText(MessageFormat.format("\nПроизошла ошибка: {0}", stringWriter.toString()));
         }
     }
 
-    private String getHistoryNext()
+    private String goHistoryNext()
     {
-        if (historyIterator.hasNext())
-        {
-            return historyIterator.next();
-        }
-        else
-        {
-            return "";
-        }
+        return historyIterator.hasNext() ? historyIterator.next() : "";
     }
 
-    private String getHistoryPrev()
+    private String goHistoryPrev()
     {
-        if (historyIterator.hasPrevious())
-        {
-            return historyIterator.previous();
-        }
-        else
-        {
-            return "";
-        }
+        return historyIterator.hasPrevious() ? historyIterator.previous() : "";
     }
 
     private void updateHistory(String gamerCommand)
