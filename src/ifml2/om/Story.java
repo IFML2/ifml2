@@ -16,6 +16,7 @@ import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import static ifml2.om.xml.XmlSchemaConstants.*;
@@ -99,6 +100,16 @@ public class Story
                             location.setDown(null);
                         }
                         //todo: delete links from semi-directions (NE, NW, ...)
+                    }
+
+                    // delete from heap
+                    for (Iterator<IFMLObject> iterator = objectsHeap.values().iterator(); iterator.hasNext(); )
+                    {
+                        IFMLObject object = iterator.next();
+                        if (object instanceof Location && !locations.contains(object))
+                        {
+                            iterator.remove();
+                        }
                     }
                 }
             }
