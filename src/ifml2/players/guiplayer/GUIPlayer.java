@@ -69,15 +69,10 @@ public class GUIPlayer extends JFrame
                 @Override
                 public void run()
                 {
-                    JViewport viewPort = scrollPane.getViewport();
-                    viewPort.setEnabled(false); // disable viewPort to avoid flickering
-                    try
+                    if(scrollPane.getVerticalScrollBar().isShowing())
                     {
+                        JViewport viewPort = scrollPane.getViewport();
                         viewPort.setViewPosition(viewPosition);
-                    }
-                    finally
-                    {
-                        viewPort.setEnabled(true); // enable to repaint
                     }
                 }
             });

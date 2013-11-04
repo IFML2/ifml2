@@ -45,11 +45,6 @@ public class VirtualMachine
     };
     private Engine engine;
 
-    public Engine getEngine()
-    {
-        return engine;
-    }
-
     public void setEngine(Engine engine)
     {
         this.engine = engine;
@@ -299,5 +294,15 @@ public class VirtualMachine
     public void outText(String text)
     {
         engine.outText(text);
+    }
+
+    public void startTimer(String timerName) throws IFML2ObjectNotFoundException
+    {
+        engine.startTimer(timerName);
+    }
+
+    public void reportError(IFML2Exception exception, String message, Object... args)
+    {
+        engine.reportError(exception, message, args);
     }
 }

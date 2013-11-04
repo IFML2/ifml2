@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlElements;
 public class InstructionList implements Cloneable
 {
     private EventList<Instruction> instructions = new BasicEventList<Instruction>(); // InstructionList controls its instructions
+
     @XmlElements({
             @XmlElement(name = "goToLoc", type = GoToLocInstruction.class),
             @XmlElement(name = "showMessage", type = ShowMessageInstr.class),
@@ -18,16 +19,20 @@ public class InstructionList implements Cloneable
             @XmlElement(name = "var", type = SetVarInstruction.class),
             @XmlElement(name = "return", type = ReturnInstruction.class),
             @XmlElement(name = "setProperty", type = SetPropertyInstruction.class),
-            @XmlElement(name = "moveItem", type = MoveItemInstruction.class)
+            @XmlElement(name = "moveItem", type = MoveItemInstruction.class),
+            @XmlElement(name = "startTimer", type=StartTimerInstruction.class)
     })
-    public EventList<Instruction> getInstructions() { return instructions; }
+    public EventList<Instruction> getInstructions()
+    {
+        return instructions;
+    }
 
     @Override
     public InstructionList clone() throws CloneNotSupportedException
     {
         InstructionList clone = (InstructionList) super.clone();
-        clone.instructions =  new BasicEventList<Instruction>();
-        for(Instruction instruction : instructions)
+        clone.instructions = new BasicEventList<Instruction>();
+        for (Instruction instruction : instructions)
         {
             clone.instructions.add(instruction.clone());
         }
@@ -37,6 +42,6 @@ public class InstructionList implements Cloneable
     public void rewriteInstructions(InstructionList instructionList)
     {
         instructions.clear();
-        instructions.addAll(instructionList.getInstructions());
+        instructions.addAll(instructionList.instructions);
     }
 }

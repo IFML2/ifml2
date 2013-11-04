@@ -446,4 +446,27 @@ public class Engine
     {
         return virtualMachine;
     }
+
+    public void startTimer(String timerName) throws IFML2ObjectNotFoundException
+    {
+        GameTimer gameTimer = story.getDataHelper().getTimerByName(timerName);
+        gameTimer.start(virtualMachine);
+    }
+
+    public void reportError(IFML2Exception exception, String message, Object... args)
+    {
+        exception.printStackTrace();
+        LOG.error(message, args);
+
+        String errMessage = MessageFormat.format(message, args);
+
+        if (exception instanceof IFML2VMException)
+        {
+            outTextLn("[Ошибка!] " + errMessage);
+        }
+        else
+        {
+            outTextLn(errMessage);
+        }
+    }
 }

@@ -8,6 +8,7 @@ import ifml2.CommonUtils;
 import ifml2.IFML2Exception;
 import ifml2.om.xml.xmladapters.DictionaryAdapter;
 import ifml2.om.xml.xmladapters.ProceduresAdapter;
+import ifml2.om.xml.xmladapters.TimerAdapter;
 import ifml2.om.xml.xmladapters.UsedLibrariesAdapter;
 import org.jetbrains.annotations.NotNull;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -116,11 +117,10 @@ public class Story
         });
     }
 
-    /*@XmlElementWrapper(name = "fuses")
-    @XmlElement(name = "fuse")
-    @XmlJavaTypeAdapter(type = TimerAdapter.class)*/
-    @XmlTransient // created by instructions
-    private EventList<Fuse> fuses = new BasicEventList<Fuse>();
+    @XmlElementWrapper(name = "timers")
+    @XmlElement(name = "timer")
+    @XmlJavaTypeAdapter(value = TimerAdapter.class)
+    private EventList<GameTimer> gameTimers = new BasicEventList<GameTimer>();
 
     @XmlElementWrapper(name = STORY_ITEMS_ELEMENT)
     @XmlElement(name = ITEMS_ITEM_ELEMENT)
@@ -473,6 +473,19 @@ public class Story
             }
 
             return null;
+        }
+
+        public GameTimer getTimerByName(String timerName) throws IFML2ObjectNotFoundException
+        {
+            for(GameTimer gameTimer : gameTimers)
+            {
+                if(gameTimer.getName().equalsIgnoreCase(timerName))
+                {
+                    return gameTimer;
+                }
+            }
+
+            throw new IFML2ObjectNotFoundException("Не найден таймер с именем \"{0}\"", timerName);
         }
     }
 }

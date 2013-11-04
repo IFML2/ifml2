@@ -258,9 +258,7 @@
 
     <complexType name="instructionsType">
         <choice minOccurs="0" maxOccurs="unbounded">
-            <!--element name="showLocName" type="ifml2:instructionShowLocNameType"/-->
             <element name="goToLoc" type="ifml2:instructionGoToLocationType"/>
-            <!--<element name="showInventory" type="ifml2:instructionShowInventoryType"/>-->
             <element name="showMessage" type="ifml2:instructionShowMessageType"/>
             <element name="if" type="ifml2:instructionIfType"/>
             <element name="loop" type="ifml2:instructionLoopType"/>
@@ -268,6 +266,7 @@
             <element name="return" type="ifml2:instructionReturnType"/>
             <element name="setProperty" type="ifml2:instructionSetPropertyType"/>
             <element name="moveItem" type="ifml2:instructionMoveItemType"/>
+            <element name="startTimer" type="ifml2:instructionStartTimerType"/>
         </choice>
     </complexType>
 
@@ -593,6 +592,24 @@
                     <documentation>Системная процедур, выводящая описание текущей локации: её имя, описание и список предметов в ней. Параметров не принимает.</documentation>
                 </annotation>
             </enumeration>
+        </restriction>
+    </simpleType>
+
+    <complexType name="instructionStartTimerType">
+        <complexContent>
+            <extension base="ifml2:instructionType">
+                <attribute name="type" type="ifml2:timerTypeEnumType" use="required"/>
+                <attribute name="name" type="string" use="required"/>
+                <attribute name="time" type="time"/>
+                <attribute name="quantity" type="integer"/>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <simpleType name="timerTypeEnumType">
+        <restriction base="string">
+            <enumeration value="real-time"/>
+            <enumeration value="actions"/>
         </restriction>
     </simpleType>
 </schema>

@@ -25,13 +25,22 @@
             <procedureBody>
                 <if condition="ком = 'го'" position="1">
                     <else>
-                        <showMessage type="text" message="Не знаю такой отладочной команды." carriageReturn="true" beginWithCap="false" position="1"/>
+                        <if condition="ком='т'" position="2">
+                            <then>
+                                <startTimer position="1" type="real-time" name="timer"/>
+                                <showMessage position="2" type="text" message="Таймер запущен."/>
+                            </then>
+                            <else>
+                                <showMessage type="text" message="Не знаю такой отладочной команды." carriageReturn="true" beginWithCap="false" position="1"/>
+                            </else>
+                        </if>
                     </else>
                     <then>
                         <goToLoc location="Растительность" position="1"/>
                         <moveItem to="инвентарий" item="КиркаПред" position="2"/>
                     </then>
                 </if>
+
             </procedureBody>
             <parameters/>
         </procedure>
@@ -448,6 +457,7 @@
                 <template>
                     <literalElement parameter="ком" position="1">
                         <synonym>го</synonym>
+                        <synonym>т</synonym>
                     </literalElement>
                 </template>
             </templates>

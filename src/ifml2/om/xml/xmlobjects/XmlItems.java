@@ -7,9 +7,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
 
-@XmlRootElement(name="items")
+@XmlRootElement(name = "items")
 public class XmlItems
 {
-	@XmlElement(name="item")
-	public List<Item> items = new ArrayList<Item>();
+    @XmlElement(name = "item")
+    public List<Item> items = new ArrayList<Item>();
 }
