@@ -206,7 +206,7 @@
             <ifml2:restrictions>
                 <ifml2:restriction condition="предмет.прикреплён">
                     <ifml2:reaction>
-                        <ifml2:showMessage position="1" type="expression" message="Прикреплено надёжно.'" beginWithCap="true"/>
+                        <ifml2:showMessage position="1" type="text" message="Прикреплено надёжно."/>
                     </ifml2:reaction>
                 </ifml2:restriction>
                 <ifml2:restriction condition="предмет.недоступен">
