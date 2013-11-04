@@ -206,7 +206,7 @@
             <ifml2:restrictions>
                 <ifml2:restriction condition="предмет.прикреплён">
                     <ifml2:reaction>
-                        <ifml2:showMessage position="1" type="expression" message="предмет.имя + ' надёжно прикреплён.'" beginWithCap="true"/>
+                        <ifml2:showMessage position="1" type="expression" message="Прикреплено надёжно.'" beginWithCap="true"/>
                     </ifml2:reaction>
                 </ifml2:restriction>
                 <ifml2:restriction condition="предмет.недоступен">
@@ -704,11 +704,11 @@
                 <ifml2:loop position="3" collection="ТекущаяЛокация.Предметы" element="предмет"
                             condition="не предмет.частьПейзажа">
                     <ifml2:alone>
-                        <ifml2:showMessage position="1" type="expression" message="'Здесь же ' + предмет.имя + '.'"
+                        <ifml2:showMessage position="1" type="expression" message="'Здесь ' + предмет.имя + '.'"
                                            carriageReturn="true"/>
                     </ifml2:alone>
                     <ifml2:first>
-                        <ifml2:showMessage position="1" type="expression" message="'Здесь же ' + предмет.имя"
+                        <ifml2:showMessage position="1" type="expression" message="'Здесь ' + предмет.имя"
                                            carriageReturn="false"/>
                     </ifml2:first>
                     <ifml2:next>

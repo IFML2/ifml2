@@ -1,5 +1,6 @@
 package ifml2.vm.instructions;
 
+import ca.odell.glazedlists.BasicEventList;
 import ifml2.IFML2Exception;
 import ifml2.om.IFMLObject;
 import ifml2.om.Item;
@@ -30,6 +31,23 @@ public abstract class Instruction implements Cloneable
         {
             throw new IFML2VMException("Параметр {0} не задан у инструкции [{1}]", parameterName, instructionTitle);
         }
+    }
+
+    protected static <T> List<T> ConvertToClassedList(List<?> unknownList, Class<T> convertingClass) throws IFML2VMException
+    {
+        List<T> ifmlObjects = new BasicEventList<T>();
+        for(Object obj : unknownList)
+        {
+            if(convertingClass.isInstance(obj))
+            {
+                ifmlObjects.add(convertingClass.cast(obj));
+            }
+            else
+            {
+                throw new IFML2VMException("Элемент коллекции \"{0}\" - не типа Объект.", obj);
+            }
+        }
+        return ifmlObjects;
     }
 
     @Override

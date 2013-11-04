@@ -27,7 +27,7 @@ public class MoveItemInstruction extends Instruction
         Item item = getItemFromExpression(itemExpr, runningContext, getTitle(), "предмет", false);
         assert item.getContainer() != null;
 
-        List<Item> collection = (List<Item>) getCollectionFromExpression(toCollectionExpr, runningContext, getTitle(), "куда");
+        List<Item> collection = ConvertToClassedList(getCollectionFromExpression(toCollectionExpr, runningContext, getTitle(), "куда"), Item.class);
 
         if (collection.contains(item))
         {

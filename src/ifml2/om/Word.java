@@ -25,17 +25,17 @@ public class Word
     public enum GramCaseEnum
 	{
 		@XmlEnumValue(value = "ip")
-        IP("ИП", "что"),
+        IP("ИП", "кто (что)"),
         @XmlEnumValue(value = "rp")
-		RP("РП", "чего"),
+		RP("РП", "кого (чего)"),
         @XmlEnumValue(value = "dp")
-		DP("ДП", "чему"),
+		DP("ДП", "кому (чему)"),
         @XmlEnumValue(value = "vp")
-		VP("ВП", "что"),
+		VP("ВП", "кого (что)"),
         @XmlEnumValue(value = "tp")
-		TP("ТП", "чем"),
+		TP("ТП", "кем (чем)"),
         @XmlEnumValue(value = "pp")
-		PP("ПП", "чём");
+		PP("ПП", "ком (чём)");
 
         @XmlTransient
         private final String abbreviation;
