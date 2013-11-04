@@ -116,6 +116,12 @@ public class Story
         });
     }
 
+    /*@XmlElementWrapper(name = "fuses")
+    @XmlElement(name = "fuse")
+    @XmlJavaTypeAdapter(type = TimerAdapter.class)*/
+    @XmlTransient // created by instructions
+    private EventList<Fuse> fuses = new BasicEventList<Fuse>();
+
     @XmlElementWrapper(name = STORY_ITEMS_ELEMENT)
     @XmlElement(name = ITEMS_ITEM_ELEMENT)
     private EventList<Item> items = new BasicEventList<Item>();

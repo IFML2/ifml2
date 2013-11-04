@@ -9,24 +9,23 @@ import java.util.HashMap;
 
 public class DictionaryAdapter extends XmlAdapter<XmlDictionary, HashMap<String, Word>>
 {
-	@Override
-	public HashMap<String, Word> unmarshal(XmlDictionary v) throws Exception
-	{
-		HashMap<String, Word> dictionary = new HashMap<String, Word>();
-		for(Word word : v.words)
-		{
-			dictionary.put(word.ip.toLowerCase(), word);
-		}
-		
-		return dictionary;
-	}
+    @Override
+    public HashMap<String, Word> unmarshal(XmlDictionary v) throws Exception
+    {
+        HashMap<String, Word> dictionary = new HashMap<String, Word>();
+        for (Word word : v.words)
+        {
+            dictionary.put(word.ip.toLowerCase(), word);
+        }
 
-	@Override
-	public XmlDictionary marshal(HashMap<String, Word> v) throws Exception
-	{
-		XmlDictionary xmlDictionary = new XmlDictionary();
+        return dictionary;
+    }
+
+    @Override
+    public XmlDictionary marshal(HashMap<String, Word> v) throws Exception
+    {
+        XmlDictionary xmlDictionary = new XmlDictionary();
         xmlDictionary.words = new ArrayList<Word>(v.values());
         return xmlDictionary;
-	}
-
+    }
 }
