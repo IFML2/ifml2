@@ -70,15 +70,16 @@ public class GUIPlayer extends JFrame
                 public void run()
                 {
                     JViewport viewPort = scrollPane.getViewport();
-                    viewPort.setEnabled(false); // disable viewPort to avoid flickering
+                    // viewPort.setEnabled commented cause it leads to unavailability to select text
+                    /*viewPort.setEnabled(false); // disable viewPort to avoid flickering
                     try
-                    {
+                    {*/
                         viewPort.setViewPosition(viewPosition);
-                    }
+                    /*}
                     finally
                     {
                         viewPort.setEnabled(true); // enable to repaint
-                    }
+                    }*/
                 }
             });
 
