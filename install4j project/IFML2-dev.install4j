@@ -1248,7 +1248,7 @@ if (context.isUnattended()) {
       <excludedComponents />
       <includedDownloadableComponents />
     </windows>
-    <windows name="Windows with JRE 6" id="37" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_j6" installDir="${compiler:sys.publisher}\${compiler:sys.fullName}" overridePrincipalLanguage="false" jreBitType="32" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="windows-x86-1.6.0_45" manualJREEntry="false" bundleType="2" jreURL="https://dl.dropboxusercontent.com/u/87862945/IFML2/windows-x86-1.6.0_45.tar.gz" jreShared="true" directDownload="false" installOnlyIfNecessary="true" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
+    <windows name="Windows with JRE 6" id="37" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.date}" installDir="${compiler:sys.publisher}\${compiler:sys.fullName}" overridePrincipalLanguage="false" jreBitType="32" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="windows-x86-1.6.0_45" manualJREEntry="false" bundleType="2" jreURL="https://dl.dropboxusercontent.com/u/87862945/IFML2/windows-x86-1.6.0_45.tar.gz" jreShared="true" directDownload="false" installOnlyIfNecessary="true" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
       <excludedLaunchers />
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
