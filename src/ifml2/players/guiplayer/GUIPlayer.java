@@ -15,6 +15,8 @@ import javax.xml.bind.ValidationEvent;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -91,13 +93,37 @@ public class GUIPlayer extends JFrame
     private Engine engine = new Engine(guiInterface);
     private ListIterator<String> historyIterator = commandHistory.listIterator();
     private String storyFile;
+    private boolean isFromTempFile;
 
-    private GUIPlayer(String fileName)
+    private GUIPlayer(boolean fromTempFile)
     {
         super("ЯРИЛ 2.0 Плеер " + Engine.ENGINE_VERSION);
+        this.isFromTempFile = fromTempFile;
 
         setContentPane(mainPanel);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter()
+        {
+            @Override
+            public void windowClosing(WindowEvent e)
+            {
+                try
+                {
+                    if(isFromTempFile)
+                    {
+                        File tempFile = new File(storyFile);
+                        if (!tempFile.delete())
+                        {
+                            LOG.error(MessageFormat.format("Can't delete temp file {0}", tempFile.getAbsolutePath()));
+                        }
+                    }
+                }
+                finally
+                {
+                    dispose();
+                }
+            }
+        });
 
         GUIUtils.packAndCenterWindow(this);
 
@@ -186,8 +212,6 @@ public class GUIPlayer extends JFrame
 
         setVisible(true);
         commandText.requestFocusInWindow();
-
-        loadStory(fileName);
     }
 
     private static String acquireStoryFileNameForPlay(String[] args)
@@ -239,14 +263,23 @@ public class GUIPlayer extends JFrame
 
     public static void main(String[] args)
     {
-        startFromFile(acquireStoryFileNameForPlay(args));
+        startFromFile(acquireStoryFileNameForPlay(args), false);
     }
 
-    public static void startFromFile(String fileName)
+    public static void startFromFile(String fileName, boolean isFromTempFile)
     {
         if (fileName != null)
         {
-            new GUIPlayer(fileName);
+            GUIPlayer player = new GUIPlayer(isFromTempFile);
+            player.loadStory(fileName);
+            /*if(isFromTempFile)
+            {
+                File tempFile = new File(fileName);
+                if (!tempFile.delete())
+                {
+                    LOG.error(MessageFormat.format("Can't delete temp file {0}", tempFile.getAbsolutePath()));
+                }
+            }*/
         }
         else
         {
@@ -256,7 +289,7 @@ public class GUIPlayer extends JFrame
 
     private void loadStory(String storyFile)
     {
-        this.storyFile = storyFile;
+        setStoryFile(storyFile);
 
         // load story
         try
@@ -308,5 +341,29 @@ public class GUIPlayer extends JFrame
     {
         commandHistory.add(gamerCommand);
         historyIterator = commandHistory.listIterator(commandHistory.size());
+    }
+
+    public void setStoryFile(String storyFile)
+    {
+        this.storyFile = storyFile;
+        updateTitle();
+    }
+
+    private void updateTitle()
+    {
+        String titleFile = "";
+        if(isFromTempFile)
+        {
+            titleFile = "запущен из Редактора";
+        }
+        else
+        {
+            File file = new File(storyFile);
+            if(file.exists())
+            {
+                titleFile = file.getName();
+            }
+        }
+        setTitle("ЯРИЛ 2.0 Плеер " + Engine.ENGINE_VERSION + " -- " + titleFile);
     }
 }

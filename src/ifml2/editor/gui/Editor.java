@@ -549,17 +549,24 @@ public class Editor extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                String fileName;
+                final String fileName;
                 try
                 {
                     File tempFile = File.createTempFile("ifml2run_", ".xml");
                     fileName = tempFile.getAbsolutePath();
                     saveStory(fileName);
-                    GUIPlayer.startFromFile(fileName);
-                    if (!tempFile.delete())
+                    SwingUtilities.invokeLater(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            GUIPlayer.startFromFile(fileName, true);
+                        }
+                    });
+                    /*if (!tempFile.delete())
                     {
                         LOG.error(MessageFormat.format("Can't delete temp file {0}", tempFile.getAbsolutePath()));
-                    }
+                    }*/
                 }
                 catch (Throwable ex)
                 {
