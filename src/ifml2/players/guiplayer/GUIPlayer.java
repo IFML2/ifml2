@@ -32,7 +32,6 @@ public class GUIPlayer extends JFrame
     private JTextField commandText;
     private JTextArea logTextArea;
     private JScrollPane scrollPane;
-    //private JLabel nextLabel;
     private GameInterface guiInterface = new GameInterface()
     {
         @Override
@@ -190,28 +189,8 @@ public class GUIPlayer extends JFrame
             }
         });
 
-        /*final JScrollBar verticalScrollBar = scrollPane.getVerticalScrollBar();
-        verticalScrollBar.addAdjustmentListener(new AdjustmentListener()
-        {
-            @Override
-            public void adjustmentValueChanged(AdjustmentEvent e)
-            {
-                if(!verticalScrollBar.getValueIsAdjusting())
-                {
-                    if(verticalScrollBar.getValue() + verticalScrollBar.getModel().getExtent() < verticalScrollBar.getMaximum())
-                    {
-                        nextLabel.setVisible(true);
-                    }
-                    else
-                    {
-                        nextLabel.setVisible(false);
-                    }
-                }
-            }
-        });*/
-
-        setVisible(true);
         commandText.requestFocusInWindow();
+        setVisible(true);
     }
 
     private static String acquireStoryFileNameForPlay(String[] args)

@@ -1235,7 +1235,7 @@ if (context.isUnattended()) {
     </applications>
   </installerGui>
   <mediaSets>
-    <windows name="Windows w/o JRE" id="29" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}_${compiler:sys.date}" installDir="${compiler:sys.publisher}\${compiler:sys.fullName}" overridePrincipalLanguage="false" jreBitType="32" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
+    <windows name="Windows w/o JRE" id="29" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.date}_${compiler:sys.time}" installDir="${compiler:sys.publisher}\${compiler:sys.fullName}" overridePrincipalLanguage="false" jreBitType="32" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="windows-x86-1.6.0_45" manualJREEntry="false" bundleType="2" jreURL="https://dl.dropboxusercontent.com/u/87862945/IFML2/windows-x86-1.6.0_45.tar.gz" jreShared="true" directDownload="false" installOnlyIfNecessary="true" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
       <excludedLaunchers />
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
