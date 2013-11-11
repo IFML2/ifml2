@@ -3,6 +3,7 @@ package ifml2.players.guiplayer;
 import ifml2.CommonConstants;
 import ifml2.CommonUtils;
 import ifml2.GUIUtils;
+import ifml2.IFML2Exception;
 import ifml2.engine.Engine;
 import ifml2.om.IFML2LoadXmlException;
 import ifml2.players.GameInterface;
@@ -13,10 +14,7 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.text.BadLocationException;
 import javax.xml.bind.ValidationEvent;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -70,7 +68,7 @@ public class GUIPlayer extends JFrame
                 @Override
                 public void run()
                 {
-                    if(scrollPane.getVerticalScrollBar().isShowing())
+                    if (scrollPane.getVerticalScrollBar().isShowing())
                     {
                         JViewport viewPort = scrollPane.getViewport();
                         viewPort.setEnabled(false); // disable viewPort to avoid flickering
@@ -100,29 +98,25 @@ public class GUIPlayer extends JFrame
         this.isFromTempFile = fromTempFile;
 
         setContentPane(mainPanel);
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         addWindowListener(new WindowAdapter()
         {
             @Override
-            public void windowClosing(WindowEvent e)
+            public void windowClosed(WindowEvent e)
             {
-                try
+                if (isFromTempFile)
                 {
-                    if(isFromTempFile)
+                    // delete temp file
+                    File tempFile = new File(storyFile);
+                    if (!tempFile.delete())
                     {
-                        File tempFile = new File(storyFile);
-                        if (!tempFile.delete())
-                        {
-                            LOG.error(MessageFormat.format("Can't delete temp file {0}", tempFile.getAbsolutePath()));
-                        }
+                        LOG.error(MessageFormat.format("Can't delete temp file {0}", tempFile.getAbsolutePath()));
                     }
-                }
-                finally
-                {
-                    dispose();
                 }
             }
         });
+
+        setJMenuBar(createMainMenu());
 
         GUIUtils.packAndCenterWindow(this);
 
@@ -161,9 +155,7 @@ public class GUIPlayer extends JFrame
 
                         if ("заново!".equalsIgnoreCase(gamerCommand))
                         {
-                            guiInterface.outputText("Начинаем заново...\n");
-                            engine.loadStory(storyFile);
-                            engine.initGame();
+                            startAnew();
                             return;
                         }
 
@@ -197,7 +189,7 @@ public class GUIPlayer extends JFrame
     {
         String storyFile;
 
-        // option #1 -- the first argument is file name 
+        // option #1 -- the first argument is file name
         if (args != null && args.length >= 1)
         {
             // first parameter is story file name
@@ -215,6 +207,11 @@ public class GUIPlayer extends JFrame
         }
 
         // option #2 -- show open file dialog
+        return showOpenStoryFileDialog(null);
+    }
+
+    private static String showOpenStoryFileDialog(Window owner)
+    {
         JFileChooser ifmlFileChooser = new JFileChooser(CommonUtils.getSamplesDirectory());
         ifmlFileChooser.setFileFilter(new FileFilter()
         {
@@ -231,13 +228,12 @@ public class GUIPlayer extends JFrame
             }
         });
 
-        if (ifmlFileChooser.showOpenDialog(null) != JFileChooser.APPROVE_OPTION)
+        if (ifmlFileChooser.showOpenDialog(owner) == JFileChooser.APPROVE_OPTION)
         {
-            return null;
+            return ifmlFileChooser.getSelectedFile().getAbsolutePath();
         }
-        storyFile = ifmlFileChooser.getSelectedFile().getAbsolutePath();
 
-        return storyFile;
+        return null;
     }
 
     public static void main(String[] args)
@@ -251,19 +247,82 @@ public class GUIPlayer extends JFrame
         {
             GUIPlayer player = new GUIPlayer(isFromTempFile);
             player.loadStory(fileName);
-            /*if(isFromTempFile)
-            {
-                File tempFile = new File(fileName);
-                if (!tempFile.delete())
-                {
-                    LOG.error(MessageFormat.format("Can't delete temp file {0}", tempFile.getAbsolutePath()));
-                }
-            }*/
         }
         else
         {
             JOptionPane.showMessageDialog(null, "История не выбрана, Плеер завершает свою работу");
         }
+    }
+
+    private void startAnew() throws IFML2Exception
+    {
+        guiInterface.outputText("Начинаем заново...\n");
+        engine.loadStory(storyFile);
+        engine.initGame();
+    }
+
+    private JMenuBar createMainMenu()
+    {
+        JMenuBar mainMenu = new JMenuBar();
+
+        JMenu storyMenu = new JMenu("История");
+        storyMenu.add(new AbstractAction("Начать новую историю...", GUIUtils.NEW_ELEMENT_ICON)
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                if (JOptionPane.showConfirmDialog(GUIPlayer.this,
+                                                  "Вы действительно хотите завершить текущую историю и начать новую?\r\n" +
+                                                  "Ведь всё, чего Вы тут достигли - не сохранится.", "Новая история",
+                                                  JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) ==
+                    JOptionPane.YES_OPTION)
+                {
+                    String fileName = showOpenStoryFileDialog(GUIPlayer.this);
+                    if (fileName != null)
+                    {
+                        loadStory(fileName);
+                    }
+                }
+            }
+        });
+        storyMenu.add(new AbstractAction("Начать сначала...")
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                if (JOptionPane.showConfirmDialog(GUIPlayer.this, "Вы действительно хотите начать историю заново?\r\n" +
+                                                                  "Ведь всё, чего Вы тут достигли - не сохранится.",
+                                                  "Начать заново", JOptionPane.YES_NO_OPTION,
+                                                  JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
+                {
+                    try
+                    {
+                        startAnew();
+                    }
+                    catch (IFML2Exception ex)
+                    {
+                        ReportError(ex, "Ошибка при перезапуске истории!");
+                    }
+                }
+            }
+        });
+        storyMenu.addSeparator();
+        storyMenu.add(new AbstractAction("Выйти...")
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                if (JOptionPane.showConfirmDialog(GUIPlayer.this, "Вы действительно хотите выйти?\r\n" +
+                                                                  "Ведь всё, чего Вы тут достигли - не сохранится.",
+                                                  "Выйти", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) ==
+                    JOptionPane.YES_OPTION)
+                {
+                    GUIPlayer.this.dispose();
+                }
+            }
+        });
+        mainMenu.add(storyMenu);
+        return mainMenu;
     }
 
     private void loadStory(String storyFile)
@@ -277,6 +336,16 @@ public class GUIPlayer extends JFrame
             engine.loadStory(this.storyFile);
             logTextArea.setText("");
             engine.initGame();
+
+            SwingUtilities.invokeLater(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    // move scrollBar to the top...
+                    scrollPane.getVerticalScrollBar().setValue(0);
+                }
+            });
         }
         catch (Throwable e)
         {
@@ -331,14 +400,14 @@ public class GUIPlayer extends JFrame
     private void updateTitle()
     {
         String titleFile = "";
-        if(isFromTempFile)
+        if (isFromTempFile)
         {
             titleFile = "запущен из Редактора";
         }
         else
         {
             File file = new File(storyFile);
-            if(file.exists())
+            if (file.exists())
             {
                 titleFile = file.getName();
             }
