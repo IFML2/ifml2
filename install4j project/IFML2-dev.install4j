@@ -1287,7 +1287,7 @@ if (context.isUnattended()) {
     </windowsArchive>
   </mediaSets>
   <buildIds buildAll="false">
-    <mediaSet refId="37" />
+    <mediaSet refId="29" />
   </buildIds>
   <buildOptions verbose="false" faster="false" disableSigning="false" debug="false" />
 </install4j>
