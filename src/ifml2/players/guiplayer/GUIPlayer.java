@@ -25,69 +25,14 @@ import java.util.ListIterator;
 public class GUIPlayer extends JFrame
 {
     private static final Logger LOG = Logger.getLogger(GUIPlayer.class);
+    private static final String START_ANEW_COMMAND = "заново!";
     private final ArrayList<String> commandHistory = new ArrayList<String>();
     private JPanel mainPanel;
     private JTextField commandText;
     private JTextArea logTextArea;
     private JScrollPane scrollPane;
-    private GameInterface guiInterface = new GameInterface()
-    {
-        @Override
-        public void outputText(String text)
-        {
-            logTextArea.append(text);
-        }
-
-        @Override
-        public String inputText()
-        {
-            String command = commandText.getText();
-            commandText.setText("");
-            outputText("\n");
-
-            // prepare for scrolling to command
-            Rectangle startLocation;
-            int lastLine = logTextArea.getLineCount() - 1;
-            try
-            {
-                startLocation = logTextArea.modelToView(logTextArea.getLineStartOffset(lastLine));
-            }
-            catch (BadLocationException e)
-            {
-                LOG.error("Error while scrolling JTextArea", e);
-                throw new RuntimeException(e);
-            }
-
-            // echo command
-            outputText("> " + command + "\n");
-
-            // scroll to inputted command
-            final Point viewPosition = new Point(startLocation.x, startLocation.y);
-            SwingUtilities.invokeLater(new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    if (scrollPane.getVerticalScrollBar().isShowing())
-                    {
-                        JViewport viewPort = scrollPane.getViewport();
-                        viewPort.setEnabled(false); // disable viewPort to avoid flickering
-                        try
-                        {
-                            viewPort.setViewPosition(viewPosition);
-                        }
-                        finally
-                        {
-                            viewPort.setEnabled(true); // enable to repaint
-                        }
-                    }
-                }
-            });
-
-            return command;
-        }
-    };
-    private Engine engine = new Engine(guiInterface);
+    private GUIPlayerGameInterface gameInterface = new GUIPlayerGameInterface();
+    private Engine engine = new Engine(gameInterface);
     private ListIterator<String> historyIterator = commandHistory.listIterator();
     private String storyFile;
     private boolean isFromTempFile;
@@ -138,32 +83,10 @@ public class GUIPlayer extends JFrame
                     if ("".equals(commandText.getText().trim()) && isNotAtTheBottom)
                     {
                         scrollModel.setValue(value + extent); // scroll to next page
-                        return;
                     }
-
-                    try
+                    else
                     {
-                        String gamerCommand = guiInterface.inputText();
-
-                        if ("".equals(gamerCommand.trim()))
-                        {
-                            guiInterface.outputText("Введите что-нибудь.\n");
-                            return;
-                        }
-
-                        updateHistory(gamerCommand);
-
-                        if ("заново!".equalsIgnoreCase(gamerCommand))
-                        {
-                            startAnew();
-                            return;
-                        }
-
-                        engine.executeGamerCommand(gamerCommand);
-                    }
-                    catch (Throwable ex)
-                    {
-                        ReportError(ex, "Ошибка при перезапуске истории!");
+                        processCommand(gameInterface.inputText());
                     }
                 }
                 else
@@ -183,6 +106,34 @@ public class GUIPlayer extends JFrame
 
         commandText.requestFocusInWindow();
         setVisible(true);
+    }
+
+    private void processCommand(String gamerCommand)
+    {
+        gameInterface.echoCommand(gamerCommand);
+
+        if ("".equals(gamerCommand.trim()))
+        {
+            gameInterface.outputText("Введите что-нибудь.\n");
+            return;
+        }
+
+        updateHistory(gamerCommand);
+
+        try
+        {
+            if (START_ANEW_COMMAND.equalsIgnoreCase(gamerCommand))
+            {
+                startAnew();
+                return;
+            }
+        }
+        catch (IFML2Exception ex)
+        {
+            ReportError(ex, "Ошибка при перезапуске истории!");
+        }
+
+        engine.executeGamerCommand(gamerCommand);
     }
 
     private static String acquireStoryFileNameForPlay(String[] args)
@@ -256,7 +207,7 @@ public class GUIPlayer extends JFrame
 
     private void startAnew() throws IFML2Exception
     {
-        guiInterface.outputText("Начинаем заново...\n");
+        gameInterface.outputText("Начинаем заново...\n");
         engine.loadStory(storyFile);
         engine.initGame();
     }
@@ -295,14 +246,8 @@ public class GUIPlayer extends JFrame
                                                   "Начать заново", JOptionPane.YES_NO_OPTION,
                                                   JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
                 {
-                    try
-                    {
-                        startAnew();
-                    }
-                    catch (IFML2Exception ex)
-                    {
-                        ReportError(ex, "Ошибка при перезапуске истории!");
-                    }
+                    //startAnew();
+                    processCommand(START_ANEW_COMMAND);
                 }
             }
         });
@@ -359,10 +304,10 @@ public class GUIPlayer extends JFrame
         LOG.error(message, exception);
         if (exception instanceof IFML2LoadXmlException)
         {
-            guiInterface.outputText("\nВ файле истории есть ошибки:");
+            gameInterface.outputText("\nВ файле истории есть ошибки:");
             for (ValidationEvent validationEvent : ((IFML2LoadXmlException) exception).getEvents())
             {
-                guiInterface.outputText(MessageFormat.format("\n\"{0}\" at {1},{2}", validationEvent.getMessage(),
+                gameInterface.outputText(MessageFormat.format("\n\"{0}\" at {1},{2}", validationEvent.getMessage(),
                                                              validationEvent.getLocator().getLineNumber(),
                                                              validationEvent.getLocator().getColumnNumber()));
             }
@@ -371,7 +316,7 @@ public class GUIPlayer extends JFrame
         {
             StringWriter stringWriter = new StringWriter();
             exception.printStackTrace(new PrintWriter(stringWriter));
-            guiInterface.outputText(MessageFormat.format("\nПроизошла ошибка: {0}", stringWriter.toString()));
+            gameInterface.outputText(MessageFormat.format("\nПроизошла ошибка: {0}", stringWriter.toString()));
         }
     }
 
@@ -413,5 +358,68 @@ public class GUIPlayer extends JFrame
             }
         }
         setTitle("ЯРИЛ 2.0 Плеер " + Engine.ENGINE_VERSION + " -- " + titleFile);
+    }
+
+    private class GUIPlayerGameInterface implements GameInterface
+    {
+        @Override
+        public void outputText(String text)
+        {
+            logTextArea.append(text);
+        }
+
+        @Override
+        public String inputText()
+        {
+            String command = commandText.getText();
+            commandText.setText("");
+            //echoCommand(command);
+
+            return command;
+        }
+
+        private void echoCommand(String command)
+        {
+            outputText("\n");
+
+            // prepare for scrolling to command
+            Rectangle startLocation;
+            int lastLine = logTextArea.getLineCount() - 1;
+            try
+            {
+                startLocation = logTextArea.modelToView(logTextArea.getLineStartOffset(lastLine));
+            }
+            catch (BadLocationException e)
+            {
+                LOG.error("Error while scrolling JTextArea", e);
+                throw new RuntimeException(e);
+            }
+
+            // echo command
+            outputText("> " + command + "\n");
+
+            // scroll to inputted command
+            final Point viewPosition = new Point(startLocation.x, startLocation.y);
+            SwingUtilities.invokeLater(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    if (scrollPane.getVerticalScrollBar().isShowing())
+                    {
+                        JViewport viewPort = scrollPane.getViewport();
+                        viewPort.setEnabled(false); // disable viewPort to avoid flickering
+                        try
+                        {
+                            viewPort.setViewPosition(viewPosition);
+                        }
+                        finally
+                        {
+                            viewPort.setEnabled(true); // enable to repaint
+                        }
+                    }
+                }
+            });
+        }
     }
 }
