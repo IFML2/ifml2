@@ -3,12 +3,14 @@ package ifml2.om;
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
+import ifml2.FormatLogger;
 import ifml2.IFML2Exception;
 import ifml2.vm.IFML2VMException;
 import ifml2.vm.RunningContext;
 import ifml2.vm.values.BooleanValue;
 import ifml2.vm.values.TextValue;
 import ifml2.vm.values.Value;
+import org.jetbrains.annotations.NotNull;
 
 import javax.xml.bind.annotation.*;
 import java.text.MessageFormat;
@@ -20,6 +22,7 @@ public class IFMLObject implements Cloneable
 {
     private static final String NAME_PROPERTY_LITERAL = "имя";
     private static final String DESCRIPTION_PROPERTY_LITERAL = "описание";
+    private static final FormatLogger LOG = FormatLogger.getLogger(IFMLObject.class);
     @XmlElementWrapper(name = ITEM_HOOKS_ELEMENT)
     @XmlElement(name = ITEM_HOOK_ELEMENT)
     public EventList<Hook> hooks = new BasicEventList<Hook>();
@@ -62,9 +65,30 @@ public class IFMLObject implements Cloneable
     }
 
     @XmlElement(name = OBJECT_WORDS_TAG)
-    public void setWordLinks(WordLinks wordLinks)
+    public void setWordLinks(@NotNull WordLinks wordLinks) throws IFML2Exception
     {
         this.wordLinks = wordLinks;
+
+        // set reverse links
+        if(this instanceof Item && wordLinks.getMainWord() == null)
+        {
+            throw new IFML2Exception("Основное слово не задано у объекта {0}", this);
+        }
+        if(wordLinks.getMainWord() != null)
+        {
+            LOG.debug("setWordLinks() :: Adding link for main word \"{0}\" to object \"{1}\"",  wordLinks.getMainWord(), this);
+            wordLinks.getMainWord().addLinkerObject(this);
+        }
+        for(Word word : wordLinks.getWords())
+        {
+            if(word == null)
+            {
+                throw new IFML2Exception("Задана неверная ссылка на слово у объекта {0}", this);
+            }
+
+            LOG.debug("setWordLinks() :: Adding link for word \"{0}\" to object \"{1}\"",  wordLinks.getMainWord(), this);
+            word.addLinkerObject(this);
+        }
     }
 
     public String getName()
@@ -203,8 +227,9 @@ public class IFMLObject implements Cloneable
             }
         }
 
-        throw new IFML2VMException("У объекта \"{0}\" нет свойства \"{1}\", а также в игре" +
-                " нет признаков и ролей с таким названием.", this, propertyName);
+        throw new IFML2VMException(
+                "У объекта \"{0}\" нет свойства \"{1}\", а также в игре нет признаков и ролей с таким названием.",
+                this, propertyName);
     }
 
     public Value tryGetMemberValue(String symbol, RunningContext runningContext)

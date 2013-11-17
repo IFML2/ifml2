@@ -21,6 +21,14 @@ public class Word
         return "Словарная запись";
     }
 
+    public void addLinkerObject(IFMLObject ifmlObject)
+    {
+        if(!linkerObjects.contains(ifmlObject))
+        {
+            linkerObjects.add(ifmlObject);
+        }
+    }
+
     @XmlEnum
     public enum GramCaseEnum
 	{
@@ -96,7 +104,7 @@ public class Word
      * Are set in OMManager
      */
     @XmlTransient
-    public final ArrayList<IFMLObject> linkerObjects = new ArrayList<IFMLObject>();
+    private final ArrayList<IFMLObject> linkerObjects = new ArrayList<IFMLObject>();
     public ArrayList<IFMLObject> getLinkerObjects()
     {
         return linkerObjects;

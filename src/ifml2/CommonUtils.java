@@ -34,6 +34,11 @@ public class CommonUtils
         return getCurrentDirectory() + CommonConstants.TESTS_DIRECTORY;
     }
 
+    public static String getSavesDirectory()
+    {
+        return getCurrentDirectory() + CommonConstants.SAVES_DIRECTORY;
+    }
+
     /*public static String getExtendedStackTrace(Throwable e)
     {
         StringWriter stringWriter = new StringWriter();

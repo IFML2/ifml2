@@ -3,6 +3,9 @@ package ifml2.engine;
 import ifml2.FormatLogger;
 import ifml2.IFML2Exception;
 import ifml2.SystemIdentifiers;
+import ifml2.engine.savedGame.LocItems;
+import ifml2.engine.savedGame.SavedGame;
+import ifml2.engine.savedGame.Variable;
 import ifml2.om.*;
 import ifml2.parser.FormalElement;
 import ifml2.parser.Parser;
@@ -23,6 +26,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 public class Engine
@@ -77,6 +81,7 @@ public class Engine
             });
         }
     };
+    private SavedGameHelper savedGameHelper = new SavedGameHelper();
 
     public Engine(GameInterface gameInterface)
     {
@@ -445,5 +450,98 @@ public class Engine
     public VirtualMachine getVirtualMachine()
     {
         return virtualMachine;
+    }
+
+    public void saveGame(String saveFileName) throws IFML2Exception
+    {
+        SavedGame savedGame = new SavedGame(savedGameHelper);
+        OMManager.saveGame(saveFileName, savedGame);
+    }
+
+    /**
+     * Helper for saved games data.
+     */
+    public class SavedGameHelper
+    {
+        public List<Variable> getGlobalVariables()
+        {
+            List<Variable> vars = new ArrayList<Variable>();
+            for(Map.Entry<String, Value> var : globalVariables.entrySet())
+            {
+                vars.add(new Variable(var.getKey(), var.getValue().toLiteral()));
+            }
+            return vars;
+        }
+
+        public void setGlobalVariables(List<Variable> vars) throws IFML2Exception
+        {
+            for(Variable var : vars)
+            {
+                Value value = ExpressionCalculator.calculate(virtualMachine.createGlobalRunningContext(), var.getValue());
+                globalVariables.put(var.getName(), value);
+            }
+        }
+
+        public List<Variable> getSystemVariables()
+        {
+            List<Variable> vars = new ArrayList<Variable>();
+            for(Map.Entry<String, Value> var : systemVariables.entrySet())
+            {
+                vars.add(new Variable(var.getKey(), var.getValue().toLiteral()));
+            }
+            return vars;
+        }
+
+        public void setSystemVariables(List<Variable> vars) throws IFML2Exception
+        {
+            for(Variable var : vars)
+            {
+                Value value = ExpressionCalculator.calculate(virtualMachine.createGlobalRunningContext(), var.getValue());
+                systemVariables.put(var.getName(), value);
+            }
+        }
+
+        public List<String> getInventory()
+        {
+            ArrayList<String> ids = new ArrayList<String>();
+            for(Item item : inventory)
+            {
+                ids.add(item.getId());
+            }
+            return ids;
+        }
+
+        public void setInventory(List<String> inventoryIds)
+        {
+            inventory.clear();
+            for(String id : inventoryIds)
+            {
+                HashMap<String, IFMLObject> objectsHeap = story.getObjectsHeap();
+                String loweredId = id.toLowerCase();
+                if(objectsHeap.containsKey(loweredId))
+                {
+                    IFMLObject object = objectsHeap.get(loweredId);
+                    if(object instanceof Item)
+                    {
+                        inventory.add((Item) object);
+                    }
+                }
+            }
+        }
+
+        public List<LocItems> getLocationsItems()
+        {
+            ArrayList<LocItems> locationsItems = new ArrayList<LocItems>();
+            for(Location location : story.getLocations())
+            {
+                LocItems locItems = new LocItems(location.getId());
+                locationsItems.add(locItems);
+                for(Item item : location.getItems())
+                {
+                    locItems.getItems().add(item.getId());
+                }
+            }
+            return locationsItems;
+        }
     }
 }

@@ -4,6 +4,8 @@ public abstract class Value
 {
     public abstract String getTypeName();
 
+    public abstract String toLiteral();
+
     public enum OperationEnum
     {
         ADD("сложение");

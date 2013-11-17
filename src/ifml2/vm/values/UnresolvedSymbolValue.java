@@ -38,6 +38,12 @@ public class UnresolvedSymbolValue extends Value
         return "идентификатор";
     }
 
+    @Override
+    public String toLiteral()
+    {
+        return value;
+    }
+
     public String getValue()
     {
         return value;

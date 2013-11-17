@@ -477,7 +477,7 @@ public class Parser
                 if (usedWords > 0)
                 {
                     // case when dict word has no links to objects
-                    if (dictWord.linkerObjects.size() == 0)
+                    if (dictWord.getLinkerObjects().size() == 0)
                     {
                         throw new IFML2ParseException(MessageFormat.format("Нигде не вижу {0}.", dictWord.getFormByGramCase(Word.GramCaseEnum.VP)), allUsedWords);
                     }
@@ -516,7 +516,7 @@ public class Parser
         // Stage II
 
         ArrayList<IFMLObject> objects = new ArrayList<IFMLObject>();
-        objects.addAll(fittedWords.get(0).linkerObjects);
+        objects.addAll(fittedWords.get(0).getLinkerObjects());
 
         if (fittedWords.size() == 1)
         {
@@ -528,7 +528,7 @@ public class Parser
             for (Iterator<IFMLObject> iterator = objects.iterator(); iterator.hasNext(); )
             {
                 IFMLObject object = iterator.next();
-                if (!word.linkerObjects.contains(object))
+                if (!word.getLinkerObjects().contains(object))
                 {
                     if (objects.size() > 1)
                     {

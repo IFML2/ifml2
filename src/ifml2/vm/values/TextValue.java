@@ -46,6 +46,12 @@ public class TextValue extends Value implements IAddableValue
         return "текст";
     }
 
+    @Override
+    public String toLiteral()
+    {
+        return '\'' +  value + '\'';
+    }
+
     public String getValue()
     {
         return value;

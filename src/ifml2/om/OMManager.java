@@ -3,6 +3,7 @@ package ifml2.om;
 import com.sun.xml.internal.bind.IDResolver;
 import ifml2.FormatLogger;
 import ifml2.IFML2Exception;
+import ifml2.engine.savedGame.SavedGame;
 import org.xml.sax.SAXException;
 
 import javax.xml.bind.*;
@@ -46,10 +47,11 @@ public class OMManager
                 {
                     LOG.debug("afterUnmarshal({0}, {1})", target, parent);
 
-                    // load all objects into objectsHeap
                     if (target instanceof IFMLObject)
                     {
                         IFMLObject ifmlObject = (IFMLObject) target;
+
+                        // load all objects into objectsHeap
                         ifmlObjectsHeap.put(ifmlObject.getId().toLowerCase(), ifmlObject);
 
                         // add item to inventory by starting position
@@ -96,8 +98,6 @@ public class OMManager
                 assignItemsToLocations(story);
             }
 
-            postProcessObjects(ifmlObjectsHeap);
-
             LOG.debug("loadStoryFromXmlFile :: End");
 		}
 		catch (JAXBException e)
@@ -117,52 +117,6 @@ public class OMManager
                 List<Item> items = location.getItems();
                 items.add(item);
                 item.setContainer(items);
-            }
-        }
-    }
-
-    /**
-     * Post process objects:
-     * set reverse links word -> object;
-     * evaluate properties.
-     * @param objectsHeap Objects heap
-     * @throws IFML2Exception In case of incorrect state ob object model
-     */
-    private static void postProcessObjects(HashMap<String, IFMLObject> objectsHeap) throws IFML2Exception
-    {
-        for(IFMLObject ifmlObject : objectsHeap.values())
-        {
-            // assign reverse links from words to objects
-            WordLinks wordLinks = ifmlObject.getWordLinks();
-
-            if(wordLinks == null)
-            {
-                throw new IFML2Exception("Список ссылок на слова не задан у объекта {0}", ifmlObject);
-            }
-
-            if(ifmlObject instanceof Item && wordLinks.getMainWord() == null)
-            {
-                throw new IFML2Exception("Основное слово не задано у объекта {0}", ifmlObject);
-            }
-
-            if(wordLinks.getMainWord() != null)
-            {
-                LOG.debug("postProcessObjects() :: Adding link for main word \"{0}\" to object \"{1}\"",  wordLinks.getMainWord(), ifmlObject);
-                wordLinks.getMainWord().getLinkerObjects().add(ifmlObject);
-            }
-
-            for(Word word : wordLinks.getWords())
-            {
-                if(word == null)
-                {
-                    throw new IFML2Exception("Задана неверная ссылка на слово у объекта {0}", ifmlObject);
-                }
-
-                if(!word.getLinkerObjects().contains(ifmlObject))
-                {
-                    LOG.debug("postProcessObjects() :: Adding link for word \"{0}\" to object \"{1}\"",  wordLinks.getMainWord(), ifmlObject);
-                    word.getLinkerObjects().add(ifmlObject);
-                }
             }
         }
     }
@@ -230,6 +184,24 @@ public class OMManager
             File file = new File(xmlFile);
 
             marshaller.marshal(story, file);
+        }
+        catch (JAXBException e)
+        {
+            throw new IFML2Exception(e);
+        }
+    }
+
+    public static void saveGame(String saveFileName, SavedGame savedGame) throws IFML2Exception
+    {
+        try
+        {
+            JAXBContext context = JAXBContext.newInstance(SavedGame.class);
+            Marshaller marshaller = context.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+
+            File file = new File(saveFileName);
+
+            marshaller.marshal(savedGame, file);
         }
         catch (JAXBException e)
         {

@@ -252,6 +252,46 @@ public class GUIPlayer extends JFrame
             }
         });
         storyMenu.addSeparator();
+        storyMenu.add(new AbstractAction("Сохранить игру...", GUIUtils.SAVE_ICON)
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                JFileChooser ifmlFileChooser = new JFileChooser(CommonUtils.getSavesDirectory());
+                ifmlFileChooser.setFileFilter(new FileFilter()
+                {
+                    @Override
+                    public String getDescription()
+                    {
+                        return CommonConstants.SAVE_FILE_FILTER_NAME;
+                    }
+
+                    @Override
+                    public boolean accept(File f)
+                    {
+                        return f.isDirectory() || f.getName().toLowerCase().endsWith(CommonConstants.SAVE_EXTENSION);
+                    }
+                });
+
+                if (ifmlFileChooser.showOpenDialog(GUIPlayer.this) == JFileChooser.APPROVE_OPTION)
+                {
+                    String saveFileName = ifmlFileChooser.getSelectedFile().getAbsolutePath();
+                    if (!saveFileName.toLowerCase().endsWith(CommonConstants.SAVE_EXTENSION))
+                    {
+                        saveFileName += CommonConstants.SAVE_EXTENSION;
+                    }
+                    try
+                    {
+                        engine.saveGame(saveFileName);
+                    }
+                    catch (IFML2Exception ex)
+                    {
+                        GUIUtils.showErrorMessage(GUIPlayer.this, ex);
+                    }
+                }
+            }
+        });
+        storyMenu.addSeparator();
         storyMenu.add(new AbstractAction("Выйти...")
         {
             @Override
