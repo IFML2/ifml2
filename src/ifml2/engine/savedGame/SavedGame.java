@@ -2,7 +2,6 @@ package ifml2.engine.savedGame;
 
 import ifml2.IFML2Exception;
 import ifml2.engine.Engine;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -66,7 +65,7 @@ public class SavedGame
     @XmlElement(name = "loc")
     public void setLocItems(List<LocItems> locationsItems)
     {
-        throw new NotImplementedException(); //todo
+        savedGameHelper.setLocItems(locationsItems);
     }
 
     public List<LocItems> getLocItems()

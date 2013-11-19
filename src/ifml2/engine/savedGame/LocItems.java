@@ -5,6 +5,7 @@ import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("UnusedDeclaration")
 public class LocItems
 {
     public LocItems()
@@ -12,12 +13,9 @@ public class LocItems
 
     }
 
-    @XmlAttribute(name = "id")
-    public String locId = null;
+    private String locId = null;
 
-    //@XmlElementWrapper(name = "items")
-    @XmlElement(name = "item")
-    public List<String> items = new ArrayList<String>();
+    private List<String> items = new ArrayList<String>();
 
     public LocItems(String locId)
     {
@@ -28,5 +26,27 @@ public class LocItems
     public List<String> getItems()
     {
         return items;
+    }
+
+    public String getLocId()
+    {
+        return locId;
+    }
+
+    @XmlAttribute(name = "id")
+    public void setLocId(String locId)
+    {
+        this.locId = locId;
+    }
+
+    @XmlElement(name = "item")
+    public void setItems(List<String> items)
+    {
+        this.items = items;
+    }
+
+    public void addItemId(String itemId)
+    {
+        items.add(itemId);
     }
 }
