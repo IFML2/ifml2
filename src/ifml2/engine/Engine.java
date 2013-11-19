@@ -516,15 +516,14 @@ public class Engine
             inventory.clear();
             for(String id : inventoryIds)
             {
-                HashMap<String, IFMLObject> objectsHeap = story.getObjectsHeap();
-                String loweredId = id.toLowerCase();
-                if(objectsHeap.containsKey(loweredId))
+                Item item = story.getDataHelper().findItemById(id);
+                if(item != null)
                 {
-                    IFMLObject object = objectsHeap.get(loweredId);
-                    if(object instanceof Item)
-                    {
-                        inventory.add((Item) object);
-                    }
+                    inventory.add(item);
+                }
+                else
+                {
+                    LOG.warn("[Game loading] Inventory loading: there is no item with id \"{0}\".", id);
                 }
             }
         }
@@ -535,13 +534,44 @@ public class Engine
             for(Location location : story.getLocations())
             {
                 LocItems locItems = new LocItems(location.getId());
-                locationsItems.add(locItems);
                 for(Item item : location.getItems())
                 {
-                    locItems.getItems().add(item.getId());
+                    locItems.addItemId(item.getId());
                 }
+                locationsItems.add(locItems);
             }
             return locationsItems;
+        }
+
+        public void setLocItems(List<LocItems> locationsItems)
+        {
+            for(LocItems locItem : locationsItems)
+            {
+                String locId = locItem.getLocId();
+                Story.DataHelper dataHelper = story.getDataHelper();
+                Location location = dataHelper.findLocationById(locId);
+                if(location != null)
+                {
+                    List<Item> items = location.getItems();
+                    items.clear();
+                    for(String itemId : locItem.getItems())
+                    {
+                        Item item = dataHelper.findItemById(itemId);
+                        if(item != null)
+                        {
+                            items.add(item);
+                        }
+                        else
+                        {
+                            LOG.warn("[Game loading] Location items loading: there is no item with id \"{0}\".", itemId);
+                        }
+                    }
+                }
+                else
+                {
+                    LOG.warn("[Game loading] Location items loading: there is no location with id \"{0}\".", locId);
+                }
+            }
         }
     }
 }
