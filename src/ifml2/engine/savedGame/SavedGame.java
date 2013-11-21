@@ -2,6 +2,7 @@ package ifml2.engine.savedGame;
 
 import ifml2.IFML2Exception;
 import ifml2.engine.Engine;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -71,5 +72,19 @@ public class SavedGame
     public List<LocItems> getLocItems()
     {
         return savedGameHelper.getLocationsItems();
+    }
+
+    @XmlElementWrapper(name = "item-items")
+    @XmlElement(name = "item")
+    public void setItemItems(List<ItemItems> itemItems)
+    {
+        //todo savedGameHelper.setItemItems(itemItems);
+        throw new NotImplementedException();
+    }
+
+    public List<ItemItems> getItemItems()
+    {
+        //todo return savedGameHelper.getItemItems();
+        throw new NotImplementedException();
     }
 }
