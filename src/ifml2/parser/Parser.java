@@ -54,6 +54,7 @@ public class Parser
         {
             for (Template template : action.getTemplates())
             {
+                int templateSize = template.getSize();
                 try
                 {
                     ArrayList<FittedFormalElement> fittedFormalElements =
@@ -66,22 +67,32 @@ public class Parser
                 {
                     if (lastException == null
                             || (lastException instanceof IFML2ParseException
-                            && e.isMoreFull((IFML2ParseException) lastException, template.getSize())))
+                            && e.isMoreFull((IFML2ParseException) lastException, templateSize)))
                     {
                         lastException = new IFML2ParseException(MessageFormat.format(
                                 "Я бы понял, если бы вы сказали \"{0}\", но я не понял вот эту часть фразы: \"{1}\".",
                                 convertFittedToString(e.getFittedFormalElements()), e.getPhraseRest()), // convert phrase rest to normal string
-                                e.getUsedWords(), template.getSize());
+                                e.getUsedWords(), templateSize);
                     }
                 }
                 catch (IFML2ParseException e)
                 {
-                    if (lastException == null
-                            || (lastException instanceof IFML2ParseException
-                            && e.isMoreFull((IFML2ParseException) lastException, template.getSize())))
+                    if (lastException == null)
                     {
+                        e.setTemplateSize(templateSize);
                         lastException = e;
-                        ((IFML2ParseException) lastException).setTemplateSize(template.getSize());
+                    }
+                    else if (lastException instanceof IFML2ParseException)
+                    {
+                        e.setTemplateSize(templateSize);
+                        if (e.isMoreFull((IFML2ParseException) lastException, templateSize))
+                        {
+                            lastException = e;
+                        }
+                        else if (e.isEquallyFull((IFML2ParseException) lastException, templateSize))
+                        {
+                            lastException = Math.round(Math.random()) == 0 ? lastException : e; // randomly take one of error :)
+                        }
                     }
                 }
                 catch (IFML2Exception e)
@@ -402,9 +413,18 @@ public class Parser
                 }
                 catch (IFML2ParseException e)
                 {
-                    if (lastException == null || ((e.getUsedWords() > ((IFML2ParseException) lastException).getUsedWords())))
+                    if (lastException == null)
                     {
                         lastException = e;
+                    }
+                    else if (e.getUsedWords() > ((IFML2ParseException) lastException).getUsedWords())
+                    {
+                        lastException = e;
+                    }
+                    else if (e.getUsedWords() == ((IFML2ParseException) lastException).getUsedWords())
+                    {
+                        // take random of these exceptions :)
+                        lastException = Math.round(Math.random()) == 0 ? lastException : e;
                     }
                 }
             }
@@ -427,23 +447,7 @@ public class Parser
             ArrayList<IFMLObject> objects = fitObjectWithPhraseResult.getObjects();
             int usedWordsQty = fitObjectWithPhraseResult.getUsedWordsQty();
 
-            /*
-            ArrayList<IFMLObject> objects;
-            String word = phrase.get(0);
-
-            Word.GramCaseEnum gramCase = ((ObjectTemplateElement) templateElement).gramCase;
-
-            objects = fitObjectWithWord(gramCase, word);
-            */
-
-            /*if(objects == null || objects.size() == 0)
-            {
-                throw new IFML2ParseException("Не знаю, что такое \"" + word + "\".", 1);
-            }
-            else
-            {*/
             return new TemplateElementFitResult(new FittedObjects(objects, gramCase, templateElement.getParameter()), usedWordsQty);
-            /*}*/
         }
         else
         {
@@ -574,23 +578,31 @@ public class Parser
     {
         ArrayList<String> synonymWords = new ArrayList<String>(Arrays.asList(synonym.split("\\s+")));
 
-        if (synonymWords.size() > phrase.size())
-        {
-            throw new IFML2ParseException("Я бы понял, если бы вы упомянули \"" + synonym + "\".", 0);
-        }
+        int synonymSize = synonymWords.size();
 
-        int wordNum = 0;
-        for (String synonymWord : synonymWords)
+        // take length of shortest (synonym of phrase)
+        int minLength = Math.min(synonymSize, phrase.size());
+
+        int usedWordsQty = 0; // fitted words for generating the most suitable exception
+
+        for(int wordIdx = 0; wordIdx <= minLength - 1; wordIdx++)
         {
-            String phraseWord = phrase.get(wordNum);
+            String phraseWord = phrase.get(wordIdx);
+            String synonymWord = synonymWords.get(wordIdx);
             if (!synonymWord.equalsIgnoreCase(phraseWord))
             {
-                throw new IFML2ParseException("Не знаю, что такое \"" + phraseWord + "\".", wordNum);
+                throw new IFML2ParseException("Не знаю, что такое \"" + phraseWord + "\".", usedWordsQty);
             }
-            wordNum++;
+            usedWordsQty++;
         }
 
-        return wordNum;
+        // check if synonym is not fully used
+        if(usedWordsQty < synonymSize)
+        {
+            throw new IFML2ParseException("Команду не совсем понял, прошу уточнить.", usedWordsQty);
+        }
+
+        return usedWordsQty;
     }
 
     private String makeQuestionsForTemplate(ArrayList<TemplateElement> templateRest) throws IFML2Exception
