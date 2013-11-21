@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <updateDescriptor baseUrl="">
-  <entry targetMediaFileId="29" updatableVersionMin="" updatableVersionMax="" fileName="ЯРИЛ_2_0_DEVELOPER_BUILD_PARSER_FIX_20131121_244025.exe" newVersion="DEVELOPER BUILD PARSER FIX" newMediaFileId="29" fileSize="1776640" bundledJre="" archive="false">
+  <entry targetMediaFileId="29" updatableVersionMin="" updatableVersionMax="" fileName="ЯРИЛ_2_0_P10_4_5_20131121.exe" newVersion="P10.4.5" newMediaFileId="29" fileSize="1701376" bundledJre="" archive="false">
     <comment language="ru" />
     <comment language="en" />
   </entry>
