@@ -599,7 +599,7 @@ public class Parser
         // check if synonym is not fully used
         if(usedWordsQty < synonymSize)
         {
-            throw new IFML2ParseException("Я бы понял, если бы вы сказали, к примеру, \"" + synonym + "\".", usedWordsQty);
+            throw new IFML2ParseException("Команду не совсем понял, прошу уточнить.", usedWordsQty);
         }
 
         return usedWordsQty;
