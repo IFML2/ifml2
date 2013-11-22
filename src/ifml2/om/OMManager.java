@@ -197,11 +197,26 @@ public class OMManager
         {
             JAXBContext context = JAXBContext.newInstance(SavedGame.class);
             Marshaller marshaller = context.createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
             File file = new File(saveFileName);
 
             marshaller.marshal(savedGame, file);
+        }
+        catch (JAXBException e)
+        {
+            throw new IFML2Exception(e);
+        }
+    }
+
+    public static SavedGame loadGame(String saveFileName) throws IFML2Exception
+    {
+        try
+        {
+            JAXBContext context = JAXBContext.newInstance(SavedGame.class);
+            Unmarshaller unmarshaller = context.createUnmarshaller();
+            File file = new File(saveFileName);
+            return (SavedGame) unmarshaller.unmarshal(file);
         }
         catch (JAXBException e)
         {

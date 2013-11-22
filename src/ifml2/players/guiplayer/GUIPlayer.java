@@ -26,6 +26,8 @@ public class GUIPlayer extends JFrame
 {
     private static final Logger LOG = Logger.getLogger(GUIPlayer.class);
     private static final String START_ANEW_COMMAND = "заново!";
+    private static final String SAVE_COMMAND = "сохранить";
+    private static final String LOAD_COMMAND = "загрузить";
     private final ArrayList<String> commandHistory = new ArrayList<String>();
     private JPanel mainPanel;
     private JTextField commandText;
@@ -127,6 +129,18 @@ public class GUIPlayer extends JFrame
                 startAnew();
                 return;
             }
+
+            if(SAVE_COMMAND.equalsIgnoreCase(gamerCommand))
+            {
+                saveGame();
+                return;
+            }
+
+            if(LOAD_COMMAND.equalsIgnoreCase(gamerCommand))
+            {
+                loadGame();
+                return;
+            }
         }
         catch (IFML2Exception ex)
         {
@@ -134,6 +148,82 @@ public class GUIPlayer extends JFrame
         }
 
         engine.executeGamerCommand(gamerCommand);
+    }
+
+    private void loadGame()
+    {
+        JFileChooser ifmlFileChooser = new JFileChooser(CommonUtils.getSavesDirectory());
+        ifmlFileChooser.setFileFilter(new FileFilter()
+        {
+            @Override
+            public String getDescription()
+            {
+                return CommonConstants.SAVE_FILE_FILTER_NAME;
+            }
+
+            @Override
+            public boolean accept(File f)
+            {
+                return f.isDirectory() || f.getName().toLowerCase().endsWith(CommonConstants.SAVE_EXTENSION);
+            }
+        });
+
+        if (ifmlFileChooser.showOpenDialog(GUIPlayer.this) == JFileChooser.APPROVE_OPTION)
+        {
+            String saveFileName = ifmlFileChooser.getSelectedFile().getAbsolutePath();
+            try
+            {
+                engine.loadGame(saveFileName);
+            }
+            catch (IFML2Exception ex)
+            {
+                GUIUtils.showErrorMessage(GUIPlayer.this, ex);
+            }
+        }
+        else
+        {
+            gameInterface.outputText("Загрузка отменена.\n");
+        }
+    }
+
+    private void saveGame()
+    {
+        JFileChooser ifmlFileChooser = new JFileChooser(CommonUtils.getSavesDirectory());
+        ifmlFileChooser.setFileFilter(new FileFilter()
+        {
+            @Override
+            public String getDescription()
+            {
+                return CommonConstants.SAVE_FILE_FILTER_NAME;
+            }
+
+            @Override
+            public boolean accept(File f)
+            {
+                return f.isDirectory() || f.getName().toLowerCase().endsWith(CommonConstants.SAVE_EXTENSION);
+            }
+        });
+
+        if (ifmlFileChooser.showSaveDialog(GUIPlayer.this) == JFileChooser.APPROVE_OPTION)
+        {
+            String saveFileName = ifmlFileChooser.getSelectedFile().getAbsolutePath();
+            if (!saveFileName.toLowerCase().endsWith(CommonConstants.SAVE_EXTENSION))
+            {
+                saveFileName += CommonConstants.SAVE_EXTENSION;
+            }
+            try
+            {
+                engine.saveGame(saveFileName);
+            }
+            catch (IFML2Exception ex)
+            {
+                GUIUtils.showErrorMessage(GUIPlayer.this, ex);
+            }
+        }
+        else
+        {
+            gameInterface.outputText("Сохранение отменено.\n");
+        }
     }
 
     private static String acquireStoryFileNameForPlay(String[] args)
@@ -257,38 +347,15 @@ public class GUIPlayer extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                JFileChooser ifmlFileChooser = new JFileChooser(CommonUtils.getSavesDirectory());
-                ifmlFileChooser.setFileFilter(new FileFilter()
-                {
-                    @Override
-                    public String getDescription()
-                    {
-                        return CommonConstants.SAVE_FILE_FILTER_NAME;
-                    }
-
-                    @Override
-                    public boolean accept(File f)
-                    {
-                        return f.isDirectory() || f.getName().toLowerCase().endsWith(CommonConstants.SAVE_EXTENSION);
-                    }
-                });
-
-                if (ifmlFileChooser.showOpenDialog(GUIPlayer.this) == JFileChooser.APPROVE_OPTION)
-                {
-                    String saveFileName = ifmlFileChooser.getSelectedFile().getAbsolutePath();
-                    if (!saveFileName.toLowerCase().endsWith(CommonConstants.SAVE_EXTENSION))
-                    {
-                        saveFileName += CommonConstants.SAVE_EXTENSION;
-                    }
-                    try
-                    {
-                        engine.saveGame(saveFileName);
-                    }
-                    catch (IFML2Exception ex)
-                    {
-                        GUIUtils.showErrorMessage(GUIPlayer.this, ex);
-                    }
-                }
+                processCommand(SAVE_COMMAND);
+            }
+        });
+        storyMenu.add(new AbstractAction("Загрузить игру...", GUIUtils.OPEN_ICON)
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                processCommand(LOAD_COMMAND);
             }
         });
         storyMenu.addSeparator();

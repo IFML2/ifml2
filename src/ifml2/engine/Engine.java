@@ -3,6 +3,7 @@ package ifml2.engine;
 import ifml2.FormatLogger;
 import ifml2.IFML2Exception;
 import ifml2.SystemIdentifiers;
+import ifml2.engine.savedGame.ItemItems;
 import ifml2.engine.savedGame.LocItems;
 import ifml2.engine.savedGame.SavedGame;
 import ifml2.engine.savedGame.Variable;
@@ -456,6 +457,14 @@ public class Engine
     {
         SavedGame savedGame = new SavedGame(savedGameHelper);
         OMManager.saveGame(saveFileName, savedGame);
+        outTextLn(MessageFormat.format("Игра сохранена в файл {0}.", saveFileName));
+    }
+
+    public void loadGame(String saveFileName) throws IFML2Exception
+    {
+        SavedGame savedGame = OMManager.loadGame(saveFileName);
+        savedGame.restoreGame(savedGameHelper);
+        outTextLn(MessageFormat.format("Игра восстановлена из файла {0}.", saveFileName));
     }
 
     /**
@@ -572,6 +581,18 @@ public class Engine
                     LOG.warn("[Game loading] Location items loading: there is no location with id \"{0}\".", locId);
                 }
             }
+        }
+
+        public List<ItemItems> getItemItems()
+        {
+            return null;
+            //throw new NotImplementedException();
+            //todo
+        }
+
+        public void setItemItems(List<ItemItems> itemItems)
+        {
+            //todo
         }
     }
 }

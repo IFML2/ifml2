@@ -2,7 +2,6 @@ package ifml2.engine.savedGame;
 
 import ifml2.IFML2Exception;
 import ifml2.engine.Engine;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -13,7 +12,11 @@ import java.util.List;
 @XmlRootElement(name = "saved-game")
 public class SavedGame
 {
-    private Engine.SavedGameHelper savedGameHelper;
+    private List<Variable> globalVars;
+    private List<Variable> systemVars;
+    private List<String> inventoryIds;
+    private List<LocItems> locItems;
+    private List<ItemItems> itemItems;
 
     public SavedGame()
     {
@@ -23,68 +26,91 @@ public class SavedGame
     public SavedGame(Engine.SavedGameHelper savedGameHelper)
     {
         this();
-        this.savedGameHelper = savedGameHelper;
+        globalVars = savedGameHelper.getGlobalVariables();
+        systemVars = savedGameHelper.getSystemVariables();
+        inventoryIds = savedGameHelper.getInventory();
+        locItems = savedGameHelper.getLocationsItems();
+        itemItems = savedGameHelper.getItemItems();
+    }
+
+    public void restoreGame(Engine.SavedGameHelper savedGameHelper) throws IFML2Exception
+    {
+        savedGameHelper.setGlobalVariables(globalVars);
+        savedGameHelper.setSystemVariables(systemVars);
+        savedGameHelper.setInventory(inventoryIds);
+        savedGameHelper.setLocItems(locItems);
+        savedGameHelper.setItemItems(itemItems);
     }
 
     public List<Variable> getGlobalVars()
     {
-        return savedGameHelper.getGlobalVariables();
+        //return savedGameHelper.getGlobalVariables();
+        return globalVars;
     }
 
     @XmlElementWrapper(name = "global-vars")
     @XmlElement(name = "var")
-    public void setGlobalVars(List<Variable> vars) throws IFML2Exception
+    public void setGlobalVars(List<Variable> globalVars) throws IFML2Exception
     {
-        savedGameHelper.setGlobalVariables(vars);
+        //savedGameHelper.setGlobalVariables(vars);
+        this.globalVars = globalVars;
     }
 
     public List<Variable> getSystemVars()
     {
-        return savedGameHelper.getSystemVariables();
+        //return savedGameHelper.getSystemVariables();
+        return systemVars;
     }
 
     @XmlElementWrapper(name = "system-vars")
     @XmlElement(name = "var")
-    public void setSystemVars(List<Variable> vars) throws IFML2Exception
+    public void setSystemVars(List<Variable> systemVars) throws IFML2Exception
     {
-        savedGameHelper.setSystemVariables(vars);
+        //savedGameHelper.setSystemVariables(vars);
+        this.systemVars = systemVars;
     }
 
     @XmlElementWrapper(name = "inventory")
     @XmlElement(name = "item")
     public void setInventory(List<String> inventoryIds)
     {
-        savedGameHelper.setInventory(inventoryIds);
+        //savedGameHelper.setInventory(inventoryIds);
+        this.inventoryIds = inventoryIds;
     }
 
     public List<String> getInventory()
     {
-        return savedGameHelper.getInventory();
+        //return savedGameHelper.getInventory();
+        return inventoryIds;
     }
 
     @XmlElementWrapper(name = "locations-items")
     @XmlElement(name = "loc")
     public void setLocItems(List<LocItems> locationsItems)
     {
-        savedGameHelper.setLocItems(locationsItems);
+        //savedGameHelper.setLocItems(locationsItems);
+        this.locItems = locationsItems;
     }
 
     public List<LocItems> getLocItems()
     {
-        return savedGameHelper.getLocationsItems();
+        //return savedGameHelper.getLocationsItems();
+        return locItems;
     }
 
     @XmlElementWrapper(name = "item-items")
     @XmlElement(name = "item")
     public void setItemItems(List<ItemItems> itemItems)
     {
-        //todo savedGameHelper.setItemItems(itemItems);
-        throw new NotImplementedException();
+        //savedGameHelper.setItemItems(itemItems);
+        //throw new NotImplementedException();
+        this.itemItems = itemItems;
     }
 
     public List<ItemItems> getItemItems()
     {
-        //todo return savedGameHelper.getItemItems();
-        throw new NotImplementedException();
+        //return savedGameHelper.getItemItems();
+        //throw new NotImplementedException();
+        return itemItems;
     }
 }
