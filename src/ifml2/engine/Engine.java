@@ -455,7 +455,7 @@ public class Engine
 
     public void saveGame(String saveFileName) throws IFML2Exception
     {
-        SavedGame savedGame = new SavedGame(savedGameHelper);
+        SavedGame savedGame = new SavedGame(savedGameHelper, story.getDataHelper());
         OMManager.saveGame(saveFileName, savedGame);
         outTextLn(MessageFormat.format("Игра сохранена в файл {0}.", saveFileName));
     }
@@ -463,7 +463,7 @@ public class Engine
     public void loadGame(String saveFileName) throws IFML2Exception
     {
         SavedGame savedGame = OMManager.loadGame(saveFileName);
-        savedGame.restoreGame(savedGameHelper);
+        savedGame.restoreGame(savedGameHelper, story.getDataHelper());
         outTextLn(MessageFormat.format("Игра восстановлена из файла {0}.", saveFileName));
     }
 
@@ -533,52 +533,6 @@ public class Engine
                 else
                 {
                     LOG.warn("[Game loading] Inventory loading: there is no item with id \"{0}\".", id);
-                }
-            }
-        }
-
-        public List<SavedLoc> getLocationsItems()
-        {
-            ArrayList<SavedLoc> locationsItems = new ArrayList<SavedLoc>();
-            for (Location location : story.getLocations())
-            {
-                SavedLoc savedLoc = new SavedLoc(location.getId());
-                for (Item item : location.getItems())
-                {
-                    savedLoc.addItemId(item.getId());
-                }
-                locationsItems.add(savedLoc);
-            }
-            return locationsItems;
-        }
-
-        public void setLocItems(List<SavedLoc> locationsItems)
-        {
-            for (SavedLoc locItem : locationsItems)
-            {
-                String locId = locItem.getLocId();
-                Story.DataHelper dataHelper = story.getDataHelper();
-                Location location = dataHelper.findLocationById(locId);
-                if (location != null)
-                {
-                    List<Item> items = location.getItems();
-                    items.clear();
-                    for (String itemId : locItem.getItems())
-                    {
-                        Item item = dataHelper.findItemById(itemId);
-                        if (item != null)
-                        {
-                            items.add(item);
-                        }
-                        else
-                        {
-                            LOG.warn("[Game loading] Location items loading: there is no item with id \"{0}\".", itemId);
-                        }
-                    }
-                }
-                else
-                {
-                    LOG.warn("[Game loading] Location items loading: there is no location with id \"{0}\".", locId);
                 }
             }
         }
@@ -706,6 +660,11 @@ public class Engine
                     LOG.warn("Не найден предмет с ид \"{0}\"", itemId);
                 }
             }
+        }
+
+        public List<Location> getLocations()
+        {
+            return story.getLocations();
         }
     }
 }
