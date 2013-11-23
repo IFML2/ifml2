@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<install4j version="5.1.6" transformSequenceNumber="4">
+<install4j version="5.1.7" transformSequenceNumber="4">
   <directoryPresets config="../../../../../Documents/ЯРИЛ 2.0/ifml2 project/log4j.xml" />
   <application name="ЯРИЛ 2.0" distributionSourceDir="" applicationId="5434-6524-6365-4741" mediaDir="." mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="9" lzmaCompression="true" pack200Compression="true" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="true" shortName="${compiler:sys.fullName}" publisher="TOY Soft" publisherWeb="http://toysoft.narod.ru" version="DEVELOPER BUILD" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" installerName="" javaMinVersion="1.6" javaMaxVersion="1.6" allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="true" languageSelectionInPrincipalLanguage="false">
@@ -28,18 +28,14 @@
     </roots>
     <mountPoints>
       <mountPoint id="23" root="" location="" mode="755" />
+      <mountPoint id="191" root="" location="Games" mode="755" />
+      <mountPoint id="192" root="" location="Saved Games" mode="755" />
       <mountPoint id="34" root="33" location="" mode="755" />
       <mountPoint id="88" root="87" location="" mode="755" />
     </mountPoints>
     <entries>
       <dirEntry mountPoint="23" file="../../libs" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="libs" excludeSuffixes="" dirMode="755" overrideDirMode="false">
-        <exclude>
-          <entry location=".svn" fileType="regular" />
-          <entry location="standard/.svn" fileType="regular" />
-          <entry location="standard/verbs.xml.old.20120212" fileType="regular" />
-          <entry location="standard/verbs.xml.old.20120218" fileType="regular" />
-          <entry location="standard/verbs.xml.old.20120219" fileType="regular" />
-        </exclude>
+        <exclude />
       </dirEntry>
       <fileEntry mountPoint="23" file="../../out/artifacts/ifml2/ifml2.jar" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
       <fileEntry mountPoint="23" file="../../lib/glazedlists_java15-1.9-20110828.184933-10.jar" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />

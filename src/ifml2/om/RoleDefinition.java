@@ -43,7 +43,7 @@ public class RoleDefinition
         return "определение роли " + name;
     }
 
-    public PropertyDefinition getPropertyDefinitionByName(String name)
+    public PropertyDefinition findPropertyDefinitionByName(String name)
     {
         assert name != null;
         for(PropertyDefinition propertyDefinition : propertyDefinitions)

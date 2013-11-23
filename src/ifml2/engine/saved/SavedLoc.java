@@ -1,25 +1,24 @@
-package ifml2.engine.savedGame;
+package ifml2.engine.saved;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("UnusedDeclaration")
-public class LocItems
+public class SavedLoc
 {
-    public LocItems()
-    {
-
-    }
-
+    @XmlAttribute(name = "id")
     private String locId = null;
-
     private List<String> items = new ArrayList<String>();
 
-    public LocItems(String locId)
+    @SuppressWarnings("UnusedDeclaration")
+    public SavedLoc()
     {
-        this();
+        // for JAXB
+    }
+
+    public SavedLoc(String locId)
+    {
         this.locId = locId;
     }
 
@@ -28,21 +27,15 @@ public class LocItems
         return items;
     }
 
-    public String getLocId()
-    {
-        return locId;
-    }
-
-    @XmlAttribute(name = "id")
-    public void setLocId(String locId)
-    {
-        this.locId = locId;
-    }
-
     @XmlElement(name = "item")
     public void setItems(List<String> items)
     {
         this.items = items;
+    }
+
+    public String getLocId()
+    {
+        return locId;
     }
 
     public void addItemId(String itemId)

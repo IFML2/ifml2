@@ -244,7 +244,7 @@ public class IFMLObject implements Cloneable
         }
     }
 
-    public Property getPropertyByName(String name)
+    public Property findPropertyByName(String name)
     {
         // search in local properties
         for (Property property : properties)
@@ -258,10 +258,23 @@ public class IFMLObject implements Cloneable
         // search in roles' properties
         for (Role role : roles)
         {
-            Property property = role.getPropertyByName(name);
+            Property property = role.findPropertyByName(name);
             if (property != null)
             {
                 return property;
+            }
+        }
+
+        return null;
+    }
+
+    public Role findRoleByName(String name)
+    {
+        for(Role role : roles)
+        {
+            if(role.getName().equalsIgnoreCase(name))
+            {
+                return role;
             }
         }
 
