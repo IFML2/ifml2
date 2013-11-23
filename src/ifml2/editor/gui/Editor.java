@@ -17,6 +17,7 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileView;
 import javax.xml.bind.ValidationEvent;
 import java.awt.*;
 import java.awt.event.*;
@@ -591,8 +592,8 @@ public class Editor extends JFrame
     private String selectStoryFileForOpen()
     {
         // choose story file:
-        JFileChooser ifmlFileChooser = new JFileChooser(CommonUtils.getSamplesDirectory());
-        ifmlFileChooser.setFileFilter(new FileFilter()
+        JFileChooser storyFileChooser = new JFileChooser(CommonUtils.getSamplesDirectory());
+        storyFileChooser.setFileFilter(new FileFilter()
         {
             @Override
             public String getDescription()
@@ -607,12 +608,25 @@ public class Editor extends JFrame
             }
         });
 
-        if (ifmlFileChooser.showOpenDialog(this) != JFileChooser.APPROVE_OPTION)
+        storyFileChooser.setFileView(new FileView()
+        {
+            @Override
+            public Icon getIcon(File f)
+            {
+                if (f.isDirectory())
+                {
+                    return GUIUtils.DIRECTORY_ICON;
+                }
+                return GUIUtils.STORY_FILE_ICON;
+            }
+        });
+
+        if (storyFileChooser.showOpenDialog(this) != JFileChooser.APPROVE_OPTION)
         {
             return null;
         }
 
-        return ifmlFileChooser.getSelectedFile().getAbsolutePath();
+        return storyFileChooser.getSelectedFile().getAbsolutePath();
     }
 
     private JPopupMenu createPopupMenus()
@@ -685,8 +699,8 @@ public class Editor extends JFrame
     private String selectFileForStorySave()
     {
         // choose story file:
-        JFileChooser ifmlFileChooser = new JFileChooser(CommonUtils.getSamplesDirectory());
-        ifmlFileChooser.setFileFilter(new FileFilter()
+        JFileChooser storyFileChooser = new JFileChooser(CommonUtils.getSamplesDirectory());
+        storyFileChooser.setFileFilter(new FileFilter()
         {
             @Override
             public String getDescription()
@@ -702,12 +716,25 @@ public class Editor extends JFrame
             }
         });
 
-        if (ifmlFileChooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION)
+        storyFileChooser.setFileView(new FileView()
+        {
+            @Override
+            public Icon getIcon(File f)
+            {
+                if (f.isDirectory())
+                {
+                    return GUIUtils.DIRECTORY_ICON;
+                }
+                return GUIUtils.STORY_FILE_ICON;
+            }
+        });
+
+        if (storyFileChooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION)
         {
             return null;
         }
 
-        String fileName = ifmlFileChooser.getSelectedFile().getAbsolutePath();
+        String fileName = storyFileChooser.getSelectedFile().getAbsolutePath();
 
         if (!fileName.toLowerCase().endsWith(CommonConstants.STORY_EXTENSION))
         {

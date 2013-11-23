@@ -26,6 +26,9 @@ public class GUIUtils
     public static final Icon MOVE_RIGHT_ICON = getEditorIcon("Forward24.gif");
     public static final Icon UP_ICON = getEditorIcon("Up24.gif");
     public static final Icon DOWN_ICON = getEditorIcon("Down24.gif");
+    public static final Icon DIRECTORY_ICON = getEditorIcon("Open24.gif");
+    public static final Icon SAVE_FILE_ICON = getEditorIcon("Save24.gif");
+    public static final Icon STORY_FILE_ICON = getEditorIcon("Edit24.gif");
     private static final String IFML2_EDITOR_GUI_IMAGES = "/ifml2/editor/gui/images/";
 
     public static void packAndCenterWindow(@NotNull Window window)
@@ -47,8 +50,7 @@ public class GUIUtils
     {
         StringWriter stringWriter = new StringWriter();
         exception.printStackTrace(new PrintWriter(stringWriter));
-        JOptionPane.showMessageDialog(parentComponent, stringWriter.toString(), "Произошла ошибка!",
-                                      JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(parentComponent, stringWriter.toString(), "Произошла ошибка!", JOptionPane.ERROR_MESSAGE);
     }
 
     /**
@@ -78,8 +80,8 @@ public class GUIUtils
         String question = MessageFormat.format("Вы действительно хотите удалить {0} {1}?", thisGendered, objectNameVP);
         String title = MessageFormat.format("Удаление {0}", objectNameRP);
 
-        return JOptionPane.YES_OPTION == JOptionPane
-                .showConfirmDialog(owner, question, title, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        return JOptionPane.YES_OPTION ==
+               JOptionPane.showConfirmDialog(owner, question, title, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
     }
 
     /**

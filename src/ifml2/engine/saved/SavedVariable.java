@@ -1,20 +1,21 @@
-package ifml2.engine.savedGame;
+package ifml2.engine.saved;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlValue;
 
-public class Variable
+public class SavedVariable
 {
     private String name = null;
     private String value = null;
 
-    public Variable()
+    @SuppressWarnings("UnusedDeclaration")
+    public SavedVariable()
     {
+        // for JAXB
     }
 
-    public Variable(String name, String value)
+    public SavedVariable(String name, String value)
     {
-        this();
         this.setName(name);
         this.setValue(value);
     }

@@ -58,7 +58,7 @@ public class Role
         return null;
     }
 
-    public Property getPropertyByName(String name)
+    public Property findPropertyByName(String name)
     {
         for(Property property : properties)
         {

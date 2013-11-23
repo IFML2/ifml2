@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileView;
 import javax.swing.text.BadLocationException;
 import javax.xml.bind.ValidationEvent;
 import java.awt.*;
@@ -152,8 +153,8 @@ public class GUIPlayer extends JFrame
 
     private void loadGame()
     {
-        JFileChooser ifmlFileChooser = new JFileChooser(CommonUtils.getSavesDirectory());
-        ifmlFileChooser.setFileFilter(new FileFilter()
+        JFileChooser savedGameFileChooser = new JFileChooser(CommonUtils.getSavesDirectory());
+        savedGameFileChooser.setFileFilter(new FileFilter()
         {
             @Override
             public String getDescription()
@@ -168,12 +169,32 @@ public class GUIPlayer extends JFrame
             }
         });
 
-        if (ifmlFileChooser.showOpenDialog(GUIPlayer.this) == JFileChooser.APPROVE_OPTION)
+        savedGameFileChooser.setFileView(new FileView()
         {
-            String saveFileName = ifmlFileChooser.getSelectedFile().getAbsolutePath();
+            @Override
+            public Icon getIcon(File f)
+            {
+                if(f.isDirectory())
+                {
+                    return GUIUtils.DIRECTORY_ICON;
+                }
+                return GUIUtils.SAVE_FILE_ICON;
+            }
+        });
+
+        if (savedGameFileChooser.showOpenDialog(GUIPlayer.this) == JFileChooser.APPROVE_OPTION)
+        {
+            String saveFileName = savedGameFileChooser.getSelectedFile().getAbsolutePath();
             try
             {
-                engine.loadGame(saveFileName);
+                if(new File(saveFileName).exists())
+                {
+                    engine.loadGame(saveFileName);
+                }
+                else
+                {
+                    gameInterface.outputText("Выбранный файл не существует.");
+                }
             }
             catch (IFML2Exception ex)
             {
@@ -188,8 +209,8 @@ public class GUIPlayer extends JFrame
 
     private void saveGame()
     {
-        JFileChooser ifmlFileChooser = new JFileChooser(CommonUtils.getSavesDirectory());
-        ifmlFileChooser.setFileFilter(new FileFilter()
+        JFileChooser savedGameFileChooser = new JFileChooser(CommonUtils.getSavesDirectory());
+        savedGameFileChooser.setFileFilter(new FileFilter()
         {
             @Override
             public String getDescription()
@@ -204,9 +225,23 @@ public class GUIPlayer extends JFrame
             }
         });
 
-        if (ifmlFileChooser.showSaveDialog(GUIPlayer.this) == JFileChooser.APPROVE_OPTION)
+        savedGameFileChooser.setFileView(new FileView()
         {
-            String saveFileName = ifmlFileChooser.getSelectedFile().getAbsolutePath();
+            @Override
+            public Icon getIcon(File f)
+            {
+                if(f.isDirectory())
+                {
+                    return GUIUtils.DIRECTORY_ICON;
+                }
+                return GUIUtils.SAVE_FILE_ICON;
+            }
+        });
+
+
+        if (savedGameFileChooser.showSaveDialog(GUIPlayer.this) == JFileChooser.APPROVE_OPTION)
+        {
+            String saveFileName = savedGameFileChooser.getSelectedFile().getAbsolutePath();
             if (!saveFileName.toLowerCase().endsWith(CommonConstants.SAVE_EXTENSION))
             {
                 saveFileName += CommonConstants.SAVE_EXTENSION;
@@ -253,8 +288,8 @@ public class GUIPlayer extends JFrame
 
     private static String showOpenStoryFileDialog(Window owner)
     {
-        JFileChooser ifmlFileChooser = new JFileChooser(CommonUtils.getSamplesDirectory());
-        ifmlFileChooser.setFileFilter(new FileFilter()
+        JFileChooser storyFileChooser = new JFileChooser(CommonUtils.getSamplesDirectory());
+        storyFileChooser.setFileFilter(new FileFilter()
         {
             @Override
             public String getDescription()
@@ -269,9 +304,22 @@ public class GUIPlayer extends JFrame
             }
         });
 
-        if (ifmlFileChooser.showOpenDialog(owner) == JFileChooser.APPROVE_OPTION)
+        storyFileChooser.setFileView(new FileView()
         {
-            return ifmlFileChooser.getSelectedFile().getAbsolutePath();
+            @Override
+            public Icon getIcon(File f)
+            {
+                if (f.isDirectory())
+                {
+                    return GUIUtils.DIRECTORY_ICON;
+                }
+                return GUIUtils.STORY_FILE_ICON;
+            }
+        });
+
+        if (storyFileChooser.showOpenDialog(owner) == JFileChooser.APPROVE_OPTION)
+        {
+            return storyFileChooser.getSelectedFile().getAbsolutePath();
         }
 
         return null;

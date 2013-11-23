@@ -3,10 +3,7 @@ package ifml2.engine;
 import ifml2.FormatLogger;
 import ifml2.IFML2Exception;
 import ifml2.SystemIdentifiers;
-import ifml2.engine.savedGame.ItemItems;
-import ifml2.engine.savedGame.LocItems;
-import ifml2.engine.savedGame.SavedGame;
-import ifml2.engine.savedGame.Variable;
+import ifml2.engine.saved.*;
 import ifml2.om.*;
 import ifml2.parser.FormalElement;
 import ifml2.parser.Parser;
@@ -210,8 +207,9 @@ public class Engine
 
         // check help command
         if ("помощь".equalsIgnoreCase(trimmedCommand) || "помоги".equalsIgnoreCase(trimmedCommand) ||
-                "помогите".equalsIgnoreCase(trimmedCommand) || "help".equalsIgnoreCase(trimmedCommand) ||
-                "info".equalsIgnoreCase(trimmedCommand) || "инфо".equalsIgnoreCase(trimmedCommand)) // todo refactor to List.contains() or something similar
+            "помогите".equalsIgnoreCase(trimmedCommand) || "help".equalsIgnoreCase(trimmedCommand) ||
+            "info".equalsIgnoreCase(trimmedCommand) ||
+            "инфо".equalsIgnoreCase(trimmedCommand)) // todo refactor to List.contains() or something similar
         {
             outTextLn("Попробуйте одну из команд: " + story.getAllActions());
             return true;
@@ -378,7 +376,8 @@ public class Engine
                 Value isRestricted = ExpressionCalculator.calculate(runningContext, restriction.getCondition());
                 if (!(isRestricted instanceof BooleanValue))
                 {
-                    throw new IFML2Exception("Выражение (%s) условия ограничения действия \"%s\" не логического типа.", restriction.getCondition(), action);
+                    throw new IFML2Exception("Выражение (%s) условия ограничения действия \"%s\" не логического типа.",
+                                             restriction.getCondition(), action);
                 }
                 if (((BooleanValue) isRestricted).getValue()) // if condition is true, run reaction
                 {
@@ -388,7 +387,8 @@ public class Engine
             }
             catch (IFML2Exception e)
             {
-                throw new IFML2Exception(e, "{0}\n  при вычислении ограничения \"{1}\" действия \"{2}\"", e.getMessage(), restriction.getCondition(), action);
+                throw new IFML2Exception(e, "{0}\n  при вычислении ограничения \"{1}\" действия \"{2}\"", e.getMessage(),
+                                         restriction.getCondition(), action);
             }
         }
         return false;
@@ -472,38 +472,38 @@ public class Engine
      */
     public class SavedGameHelper
     {
-        public List<Variable> getGlobalVariables()
+        public List<SavedVariable> getGlobalVariables()
         {
-            List<Variable> vars = new ArrayList<Variable>();
-            for(Map.Entry<String, Value> var : globalVariables.entrySet())
+            List<SavedVariable> vars = new ArrayList<SavedVariable>();
+            for (Map.Entry<String, Value> var : globalVariables.entrySet())
             {
-                vars.add(new Variable(var.getKey(), var.getValue().toLiteral()));
+                vars.add(new SavedVariable(var.getKey(), var.getValue().toLiteral()));
             }
             return vars;
         }
 
-        public void setGlobalVariables(List<Variable> vars) throws IFML2Exception
+        public void setGlobalVariables(List<SavedVariable> vars) throws IFML2Exception
         {
-            for(Variable var : vars)
+            for (SavedVariable var : vars)
             {
                 Value value = ExpressionCalculator.calculate(virtualMachine.createGlobalRunningContext(), var.getValue());
                 globalVariables.put(var.getName(), value);
             }
         }
 
-        public List<Variable> getSystemVariables()
+        public List<SavedVariable> getSystemVariables()
         {
-            List<Variable> vars = new ArrayList<Variable>();
-            for(Map.Entry<String, Value> var : systemVariables.entrySet())
+            List<SavedVariable> vars = new ArrayList<SavedVariable>();
+            for (Map.Entry<String, Value> var : systemVariables.entrySet())
             {
-                vars.add(new Variable(var.getKey(), var.getValue().toLiteral()));
+                vars.add(new SavedVariable(var.getKey(), var.getValue().toLiteral()));
             }
             return vars;
         }
 
-        public void setSystemVariables(List<Variable> vars) throws IFML2Exception
+        public void setSystemVariables(List<SavedVariable> vars) throws IFML2Exception
         {
-            for(Variable var : vars)
+            for (SavedVariable var : vars)
             {
                 Value value = ExpressionCalculator.calculate(virtualMachine.createGlobalRunningContext(), var.getValue());
                 systemVariables.put(var.getName(), value);
@@ -513,7 +513,7 @@ public class Engine
         public List<String> getInventory()
         {
             ArrayList<String> ids = new ArrayList<String>();
-            for(Item item : inventory)
+            for (Item item : inventory)
             {
                 ids.add(item.getId());
             }
@@ -523,10 +523,10 @@ public class Engine
         public void setInventory(List<String> inventoryIds)
         {
             inventory.clear();
-            for(String id : inventoryIds)
+            for (String id : inventoryIds)
             {
                 Item item = story.getDataHelper().findItemById(id);
-                if(item != null)
+                if (item != null)
                 {
                     inventory.add(item);
                 }
@@ -537,36 +537,36 @@ public class Engine
             }
         }
 
-        public List<LocItems> getLocationsItems()
+        public List<SavedLoc> getLocationsItems()
         {
-            ArrayList<LocItems> locationsItems = new ArrayList<LocItems>();
-            for(Location location : story.getLocations())
+            ArrayList<SavedLoc> locationsItems = new ArrayList<SavedLoc>();
+            for (Location location : story.getLocations())
             {
-                LocItems locItems = new LocItems(location.getId());
-                for(Item item : location.getItems())
+                SavedLoc savedLoc = new SavedLoc(location.getId());
+                for (Item item : location.getItems())
                 {
-                    locItems.addItemId(item.getId());
+                    savedLoc.addItemId(item.getId());
                 }
-                locationsItems.add(locItems);
+                locationsItems.add(savedLoc);
             }
             return locationsItems;
         }
 
-        public void setLocItems(List<LocItems> locationsItems)
+        public void setLocItems(List<SavedLoc> locationsItems)
         {
-            for(LocItems locItem : locationsItems)
+            for (SavedLoc locItem : locationsItems)
             {
                 String locId = locItem.getLocId();
                 Story.DataHelper dataHelper = story.getDataHelper();
                 Location location = dataHelper.findLocationById(locId);
-                if(location != null)
+                if (location != null)
                 {
                     List<Item> items = location.getItems();
                     items.clear();
-                    for(String itemId : locItem.getItems())
+                    for (String itemId : locItem.getItems())
                     {
                         Item item = dataHelper.findItemById(itemId);
-                        if(item != null)
+                        if (item != null)
                         {
                             items.add(item);
                         }
@@ -583,16 +583,129 @@ public class Engine
             }
         }
 
-        public List<ItemItems> getItemItems()
+        public List<SavedItem> getItemItems()
         {
-            return null;
-            //throw new NotImplementedException();
-            //todo
+            ArrayList<SavedItem> savedItemList = new ArrayList<SavedItem>();
+            for (Item item : story.getItems())
+            {
+                SavedItem savedItem = new SavedItem(item.getId());
+                for (Role role : item.getRoles())
+                {
+                    SavedRole savedRole = new SavedRole(role.getName());
+                    for (Property property : role.getProperties())
+                    {
+                        String propertyName = property.getName();
+                        PropertyDefinition propertyDefinition = role.getRoleDefinition().findPropertyDefinitionByName(propertyName);
+                        if (propertyDefinition != null)
+                        {
+                            if (PropertyDefinition.PropertyTypeEnum.COLLECTION.equals(propertyDefinition.getType()))
+                            {
+                                SavedProperty savedProperty = savedRole.addProperty(propertyName);
+                                Value value = property.getValue();
+                                if (value instanceof CollectionValue)
+                                {
+                                    List<?> collection = ((CollectionValue) value).getValue();
+                                    for (Object obj : collection)
+                                    {
+                                        if (obj instanceof Item)
+                                        {
+                                            Item listItem = (Item) obj;
+                                            savedProperty.addItem(listItem.getId());
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    LOG.error("Системная ошибка: свойство \"{0}\" в роли \"{1}\"" +
+                                              "в предмете \"{2}\" помечено как коллекция, но хранит значение другого типа - \"{3)\".",
+                                              propertyName, role.getName(), item.getId(), value.getTypeName());
+                                }
+                            }
+                        }
+                        else
+                        {
+                            LOG.error("Системная ошибка: в роли {0} не найдено свойство {1}.", role, propertyName);
+                        }
+                    }
+                    savedItem.addRole(savedRole);
+                }
+                savedItemList.add(savedItem);
+            }
+            return savedItemList;
         }
 
-        public void setItemItems(List<ItemItems> itemItems)
+        public void setItemItems(List<SavedItem> savedItemList)
         {
-            //todo
+            Story.DataHelper dataHelper = story.getDataHelper();
+            for(SavedItem savedItem : savedItemList)
+            {
+                String itemId = savedItem.getId();
+                Item item = dataHelper.findItemById(itemId);
+                if(item != null)
+                {
+                    for(SavedRole savedRole : savedItem.getRoles())
+                    {
+                        String roleName = savedRole.getName();
+                        Role role = item.findRoleByName(roleName);
+                        if (role != null)
+                        {
+                            for(SavedProperty savedProperty : savedRole.getProperties())
+                            {
+                                String propName = savedProperty.getName();
+                                Property property = role.findPropertyByName(propName);
+                                if(property != null)
+                                {
+                                    RoleDefinition roleDefinition = role.getRoleDefinition();
+                                    PropertyDefinition propertyDefinition = roleDefinition.findPropertyDefinitionByName(propName);
+                                    if (propertyDefinition != null)
+                                    {
+                                        if(PropertyDefinition.PropertyTypeEnum.COLLECTION.equals(propertyDefinition.getType()))
+                                        {
+                                            List<Item> items = new ArrayList<Item>();
+                                            for(String propItemId : savedProperty.getItems())
+                                            {
+                                                Item propItem = dataHelper.findItemById(propItemId);
+                                                if(propItem != null)
+                                                {
+                                                    items.add(propItem);
+                                                }
+                                                else
+                                                {
+                                                    LOG.warn("[Game loading] Location items loading: there is no item with id \"{0}\".", itemId);
+                                                }
+                                            }
+                                            CollectionValue collectionValue = new CollectionValue(items);
+                                            property.setValue(collectionValue);
+                                        }
+                                        else
+                                        {
+                                            LOG.error("Системная ошибка: свойство \"{0}\" в роли \"{1}\"" +
+                                                      "в предмете \"{2}\" не помечено как коллекция, но сохранено в сохранённой игре как коллекция.",
+                                                      propName, role.getName(), item.getId());
+                                        }
+                                    }
+                                    else
+                                    {
+                                        LOG.error("Системная ошибка: в роли {0} не найдено свойство {1}.", role, propName);
+                                    }
+                                }
+                                else
+                                {
+                                    LOG.warn("Не найдено свойство по имени \"{0}\" в роли \"{0}\" у предмета \"{0}\".", propName, roleName, itemId);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            LOG.warn("Не найдена роль \"{0}\" в предмете \"{1}\".", roleName, itemId);
+                        }
+                    }
+                }
+                else
+                {
+                    LOG.warn("Не найден предмет с ид \"{0}\"", itemId);
+                }
+            }
         }
     }
 }
