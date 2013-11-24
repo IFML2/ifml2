@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <updateDescriptor baseUrl="">
-  <entry targetMediaFileId="29" updatableVersionMin="" updatableVersionMax="" fileName="ЯРИЛ_2_0_P10_4_5_20131121.exe" newVersion="P10.4.5" newMediaFileId="29" fileSize="1701376" bundledJre="" archive="false">
+  <entry targetMediaFileId="29" updatableVersionMin="" updatableVersionMax="" fileName="ЯРИЛ_2_0_P10_5_20131125.exe" newVersion="P10.5" newMediaFileId="29" fileSize="1721344" bundledJre="" archive="false">
     <comment language="ru" />
     <comment language="en" />
   </entry>
