@@ -339,7 +339,7 @@ public class Editor extends JFrame
 
     private void loadStory(final String storyFile)
     {
-        new Thread()
+        new Thread() // todo remake to SwingWorker
         {
             @Override
             public void run()
@@ -360,7 +360,7 @@ public class Editor extends JFrame
                 }
                 finally
                 {
-                    //getContentPane().setEnabled(true);
+                    //getContentPane().setEnabled(true); // todo try SwingUtilities.invokeLater
                     progressBar.setVisible(false);
                     mainPanel.setCursor(previousCursor);
                 }
@@ -555,7 +555,7 @@ public class Editor extends JFrame
                 {
                     File tempFile = File.createTempFile("ifml2run_", ".xml");
                     fileName = tempFile.getAbsolutePath();
-                    saveStory(fileName);
+                    saveStory(fileName, false);
                     SwingUtilities.invokeLater(new Runnable()
                     {
                         @Override
@@ -564,10 +564,6 @@ public class Editor extends JFrame
                             GUIPlayer.startFromFile(fileName, true);
                         }
                     });
-                    /*if (!tempFile.delete())
-                    {
-                        LOG.error(MessageFormat.format("Can't delete temp file {0}", tempFile.getAbsolutePath()));
-                    }*/
                 }
                 catch (Throwable ex)
                 {
@@ -683,17 +679,20 @@ public class Editor extends JFrame
         String storyFileName = selectFileForStorySave();
         if (storyFileName != null)
         {
-            saveStory(storyFileName);
+            saveStory(storyFileName, true);
             return true;
         }
 
         return false;
     }
 
-    private void saveStory(String storyFileName) throws IFML2Exception
+    private void saveStory(String storyFileName, boolean toMarkAsSaved) throws IFML2Exception
     {
         OMManager.saveStoryToXmlFile(storyFileName, story);
-        setStoryEdited(false); // reset edited flag
+        if (toMarkAsSaved)
+        {
+            setStoryEdited(false); // reset edited flag
+        }
     }
 
     private String selectFileForStorySave()
