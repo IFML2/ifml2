@@ -87,6 +87,8 @@ public class OMManager
             story = (Story) unmarshaller.unmarshal(file);
             LOG.debug("loadStoryFromXmlFile :: after unmarshal");
 
+            addWordReverseLinks(ifmlObjectsHeap); // adding links is made explicitly because WordLinks in unmarshal listeners are not loaded with words yet
+
             if (validationEventCollector.hasEvents())
             {
                 throw new IFML2LoadXmlException(validationEventCollector.getEvents());
@@ -107,6 +109,35 @@ public class OMManager
         }
 
         return new LoadStoryResult(story, inventory);
+    }
+
+    private static void addWordReverseLinks(HashMap<String, IFMLObject> storyObjectsHeap) throws IFML2Exception
+    {
+        // add reverse links
+        for(IFMLObject object : storyObjectsHeap.values())
+        {
+            WordLinks wordLinks = object.getWordLinks();
+            Word mainWord = wordLinks.getMainWord();
+            if(object instanceof Item && mainWord == null)
+            {
+                throw new IFML2Exception("Основное слово не задано у объекта {0}", object);
+            }
+            if(mainWord != null)
+            {
+                LOG.debug("setWordLinks() :: Adding link for main word \"{0}\" to object \"{1}\"", mainWord, object);
+                mainWord.addLinkerObject(object);
+            }
+            for(Word word : wordLinks.getWords())
+            {
+                if(word == null)
+                {
+                    throw new IFML2Exception("Задана неверная ссылка на слово у объекта {0}", object);
+                }
+
+                LOG.debug("setWordLinks() :: Adding link for word \"{0}\" to object \"{1}\"", mainWord, object);
+                word.addLinkerObject(object);
+            }
+        }
     }
 
     private static void assignItemsToLocations(Story story)
