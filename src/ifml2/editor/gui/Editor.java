@@ -110,6 +110,7 @@ public class Editor extends JFrame
     private JButton delItemButton;
     private Story story = new Story();
     private boolean isStoryEdited = false;
+    private String storyFileName = "новая история";
 
     public Editor()
     {
@@ -302,13 +303,13 @@ public class Editor extends JFrame
     }
 
     /**
-     * Updates Editor's title - including story modification asterisk (*)
+     * Updates Editor's title - including story filename and modification asterisk (*)
      */
     private void updateTitle()
     {
-        String IFML_EDITOR_VERSION =
-                "ЯРИЛ 2.0 Редактор " + Engine.ENGINE_VERSION + (isStoryEdited ? " - * история не сохранена" : "");
-        setTitle(IFML_EDITOR_VERSION);
+        String editorTitle =
+                MessageFormat.format("ЯРИЛ 2.0 Редактор {0} -- {1}{2}", Engine.ENGINE_VERSION, storyFileName, isStoryEdited ? " - * история не сохранена" : "");
+        setTitle(editorTitle);
     }
 
     private int askAboutSavingStory()
@@ -351,6 +352,7 @@ public class Editor extends JFrame
                 {
                     progressBar.setVisible(true);
                     Editor.this.setStory(OMManager.loadStoryFromXmlFile(storyFile, false).getStory());
+                    Editor.this.setStoryFileName(storyFile);
                 }
                 catch (Throwable e)
                 {
@@ -425,6 +427,7 @@ public class Editor extends JFrame
                     }
                 }
                 setStory(new Story());
+                setStoryFileName("новая история");
             }
         });
         fileMenu.addSeparator();
@@ -680,6 +683,7 @@ public class Editor extends JFrame
         if (storyFileName != null)
         {
             saveStory(storyFileName, true);
+            setStoryFileName(storyFileName);
             return true;
         }
 
@@ -756,5 +760,11 @@ public class Editor extends JFrame
         }
 
         return false;
+    }
+
+    public void setStoryFileName(String storyFileName)
+    {
+        this.storyFileName = storyFileName;
+        updateTitle();
     }
 }
