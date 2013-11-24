@@ -15,6 +15,7 @@ public class SavedLocation
     private static final FormatLogger LOG = FormatLogger.getLogger(SavedLocation.class);
     @XmlAttribute(name = "id")
     private String id;
+
     private List<String> items = new ArrayList<String>();
 
     @SuppressWarnings("UnusedDeclaration")

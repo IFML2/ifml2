@@ -222,7 +222,7 @@ public class Engine
             try
             {
                 Value value = ExpressionCalculator.calculate(virtualMachine.createGlobalRunningContext(), expression);
-                outTextLn(MessageFormat.format("[ОТЛАДКА] ({0}) {1}", value.getClass().getSimpleName(), value));
+                outTextLn(MessageFormat.format("[ОТЛАДКА] ({0}) {1}", value.getTypeName(), value));
             }
             catch (IFML2Exception e)
             {
