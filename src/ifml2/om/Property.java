@@ -38,7 +38,6 @@ public class Property
 
     public Property(PropertyDefinition propertyDefinition, Role parentRole)
     {
-        super();
         name = propertyDefinition.getName();
         this.parentRole = parentRole;
         valueExpression = propertyDefinition.getValue();
