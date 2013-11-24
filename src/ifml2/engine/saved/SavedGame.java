@@ -20,9 +20,11 @@ public class SavedGame
     @XmlElementWrapper(name = "system-vars")
     @XmlElement(name = "var")
     public List<SavedVariable> systemVars;
+
     @XmlElementWrapper(name = "inventory")
     @XmlElement(name = "item")
-    public List<String> inventoryIds;
+    public List<String> inventory;
+
     @XmlElementWrapper(name = "locations-items")
     @XmlElement(name = "loc")
     public List<SavedLocation> savedLocationItems;
@@ -40,7 +42,7 @@ public class SavedGame
     {
         globalVars = savedGameHelper.getGlobalVariables();
         systemVars = savedGameHelper.getSystemVariables();
-        inventoryIds = savedGameHelper.getInventory();
+        inventory = savedGameHelper.getInventory();
         savedLocationItems = storeSavedLocations(storyDataHelper);
         itemSavedItems = savedGameHelper.getItemItems();
     }
@@ -59,7 +61,7 @@ public class SavedGame
     {
         savedGameHelper.setGlobalVariables(globalVars);
         savedGameHelper.setSystemVariables(systemVars);
-        savedGameHelper.setInventory(inventoryIds);
+        savedGameHelper.setInventory(inventory);
         restoreSavedLocations(storyDataHelper);
         savedGameHelper.setItemItems(itemSavedItems);
     }
@@ -70,15 +72,5 @@ public class SavedGame
         {
             savedLocation.restore(storyDataHelper);
         }
-    }
-
-    public List<String> getInventory()
-    {
-        return inventoryIds;
-    }
-
-    public void setInventory(List<String> inventoryIds)
-    {
-        this.inventoryIds = inventoryIds;
     }
 }

@@ -303,10 +303,10 @@
     </complexType>
 
     <complexType name="instructionType">
-        <attribute name="position" use="required">
+        <attribute name="position" use="optional">
             <simpleType>
                 <restriction base="positiveInteger">
-                    <minInclusive value="1"/>
+                    <!--<minInclusive value="1"/>-->
                 </restriction>
             </simpleType>
         </attribute>
