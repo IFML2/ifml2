@@ -62,6 +62,7 @@ public class SavedLocation
                 if (item != null)
                 {
                     locationItems.add(item);
+                    item.setContainer(locationItems); // todo refactor to set in OM in one action
                 }
                 else
                 {

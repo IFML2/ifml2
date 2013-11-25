@@ -143,6 +143,7 @@ public class SavedGame
             if (item != null)
             {
                 inventory.add(item);
+                item.setContainer(inventory); // todo refactor to set in OM in one action
             }
             else
             {
