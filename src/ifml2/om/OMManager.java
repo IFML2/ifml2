@@ -1,14 +1,21 @@
 package ifml2.om;
 
 import com.sun.xml.internal.bind.IDResolver;
+import ifml2.CommonConstants;
+import ifml2.CommonUtils;
 import ifml2.FormatLogger;
 import ifml2.IFML2Exception;
 import ifml2.engine.saved.SavedGame;
+import org.jetbrains.annotations.NotNull;
 import org.xml.sax.SAXException;
 
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.*;
 import javax.xml.bind.util.ValidationEventCollector;
-import java.io.File;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,94 +28,153 @@ public class OMManager
     /**
      * Loads story from xml file
      *
-     * @param xmlFile             Full path to xml file with story.
+     * @param storyFileName             Full path to xml file with story.
      * @param toInitItemsStartLoc Provide true if items should be copied into start positions (inventory and locations).
      *                            It's necessary in Editor.
      * @return Wrapped result containing story and loaded inventory (see toInitItemsStartLoc param).
      * @throws IFML2Exception If some error has occurred during loading.
      */
-    public static LoadStoryResult loadStoryFromXmlFile(String xmlFile, final boolean toInitItemsStartLoc) throws IFML2Exception
+    public static LoadStoryResult loadStoryFromFile(@NotNull String storyFileName, final boolean toInitItemsStartLoc) throws IFML2Exception
     {
-        LOG.debug("loadStoryFromXmlFile(xmlFile = \"{0}\", toInitItemsStartLoc = {1}) :: begin", xmlFile, toInitItemsStartLoc);
-        final Story story;
-        final ArrayList<Item> inventory = new ArrayList<Item>();
+        LOG.debug("loadStoryFromFile(storyFileName = \"{0}\", toInitItemsStartLoc = {1}) :: begin", storyFileName, toInitItemsStartLoc);
 
+        InputStream inputStream = null;
         try
         {
-            JAXBContext context = JAXBContext.newInstance(Story.class);
-            Unmarshaller unmarshaller = context.createUnmarshaller();
-            unmarshaller.setProperty(IDResolver.class.getName(), new IFMLIDResolver());
-
-            final HashMap<String, IFMLObject> ifmlObjectsHeap = new HashMap<String, IFMLObject>();
-
-            unmarshaller.setListener(new Unmarshaller.Listener()
+            try
             {
-                @Override
-                public void afterUnmarshal(Object target, Object parent)
+                // detect ciphered story by extension
+                if (storyFileName.trim().endsWith(CommonConstants.CIPHERED_STORY_EXTENSION))
                 {
-                    LOG.debug("afterUnmarshal({0}, {1})", target, parent);
+                    LOG.debug("loadStoryFromFile :: File is ciphered, decipher...");
 
-                    if (target instanceof IFMLObject)
+                    FileInputStream cipheredFile = new FileInputStream(storyFileName);
+                    try
                     {
-                        IFMLObject ifmlObject = (IFMLObject) target;
-
-                        // load all objects into objectsHeap
-                        ifmlObjectsHeap.put(ifmlObject.getId().toLowerCase(), ifmlObject);
-
-                        // add item to inventory by starting position
-                        if (toInitItemsStartLoc && ifmlObject instanceof Item)
+                        // read key length
+                        int keyLength = cipheredFile.read();
+                        // read cipher key from file
+                        byte[] keyBytes = new byte[keyLength];
+                        int bytesRead = cipheredFile.read(keyBytes);
+                        if(bytesRead == -1)
                         {
-                            Item item = (Item) ifmlObject;
-                            if (item.getStartingPosition().getInventory())
+                            LOG.error("loadStoryFromFile :: file stream read() for  returned {0}", bytesRead);
+                            throw new IFML2Exception("Неожиданно короткий файл {0}.", storyFileName);
+                        }
+
+                        // create key
+                        SecretKey cipherKey = new SecretKeySpec(keyBytes, "DES");
+
+                        // Initialize the same cipher for decryption
+                        Cipher desCipher = CommonUtils.createCipher();
+                        desCipher.init(Cipher.DECRYPT_MODE, cipherKey);
+
+                        byte[] cipherBytes = new byte[cipheredFile.available()];
+                        bytesRead = cipheredFile.read(cipherBytes);
+                        LOG.debug("loadStoryFromFile :: file stream read() returned {0}", bytesRead);
+
+                        // Decrypt the story
+                        byte[] textDecrypted = desCipher.doFinal(cipherBytes);
+
+                        // write deciphered story to stream
+                        inputStream = new ByteArrayInputStream(textDecrypted);
+                    }
+                    finally
+                    {
+                        cipheredFile.close();
+                    }
+                }
+                else
+                {
+                    LOG.debug("loadStoryFromFile :: File is normal, read...");
+                    inputStream = new FileInputStream(storyFileName);
+                }
+
+                final Story story;
+                final ArrayList<Item> inventory = new ArrayList<Item>();
+
+                JAXBContext context = JAXBContext.newInstance(Story.class);
+                Unmarshaller unmarshaller = context.createUnmarshaller();
+                unmarshaller.setProperty(IDResolver.class.getName(), new IFMLIDResolver());
+
+                final HashMap<String, IFMLObject> ifmlObjectsHeap = new HashMap<String, IFMLObject>();
+
+                unmarshaller.setListener(new Unmarshaller.Listener()
+                {
+                    @Override
+                    public void afterUnmarshal(Object target, Object parent)
+                    {
+                        LOG.debug("afterUnmarshal({0}, {1})", target, parent);
+
+                        if (target instanceof IFMLObject)
+                        {
+                            IFMLObject ifmlObject = (IFMLObject) target;
+
+                            // load all objects into objectsHeap
+                            ifmlObjectsHeap.put(ifmlObject.getId().toLowerCase(), ifmlObject);
+
+                            // add item to inventory by starting position
+                            if (toInitItemsStartLoc && ifmlObject instanceof Item)
                             {
-                                inventory.add(item); //should it be original items
-                                item.setContainer(inventory);
+                                Item item = (Item) ifmlObject;
+                                if (item.getStartingPosition().getInventory())
+                                {
+                                    inventory.add(item); //should it be original items
+                                    item.setContainer(inventory);
+                                }
                             }
                         }
                     }
-                }
-            });
+                });
 
-            File file = new File(xmlFile);
-            LOG.debug("loadStoryFromXmlFile :: File object for path \"{0}\" created", file.getAbsolutePath());
+                //LOG.debug("loadStoryFromFile :: File object for path \"{0}\" created", file.getAbsolutePath());
 
-            ValidationEventCollector validationEventCollector = new ValidationEventCollector()
-            {
-                @Override
-                public boolean handleEvent(ValidationEvent event)
+                ValidationEventCollector validationEventCollector = new ValidationEventCollector()
                 {
-                    LOG.warn("There is ValidationEvent during unmarshalling: {0}", event);
-                    return super.handleEvent(event);
+                    @Override
+                    public boolean handleEvent(ValidationEvent event)
+                    {
+                        LOG.warn("There is ValidationEvent during unmarshalling: {0}", event);
+                        return super.handleEvent(event);
+                    }
+                };
+                unmarshaller.setEventHandler(validationEventCollector);
+
+                LOG.debug("loadStoryFromFile :: before unmarshal");
+                story = (Story) unmarshaller.unmarshal(inputStream);
+                LOG.debug("loadStoryFromFile :: after unmarshal");
+
+                addWordReverseLinks(
+                        ifmlObjectsHeap); // adding links is made explicitly because WordLinks in unmarshal listeners are not loaded with words yet
+
+                if (validationEventCollector.hasEvents())
+                {
+                    throw new IFML2LoadXmlException(validationEventCollector.getEvents());
                 }
-            };
-            unmarshaller.setEventHandler(validationEventCollector);
 
-            LOG.debug("loadStoryFromXmlFile :: before unmarshal");
-            story = (Story) unmarshaller.unmarshal(file);
-            LOG.debug("loadStoryFromXmlFile :: after unmarshal");
+                story.setObjectsHeap(ifmlObjectsHeap);
 
-            addWordReverseLinks(ifmlObjectsHeap); // adding links is made explicitly because WordLinks in unmarshal listeners are not loaded with words yet
+                if (toInitItemsStartLoc)
+                {
+                    assignItemsToLocations(story);
+                }
 
-            if (validationEventCollector.hasEvents())
-            {
-                throw new IFML2LoadXmlException(validationEventCollector.getEvents());
+                LOG.debug("loadStoryFromFile :: End");
+
+                return new LoadStoryResult(story, inventory);
             }
-
-            story.setObjectsHeap(ifmlObjectsHeap);
-
-            if (toInitItemsStartLoc)
+            finally
             {
-                assignItemsToLocations(story);
+                if (inputStream != null)
+                {
+                    inputStream.close();
+                }
             }
-
-            LOG.debug("loadStoryFromXmlFile :: End");
         }
-        catch (JAXBException e)
+        catch (Exception e)
         {
             throw new IFML2Exception(e, "Ошибка при загрузке истории: {0}", e.getMessage());
         }
-
-        return new LoadStoryResult(story, inventory);
     }
 
     private static void addWordReverseLinks(HashMap<String, IFMLObject> storyObjectsHeap) throws IFML2Exception
@@ -258,6 +324,60 @@ public class OMManager
             }
         }
         catch (JAXBException e)
+        {
+            throw new IFML2Exception(e);
+        }
+    }
+
+    public static void exportCipheredStory(String fileName, Story story) throws IFML2Exception
+    {
+        try
+        {
+            JAXBContext context = JAXBContext.newInstance(Story.class);
+            Marshaller marshaller = context.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+
+            ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+            try
+            {
+                // marshal to bytes
+                marshaller.marshal(story, byteStream);
+                byte[] storyBytes = byteStream.toByteArray();
+
+                // Create the cipher
+                KeyGenerator keygenerator = KeyGenerator.getInstance("DES");
+                Cipher desCipher = CommonUtils.createCipher();
+                // Initialize the cipher for encryption
+                SecretKey key = keygenerator.generateKey();
+                desCipher.init(Cipher.ENCRYPT_MODE, key);
+
+                // Encrypt the story
+                byte[] storyBytesEncrypted = desCipher.doFinal(storyBytes);
+
+                // create fileOutputStream
+                FileOutputStream cipherStoryFile = new FileOutputStream(fileName);
+                try
+                {
+                    // store key
+                    byte[] keyBytes = key.getEncoded();
+                    cipherStoryFile.write(keyBytes.length); // key length
+                    cipherStoryFile.write(keyBytes); // key itself
+
+                    // write cipher
+                    cipherStoryFile.write(storyBytesEncrypted);
+                }
+
+                finally
+                {
+                    cipherStoryFile.close();
+                }
+            }
+            finally
+            {
+                byteStream.close();
+            }
+        }
+        catch (Exception e)
         {
             throw new IFML2Exception(e);
         }

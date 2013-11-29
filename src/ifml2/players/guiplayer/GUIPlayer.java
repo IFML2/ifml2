@@ -289,18 +289,20 @@ public class GUIPlayer extends JFrame
     private static String showOpenStoryFileDialog(Window owner)
     {
         JFileChooser storyFileChooser = new JFileChooser(CommonUtils.getSamplesDirectory());
+        storyFileChooser.removeChoosableFileFilter(storyFileChooser.getAcceptAllFileFilter()); // remove All files filter
         storyFileChooser.setFileFilter(new FileFilter()
         {
             @Override
             public String getDescription()
             {
-                return CommonConstants.STORY_FILE_FILTER_NAME;
+                return CommonConstants.STORY_ALL_TYPES_FILE_FILTER_NAME;
             }
 
             @Override
             public boolean accept(File f)
             {
-                return f.isDirectory() || f.getName().toLowerCase().endsWith(CommonConstants.STORY_EXTENSION);
+                return f.isDirectory() || f.getName().toLowerCase().endsWith(CommonConstants.STORY_EXTENSION) ||
+                       f.getName().toLowerCase().endsWith(CommonConstants.CIPHERED_STORY_EXTENSION);
             }
         });
 

@@ -353,7 +353,7 @@ public class Editor extends JFrame
                 try
                 {
                     progressBar.setVisible(true);
-                    Editor.this.setStory(OMManager.loadStoryFromXmlFile(storyFile, false).getStory());
+                    Editor.this.setStory(OMManager.loadStoryFromFile(storyFile, false).getStory());
                     Editor.this.setStoryFileName(storyFile);
                 }
                 catch (Throwable e)
@@ -478,9 +478,66 @@ public class Editor extends JFrame
                 }
                 catch (IFML2Exception ex)
                 {
-                    JOptionPane
-                            .showMessageDialog(Editor.this, "Ошибка во время сохранения истории: " + ex.getMessage());
+                    JOptionPane.showMessageDialog(Editor.this, "Ошибка во время сохранения истории: " + ex.getMessage());
                     ReportError(ex, "Ошибка во время сохранения истории");
+                }
+            }
+        });
+        fileMenu.addSeparator();
+        fileMenu.add(new AbstractAction("Экспортировать зашифрованную историю...")
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                // choose cipher story file:
+                JFileChooser storyFileChooser = new JFileChooser(CommonUtils.getSamplesDirectory());
+                storyFileChooser.removeChoosableFileFilter(storyFileChooser.getAcceptAllFileFilter()); // remove All files filter
+                storyFileChooser.setFileFilter(new FileFilter()
+                {
+                    @Override
+                    public String getDescription()
+                    {
+                        return CommonConstants.CIPHERED_STORY_FILE_FILTER_NAME;
+                    }
+
+                    @Override
+                    public boolean accept(File file)
+                    {
+                        return file.isDirectory() || file.getName().toLowerCase().endsWith(CommonConstants.CIPHERED_STORY_EXTENSION) ||
+                               !file.exists();
+                    }
+                });
+
+                storyFileChooser.setFileView(new FileView()
+                {
+                    @Override
+                    public Icon getIcon(File f)
+                    {
+                        if (f.isDirectory())
+                        {
+                            return GUIUtils.DIRECTORY_ICON;
+                        }
+                        return GUIUtils.CIPHERED_STORY_FILE_ICON;
+                    }
+                });
+
+                if (storyFileChooser.showSaveDialog(Editor.this) == JFileChooser.APPROVE_OPTION)
+                {
+                    String fileName = storyFileChooser.getSelectedFile().getAbsolutePath();
+
+                    if (!fileName.toLowerCase().endsWith(CommonConstants.CIPHERED_STORY_EXTENSION))
+                    {
+                        fileName += CommonConstants.CIPHERED_STORY_EXTENSION;
+                    }
+
+                    try
+                    {
+                        OMManager.exportCipheredStory(fileName, story);
+                    }
+                    catch (IFML2Exception ex)
+                    {
+                        ReportError(ex, "Произошла ошибка во время экспорта зашифрованной истории.");
+                    }
                 }
             }
         });

@@ -87,18 +87,18 @@ public class Engine
         LOG.info("Engine created.");
     }
 
-    public void loadStory(String storyFile) throws IFML2Exception
+    public void loadStory(String storyFileName) throws IFML2Exception
     {
-        LOG.info("Loading story \"{0}\"...", storyFile);
+        LOG.info("Loading story \"{0}\"...", storyFileName);
 
-        if (!new File(storyFile).exists())
+        if (!new File(storyFileName).exists())
         {
             throw new IFML2Exception("Файл истории не найден");
         }
 
         //TODO validate xml
 
-        OMManager.LoadStoryResult loadStoryResult = OMManager.loadStoryFromXmlFile(storyFile, true);
+        OMManager.LoadStoryResult loadStoryResult = OMManager.loadStoryFromFile(storyFileName, true);
         story = loadStoryResult.getStory();
         parser.setStory(story);
         inventory = loadStoryResult.getInventory();

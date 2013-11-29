@@ -29,6 +29,7 @@ public class GUIUtils
     public static final Icon DIRECTORY_ICON = getEditorIcon("Open24.gif");
     public static final Icon SAVE_FILE_ICON = getEditorIcon("Save24.gif");
     public static final Icon STORY_FILE_ICON = getEditorIcon("Edit24.gif");
+    public static final Icon CIPHERED_STORY_FILE_ICON = getEditorIcon("Edit24.gif");
     private static final String IFML2_EDITOR_GUI_IMAGES = "/ifml2/editor/gui/images/";
 
     public static void packAndCenterWindow(@NotNull Window window)
