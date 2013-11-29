@@ -79,6 +79,7 @@ public class Engine
         }
     };
     private DataHelper dataHelper = new DataHelper();
+    private String storyFileName;
 
     public Engine(GameInterface gameInterface)
     {
@@ -100,6 +101,7 @@ public class Engine
 
         OMManager.LoadStoryResult loadStoryResult = OMManager.loadStoryFromFile(storyFileName, true, isAllowedOpenCipherFiles);
         story = loadStoryResult.getStory();
+        this.storyFileName = storyFileName;
         parser.setStory(story);
         inventory = loadStoryResult.getInventory();
 
@@ -461,9 +463,18 @@ public class Engine
 
     public void loadGame(String saveFileName) throws IFML2Exception
     {
-        SavedGame savedGame = OMManager.loadGame(saveFileName);
-        savedGame.restoreGame(dataHelper, story.getDataHelper());
-        outTextLn(MessageFormat.format("Игра восстановлена из файла {0}.", saveFileName));
+        try
+        {
+            SavedGame savedGame = OMManager.loadGame(saveFileName);
+            savedGame.restoreGame(dataHelper, story.getDataHelper());
+            outTextLn(MessageFormat.format("Игра восстановлена из файла {0}.", saveFileName));
+        }
+        catch (IFML2Exception e)
+        {
+            String errorText = "Ошибка при загрузке игры! " + e.getMessage();
+            outTextLn(errorText);
+            LOG.error(errorText);
+        }
     }
 
     /**
@@ -501,6 +512,11 @@ public class Engine
         {
             Value value = ExpressionCalculator.calculate(virtualMachine.createGlobalRunningContext(), expression);
             systemVariables.put(name, value);
+        }
+
+        public @NotNull String getStoryFileName()
+        {
+            return new File(storyFileName).getName();
         }
     }
 }
