@@ -154,6 +154,7 @@ public class GUIPlayer extends JFrame
     private void loadGame()
     {
         JFileChooser savedGameFileChooser = new JFileChooser(CommonUtils.getSavesDirectory());
+        savedGameFileChooser.removeChoosableFileFilter(savedGameFileChooser.getAcceptAllFileFilter()); // remove All files filter
         savedGameFileChooser.setFileFilter(new FileFilter()
         {
             @Override
@@ -210,6 +211,7 @@ public class GUIPlayer extends JFrame
     private void saveGame()
     {
         JFileChooser savedGameFileChooser = new JFileChooser(CommonUtils.getSavesDirectory());
+        savedGameFileChooser.removeChoosableFileFilter(savedGameFileChooser.getAcceptAllFileFilter()); // remove All files filter
         savedGameFileChooser.setFileFilter(new FileFilter()
         {
             @Override
@@ -348,7 +350,7 @@ public class GUIPlayer extends JFrame
     private void startAnew() throws IFML2Exception
     {
         gameInterface.outputText("Начинаем заново...\n");
-        engine.loadStory(storyFile);
+        engine.loadStory(storyFile, true);
         engine.initGame();
     }
 
@@ -435,7 +437,7 @@ public class GUIPlayer extends JFrame
         try
         {
             logTextArea.setText("Загрузка...");
-            engine.loadStory(this.storyFile);
+            engine.loadStory(this.storyFile, true);
             logTextArea.setText("");
             engine.initGame();
 

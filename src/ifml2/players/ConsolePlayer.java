@@ -39,7 +39,7 @@ public class ConsolePlayer
 
         try
         {
-            engine.loadStory(args[0]);
+            engine.loadStory(args[0], true);
             engine.initGame();
         }
         catch (IFML2Exception e)

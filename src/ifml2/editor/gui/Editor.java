@@ -353,7 +353,7 @@ public class Editor extends JFrame
                 try
                 {
                     progressBar.setVisible(true);
-                    Editor.this.setStory(OMManager.loadStoryFromFile(storyFile, false).getStory());
+                    Editor.this.setStory(OMManager.loadStoryFromFile(storyFile, false, false).getStory());
                     Editor.this.setStoryFileName(storyFile);
                 }
                 catch (Throwable e)
@@ -651,6 +651,7 @@ public class Editor extends JFrame
     {
         // choose story file:
         JFileChooser storyFileChooser = new JFileChooser(CommonUtils.getSamplesDirectory());
+        storyFileChooser.removeChoosableFileFilter(storyFileChooser.getAcceptAllFileFilter()); // remove All files filter
         storyFileChooser.setFileFilter(new FileFilter()
         {
             @Override
@@ -762,6 +763,7 @@ public class Editor extends JFrame
     {
         // choose story file:
         JFileChooser storyFileChooser = new JFileChooser(CommonUtils.getSamplesDirectory());
+        storyFileChooser.removeChoosableFileFilter(storyFileChooser.getAcceptAllFileFilter()); // remove All files filter
         storyFileChooser.setFileFilter(new FileFilter()
         {
             @Override

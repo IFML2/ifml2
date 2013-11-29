@@ -8,7 +8,7 @@ public interface CommonConstants
     String LIBRARIES_DIRECTORY = "\\libs";
     String TESTS_DIRECTORY = "\\Tests";
     String SAVES_DIRECTORY = "\\Saved Games";
-    String STORY_EXTENSION = ".xml";
+    String STORY_EXTENSION = ".ifml";
     String TEST_EXTENSION = ".xml";
     String SAVE_EXTENSION = ".ifml-save";
     String STORY_FILE_FILTER_NAME = "Файл истории (*" + STORY_EXTENSION + ")";
@@ -17,7 +17,7 @@ public interface CommonConstants
     @SuppressWarnings("SpellCheckingInspection")
     String CIPHERED_STORY_EXTENSION = ".cifml";
     String CIPHERED_STORY_FILE_FILTER_NAME = MessageFormat.format("Файл зашифрованной истории (*{0})", CIPHERED_STORY_EXTENSION);
-    String IFML_EXTENSION = ".ifml";
+    //String IFML_EXTENSION = ".ifml";
     String STORY_ALL_TYPES_FILE_FILTER_NAME = MessageFormat
-            .format("Файлы истории (*{0}, *{1} ,*{2})", STORY_EXTENSION, IFML_EXTENSION, CIPHERED_STORY_EXTENSION);
+            .format("Файлы истории (*{0},*{1})", STORY_EXTENSION, CIPHERED_STORY_EXTENSION);
 }

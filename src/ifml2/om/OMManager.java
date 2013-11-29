@@ -28,13 +28,14 @@ public class OMManager
     /**
      * Loads story from xml file
      *
-     * @param storyFileName             Full path to xml file with story.
-     * @param toInitItemsStartLoc Provide true if items should be copied into start positions (inventory and locations).
-     *                            It's necessary in Editor.
+     * @param storyFileName            Full path to xml file with story.
+     * @param toInitItemsStartLoc      Provide true if items should be copied into start positions (inventory and locations).
+     *                                 It's necessary in Editor.
+     * @param isAllowedOpenCipherFiles Provide true if it's allowed to load ciphered stories (from Players) or false if not (from Editor).
      * @return Wrapped result containing story and loaded inventory (see toInitItemsStartLoc param).
      * @throws IFML2Exception If some error has occurred during loading.
      */
-    public static LoadStoryResult loadStoryFromFile(@NotNull String storyFileName, final boolean toInitItemsStartLoc) throws IFML2Exception
+    public static LoadStoryResult loadStoryFromFile(@NotNull String storyFileName, final boolean toInitItemsStartLoc, boolean isAllowedOpenCipherFiles) throws IFML2Exception
     {
         LOG.debug("loadStoryFromFile(storyFileName = \"{0}\", toInitItemsStartLoc = {1}) :: begin", storyFileName, toInitItemsStartLoc);
 
@@ -48,6 +49,11 @@ public class OMManager
                 {
                     LOG.debug("loadStoryFromFile :: File is ciphered, decipher...");
 
+                    if (!isAllowedOpenCipherFiles)
+                    {
+                        throw new IFML2Exception("В этом режиме нельзя открывать зашифрованные истории!");
+                    }
+
                     FileInputStream cipheredFile = new FileInputStream(storyFileName);
                     try
                     {
@@ -56,7 +62,7 @@ public class OMManager
                         // read cipher key from file
                         byte[] keyBytes = new byte[keyLength];
                         int bytesRead = cipheredFile.read(keyBytes);
-                        if(bytesRead == -1)
+                        if (bytesRead == -1)
                         {
                             LOG.error("loadStoryFromFile :: file stream read() for  returned {0}", bytesRead);
                             throw new IFML2Exception("Неожиданно короткий файл {0}.", storyFileName);
@@ -180,22 +186,22 @@ public class OMManager
     private static void addWordReverseLinks(HashMap<String, IFMLObject> storyObjectsHeap) throws IFML2Exception
     {
         // add reverse links
-        for(IFMLObject object : storyObjectsHeap.values())
+        for (IFMLObject object : storyObjectsHeap.values())
         {
             WordLinks wordLinks = object.getWordLinks();
             Word mainWord = wordLinks.getMainWord();
-            if(object instanceof Item && mainWord == null)
+            if (object instanceof Item && mainWord == null)
             {
                 throw new IFML2Exception("Основное слово не задано у объекта {0}", object);
             }
-            if(mainWord != null)
+            if (mainWord != null)
             {
                 LOG.debug("setWordLinks() :: Adding link for main word \"{0}\" to object \"{1}\"", mainWord, object);
                 mainWord.addLinkerObject(object);
             }
-            for(Word word : wordLinks.getWords())
+            for (Word word : wordLinks.getWords())
             {
-                if(word == null)
+                if (word == null)
                 {
                     throw new IFML2Exception("Задана неверная ссылка на слово у объекта {0}", object);
                 }

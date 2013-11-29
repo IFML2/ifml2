@@ -87,7 +87,7 @@ public class Engine
         LOG.info("Engine created.");
     }
 
-    public void loadStory(String storyFileName) throws IFML2Exception
+    public void loadStory(String storyFileName, boolean isAllowedOpenCipherFiles) throws IFML2Exception
     {
         LOG.info("Loading story \"{0}\"...", storyFileName);
 
@@ -98,7 +98,7 @@ public class Engine
 
         //TODO validate xml
 
-        OMManager.LoadStoryResult loadStoryResult = OMManager.loadStoryFromFile(storyFileName, true);
+        OMManager.LoadStoryResult loadStoryResult = OMManager.loadStoryFromFile(storyFileName, true, isAllowedOpenCipherFiles);
         story = loadStoryResult.getStory();
         parser.setStory(story);
         inventory = loadStoryResult.getInventory();
