@@ -52,7 +52,7 @@ public class Item extends IFMLObject implements Cloneable
         //todo: run own triggers -- when they will exist
 
         // run roles' triggers
-        for (Role role : getRoles())
+        for (Role role : roles)
         {
             Trigger trigger = role.getRoleDefinition().getTrigger(Trigger.TriggerTypeEnum.GET_ACCESSIBLE_CONTENT);
             if (trigger != null)

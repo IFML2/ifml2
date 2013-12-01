@@ -1,13 +1,9 @@
 package ifml2.parser;
 
-import ca.odell.glazedlists.BasicEventList;
 import ifml2.CommonUtils;
 import ifml2.IFML2Exception;
 import ifml2.engine.Engine;
 import ifml2.om.*;
-import ifml2.vm.IFML2VMException;
-import ifml2.vm.values.CollectionValue;
-import ifml2.vm.values.Value;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -217,7 +213,7 @@ public class Parser
 
                     for (IFMLObject object : fittedObjects)
                     {
-                        if (!isObjectAccessible(object))
+                        if (!engine.isObjectAccessible(object))
                         {
                             objectsToRemove.add(object);
 
@@ -260,84 +256,6 @@ public class Parser
             }
             // it doesn't require word count because it's outstanding exception
         }
-    }
-
-    /**
-     * Checks if object is inaccessible for player's actions
-     *
-     * @param object IFMLObject for check
-     * @return true if object is inaccessible
-     * @throws IFML2Exception when tested objects neither location or item
-     */
-    private boolean isObjectAccessible(IFMLObject object) throws IFML2Exception
-    {
-        Location currentLocation = engine.getCurrentLocation();
-
-        // test locations
-        if (object instanceof Location)
-        {
-            return object.equals(currentLocation);
-        }
-        else
-
-            // test items
-            if (object instanceof Item)
-            {
-                Item item = (Item) object;
-
-                // test if object is in current location or player's inventory
-                boolean isInLocOrInv = currentLocation.contains(item) || engine.getInventory().contains(item);
-                if (isInLocOrInv)
-                {
-                    return isInLocOrInv;
-                }
-                else
-                {
-                    // test contents of current location's items using item triggers
-                    return checkDeepContent(item, currentLocation.getItems());
-                }
-            }
-            else
-            {
-                throw new IFML2Exception("Системная ошибка: Неизвестный тип объекта: \"{0}\".", object);
-            }
-    }
-
-    private boolean checkDeepContent(Item item, List<Item> items) throws IFML2Exception
-    {
-        for (Item locItem : items)
-        {
-            Value itemContents = locItem.getAccessibleContent(engine.getVirtualMachine());
-            if (itemContents != null)
-            {
-                if (!(itemContents instanceof CollectionValue))
-                {
-                    throw new IFML2VMException("Триггер доступного содержимого у предмета \"{0}\" вернул не коллекцию, а \"{1}\"!", item,
-                                               itemContents.getTypeName());
-                }
-
-                List itemContentsList = ((CollectionValue) itemContents).getValue();
-                List<Item> itemContentsItemList = new BasicEventList<Item>();
-                for (Object object : itemContentsList)
-                {
-                    if (!(object instanceof Item))
-                    {
-                        throw new IFML2VMException(
-                                "Триггер доступного содержимого у предмета \"{0}\" вернул в коллекции не предмет, а \"{1}\"!", item,
-                                object);
-                    }
-
-                    itemContentsItemList.add((Item) object);
-                }
-
-                if (itemContentsList.contains(item) || checkDeepContent(item, itemContentsItemList))
-                {
-                    return true;
-                }
-            }
-        }
-
-        return false;
     }
 
     private ArrayList<FittedFormalElement> fitPhraseWithTemplate(ArrayList<String> phraseAsList, List<TemplateElement> template) throws IFML2Exception

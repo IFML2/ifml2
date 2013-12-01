@@ -692,8 +692,41 @@
                                            beginWithCap="true" carriageReturn="true"/>
                     </ifml2:reaction>
                 </ifml2:restriction>
+                <ifml2:restriction
+                        condition="чтоОткрыть.открыт">  <!-- Ограничение обязательно идёт после проверки на роль "открываемый"! -->
+                    <ifml2:reaction>
+                        <ifml2:showMessage type="expression" message="чтоОткрыть.ИП + ' уже открыт.'" beginWithCap="true"/>
+                    </ifml2:reaction>
+                </ifml2:restriction>
             </ifml2:restrictions>
             <ifml2:procedureCall procedure="ОткрытьПредмет"/>
+        </ifml2:action>
+
+        <!-- Закрыть -->
+        <ifml2:action name="закрыть" description="Закрыть [ВП]">
+            <ifml2:templates>
+                <ifml2:template>
+                    <ifml2:literalElement position="1">
+                        <ifml2:synonym>закрыть</ifml2:synonym>
+                    </ifml2:literalElement>
+                    <ifml2:objectElement position="2" case="vp" parameter="чтоЗакрыть"/>
+                </ifml2:template>
+            </ifml2:templates>
+            <ifml2:restrictions>
+                <ifml2:restriction condition="не чтоЗакрыть.открываемый">
+                    <ifml2:reaction>
+                        <ifml2:showMessage position="1" type="expression" message="чтоЗакрыть.имя + ' невозможно закрыть.'"
+                                           beginWithCap="true" carriageReturn="true"/>
+                    </ifml2:reaction>
+                </ifml2:restriction>
+                <ifml2:restriction
+                        condition="не чтоЗакрыть.открыт">  <!-- Ограничение обязательно идёт после проверки на роль "открываемый"! -->
+                    <ifml2:reaction>
+                        <ifml2:showMessage type="expression" message="чтоЗакрыть.ИП + ' уже закрыт.'" beginWithCap="true"/>
+                    </ifml2:reaction>
+                </ifml2:restriction>
+            </ifml2:restrictions>
+            <ifml2:procedureCall procedure="ЗакрытьПредмет"/>
         </ifml2:action>
     </ifml2:actions>
 
@@ -772,7 +805,7 @@
                                                    carriageReturn="false"/>
                             </ifml2:next>
                             <ifml2:last>
-                                <ifml2:showMessage position="1" type="expression" message="предметСверху.имя + ','" carriageReturn="true"/>
+                                <ifml2:showMessage position="1" type="expression" message="предметСверху.имя + '.'" carriageReturn="true"/>
                             </ifml2:last>
                         </ifml2:loop>
                     </ifml2:then>
@@ -796,7 +829,7 @@
                                                            carriageReturn="false"/>
                                     </ifml2:next>
                                     <ifml2:last>
-                                        <ifml2:showMessage position="1" type="expression" message="предметВнутри.имя + ','"
+                                        <ifml2:showMessage position="1" type="expression" message="предметВнутри.имя + '.'"
                                                            carriageReturn="true"/>
                                     </ifml2:last>
                                 </ifml2:loop>
@@ -841,7 +874,6 @@
         </ifml2:procedure>
         <ifml2:procedure name="ПоказатьИнвентарь">
             <ifml2:procedureBody>
-                <!--ifml2:showInventory position="1"/-->
                 <ifml2:loop position="2" collection="Инвентарий" element="предмет">
                     <ifml2:empty>
                         <ifml2:showMessage position="1" type="text" message="А у Вас ничего нет."/>
@@ -857,6 +889,18 @@
                     <ifml2:next>
                         <ifml2:showMessage position="1" type="expression" message="', ' + предмет.имя"
                                            carriageReturn="false"/>
+                        <!--<ifml2:if condition="предмет.открываемый">
+                            <ifml2:then>
+                                <ifml2:if condition="предмет.открыт">
+                                    <ifml2:then>
+                                        <ifml2:showMessage message=" (открыт)" type="text" carriageReturn="false"/>
+                                    </ifml2:then>
+                                    <ifml2:else>
+                                        <ifml2:showMessage message=" (закрыт)" type="text" carriageReturn="false"/>
+                                    </ifml2:else>
+                                </ifml2:if>
+                            </ifml2:then>
+                        </ifml2:if>-->
                     </ifml2:next>
                     <ifml2:last>
                         <ifml2:showMessage position="1" type="expression" message="' и ' + предмет.имя + '.'"
@@ -1158,42 +1202,54 @@
                 <ifml2:parameter name="чтоОткрыть"/>
             </ifml2:parameters>
             <ifml2:procedureBody>
-                <ifml2:if position="1" condition="не чтоОткрыть.открыт">
+                <!--<ifml2:if position="1" condition="не чтоОткрыть.открыт">
+                    <ifml2:then>-->
+                <ifml2:setProperty position="1" object="чтоОткрыть" name="открыт" value="да"/>
+                <ifml2:showMessage position="2" type="expression"
+                                   message="'Вы открыли ' + чтоОткрыть.имя + '.'"/>
+                <ifml2:if position="3" condition="чтоОткрыть.контейнер">
                     <ifml2:then>
-                        <ifml2:setProperty position="1" object="чтоОткрыть" name="открыт" value="да"/>
-                        <ifml2:showMessage position="2" type="expression"
-                                           message="'Вы открыли ' + чтоОткрыть.имя + '.'"/>
-                        <ifml2:if position="3" condition="чтоОткрыть.контейнер">
-                            <ifml2:then>
-                                <!--TODO: сделать процу, выводящую список из коллекции через запятую, с выводом предваряющего слова
-                                    TODO: also сделать вызов других процедур-->
-                                <!--TODO: добавить в loop секции before и after с аттрибутом типа runAlsoIfNull-->
-                                <ifml2:loop position="1" collection="чтоОткрыть.предметыВнутри"
-                                            element="предмет">
-                                    <ifml2:alone>
-                                        <ifml2:showMessage position="1" type="expression" message="'Внутри оказалось: ' + предмет.имя + '.'"
-                                                           carriageReturn="true"/>
-                                    </ifml2:alone>
-                                    <ifml2:first>
-                                        <ifml2:showMessage position="1" type="expression" message="'Внутри оказалось: ' + предмет.имя"
-                                                           carriageReturn="false"/>
-                                    </ifml2:first>
-                                    <ifml2:next>
-                                        <ifml2:showMessage position="1" type="expression"
-                                                           message="', ' + предмет.имя" carriageReturn="false"/>
-                                    </ifml2:next>
-                                    <ifml2:last>
-                                        <ifml2:showMessage position="1" type="expression" message="'.'" carriageReturn="true"/>
-                                    </ifml2:last>
-                                </ifml2:loop>
-                            </ifml2:then>
-                        </ifml2:if>
+                        <!--TODO: сделать процу, выводящую список из коллекции через запятую, с выводом предваряющего слова
+                            TODO: also сделать вызов других процедур-->
+                        <!--TODO: добавить в loop секции before и after с аттрибутом типа runAlsoIfNull-->
+                        <ifml2:loop position="1" collection="чтоОткрыть.предметыВнутри"
+                                    element="предмет">
+                            <ifml2:alone>
+                                <ifml2:showMessage position="1" type="expression" message="'Внутри оказалось: ' + предмет.имя + '.'"
+                                                   carriageReturn="true"/>
+                            </ifml2:alone>
+                            <ifml2:first>
+                                <ifml2:showMessage position="1" type="expression" message="'Внутри оказалось: ' + предмет.имя"
+                                                   carriageReturn="false"/>
+                            </ifml2:first>
+                            <ifml2:next>
+                                <ifml2:showMessage position="1" type="expression"
+                                                   message="', ' + предмет.имя" carriageReturn="false"/>
+                            </ifml2:next>
+                            <ifml2:last>
+                                <ifml2:showMessage position="1" type="expression" message="'.'" carriageReturn="true"/>
+                            </ifml2:last>
+                        </ifml2:loop>
                     </ifml2:then>
-                    <ifml2:else>
-                        <ifml2:showMessage position="1" type="expression" message="чтоОткрыть.имя + ' уже открыт.'" beginWithCap="true"
-                                           carriageReturn="true"/>
-                    </ifml2:else>
                 </ifml2:if>
+                <!--</ifml2:then>
+                <ifml2:else>
+                    <ifml2:showMessage position="1" type="expression" message="чтоОткрыть.имя + ' уже открыт.'" beginWithCap="true"
+                                       carriageReturn="true"/>
+                </ifml2:else>
+            </ifml2:if>-->
+            </ifml2:procedureBody>
+        </ifml2:procedure>
+
+        <!-- Закрыть предмет -->
+        <ifml2:procedure name="ЗакрытьПредмет">
+            <ifml2:parameters>
+                <ifml2:parameter name="чтоЗакрыть"/>
+            </ifml2:parameters>
+            <ifml2:procedureBody>
+                <ifml2:setProperty position="1" object="чтоЗакрыть" name="открыт" value="нет"/>
+                <ifml2:showMessage position="2" type="expression"
+                                   message="'Вы закрыли ' + чтоЗакрыть.имя + '.'"/>
             </ifml2:procedureBody>
         </ifml2:procedure>
     </ifml2:procedures>

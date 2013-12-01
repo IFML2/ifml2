@@ -34,7 +34,7 @@ public class IFMLObject implements Cloneable
     private EventList<Attribute> attributes = new BasicEventList<Attribute>();
     @XmlElementWrapper(name = IFML_OBJECT_ROLES_ELEMENT)
     @XmlElement(name = IFML_OBJECT_ROLE_ELEMENT)
-    private EventList<Role> roles = new BasicEventList<Role>();
+    protected EventList<Role> roles = new BasicEventList<Role>();
 
     @Override
     public IFMLObject clone() throws CloneNotSupportedException
