@@ -154,6 +154,7 @@ public class GUIPlayer extends JFrame
     private void loadGame()
     {
         JFileChooser savedGameFileChooser = new JFileChooser(CommonUtils.getSavesDirectory());
+        savedGameFileChooser.removeChoosableFileFilter(savedGameFileChooser.getAcceptAllFileFilter()); // remove All files filter
         savedGameFileChooser.setFileFilter(new FileFilter()
         {
             @Override
@@ -210,6 +211,7 @@ public class GUIPlayer extends JFrame
     private void saveGame()
     {
         JFileChooser savedGameFileChooser = new JFileChooser(CommonUtils.getSavesDirectory());
+        savedGameFileChooser.removeChoosableFileFilter(savedGameFileChooser.getAcceptAllFileFilter()); // remove All files filter
         savedGameFileChooser.setFileFilter(new FileFilter()
         {
             @Override
@@ -289,18 +291,20 @@ public class GUIPlayer extends JFrame
     private static String showOpenStoryFileDialog(Window owner)
     {
         JFileChooser storyFileChooser = new JFileChooser(CommonUtils.getSamplesDirectory());
+        storyFileChooser.removeChoosableFileFilter(storyFileChooser.getAcceptAllFileFilter()); // remove All files filter
         storyFileChooser.setFileFilter(new FileFilter()
         {
             @Override
             public String getDescription()
             {
-                return CommonConstants.STORY_FILE_FILTER_NAME;
+                return CommonConstants.STORY_ALL_TYPES_FILE_FILTER_NAME;
             }
 
             @Override
             public boolean accept(File f)
             {
-                return f.isDirectory() || f.getName().toLowerCase().endsWith(CommonConstants.STORY_EXTENSION);
+                return f.isDirectory() || f.getName().toLowerCase().endsWith(CommonConstants.STORY_EXTENSION) ||
+                       f.getName().toLowerCase().endsWith(CommonConstants.CIPHERED_STORY_EXTENSION);
             }
         });
 
@@ -346,7 +350,7 @@ public class GUIPlayer extends JFrame
     private void startAnew() throws IFML2Exception
     {
         gameInterface.outputText("Начинаем заново...\n");
-        engine.loadStory(storyFile);
+        engine.loadStory(storyFile, true);
         engine.initGame();
     }
 
@@ -433,7 +437,7 @@ public class GUIPlayer extends JFrame
         try
         {
             logTextArea.setText("Загрузка...");
-            engine.loadStory(this.storyFile);
+            engine.loadStory(this.storyFile, true);
             logTextArea.setText("");
             engine.initGame();
 

@@ -9,9 +9,7 @@ import ifml2.om.Story;
 import ifml2.vm.values.Value;
 import org.jetbrains.annotations.NotNull;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +17,10 @@ import java.util.Map;
 @XmlRootElement(name = "saved-game")
 public class SavedGame
 {
+    @XmlTransient
     private static final FormatLogger LOG = FormatLogger.getLogger(SavedGame.class);
+    @XmlAttribute(name = "story-file")
+    public String storyFileName;
     @XmlElementWrapper(name = "global-vars")
     @XmlElement(name = "var")
     public List<SavedVariable> globalVars;
@@ -44,6 +45,7 @@ public class SavedGame
 
     public SavedGame(@NotNull Engine.DataHelper engineDataHelper, @NotNull Story.DataHelper storyDataHelper)
     {
+        storyFileName = engineDataHelper.getStoryFileName();
         globalVars = storeGlobalVariables(engineDataHelper);
         systemVars = storeSystemVariables(engineDataHelper);
         savedInventory = storeInventory(engineDataHelper);
@@ -154,6 +156,13 @@ public class SavedGame
 
     public void restoreGame(@NotNull Engine.DataHelper engineDataHelper, @NotNull Story.DataHelper storyDataHelper) throws IFML2Exception
     {
+        // check story file name
+        String engineStoryFileName = engineDataHelper.getStoryFileName();
+        if(!engineStoryFileName.equalsIgnoreCase(storyFileName))
+        {
+            throw new IFML2Exception("Файл сохранения не соответсвует текущей истории. Он был сделан для файла \"{0}\".", storyFileName);
+        }
+
         restoreGlobalVariables(globalVars, engineDataHelper);
         restoreSystemVariables(systemVars, engineDataHelper);
         restoreInventory(savedInventory, engineDataHelper, storyDataHelper);

@@ -112,7 +112,7 @@ public class TestManager
                 String storyLink = testPlan.storyLink;
                 String storyFile = new File(testFile).getParent() + storyLink;
                 log("--- Загрузка теста {0} для файла истории {1} ---", testPlan.name, storyFile);
-                engine.loadStory(storyFile);
+                engine.loadStory(storyFile, false);
                 engine.initGame();
 
                 int cmdCnt = 0;

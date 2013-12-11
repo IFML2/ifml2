@@ -28,7 +28,7 @@ import java.util.concurrent.Callable;
 
 public class Engine
 {
-    public static final String ENGINE_VERSION = "Хоббит, глава 1";
+    public static final String ENGINE_VERSION = "Хоббит, глава 2";
     public static final FormatLogger LOG = FormatLogger.getLogger(Engine.class);
     private final HashMap<String, Value> globalVariables = new HashMap<String, Value>();
     private final Parser parser = new Parser(this);
@@ -79,6 +79,7 @@ public class Engine
         }
     };
     private DataHelper dataHelper = new DataHelper();
+    private String storyFileName;
 
     public Engine(GameInterface gameInterface)
     {
@@ -87,19 +88,20 @@ public class Engine
         LOG.info("Engine created.");
     }
 
-    public void loadStory(String storyFile) throws IFML2Exception
+    public void loadStory(String storyFileName, boolean isAllowedOpenCipherFiles) throws IFML2Exception
     {
-        LOG.info("Loading story \"{0}\"...", storyFile);
+        LOG.info("Loading story \"{0}\"...", storyFileName);
 
-        if (!new File(storyFile).exists())
+        if (!new File(storyFileName).exists())
         {
             throw new IFML2Exception("Файл истории не найден");
         }
 
         //TODO validate xml
 
-        OMManager.LoadStoryResult loadStoryResult = OMManager.loadStoryFromXmlFile(storyFile, true);
+        OMManager.LoadStoryResult loadStoryResult = OMManager.loadStoryFromFile(storyFileName, true, isAllowedOpenCipherFiles);
         story = loadStoryResult.getStory();
+        this.storyFileName = storyFileName;
         parser.setStory(story);
         inventory = loadStoryResult.getInventory();
 
@@ -461,9 +463,18 @@ public class Engine
 
     public void loadGame(String saveFileName) throws IFML2Exception
     {
-        SavedGame savedGame = OMManager.loadGame(saveFileName);
-        savedGame.restoreGame(dataHelper, story.getDataHelper());
-        outTextLn(MessageFormat.format("Игра восстановлена из файла {0}.", saveFileName));
+        try
+        {
+            SavedGame savedGame = OMManager.loadGame(saveFileName);
+            savedGame.restoreGame(dataHelper, story.getDataHelper());
+            outTextLn(MessageFormat.format("Игра восстановлена из файла {0}.", saveFileName));
+        }
+        catch (IFML2Exception e)
+        {
+            String errorText = "Ошибка при загрузке игры! " + e.getMessage();
+            outTextLn(errorText);
+            LOG.error(errorText);
+        }
     }
 
     /**
@@ -501,6 +512,11 @@ public class Engine
         {
             Value value = ExpressionCalculator.calculate(virtualMachine.createGlobalRunningContext(), expression);
             systemVariables.put(name, value);
+        }
+
+        public @NotNull String getStoryFileName()
+        {
+            return new File(storyFileName).getName();
         }
     }
 }
