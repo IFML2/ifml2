@@ -1,5 +1,6 @@
 package ifml2.engine;
 
+import ca.odell.glazedlists.BasicEventList;
 import ifml2.FormatLogger;
 import ifml2.IFML2Exception;
 import ifml2.SystemIdentifiers;
@@ -28,7 +29,7 @@ import java.util.concurrent.Callable;
 
 public class Engine
 {
-    public static final String ENGINE_VERSION = "Хоббит, глава 2";
+    public static final String ENGINE_VERSION = "Хоббит, глава 3";
     public static final FormatLogger LOG = FormatLogger.getLogger(Engine.class);
     private final HashMap<String, Value> globalVariables = new HashMap<String, Value>();
     private final Parser parser = new Parser(this);
@@ -478,6 +479,89 @@ public class Engine
     }
 
     /**
+     * Checks if item is in deep content of other items
+     *
+     * @param itemToCheck item to check
+     * @param items       items with deep content
+     * @return true if item is in deep content of items
+     * @throws ifml2.IFML2Exception
+     */
+    public boolean checkDeepContent(Item itemToCheck, List<Item> items) throws IFML2Exception
+    {
+        for (Item item : items)
+        {
+            Value itemContents = item.getAccessibleContent(getVirtualMachine());
+            if (itemContents != null)
+            {
+                if (!(itemContents instanceof CollectionValue))
+                {
+                    throw new IFML2VMException("Триггер доступного содержимого у предмета \"{0}\" вернул не коллекцию, а \"{1}\"!",
+                                               itemToCheck, itemContents.getTypeName());
+                }
+
+                List itemContentsList = ((CollectionValue) itemContents).getValue();
+                List<Item> itemContentsItemList = new BasicEventList<Item>();
+                for (Object object : itemContentsList)
+                {
+                    if (!(object instanceof Item))
+                    {
+                        throw new IFML2VMException(
+                                "Триггер доступного содержимого у предмета \"{0}\" вернул в коллекции не предмет, а \"{1}\"!", itemToCheck,
+                                object);
+                    }
+
+                    itemContentsItemList.add((Item) object);
+                }
+
+                if (itemContentsList.contains(itemToCheck) || checkDeepContent(itemToCheck, itemContentsItemList))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if object is inaccessible for player's actions
+     *
+     * @param object IFMLObject for check
+     * @return true if object is accessible including deep content
+     * @throws ifml2.IFML2Exception when tested objects neither location or item
+     */
+    public boolean isObjectAccessible(IFMLObject object) throws IFML2Exception
+    {
+        Location currentLocation = getCurrentLocation();
+
+        // test locations
+        if (object instanceof Location)
+        {
+            return object.equals(currentLocation);
+        }
+        else if (object instanceof Item)   // test items
+        {
+            Item item = (Item) object;
+
+            // test if object is in current location or player's inventory
+            boolean isInLocOrInv = currentLocation.contains(item) || inventory.contains(item);
+            if (isInLocOrInv)
+            {
+                return isInLocOrInv;
+            }
+            else
+            {
+                // test contents of current location's items and inventory items using item triggers
+                return checkDeepContent(item, currentLocation.getItems()) || checkDeepContent(item, inventory);
+            }
+        }
+        else
+        {
+            throw new IFML2Exception("Системная ошибка: Неизвестный тип объекта: \"{0}\".", object);
+        }
+    }
+
+    /**
      * Helper for saved games data.
      */
     public class DataHelper
@@ -514,7 +598,9 @@ public class Engine
             systemVariables.put(name, value);
         }
 
-        public @NotNull String getStoryFileName()
+        public
+        @NotNull
+        String getStoryFileName()
         {
             return new File(storyFileName).getName();
         }
