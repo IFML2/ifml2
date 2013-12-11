@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="5.1.7" transformSequenceNumber="4">
-  <directoryPresets config="../../../../Documents/ЯРИЛ 2.0/ifml2 project/log4j.xml" />
-  <application name="ЯРИЛ 2.0" distributionSourceDir="" applicationId="3169-8645-0418-5303" mediaDir="./" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="9" lzmaCompression="true" pack200Compression="true" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="true" shortName="${compiler:sys.fullName}" publisher="TOY Soft" publisherWeb="http://toysoft.narod.ru" version="P10.5 Хоббит" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" installerName="" javaMinVersion="1.6" javaMaxVersion="1.6" allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
+  <directoryPresets config="../Games/Кувшин.xml" />
+  <application name="ЯРИЛ 2.0" distributionSourceDir="" applicationId="3169-8645-0418-5303" mediaDir="./" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="9" lzmaCompression="true" pack200Compression="true" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="true" shortName="${compiler:sys.fullName}" publisher="TOY Soft" publisherWeb="http://toysoft.narod.ru" version="P10.5 Хоббит 1" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" installerName="" javaMinVersion="1.6" javaMaxVersion="1.6" allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="true" languageSelectionInPrincipalLanguage="false">
       <principalLanguage id="ru" customLocalizationFile="" />
       <additionalLanguages>
@@ -30,7 +30,7 @@
       <mountPoint id="23" root="" location="" mode="755" />
       <mountPoint id="191" root="" location="Games" mode="755" />
       <mountPoint id="192" root="" location="Saved Games" mode="755" />
-      <mountPoint id="34" root="33" location="" mode="755" />
+      <mountPoint id="194" root="33" location="Games" mode="755" />
       <mountPoint id="88" root="87" location="" mode="755" />
     </mountPoints>
     <entries>
@@ -48,16 +48,8 @@
       <fileEntry mountPoint="23" file="../lib/apache-log4j-1.2.17/log4j-1.2.17.jar" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
       <fileEntry mountPoint="23" file="../docs/notes.txt" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
       <fileEntry mountPoint="23" file="../log4j.xml" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
-      <dirEntry mountPoint="34" file="../Games" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="Games" excludeSuffixes="*.zip" dirMode="755" overrideDirMode="false">
-        <exclude>
-          <entry location=".svn" fileType="regular" />
-          <entry location="1.xml" fileType="regular" />
-          <entry location="Спелеолог.xml.bak" fileType="regular" />
-          <entry location="Тайна заброшенного храма 1 (1).xml" fileType="regular" />
-          <entry location="Тайна заброшенного храма 1 (2).xml" fileType="regular" />
-          <entry location="Тайна заброшенного храма 1.xml" fileType="regular" />
-        </exclude>
-      </dirEntry>
+      <fileEntry mountPoint="194" file="../Games/Кувшин.xml" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
+      <fileEntry mountPoint="194" file="../Games/Спелеолог.xml" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
       <dirEntry mountPoint="88" file="../tests" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="Tests" excludeSuffixes="" dirMode="755" overrideDirMode="false">
         <exclude>
           <entry location=".svn" fileType="regular" />

@@ -307,8 +307,10 @@ public class Editor extends JFrame
      */
     private void updateTitle()
     {
+        File file = new File(storyFileName);
+        String fileName = file.getName();
         String editorTitle =
-                MessageFormat.format("ЯРИЛ 2.0 Редактор {0} -- {1}{2}", Engine.ENGINE_VERSION, storyFileName, isStoryEdited ? " - * история не сохранена" : "");
+                MessageFormat.format("ЯРИЛ 2.0 Редактор {0} -- {1}{2}", Engine.ENGINE_VERSION, fileName, isStoryEdited ? " - * история не сохранена" : "");
         setTitle(editorTitle);
     }
 
