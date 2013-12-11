@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<library xmlns="http://toysoft.narod.ru/IFML2Schema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://toysoft.narod.ru/IFML2Schema ../../Schemes/IFML2Schema.xsd " name="Глаголы">
+<library xmlns="http://toysoft.narod.ru/IFML2Schema" name="Глаголы">
     <attribute-definitions>
         <attribute-definition name="частьПейзажа"
                               description="Определяет, пропускать ли упоминание предмета при описании локации."/>
@@ -12,6 +11,7 @@
         <attribute-definition name="хрупкий" description="Определяет, может ли предмет быть сломан или разбит."/>
         <attribute-definition name="прикреплён"
                               description="Определяет, прикреплён ли предмет к чему-либо, чтобы его откреплять (отрезать)."/>
+        <attribute-definition name="тяжёлый" description="Определяет, что предмет слишком тяжёл для переноски."/>
     </attribute-definitions>
 
     <role-definitions>
@@ -217,15 +217,20 @@
                                      message="'В этих условиях, либо из этого положения, либо в данный момент взять и что-либо сделать с(о) ' + предмет.тп + ' невозможно.'"/>
                     </reaction>
                 </restriction>
-                <!--<ifml2:restriction condition="предмет.частьПейзажа">
-                    <ifml2:reaction>
-                        <ifml2:showMessage position="1" type="expression" beginWithCap="true"
-                                           message="предмет.вп + ' взять невозможно ни при каких условиях.'"/>
-                    </ifml2:reaction>
-                </ifml2:restriction>-->
+                <restriction condition="предмет.частьПейзажа">
+                    <reaction>
+                        <showMessage position="1" type="expression" beginWithCap="true"
+                                     message="предмет.вп + ' взять невозможно ни при каких условиях.'"/>
+                    </reaction>
+                </restriction>
                 <restriction condition="предмет в инвентарий">
                     <reaction>
                         <showMessage position="1" type="expression" message="предмет.имя + ' уже у Вас.'" beginWithCap="true"/>
+                    </reaction>
+                </restriction>
+                <restriction condition="предмет.тяжёлый">
+                    <reaction>
+                        <showMessage type="expression" message="предмет.имя + ' слишком тяжёлый.'" beginWithCap="true"/>
                     </reaction>
                 </restriction>
             </restrictions>
@@ -805,7 +810,8 @@
                                              carriageReturn="false"/>
                             </next>
                             <last>
-                                <showMessage position="1" type="expression" message="' и ' + предметСверху.имя + '.'" carriageReturn="true"/>
+                                <showMessage position="1" type="expression" message="' и ' + предметСверху.имя + '.'"
+                                             carriageReturn="true"/>
                             </last>
                         </loop>
                     </then>
@@ -922,9 +928,9 @@
         <procedure name="ВзятьВсё">
             <procedureBody>
                 <loop position="1" collection="ТекущаяЛокация.Предметы" element="предмет"
-                      condition="не предмет.частьПейзажа и не предмет.недоступен">
+                      condition="не предмет.частьПейзажа и не предмет.недоступен и не предмет.прикреплён и не предмет.тяжёлый">
                     <empty>
-                        <showMessage position="1" type="text" message="Тут нечего брать."/>
+                        <showMessage position="1" type="text" message="Тут нечего нельзя взять."/>
                     </empty>
                     <next>
                         <!-- todo заменить на вызов проц-ы Взять-->
