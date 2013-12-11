@@ -51,7 +51,9 @@ public class LoopInstruction extends Instruction
     public void run(RunningContext runningContext) throws IFML2Exception
     {
         // get the collection
-        List<IFMLObject> collection = (List<IFMLObject>) getCollectionFromExpression(collectionExpression, runningContext, getTitle(), "Коллекция");
+        List<IFMLObject> collection = ConvertToClassedList(
+                getCollectionFromExpression(collectionExpression, runningContext, getTitle(), "Коллекция"),
+                IFMLObject.class);
         //todo solve unsafe cast problem...
 
         List<IFMLObject> filteredCollection = new ArrayList<IFMLObject>();

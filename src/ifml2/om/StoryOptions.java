@@ -94,18 +94,20 @@ public class StoryOptions
 
     public static class StoryDescription
     {
-        @XmlAttribute(name = "name")
-        public String name;
-        @XmlAttribute(name = "description")
-        public String description;
-        @XmlAttribute(name = "version")
-        public String version;
-        @XmlAttribute(name = "author")
-        public String author;
+        private String name;
+        private String description;
+        private String version;
+        private String author;
 
         public String getName()
         {
             return name;
+        }
+
+        @XmlAttribute(name = "name")
+        public void setName(String name)
+        {
+            this.name = name;
         }
 
         public String getDescription()
@@ -113,14 +115,32 @@ public class StoryOptions
             return description;
         }
 
+        @XmlAttribute(name = "description")
+        public void setDescription(String description)
+        {
+            this.description = description;
+        }
+
         public String getVersion()
         {
             return version;
         }
 
+        @XmlAttribute(name = "version")
+        public void setVersion(String version)
+        {
+            this.version = version;
+        }
+
         public String getAuthor()
         {
             return author;
+        }
+
+        @XmlAttribute(name = "author")
+        public void setAuthor(String author)
+        {
+            this.author = author;
         }
     }
 }

@@ -20,12 +20,24 @@ public class Property
 {
     @XmlAttribute(name = PROPERTY_NAME_ATTRIBUTE)
     private String name; //can't load as IDREF because this name isn't unique
+    @XmlTransient
+    private Role parentRole;
+    @XmlAttribute(name = PROPERTY_VALUE_ATTRIBUTE)
+    private String valueExpression;
+    @XmlElement(name = PROPERTY_COLLECTION_ITEM_ELEMENT)
+    @XmlIDREF
+    private EventList<IFMLObject> collectionItems = new BasicEventList<IFMLObject>();
+    @XmlTransient
+    private Value value;
 
-    public Property() { }
+    @SuppressWarnings("UnusedDeclaration")
+    public Property()
+    {
+        // JAXB
+    }
 
     public Property(PropertyDefinition propertyDefinition, Role parentRole)
     {
-        super();
         name = propertyDefinition.getName();
         this.parentRole = parentRole;
         valueExpression = propertyDefinition.getValue();
@@ -38,31 +50,18 @@ public class Property
         return name;
     }
 
-    @XmlTransient
-    private Role parentRole;
-
     /**
      * JAXB afterUnmarshal listener
+     *
      * @param unmarshaller Unmarshaller
-     * @param parent Parent, should be Role
+     * @param parent       Parent, should be Role
      */
     @SuppressWarnings("UnusedDeclaration")
-    private void afterUnmarshal(final Unmarshaller unmarshaller,
-                                final Object parent)
+    private void afterUnmarshal(final Unmarshaller unmarshaller, final Object parent)
     {
         assert parent instanceof Role;
         parentRole = (Role) parent;
     }
-
-    @XmlAttribute(name = PROPERTY_VALUE_ATTRIBUTE)
-    private String valueExpression;
-
-    @XmlElement(name = PROPERTY_COLLECTION_ITEM_ELEMENT)
-    @XmlIDREF
-    private EventList<IFMLObject> collectionItems = new BasicEventList<IFMLObject>();
-
-    @XmlTransient
-    private Value value;
 
     public Value getValue()
     {
@@ -76,21 +75,22 @@ public class Property
 
     /**
      * Gets primary expressions (valueExpression and collectionItems) and evaluates it to value considering type
+     *
      * @param runningContext Running context
      */
     public void evaluateFromPrimaryExpression(RunningContext runningContext) throws IFML2Exception
     {
         // get PropertyDefinition
         assert parentRole != null;
-        PropertyDefinition propertyDefinition = parentRole.getRoleDefinition().getPropertyDefinitionByName(name);
-        switch(propertyDefinition.getType())
+        PropertyDefinition propertyDefinition = parentRole.getRoleDefinition().findPropertyDefinitionByName(name);
+        switch (propertyDefinition.getType())
         {
             case COLLECTION:
                 value = new CollectionValue(collectionItems);
                 //set parent to items
-                for(IFMLObject ifmlObject : collectionItems)
+                for (IFMLObject ifmlObject : collectionItems)
                 {
-                    if(ifmlObject instanceof Item)
+                    if (ifmlObject instanceof Item)
                     {
                         ((Item) ifmlObject).setContainer(collectionItems);
                     }
@@ -99,30 +99,30 @@ public class Property
 
             case LOGIC:
                 Value logicValue = ExpressionCalculator.calculate(runningContext, valueExpression);
-                if(!(logicValue instanceof BooleanValue))
+                if (!(logicValue instanceof BooleanValue))
                 {
-                    throw new IFML2Exception("Выражение \"{0}\" для свойства \"{1}\" не логического типа",
-                            valueExpression, propertyDefinition.getName());
+                    throw new IFML2Exception("Выражение \"{0}\" для свойства \"{1}\" не логического типа", valueExpression,
+                                             propertyDefinition.getName());
                 }
                 value = logicValue;
                 break;
 
             case NUMBER:
                 Value numberValue = ExpressionCalculator.calculate(runningContext, valueExpression);
-                if(!(numberValue instanceof NumberValue))
+                if (!(numberValue instanceof NumberValue))
                 {
-                    throw new IFML2Exception("Выражение \"{0}\" для свойства \"{1}\" не числового типа",
-                            valueExpression, propertyDefinition.getName());
+                    throw new IFML2Exception("Выражение \"{0}\" для свойства \"{1}\" не числового типа", valueExpression,
+                                             propertyDefinition.getName());
                 }
                 value = numberValue;
                 break;
 
             case TEXT:
                 Value textValue = ExpressionCalculator.calculate(runningContext, valueExpression);
-                if(!(textValue  instanceof TextValue))
+                if (!(textValue instanceof TextValue))
                 {
-                    throw new IFML2Exception("Выражение \"{0}\" для свойства \"{1}\" не текстового типа",
-                            valueExpression, propertyDefinition.getName());
+                    throw new IFML2Exception("Выражение \"{0}\" для свойства \"{1}\" не текстового типа", valueExpression,
+                                             propertyDefinition.getName());
                 }
                 value = textValue;
                 break;

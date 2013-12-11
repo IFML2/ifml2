@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <updateDescriptor baseUrl="">
-  <entry targetMediaFileId="37" updatableVersionMin="" updatableVersionMax="" fileName="ЯРИЛ_2_0_windows_DEVELOPER_BUILD_j6_20131020.exe" newVersion="DEVELOPER BUILD" newMediaFileId="37" fileSize="18461184" bundledJre="windows-x86-1.6.0_45" archive="false">
+  <entry targetMediaFileId="29" updatableVersionMin="" updatableVersionMax="" fileName="ЯРИЛ_2_0_P10_5_Хоббит_20131126.exe" newVersion="P10.5 Хоббит" newMediaFileId="29" fileSize="1721344" bundledJre="" archive="false">
     <comment language="ru" />
     <comment language="en" />
   </entry>

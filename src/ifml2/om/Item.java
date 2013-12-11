@@ -35,20 +35,6 @@ public class Item extends IFMLObject implements Cloneable
         return hooks;
     }
 
-    //    /**
-    //     * JAXB afterUnmarshal listener
-    //     * @param unmarshaller Unmarshaller
-    //     * @param parent Parent, should be Role
-    //     */
-    //    @SuppressWarnings("UnusedDeclaration")
-    //    private void afterUnmarshal(final Unmarshaller unmarshaller,
-    //                                final Object parent)
-    //    {
-    //        assert parent instanceof List;
-    //        parentLIst = (List) parent;
-
-//    }
-
     @Override
     public String toString()
     {

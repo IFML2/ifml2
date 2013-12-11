@@ -28,7 +28,7 @@
           <html.disable class="java.lang.Boolean" value="false"/>
         </clientProperties>
       </component>
-      <scrollpane id="ff8d8">
+      <scrollpane id="ff8d8" binding="scrollPane">
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -40,7 +40,6 @@
             <properties>
               <background awt-color="black"/>
               <editable value="false"/>
-              <focusable value="true"/>
               <font name="Segoe UI" size="16"/>
               <foreground awt-color="green"/>
               <lineWrap value="true"/>

@@ -9,6 +9,7 @@ import ifml2.vm.RunningContext;
 import ifml2.vm.values.BooleanValue;
 import ifml2.vm.values.TextValue;
 import ifml2.vm.values.Value;
+import org.jetbrains.annotations.NotNull;
 
 import javax.xml.bind.annotation.*;
 import java.text.MessageFormat;
@@ -62,7 +63,7 @@ public class IFMLObject implements Cloneable
     }
 
     @XmlElement(name = OBJECT_WORDS_TAG)
-    public void setWordLinks(WordLinks wordLinks)
+    public void setWordLinks(@NotNull WordLinks wordLinks) throws IFML2Exception
     {
         this.wordLinks = wordLinks;
     }
@@ -203,8 +204,8 @@ public class IFMLObject implements Cloneable
             }
         }
 
-        throw new IFML2VMException("У объекта \"{0}\" нет свойства \"{1}\", а также в игре" +
-                " нет признаков и ролей с таким названием.", this, propertyName);
+        throw new IFML2VMException("У объекта \"{0}\" нет свойства \"{1}\", а также в игре нет признаков и ролей с таким названием.", this,
+                                   propertyName);
     }
 
     public Value tryGetMemberValue(String symbol, RunningContext runningContext)
@@ -219,7 +220,7 @@ public class IFMLObject implements Cloneable
         }
     }
 
-    public Property getPropertyByName(String name)
+    public Property findPropertyByName(String name)
     {
         // search in local properties
         for (Property property : properties)
@@ -233,10 +234,23 @@ public class IFMLObject implements Cloneable
         // search in roles' properties
         for (Role role : roles)
         {
-            Property property = role.getPropertyByName(name);
+            Property property = role.findPropertyByName(name);
             if (property != null)
             {
                 return property;
+            }
+        }
+
+        return null;
+    }
+
+    public Role findRoleByName(String name)
+    {
+        for (Role role : roles)
+        {
+            if (role.getName().equalsIgnoreCase(name))
+            {
+                return role;
             }
         }
 

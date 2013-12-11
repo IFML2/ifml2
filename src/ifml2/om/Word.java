@@ -21,21 +21,29 @@ public class Word
         return "Словарная запись";
     }
 
+    public void addLinkerObject(IFMLObject ifmlObject)
+    {
+        if(!linkerObjects.contains(ifmlObject))
+        {
+            linkerObjects.add(ifmlObject);
+        }
+    }
+
     @XmlEnum
     public enum GramCaseEnum
 	{
 		@XmlEnumValue(value = "ip")
-        IP("ИП", "что"),
+        IP("ИП", "кто (что)"),
         @XmlEnumValue(value = "rp")
-		RP("РП", "чего"),
+		RP("РП", "кого (чего)"),
         @XmlEnumValue(value = "dp")
-		DP("ДП", "чему"),
+		DP("ДП", "кому (чему)"),
         @XmlEnumValue(value = "vp")
-		VP("ВП", "что"),
+		VP("ВП", "кого (что)"),
         @XmlEnumValue(value = "tp")
-		TP("ТП", "чем"),
+		TP("ТП", "кем (чем)"),
         @XmlEnumValue(value = "pp")
-		PP("ПП", "чём");
+		PP("ПП", "ком (чём)");
 
         @XmlTransient
         private final String abbreviation;
@@ -96,7 +104,7 @@ public class Word
      * Are set in OMManager
      */
     @XmlTransient
-    public final ArrayList<IFMLObject> linkerObjects = new ArrayList<IFMLObject>();
+    private final ArrayList<IFMLObject> linkerObjects = new ArrayList<IFMLObject>();
     public ArrayList<IFMLObject> getLinkerObjects()
     {
         return linkerObjects;

@@ -5,6 +5,8 @@
       <w>ifml</w>
       <w>jaxb</w>
       <w>unary</w>
+      <w>unmarshal</w>
+      <w>unmarshaller</w>
     </words>
   </dictionary>
 </component>

@@ -17,6 +17,7 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileView;
 import javax.xml.bind.ValidationEvent;
 import java.awt.*;
 import java.awt.event.*;
@@ -109,6 +110,7 @@ public class Editor extends JFrame
     private JButton delItemButton;
     private Story story = new Story();
     private boolean isStoryEdited = false;
+    private String storyFileName = "новая история";
 
     public Editor()
     {
@@ -301,13 +303,13 @@ public class Editor extends JFrame
     }
 
     /**
-     * Updates Editor's title - including story modification asterisk (*)
+     * Updates Editor's title - including story filename and modification asterisk (*)
      */
     private void updateTitle()
     {
-        String IFML_EDITOR_VERSION =
-                "ЯРИЛ 2.0 Редактор " + Engine.ENGINE_VERSION + (isStoryEdited ? " - * история не сохранена" : "");
-        setTitle(IFML_EDITOR_VERSION);
+        String editorTitle =
+                MessageFormat.format("ЯРИЛ 2.0 Редактор {0} -- {1}{2}", Engine.ENGINE_VERSION, storyFileName, isStoryEdited ? " - * история не сохранена" : "");
+        setTitle(editorTitle);
     }
 
     private int askAboutSavingStory()
@@ -338,7 +340,7 @@ public class Editor extends JFrame
 
     private void loadStory(final String storyFile)
     {
-        new Thread()
+        new Thread() // todo remake to SwingWorker
         {
             @Override
             public void run()
@@ -350,6 +352,7 @@ public class Editor extends JFrame
                 {
                     progressBar.setVisible(true);
                     Editor.this.setStory(OMManager.loadStoryFromXmlFile(storyFile, false).getStory());
+                    Editor.this.setStoryFileName(storyFile);
                 }
                 catch (Throwable e)
                 {
@@ -359,7 +362,7 @@ public class Editor extends JFrame
                 }
                 finally
                 {
-                    //getContentPane().setEnabled(true);
+                    //getContentPane().setEnabled(true); // todo try SwingUtilities.invokeLater
                     progressBar.setVisible(false);
                     mainPanel.setCursor(previousCursor);
                 }
@@ -424,6 +427,7 @@ public class Editor extends JFrame
                     }
                 }
                 setStory(new Story());
+                setStoryFileName("новая история");
             }
         });
         fileMenu.addSeparator();
@@ -549,17 +553,20 @@ public class Editor extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                String fileName;
+                final String fileName;
                 try
                 {
                     File tempFile = File.createTempFile("ifml2run_", ".xml");
                     fileName = tempFile.getAbsolutePath();
-                    saveStory(fileName);
-                    GUIPlayer.startFromFile(fileName);
-                    if (!tempFile.delete())
+                    saveStory(fileName, false);
+                    SwingUtilities.invokeLater(new Runnable()
                     {
-                        LOG.error(MessageFormat.format("Can't delete temp file {0}", tempFile.getAbsolutePath()));
-                    }
+                        @Override
+                        public void run()
+                        {
+                            GUIPlayer.startFromFile(fileName, true);
+                        }
+                    });
                 }
                 catch (Throwable ex)
                 {
@@ -584,8 +591,8 @@ public class Editor extends JFrame
     private String selectStoryFileForOpen()
     {
         // choose story file:
-        JFileChooser ifmlFileChooser = new JFileChooser(CommonUtils.getSamplesDirectory());
-        ifmlFileChooser.setFileFilter(new FileFilter()
+        JFileChooser storyFileChooser = new JFileChooser(CommonUtils.getSamplesDirectory());
+        storyFileChooser.setFileFilter(new FileFilter()
         {
             @Override
             public String getDescription()
@@ -600,12 +607,25 @@ public class Editor extends JFrame
             }
         });
 
-        if (ifmlFileChooser.showOpenDialog(this) != JFileChooser.APPROVE_OPTION)
+        storyFileChooser.setFileView(new FileView()
+        {
+            @Override
+            public Icon getIcon(File f)
+            {
+                if (f.isDirectory())
+                {
+                    return GUIUtils.DIRECTORY_ICON;
+                }
+                return GUIUtils.STORY_FILE_ICON;
+            }
+        });
+
+        if (storyFileChooser.showOpenDialog(this) != JFileChooser.APPROVE_OPTION)
         {
             return null;
         }
 
-        return ifmlFileChooser.getSelectedFile().getAbsolutePath();
+        return storyFileChooser.getSelectedFile().getAbsolutePath();
     }
 
     private JPopupMenu createPopupMenus()
@@ -662,24 +682,28 @@ public class Editor extends JFrame
         String storyFileName = selectFileForStorySave();
         if (storyFileName != null)
         {
-            saveStory(storyFileName);
+            saveStory(storyFileName, true);
+            setStoryFileName(storyFileName);
             return true;
         }
 
         return false;
     }
 
-    private void saveStory(String storyFileName) throws IFML2Exception
+    private void saveStory(String storyFileName, boolean toMarkAsSaved) throws IFML2Exception
     {
         OMManager.saveStoryToXmlFile(storyFileName, story);
-        setStoryEdited(false); // reset edited flag
+        if (toMarkAsSaved)
+        {
+            setStoryEdited(false); // reset edited flag
+        }
     }
 
     private String selectFileForStorySave()
     {
         // choose story file:
-        JFileChooser ifmlFileChooser = new JFileChooser(CommonUtils.getSamplesDirectory());
-        ifmlFileChooser.setFileFilter(new FileFilter()
+        JFileChooser storyFileChooser = new JFileChooser(CommonUtils.getSamplesDirectory());
+        storyFileChooser.setFileFilter(new FileFilter()
         {
             @Override
             public String getDescription()
@@ -695,12 +719,25 @@ public class Editor extends JFrame
             }
         });
 
-        if (ifmlFileChooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION)
+        storyFileChooser.setFileView(new FileView()
+        {
+            @Override
+            public Icon getIcon(File f)
+            {
+                if (f.isDirectory())
+                {
+                    return GUIUtils.DIRECTORY_ICON;
+                }
+                return GUIUtils.STORY_FILE_ICON;
+            }
+        });
+
+        if (storyFileChooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION)
         {
             return null;
         }
 
-        String fileName = ifmlFileChooser.getSelectedFile().getAbsolutePath();
+        String fileName = storyFileChooser.getSelectedFile().getAbsolutePath();
 
         if (!fileName.toLowerCase().endsWith(CommonConstants.STORY_EXTENSION))
         {
@@ -723,5 +760,11 @@ public class Editor extends JFrame
         }
 
         return false;
+    }
+
+    public void setStoryFileName(String storyFileName)
+    {
+        this.storyFileName = storyFileName;
+        updateTitle();
     }
 }

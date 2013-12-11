@@ -40,6 +40,12 @@ public class ObjectValue extends Value
         return "объект";
     }
 
+    @Override
+    public String toLiteral()
+    {
+        return value.getId();
+    }
+
     public IFMLObject getValue()
     {
         return value;

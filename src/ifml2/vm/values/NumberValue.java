@@ -31,8 +31,7 @@ public class NumberValue extends Value implements IAddableValue
     @Override
     public String toString()
     {
-        Long roundedValue = Math.round(value);
-        return value == roundedValue.doubleValue() ? roundedValue.toString() : value.toString();
+        return toLiteral();
     }
 
     @Override
@@ -56,6 +55,13 @@ public class NumberValue extends Value implements IAddableValue
     public String getTypeName()
     {
         return "число";
+    }
+
+    @Override
+    public String toLiteral()
+    {
+        Long roundedValue = Math.round(value);
+        return value == roundedValue.doubleValue() ? roundedValue.toString() : value.toString();
     }
 
     public Double getValue()

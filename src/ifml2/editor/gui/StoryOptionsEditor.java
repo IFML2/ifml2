@@ -27,7 +27,11 @@ public class StoryOptionsEditor extends AbstractEditor<StoryOptions>
     private JList varsList;
     private JButton addVarButton;
     private JButton editVarButton;
-    private JButton delVarbutton;
+    private JButton delVarButton;
+    private JTextField nameText;
+    private JTextField authorText;
+    private JTextField versionText;
+    private JTextArea descriptionTextArea;
 
     public StoryOptionsEditor(Window owner, StoryOptions storyOptions, final Story.DataHelper storyDataHelper)
     {
@@ -74,7 +78,7 @@ public class StoryOptionsEditor extends AbstractEditor<StoryOptions>
                 }
             }
         });
-        delVarbutton.setAction(new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
+        delVarButton.setAction(new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
         {
             {
                 setEnabled(false); // disabled at start
@@ -87,12 +91,14 @@ public class StoryOptionsEditor extends AbstractEditor<StoryOptions>
                     }
                 });
             }
+
             @Override
             public void actionPerformed(ActionEvent e)
             {
                 SetVarInstruction setVarInstruction = (SetVarInstruction) varsList.getSelectedValue();
-                if(setVarInstruction != null && GUIUtils.showDeleteConfirmDialog(StoryOptionsEditor.this, "глобальную переменную", "глобальной переменной",
-                                                                                 Word.GenderEnum.FEMININE))
+                if (setVarInstruction != null &&
+                    GUIUtils.showDeleteConfirmDialog(StoryOptionsEditor.this, "глобальную переменную",
+                                                     "глобальной переменной", Word.GenderEnum.FEMININE))
                 {
                     varsClone.remove(setVarInstruction);
                 }
@@ -111,14 +117,29 @@ public class StoryOptionsEditor extends AbstractEditor<StoryOptions>
         showStartLocDescCheck.setSelected(storyOptions.getStartLocationOption().getShowStartLocDesc());
 
         varsList.setModel(new DefaultEventComboBoxModel<SetVarInstruction>(varsClone));
+
+        StoryOptions.StoryDescription storyDescription = storyOptions.getStoryDescription();
+        nameText.setText(storyDescription.getName());
+        authorText.setText(storyDescription.getAuthor());
+        versionText.setText(storyDescription.getVersion());
+        descriptionTextArea.setText(storyDescription.getDescription());
     }
 
     @Override
     public void getData(@NotNull StoryOptions data)
     {
-        data.getStartLocationOption().setLocation((Location) startLocCombo.getSelectedItem());
-        data.getStartLocationOption().setShowStartLocDesc(showStartLocDescCheck.isSelected());
+        StoryOptions.StartLocationOption startLocationOption = data.getStartLocationOption();
+        startLocationOption.setLocation((Location) startLocCombo.getSelectedItem());
+        startLocationOption.setShowStartLocDesc(showStartLocDescCheck.isSelected());
+
         data.getStartProcedureOption().setProcedure((Procedure) startProcedureCombo.getSelectedItem());
+
         data.setVars(varsClone);
+
+        StoryOptions.StoryDescription storyDescription = data.getStoryDescription();
+        storyDescription.setName(nameText.getText());
+        storyDescription.setAuthor(authorText.getText());
+        storyDescription.setVersion(versionText.getText());
+        storyDescription.setDescription(descriptionTextArea.getText());
     }
 }

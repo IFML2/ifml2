@@ -3,10 +3,11 @@ package ifml2.engine;
 import ifml2.FormatLogger;
 import ifml2.IFML2Exception;
 import ifml2.SystemIdentifiers;
-import ifml2.interfaces.Interface;
+import ifml2.engine.saved.SavedGame;
 import ifml2.om.*;
 import ifml2.parser.FormalElement;
 import ifml2.parser.Parser;
+import ifml2.players.GameInterface;
 import ifml2.vm.ExpressionCalculator;
 import ifml2.vm.IFML2VMException;
 import ifml2.vm.RunningContext;
@@ -27,13 +28,13 @@ import java.util.concurrent.Callable;
 
 public class Engine
 {
-    public static final String ENGINE_VERSION = "Прототип 10 выпуск 4 правка 4";
+    public static final String ENGINE_VERSION = "Хоббит";
     public static final FormatLogger LOG = FormatLogger.getLogger(Engine.class);
     private final HashMap<String, Value> globalVariables = new HashMap<String, Value>();
     private final Parser parser = new Parser(this);
     private final VirtualMachine virtualMachine = new VirtualMachine();
     private final HashMap<String, Value> systemVariables = new HashMap<String, Value>();
-    private Interface gameInterface = null;
+    private GameInterface gameInterface = null;
     private Story story = null;
     private ArrayList<Item> inventory = new ArrayList<Item>();
     private ArrayList<Item> abyss = new ArrayList<Item>();
@@ -77,8 +78,9 @@ public class Engine
             });
         }
     };
+    private DataHelper dataHelper = new DataHelper();
 
-    public Engine(Interface gameInterface)
+    public Engine(GameInterface gameInterface)
     {
         this.gameInterface = gameInterface;
         virtualMachine.setEngine(this);
@@ -204,8 +206,9 @@ public class Engine
 
         // check help command
         if ("помощь".equalsIgnoreCase(trimmedCommand) || "помоги".equalsIgnoreCase(trimmedCommand) ||
-                "помогите".equalsIgnoreCase(trimmedCommand) || "help".equalsIgnoreCase(trimmedCommand) ||
-                "info".equalsIgnoreCase(trimmedCommand) || "инфо".equalsIgnoreCase(trimmedCommand)) // todo refactor to List.contains() or something similar
+            "помогите".equalsIgnoreCase(trimmedCommand) || "help".equalsIgnoreCase(trimmedCommand) ||
+            "info".equalsIgnoreCase(trimmedCommand) ||
+            "инфо".equalsIgnoreCase(trimmedCommand)) // todo refactor to List.contains() or something similar
         {
             outTextLn("Попробуйте одну из команд: " + story.getAllActions());
             return true;
@@ -218,7 +221,7 @@ public class Engine
             try
             {
                 Value value = ExpressionCalculator.calculate(virtualMachine.createGlobalRunningContext(), expression);
-                outTextLn(MessageFormat.format("[ОТЛАДКА] ({0}) {1}", value.getClass().getSimpleName(), value));
+                outTextLn(MessageFormat.format("[ОТЛАДКА] ({0}) {1}", value.getTypeName(), value));
             }
             catch (IFML2Exception e)
             {
@@ -372,7 +375,8 @@ public class Engine
                 Value isRestricted = ExpressionCalculator.calculate(runningContext, restriction.getCondition());
                 if (!(isRestricted instanceof BooleanValue))
                 {
-                    throw new IFML2Exception("Выражение (%s) условия ограничения действия \"%s\" не логического типа.", restriction.getCondition(), action);
+                    throw new IFML2Exception("Выражение (%s) условия ограничения действия \"%s\" не логического типа.",
+                                             restriction.getCondition(), action);
                 }
                 if (((BooleanValue) isRestricted).getValue()) // if condition is true, run reaction
                 {
@@ -382,7 +386,8 @@ public class Engine
             }
             catch (IFML2Exception e)
             {
-                throw new IFML2Exception(e, "{0}\n  при вычислении ограничения \"{1}\" действия \"{2}\"", e.getMessage(), restriction.getCondition(), action);
+                throw new IFML2Exception(e, "{0}\n  при вычислении ограничения \"{1}\" действия \"{2}\"", e.getMessage(),
+                                         restriction.getCondition(), action);
             }
         }
         return false;
@@ -445,5 +450,57 @@ public class Engine
     public VirtualMachine getVirtualMachine()
     {
         return virtualMachine;
+    }
+
+    public void saveGame(String saveFileName) throws IFML2Exception
+    {
+        SavedGame savedGame = new SavedGame(dataHelper, story.getDataHelper());
+        OMManager.saveGame(saveFileName, savedGame);
+        outTextLn(MessageFormat.format("Игра сохранена в файл {0}.", saveFileName));
+    }
+
+    public void loadGame(String saveFileName) throws IFML2Exception
+    {
+        SavedGame savedGame = OMManager.loadGame(saveFileName);
+        savedGame.restoreGame(dataHelper, story.getDataHelper());
+        outTextLn(MessageFormat.format("Игра восстановлена из файла {0}.", saveFileName));
+    }
+
+    /**
+     * Helper for saved games data.
+     */
+    public class DataHelper
+    {
+        public HashMap<String, Value> getGlobalVariables()
+        {
+            return globalVariables;
+        }
+
+        public HashMap<String, Value> getSystemVariables()
+        {
+            return systemVariables;
+        }
+
+        public ArrayList<Item> getInventory()
+        {
+            return inventory;
+        }
+
+        public List<Location> getLocations()
+        {
+            return story.getLocations();
+        }
+
+        public void setGlobalVariable(String name, String expression) throws IFML2Exception
+        {
+            Value value = ExpressionCalculator.calculate(virtualMachine.createGlobalRunningContext(), expression);
+            globalVariables.put(name, value);
+        }
+
+        public void setSystemVariable(String name, String expression) throws IFML2Exception
+        {
+            Value value = ExpressionCalculator.calculate(virtualMachine.createGlobalRunningContext(), expression);
+            systemVariables.put(name, value);
+        }
     }
 }

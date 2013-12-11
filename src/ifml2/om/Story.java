@@ -16,6 +16,7 @@ import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import static ifml2.om.xml.XmlSchemaConstants.*;
@@ -99,6 +100,16 @@ public class Story
                             location.setDown(null);
                         }
                         //todo: delete links from semi-directions (NE, NW, ...)
+                    }
+
+                    // delete from heap
+                    for (Iterator<IFMLObject> iterator = objectsHeap.values().iterator(); iterator.hasNext(); )
+                    {
+                        IFMLObject object = iterator.next();
+                        if (object instanceof Location && !locations.contains(object))
+                        {
+                            iterator.remove();
+                        }
                     }
                 }
             }
@@ -312,6 +323,11 @@ public class Story
             return locations;
         }
 
+        /**
+         * Tries to find location by id. Id shouldn't be null. If finds returns it, else returns null.
+         * @param id Location id.
+         * @return Location if finds and null otherwise.
+         */
         public Location findLocationById(@NotNull String id)
         {
             String loweredId = id.trim().toLowerCase();
@@ -442,6 +458,11 @@ public class Story
             return items;
         }
 
+        /**
+         * Tries to find item by id. Id shouldn't be null. If finds returns it, else returns null.
+         * @param id Item id.
+         * @return Item if finds and null otherwise.
+         */
         public Item findItemById(@NotNull String id)
         {
             String loweredId = id.trim().toLowerCase();

@@ -36,12 +36,18 @@ public class BooleanValue extends Value
     @Override
     public String toString()
     {
-        return value ? SystemIdentifiers.TRUE_BOOL_LITERAL : SystemIdentifiers.FALSE_BOOL_LITERAL;
+        return toLiteral();
     }
 
     @Override
     public String getTypeName()
     {
         return "логика";
+    }
+
+    @Override
+    public String toLiteral()
+    {
+        return value ? SystemIdentifiers.TRUE_BOOL_LITERAL : SystemIdentifiers.FALSE_BOOL_LITERAL;
     }
 }

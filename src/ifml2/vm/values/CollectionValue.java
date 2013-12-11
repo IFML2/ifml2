@@ -1,5 +1,7 @@
 package ifml2.vm.values;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 import java.util.List;
 
 public class CollectionValue extends Value
@@ -38,6 +40,12 @@ public class CollectionValue extends Value
     public String getTypeName()
     {
         return "коллекция";
+    }
+
+    @Override
+    public String toLiteral()
+    {
+        throw new NotImplementedException(); //todo
     }
 
     public List<?> getValue()
