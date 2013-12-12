@@ -195,12 +195,12 @@ public class VirtualMachine
         else
         {
             // not inherited! do as usual...
-            engine.outTextLn(location.getName());
-            engine.outTextLn(location.getDescription());
+            outTextLn(location.getName());
+            outTextLn(location.getDescription());
             if (location.getItems().size() > 0)
             {
                 String objectsList = convertObjectsToString(location.getItems());
-                engine.outTextLn("А также тут " + objectsList);
+                outTextLn("А также тут {0}", objectsList);
             }
         }
     }
@@ -210,11 +210,11 @@ public class VirtualMachine
         if (engine.getInventory().size() > 0)
         {
             String objectsList = convertObjectsToString(engine.getInventory());
-            engine.outTextLn("У Вас при себе " + objectsList);
+            outTextLn("У Вас при себе {0}", objectsList);
         }
         else
         {
-            engine.outTextLn("А у Вас ничего нет.");
+            outTextLn("А у Вас ничего нет.");
         }
     }
 
@@ -291,9 +291,9 @@ public class VirtualMachine
         return engine.getStory();
     }
 
-    public void outTextLn(String text)
+    public void outTextLn(String text, Object... args)
     {
-        engine.outTextLn(text);
+        engine.outTextLn(text, args);
     }
 
     public void outText(String text)

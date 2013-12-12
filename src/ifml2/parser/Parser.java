@@ -28,6 +28,8 @@ public class Parser
 
     public ParseResult parse(String phrase) throws IFML2Exception
     {
+        outParsDebug("Начало анализа команды \"{0}\"...", phrase);
+
         if (story == null)
         {
             throw new IFML2Exception("Системная ошибка: Ссылка на объектную модель (story) не задана!");
@@ -40,16 +42,20 @@ public class Parser
 
         // split phrase to array
         ArrayList<String> phraseAsList = new ArrayList<String>(Arrays.asList(phrase.split("\\s+")));
+        outParsDebug("Разбили фразу на слова: {0}.", phraseAsList);
 
         // prepare list of all fitted templates
         ArrayList<FittedTemplate> fittedTemplates = new ArrayList<FittedTemplate>();
 
         IFML2Exception lastException = null;
 
+        outParsDebug("Старт перебора всех действий в игре...");
         for (Action action : story.getAllActions())
         {
+            outParsDebug(1, "Анализируем действие \"{0}\"...", action);
             for (Template template : action.getTemplates())
             {
+                outParsDebug(2, "Анализируем шаблон \"{0}\"...", template);
                 int templateSize = template.getSize();
                 try
                 {
@@ -160,6 +166,16 @@ public class Parser
         }
 
         return new ParseResult(firstFittedTemplate.action, formalElements);
+    }
+
+    private void outParsDebug(int level, String message, Object... args)
+    {
+        engine.outDebug(this.getClass(), level, message, args);
+    }
+
+    private void outParsDebug(String message, Object... args)
+    {
+        outParsDebug(0, message, args);
     }
 
     private String convertArrayToString(ArrayList<String> stringArrayList)
@@ -274,15 +290,19 @@ public class Parser
 
     private ArrayList<FittedFormalElement> fitPhraseWithTemplate(ArrayList<String> phraseAsList, List<TemplateElement> template) throws IFML2Exception
     {
+        outParsDebug(3, "Сравниваем фразу {0} с шаблоном {1}...", phraseAsList, template);
+
         // get vars into local copy
         ArrayList<String> phraseRest = new ArrayList<String>(phraseAsList);
         ArrayList<TemplateElement> templateRest = new ArrayList<TemplateElement>(template);
 
         // take the first element of template
         TemplateElement firstTemplateElement = templateRest.get(0);
+        outParsDebug(3, "Взяли первый элемент шаблона - {0} - и пытаемся его сопоставить с началом фразы...", firstTemplateElement);
 
         // try to fit template element with beginning of phrase
         TemplateElementFitResult result = fitTemplateElementWithPhrase(firstTemplateElement, phraseRest);
+        outParsDebug(3, "Результат: {0}", result);
 
         ArrayList<FittedFormalElement> fittedFormalElements = new ArrayList<FittedFormalElement>();
 
@@ -583,6 +603,13 @@ public class Parser
         {
             return formalElements;
         }
+
+        @Override
+        public String toString()
+        {
+            return "Действие = [" + action +
+                   "], формальные элементы = [" + formalElements + ']';
+        }
     }
 
     private class TemplateElementFitResult
@@ -594,6 +621,13 @@ public class Parser
         {
             this.fittedFormalElement = fittedSynonym;
             this.usedWordsQty = usedWordsQty;
+        }
+
+        @Override
+        public String toString()
+        {
+            return "подошедший элемент = " + fittedFormalElement +
+                   ", использовано слов = " + usedWordsQty;
         }
     }
 
