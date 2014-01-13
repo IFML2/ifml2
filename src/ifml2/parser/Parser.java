@@ -596,6 +596,7 @@ public class Parser
                              usedWordsQty);
                 throw new IFML2ParseException("Не знаю, что такое \"" + phraseWord + "\".", usedWordsQty);
             }
+            outParsDebug(synWordDebugLvl, "Слово подошло, увеличиваем кол-во слов до {0} и идём дальше.", usedWordsQty);
             usedWordsQty++;
             outParsDebug(synWordDebugLvl, "Слово подошло, увеличиваем кол-во слов до {0} и идём дальше.", usedWordsQty);
         }
