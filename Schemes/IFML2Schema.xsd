@@ -258,9 +258,7 @@
 
     <complexType name="instructionsType">
         <choice minOccurs="0" maxOccurs="unbounded">
-            <!--element name="showLocName" type="ifml2:instructionShowLocNameType"/-->
             <element name="goToLoc" type="ifml2:instructionGoToLocationType"/>
-            <!--<element name="showInventory" type="ifml2:instructionShowInventoryType"/>-->
             <element name="showMessage" type="ifml2:instructionShowMessageType"/>
             <element name="if" type="ifml2:instructionIfType"/>
             <element name="loop" type="ifml2:instructionLoopType"/>
@@ -395,14 +393,6 @@
             <enumeration value="expression"/>
         </restriction>
     </simpleType>
-
-    <complexType name="instructionDropItemType">
-        <complexContent>
-            <extension base="ifml2:instructionType">
-                <attribute name="item" type="string"/>
-            </extension>
-        </complexContent>
-    </complexType>
 
     <complexType name="instructionIfType">
         <complexContent>
