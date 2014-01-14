@@ -4,7 +4,18 @@
         <startLocationOption showStartLocDesc="true" location="Комната"/>
         <startProcedureOption/>
         <storyDescription/>
+        <globalVars/>
     </storyOptions>
+    <procedures>
+        <procedure name="БроситьКубик">
+            <procedureVariables/>
+            <procedureBody>
+                <rollDice var="кубик" to="6" from="1"/>
+                <showMessage type="expression" message="'На кубике выпало ' + кубик" carriageReturn="true" beginWithCap="false"/>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+    </procedures>
     <libraries>
         <library>standard/verbs.xml</library>
     </libraries>
@@ -26,20 +37,20 @@
             <pp>с молоком</pp>
         </word>
         <word>
-            <ip>глиняный</ip>
-            <rp>глиняного</rp>
-            <dp>глиняному</dp>
-            <vp>глиняный</vp>
-            <tp>глиняным</tp>
-            <pp>глиняном</pp>
-        </word>
-        <word>
             <ip>со сметаной</ip>
             <rp>со сметаной</rp>
             <dp>со сметаной</dp>
             <vp>со сметаной</vp>
             <tp>со сметаной</tp>
             <pp>со сметаной</pp>
+        </word>
+        <word>
+            <ip>глиняный</ip>
+            <rp>глиняного</rp>
+            <dp>глиняному</dp>
+            <vp>глиняный</vp>
+            <tp>глиняным</tp>
+            <pp>глиняном</pp>
         </word>
         <word>
             <ip>голем</ip>
@@ -52,59 +63,82 @@
     </dictionary>
     <locations>
         <location name="Зал в замке" id="Комната">
-            <words/>
+            <hooks/>
+            <properties/>
+            <roles/>
             <attributes/>
             <description>Большой просторный зал с кучей всякого замкового хлама.</description>
+            <words/>
         </location>
     </locations>
     <items>
         <item name="глиняный кувшин со сметаной" id="ГлиняныйКувшинСоСметаной">
-            <startingPosition>
-                <inventory>false</inventory>
-                <locations>
-                    <location>Комната</location>
-                </locations>
-            </startingPosition>
+            <hooks/>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>Простой кувшин из глины со свежей сметаной.</description>
             <words mainWord="кувшин">
                 <word>глиняный</word>
                 <word>кувшин</word>
                 <word>со сметаной</word>
             </words>
-            <attributes/>
-            <description>Простой кувшин из глины со свежей сметаной.</description>
-        </item>
-        <item name="глиняный кувшин с молоком" id="ГлиняныйКувшинСМолоком">
             <startingPosition>
-                <inventory>false</inventory>
                 <locations>
                     <location>Комната</location>
                 </locations>
+                <inventory>false</inventory>
             </startingPosition>
+        </item>
+        <item name="глиняный кувшин с молоком" id="ГлиняныйКувшинСМолоком">
+            <hooks/>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>Простой глиняный кувшин, полный молока.</description>
             <words mainWord="кувшин">
                 <word>глиняный</word>
                 <word>кувшин</word>
                 <word>с молоком</word>
             </words>
-            <attributes/>
-            <description>Простой глиняный кувшин, полный молока.</description>
-        </item>
-        <item name="глиняный голем" id="ГлиняныйГолем">
             <startingPosition>
-                <inventory>false</inventory>
                 <locations>
                     <location>Комната</location>
                 </locations>
+                <inventory>false</inventory>
             </startingPosition>
-            <words mainWord="голем">
-                <word>глиняный</word>
-                <word>голем</word>
-            </words>
+        </item>
+        <item name="глиняный голем" id="ГлиняныйГолем">
+            <hooks/>
+            <properties/>
+            <roles/>
             <attributes>
                 <attribute>недоступен</attribute>
             </attributes>
             <description>Большой и тяжёлый глиняный голем, его ну никак не сдвинуть Вам с места.</description>
+            <words mainWord="голем">
+                <word>глиняный</word>
+                <word>голем</word>
+            </words>
+            <startingPosition>
+                <locations>
+                    <location>Комната</location>
+                </locations>
+                <inventory>false</inventory>
+            </startingPosition>
         </item>
     </items>
-    <actions/>
-    <procedures/>
+    <actions>
+        <action name="бросить кубик" description="">
+            <templates>
+                <template>
+                    <literalElement position="0">
+                        <synonym>бросить кубик</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="БроситьКубик"/>
+            <restrictions/>
+        </action>
+    </actions>
 </story>
