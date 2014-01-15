@@ -141,6 +141,11 @@ public class RunningContext
         return virtualMachine.getStory();
     }
 
+    /**
+     * Searches for variable by name in scope (local, then procedure, then global) and set is by value.
+     * @param name name of variable.
+     * @param value value for setting.
+     */
     public void setContextVariable(String name, Value value)
     {
         String loweredName = name.toLowerCase();
