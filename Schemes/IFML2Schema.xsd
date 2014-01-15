@@ -209,9 +209,9 @@
     <complexType name="templateElementType">
         <attribute name="position" use="required">
             <simpleType>
-                <restriction base="positiveInteger">
+                <!--<restriction base="positiveInteger">
                     <minInclusive value="1"/>
-                </restriction>
+                </restriction>-->
             </simpleType>
         </attribute>
         <attribute name="parameter" use="optional" type="string"/>
@@ -258,9 +258,7 @@
 
     <complexType name="instructionsType">
         <choice minOccurs="0" maxOccurs="unbounded">
-            <!--element name="showLocName" type="ifml2:instructionShowLocNameType"/-->
             <element name="goToLoc" type="ifml2:instructionGoToLocationType"/>
-            <!--<element name="showInventory" type="ifml2:instructionShowInventoryType"/>-->
             <element name="showMessage" type="ifml2:instructionShowMessageType"/>
             <element name="if" type="ifml2:instructionIfType"/>
             <element name="loop" type="ifml2:instructionLoopType"/>
@@ -268,6 +266,7 @@
             <element name="return" type="ifml2:instructionReturnType"/>
             <element name="setProperty" type="ifml2:instructionSetPropertyType"/>
             <element name="moveItem" type="ifml2:instructionMoveItemType"/>
+            <element name="rollDice" type="ifml2:instructionRollDiceType"/>
         </choice>
     </complexType>
 
@@ -395,14 +394,6 @@
             <enumeration value="expression"/>
         </restriction>
     </simpleType>
-
-    <complexType name="instructionDropItemType">
-        <complexContent>
-            <extension base="ifml2:instructionType">
-                <attribute name="item" type="string"/>
-            </extension>
-        </complexContent>
-    </complexType>
 
     <complexType name="instructionIfType">
         <complexContent>
@@ -595,4 +586,14 @@
             </enumeration>
         </restriction>
     </simpleType>
+
+    <complexType name="instructionRollDiceType">
+        <complexContent>
+            <extension base="ifml2:instructionType">
+                <attribute name="from" type="integer" use="required"/>
+                <attribute name="to" type="integer" use="required"/>
+                <attribute name="var" type="string" use="required"/>
+            </extension>
+        </complexContent>
+    </complexType>
 </schema>

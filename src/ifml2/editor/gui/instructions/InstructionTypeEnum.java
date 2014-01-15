@@ -11,9 +11,10 @@ public enum InstructionTypeEnum
     SHOW_MESSAGE(ShowMessageInstr.class, ShowMessageInstrEditor.class),
     GO_TO_LOCATION(GoToLocInstruction.class, GoToLocInstrEditor.class),
     IF(IfInstruction.class, IfInstrEditor.class),
-    LOOP(LoopInstruction.class, null), //todo set Editor class
+    LOOP(LoopInstruction.class, null), //todo LoopInstruction Editor
     SET_VAR(SetVarInstruction.class, SetVarInstrEditor.class),
-    MOVE_ITEM(MoveItemInstruction.class, MoveItemInstrEditor.class);
+    MOVE_ITEM(MoveItemInstruction.class, MoveItemInstrEditor.class),
+    ROLL_DICE(RollDiceInstruction.class, RollDiceInstrEditor.class);
     private Class<? extends Instruction> instrClass;
     private String title;
     private Class<? extends AbstractInstrEditor> editorClass;

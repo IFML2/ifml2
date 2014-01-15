@@ -15,13 +15,13 @@ public class IFML2ParseException extends IFML2Exception
 
     public IFML2ParseException(String message, int usedWords)
     {
-        super(message);
+        this(message);
         this.usedWords = usedWords;
     }
 
     public IFML2ParseException(String message, int usedWords, int templateSize)
     {
-        super(message, usedWords);
+        this(message, usedWords);
         this.templateSize = templateSize;
     }
 

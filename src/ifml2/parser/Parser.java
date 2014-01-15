@@ -66,7 +66,7 @@ public class Parser
                         lastException = new IFML2ParseException(MessageFormat
                                                                         .format("Я бы понял, если бы вы сказали \"{0}\", но я не понял вот эту часть фразы: \"{1}\".",
                                                                                 convertFittedToString(e.getFittedFormalElements()),
-                                                                                e.getPhraseRest()), // convert phrase rest to normal string
+                                                                                convertArrayToString(e.getPhraseRest())),
                                                                 e.getUsedWords(), templateSize);
                     }
                 }
@@ -160,6 +160,20 @@ public class Parser
         }
 
         return new ParseResult(firstFittedTemplate.action, formalElements);
+    }
+
+    private String convertArrayToString(ArrayList<String> stringArrayList)
+    {
+        String result = "";
+        for (String element : stringArrayList)
+        {
+            if (result.length() > 0)
+            {
+                result += " ";
+            }
+            result += element;
+        }
+        return result;
     }
 
     private String convertFittedToString(ArrayList<FittedFormalElement> fittedFormalElements) throws IFML2Exception
