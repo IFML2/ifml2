@@ -15,6 +15,11 @@ public class RollDiceInstruction extends Instruction
     private int toNumber;
     private String varName;
 
+    public static String getTitle()
+    {
+        return "Бросить кость";
+    }
+
     @Override
     public void run(RunningContext runningContext) throws IFML2Exception
     {
