@@ -3,15 +3,29 @@
     <storyOptions>
         <startLocationOption showStartLocDesc="true" location="Комната"/>
         <startProcedureOption/>
-        <storyDescription/>
-        <globalVars/>
+        <storyDescription version="" name="" description="" author=""/>
+        <globalVars>
+            <var value="0" name="среднее"/>
+            <var value="0" name="броски"/>
+        </globalVars>
     </storyOptions>
     <procedures>
         <procedure name="БроситьКубик">
             <procedureVariables/>
             <procedureBody>
                 <rollDice var="кубик" to="6" from="1"/>
-                <showMessage type="expression" message="'На кубике выпало ' + кубик" carriageReturn="true" beginWithCap="false"/>
+                <showMessage type="expression" message="'На кубике выпало ' + кубик + '.'" carriageReturn="true" beginWithCap="false"/>
+                <if condition="броски = 0">
+                    <else>
+                        <var value="среднее + кубик" name="среднее"/>
+                        <var value="броски + 1" name="броски"/>
+                    </else>
+                    <then>
+                        <var value="1" name="броски"/>
+                        <var value="кубик" name="среднее"/>
+                    </then>
+                </if>
+                <showMessage type="expression" message="'Итого бросков ' + броски + ', общая сумма ' + среднее + '.'" carriageReturn="true" beginWithCap="false"/>
             </procedureBody>
             <parameters/>
         </procedure>
@@ -37,20 +51,20 @@
             <pp>с молоком</pp>
         </word>
         <word>
-            <ip>со сметаной</ip>
-            <rp>со сметаной</rp>
-            <dp>со сметаной</dp>
-            <vp>со сметаной</vp>
-            <tp>со сметаной</tp>
-            <pp>со сметаной</pp>
-        </word>
-        <word>
             <ip>глиняный</ip>
             <rp>глиняного</rp>
             <dp>глиняному</dp>
             <vp>глиняный</vp>
             <tp>глиняным</tp>
             <pp>глиняном</pp>
+        </word>
+        <word>
+            <ip>со сметаной</ip>
+            <rp>со сметаной</rp>
+            <dp>со сметаной</dp>
+            <vp>со сметаной</vp>
+            <tp>со сметаной</tp>
+            <pp>со сметаной</pp>
         </word>
         <word>
             <ip>голем</ip>
