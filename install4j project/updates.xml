@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <updateDescriptor baseUrl="">
-  <entry targetMediaFileId="29" updatableVersionMin="" updatableVersionMax="" fileName="IFML2_Hobbit_2_20131130.exe" newVersion="Hobbit 2" newMediaFileId="29" fileSize="1720832" bundledJre="" archive="false">
+  <entry targetMediaFileId="29" updatableVersionMin="" updatableVersionMax="" fileName="IFML2_Hobbit_3_20140117.exe" newVersion="Hobbit 3" newMediaFileId="29" fileSize="1722368" bundledJre="" archive="false">
     <comment language="ru" />
     <comment language="en" />
   </entry>
