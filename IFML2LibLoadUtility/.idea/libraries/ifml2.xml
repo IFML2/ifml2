@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="ifml2">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../out/artifacts/ifml2/ifml2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/../src" />
+    </SOURCES>
+  </library>
+</component>
