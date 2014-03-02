@@ -29,7 +29,7 @@ import java.util.concurrent.Callable;
 
 public class Engine
 {
-    public static final String ENGINE_VERSION = "Хоббит, глава 3";
+    public static final String ENGINE_VERSION = "Хоббит, глава 4";
     public static final FormatLogger LOG = FormatLogger.getLogger(Engine.class);
     private final HashMap<String, Value> globalVariables = new HashMap<String, Value>();
     private final Parser parser = new Parser(this);
@@ -545,15 +545,7 @@ public class Engine
 
             // test if object is in current location or player's inventory
             boolean isInLocOrInv = currentLocation.contains(item) || inventory.contains(item);
-            if (isInLocOrInv)
-            {
-                return isInLocOrInv;
-            }
-            else
-            {
-                // test contents of current location's items and inventory items using item triggers
-                return checkDeepContent(item, currentLocation.getItems()) || checkDeepContent(item, inventory);
-            }
+            return isInLocOrInv || checkDeepContent(item, currentLocation.getItems()) || checkDeepContent(item, inventory);
         }
         else
         {

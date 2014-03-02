@@ -75,6 +75,12 @@
         <role-definition name="съедобный" description="Означает, что предмет можно съесть.">
             <!-- Здесь пока ничего -->
         </role-definition>
+
+        <role-definition name="надеваемый" description="Означает, что предмет можно надеть на себя (и снять).">
+            <properties>
+                <property name="надет" type="logic"/>
+            </properties>
+        </role-definition>
     </role-definitions>
 
     <actions>
@@ -733,6 +739,36 @@
             </restrictions>
             <procedureCall procedure="ЗакрытьПредмет"/>
         </action>
+
+        <!-- Надеть -->
+        <action name="надеть" description="надеть [ВП]">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>надеть</synonym>
+                    </literalElement>
+                    <objectElement position="2" case="vp" parameter="предмет"/>
+                </template>
+            </templates>
+            <restrictions>
+                <restriction condition="не предмет.надеваемый">
+                    <reaction>
+                        <showMessage type="expression" message="предмет.вп + ' невозможно надеть.'" beginWithCap="true"/>
+                    </reaction>
+                </restriction>
+                <restriction condition="предмет.надет">
+                    <reaction>
+                        <showMessage type="text" message="Это уже надето."/>
+                    </reaction>
+                </restriction>
+                <restriction condition="не предмет в инвентарий">
+                    <reaction>
+                        <showMessage type="expression" message="предмет.ип + ' не в инвентаре.'" beginWithCap="true"/>
+                    </reaction>
+                </restriction>
+            </restrictions>
+            <procedureCall procedure="НадетьПредмет"/>
+        </action>
     </actions>
 
     <!-- Процедуры обработки действий -->
@@ -1238,6 +1274,17 @@
                 <setProperty position="1" object="чтоЗакрыть" name="открыт" value="нет"/>
                 <showMessage position="2" type="expression"
                              message="'Вы закрыли ' + чтоЗакрыть.ВП + '.'"/>
+            </procedureBody>
+        </procedure>
+
+        <!-- Надеть предмет -->
+        <procedure name="НадетьПредмет">
+            <parameters>
+                <parameter name="предмет"/>
+            </parameters>
+            <procedureBody>
+                <setProperty object="предмет" name="надет" value="да"/>
+                <showMessage type="expression" message="'Вы надели ' + предмет.вп + '.'"/>
             </procedureBody>
         </procedure>
     </procedures>

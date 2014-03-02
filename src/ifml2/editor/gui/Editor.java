@@ -377,6 +377,10 @@ public class Editor extends JFrame
         exception.printStackTrace();
         LOG.error(dialogTitle, exception);
         String errorMessage = "";
+        if(!(exception instanceof IFML2LoadXmlException) && exception.getCause() instanceof IFML2LoadXmlException)
+        {
+            exception = exception.getCause();
+        }
         if (exception instanceof IFML2LoadXmlException)
         {
             errorMessage += "В файле истории есть ошибки:";
