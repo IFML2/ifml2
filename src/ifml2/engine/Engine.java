@@ -544,8 +544,7 @@ public class Engine
             Item item = (Item) object;
 
             // test if object is in current location or player's inventory
-            boolean isInLocOrInv = currentLocation.contains(item) || inventory.contains(item);
-            return isInLocOrInv || checkDeepContent(item, currentLocation.getItems()) || checkDeepContent(item, inventory);
+            return currentLocation.contains(item) || inventory.contains(item) || checkDeepContent(item, currentLocation.getItems()) || checkDeepContent(item, inventory);
         }
         else
         {
