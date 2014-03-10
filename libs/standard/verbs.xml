@@ -214,24 +214,29 @@
             <restrictions>
                 <restriction condition="предмет.прикреплён">
                     <reaction>
-                        <showMessage position="1" type="text" message="Прикреплено надёжно."/>
+                        <showMessage type="text" message="Прикреплено надёжно."/>
                     </reaction>
                 </restriction>
                 <restriction condition="предмет.недоступен">
                     <reaction>
-                        <showMessage position="1" type="expression"
+                        <showMessage type="expression"
                                      message="'В этих условиях, либо из этого положения, либо в данный момент взять и что-либо сделать с(о) ' + предмет.тп + ' невозможно.'"/>
                     </reaction>
                 </restriction>
                 <restriction condition="предмет.частьПейзажа">
                     <reaction>
-                        <showMessage position="1" type="expression" beginWithCap="true"
+                        <showMessage type="expression" beginWithCap="true"
                                      message="предмет.вп + ' взять невозможно ни при каких условиях.'"/>
+                    </reaction>
+                </restriction>
+                <restriction condition="предмет.надет">
+                    <reaction>
+                        <showMessage type="text" message="Уже надет(а,о). Надо снять."/>
                     </reaction>
                 </restriction>
                 <restriction condition="предмет в инвентарий">
                     <reaction>
-                        <showMessage position="1" type="expression" message="предмет.имя + ' уже у Вас.'" beginWithCap="true"/>
+                        <showMessage type="expression" message="предмет.имя + ' уже у Вас.'" beginWithCap="true"/>
                     </reaction>
                 </restriction>
                 <restriction condition="предмет.тяжёлый">
@@ -664,12 +669,19 @@
                         <showMessage position="1" type="text" message="Это невозможно. Предмет недоступен."/>
                     </reaction>
                 </restriction>
+                <!-- todo redo in case of lazy evaluation -->
+                <!--restriction condition="чтоПоложить.надеваемый и чтоПоложить.надет">
+                    <reaction>
+                        <showMessage type="expression" message="чтоПоложить.ип + ' надет(а,о). Сначала нужно снять.'" beginWithCap="true"/>
+                    </reaction>
+                </restriction-->
                 <restriction condition="предлог = 'на' и не кудаПоложить.поверхность">
                     <reaction>
                         <showMessage position="1" type="expression"
                                      message="'На ' + кудаПоложить.ВП + ' нельзя ничего класть.'"/>
                     </reaction>
                 </restriction>
+                <!-- todo переписать, когда будет ИЛИ -->
                 <restriction condition="предлог = 'в' и не кудаПоложить.контейнер">
                     <reaction>
                         <showMessage position="1" type="expression"
@@ -769,6 +781,37 @@
             </restrictions>
             <procedureCall procedure="НадетьПредмет"/>
         </action>
+
+        <!-- Снять -->
+        <action name="снять" description="снять [ВП]">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>снять</synonym>
+                    </literalElement>
+                    <objectElement position="2" case="vp" parameter="предмет"/>
+                </template>
+            </templates>
+            <restrictions>
+                <restriction condition="не предмет.надеваемый">
+                    <reaction>
+                        <showMessage type="expression" message="предмет.вп + ' невозможно ни надеть, ни снять.'" beginWithCap="true"/>
+                    </reaction>
+                </restriction>
+                <restriction condition="не предмет.надет">
+                    <reaction>
+                        <showMessage type="text" message="Это не надето."/>
+                    </reaction>
+                </restriction>
+                <!-- TODO А тут есть проблемка: надо переделать так, чтобы надетость относилась к любому персонажу, а не только к игроку. -->
+                <!--restriction condition="не предмет в инвентарий">
+                    <reaction>
+                        <showMessage type="expression" message="предмет.ип + ' не в инвентаре.'" beginWithCap="true"/>
+                    </reaction>
+                </restriction-->
+            </restrictions>
+            <procedureCall procedure="СнятьПредмет"/>
+        </action>
     </actions>
 
     <!-- Процедуры обработки действий -->
@@ -806,23 +849,28 @@
                 <parameter name="предмет"/>
             </parameters>
             <procedureBody>
-                <if position="2" condition="предмет.открываемый">
+                <if condition="предмет.открываемый">
                     <then>
-                        <if position="1" condition="предмет.открыт">
+                        <if condition="предмет.открыт">
                             <then>
-                                <showMessage position="1" type="text" message="(открыто)" carriageReturn="true"/>
+                                <showMessage type="text" message="(открыто)" carriageReturn="true"/>
                             </then>
                             <else>
-                                <showMessage position="1" type="text" message="(закрыто)" carriageReturn="true"/>
+                                <showMessage type="text" message="(закрыто)" carriageReturn="true"/>
                             </else>
                         </if>
                     </then>
-                    <else>
-                        <!-- Вставляем перевод каретки после имени, если не было статуса открытия -->
-                        <!--ifml2:showMessage position="1" type="text" message="" carriageReturn="true"/-->
-                    </else>
                 </if>
-                <if position="3" condition="предмет.описание = ''">
+                <if condition="предмет.надеваемый">
+                    <then>
+                        <if condition="предмет.надет">
+                            <then>
+                                <showMessage type="text" message="(надето)" carriageReturn="true"/>
+                            </then>
+                        </if>
+                    </then>
+                </if>
+                <if condition="предмет.описание = ''">
                     <then>
                         <showMessage position="1" type="text" message="Ничего особенного."/>
                     </then>
@@ -830,7 +878,7 @@
                         <showMessage position="1" type="expression" message="предмет.описание"/>
                     </else>
                 </if>
-                <if position="4" condition="предмет.поверхность">
+                <if condition="предмет.поверхность">
                     <then>
                         <loop position="1" collection="предмет.предметыСверху" element="предметСверху">
                             <alone>
@@ -852,11 +900,11 @@
                         </loop>
                     </then>
                 </if>
-                <if position="5" condition="предмет.контейнер">
+                <if condition="предмет.контейнер">
                     <then>
-                        <if position="1" condition="предмет.открыт">
+                        <if condition="предмет.открыт">
                             <then>
-                                <loop position="2" collection="предмет.предметыВнутри" element="предметВнутри">
+                                <loop collection="предмет.предметыВнутри" element="предметВнутри">
                                     <empty>
                                         <showMessage position="1" type="text" message="Внутри ничего нет." carriageReturn="true"/>
                                     </empty>
@@ -930,7 +978,8 @@
                     <next>
                         <showMessage position="1" type="expression" message="', ' + предмет.имя"
                                      carriageReturn="false"/>
-                        <!--<ifml2:if condition="предмет.открываемый">
+                        <!--todo выводить статус открытости при описании в инвентаре
+                        <ifml2:if condition="предмет.открываемый">
                             <ifml2:then>
                                 <ifml2:if condition="предмет.открыт">
                                     <ifml2:then>
@@ -963,6 +1012,7 @@
 
         <procedure name="ВзятьВсё">
             <procedureBody>
+                <!--todo не брать надетые предметы!-->
                 <loop position="1" collection="ТекущаяЛокация.Предметы" element="предмет"
                       condition="не предмет.частьПейзажа и не предмет.недоступен и не предмет.прикреплён и не предмет.тяжёлый">
                     <empty>
@@ -982,8 +1032,18 @@
                 <parameter name="предмет"/>
             </parameters>
             <procedureBody>
-                <moveItem position="1" item="предмет" to="ТекущаяЛокация.Предметы"/>
-                <showMessage position="2" type="expression" message="'Вы выбросили ' + предмет.вп + '.'"/>
+                <if condition="предмет.надеваемый">
+                    <then>
+                        <if condition="предмет.надет">
+                            <then>
+                                <setProperty object="предмет" name="надет" value="нет"/>
+                                <showMessage type="expression" message="'Сначала вы сняли ' + предмет.вп + '.'" carriageReturn="true"/>
+                            </then>
+                        </if>
+                    </then>
+                </if>
+                <moveItem item="предмет" to="ТекущаяЛокация.Предметы"/>
+                <showMessage type="expression" message="'Вы выбросили ' + предмет.вп + '.'"/>
             </procedureBody>
         </procedure>
 
@@ -1285,6 +1345,17 @@
             <procedureBody>
                 <setProperty object="предмет" name="надет" value="да"/>
                 <showMessage type="expression" message="'Вы надели ' + предмет.вп + '.'"/>
+            </procedureBody>
+        </procedure>
+
+        <!-- Снять предмет -->
+        <procedure name="СнятьПредмет">
+            <parameters>
+                <parameter name="предмет"/>
+            </parameters>
+            <procedureBody>
+                <setProperty object="предмет" name="надет" value="нет"/>
+                <showMessage type="expression" message="'Вы сняли ' + предмет.вп + '.'"/>
             </procedureBody>
         </procedure>
     </procedures>
