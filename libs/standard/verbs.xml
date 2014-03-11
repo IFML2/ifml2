@@ -229,11 +229,6 @@
                                      message="предмет.вп + ' взять невозможно ни при каких условиях.'"/>
                     </reaction>
                 </restriction>
-                <restriction condition="предмет.надет">
-                    <reaction>
-                        <showMessage type="text" message="Уже надет(а,о). Надо снять."/>
-                    </reaction>
-                </restriction>
                 <restriction condition="предмет в инвентарий">
                     <reaction>
                         <showMessage type="expression" message="предмет.имя + ' уже у Вас.'" beginWithCap="true"/>
@@ -818,7 +813,6 @@
     <procedures>
         <procedure name="ОписатьТекущуюЛокацию" inheritsSystemProcedure="showLocName">
             <procedureBody>
-                <!--ifml2:showLocName position="1" location="ТекущаяЛокация"/-->
                 <showMessage position="1" type="expression" message="ТекущаяЛокация.Имя"/>
                 <showMessage position="2" type="expression" message="ТекущаяЛокация.Описание"/>
                 <loop position="3" collection="ТекущаяЛокация.Предметы" element="предмет"
@@ -979,6 +973,10 @@
                         <showMessage position="1" type="expression" message="', ' + предмет.имя"
                                      carriageReturn="false"/>
                         <!--todo выводить статус открытости при описании в инвентаре
+                        сейчас не выводится, потому что для каждого вывода предмета придётся оборачивать условиями
+                        нужно или 1) вызывать процу/функцию, которая будет выводить предмет с условиями,
+                        или 2) реализовать механизм (тригеров?), чтобы каждый предмет мог управлять текстом своего упоминания в списках и проч
+
                         <ifml2:if condition="предмет.открываемый">
                             <ifml2:then>
                                 <ifml2:if condition="предмет.открыт">

@@ -3,7 +3,7 @@
     <storyOptions>
         <startLocationOption showStartLocDesc="true" location="ГардеробнаяЛок"/>
         <startProcedureOption/>
-        <storyDescription version="0.1" name="Гардероб" description="" author="realsonic"/>
+        <storyDescription version="0.2" name="Гардероб" description="Поиграйтесь с одеждой." author="realsonic"/>
         <globalVars/>
     </storyOptions>
     <procedures/>
@@ -51,8 +51,10 @@
                     </properties>
                 </role>
             </roles>
-            <attributes/>
-            <description/>
+            <attributes>
+                <attribute>тяжёлый</attribute>
+            </attributes>
+            <description>Старый дубовый стол.</description>
             <words mainWord="стол">
                 <word>стол</word>
             </words>
@@ -74,7 +76,7 @@
                 </role>
             </roles>
             <attributes/>
-            <description/>
+            <description>Фетровая шляпа.</description>
             <words mainWord="шляпа">
                 <word>шляпа</word>
             </words>
