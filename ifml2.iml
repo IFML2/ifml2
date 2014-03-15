@@ -6,9 +6,6 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/unittests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/JSmooth" />
-      <excludeFolder url="file://$MODULE_DIR$/LibLoadUtility/.idea" />
-      <excludeFolder url="file://$MODULE_DIR$/LibLoadUtility/libs" />
-      <excludeFolder url="file://$MODULE_DIR$/LibLoadUtility/out" />
       <excludeFolder url="file://$MODULE_DIR$/launch4j" />
       <excludeFolder url="file://$MODULE_DIR$/lib" />
     </content>
