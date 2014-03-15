@@ -207,11 +207,11 @@
     </complexType>
 
     <complexType name="templateElementType">
-        <attribute name="position" use="required">
+        <attribute name="position" use="optional">
             <simpleType>
-                <!--<restriction base="positiveInteger">
-                    <minInclusive value="1"/>
-                </restriction>-->
+                <restriction base="positiveInteger">
+                    <minInclusive value="0"/>
+                </restriction>
             </simpleType>
         </attribute>
         <attribute name="parameter" use="optional" type="string"/>
@@ -490,11 +490,11 @@
     </complexType>
 
     <complexType name="role-definitionType">
-        <sequence>
+        <all>
             <element name="attributes" type="ifml2:attributesType" minOccurs="0" maxOccurs="1"/>
             <element name="properties" type="ifml2:properties-definitionsType" minOccurs="0" maxOccurs="1"/>
             <element name="triggers" type="ifml2:triggersType" minOccurs="0" maxOccurs="1"/>
-        </sequence>
+        </all>
         <attribute name="name" type="string" use="required"/>
         <attribute name="description" type="string" use="optional"/>
     </complexType>

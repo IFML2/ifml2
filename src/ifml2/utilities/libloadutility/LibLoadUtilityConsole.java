@@ -1,4 +1,4 @@
-package ifml2.utility;
+package ifml2.utilities.libloadutility;
 
 import ifml2.IFML2Exception;
 import ifml2.om.Action;
@@ -6,30 +6,15 @@ import ifml2.om.*;
 import ifml2.vm.instructions.ShowMessageInstr;
 
 import javax.swing.*;
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import java.io.*;
 import java.text.MessageFormat;
 
-public class IFML2LibLoadUtility
+public class LibLoadUtilityConsole
 {
     private static void log(String message, Object... args)
     {
         System.out.println(MessageFormat.format(message, args));
-    }
-
-    private static void saveLib(Library library, String fileName) throws JAXBException
-    {
-        JAXBContext context = JAXBContext.newInstance(Library.class);
-        Marshaller marshaller = context.createMarshaller();
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-
-        File file = new File(fileName);
-
-        marshaller.marshal(library, file);
-
-        log("Библиотека сохранёна.");
     }
 
     public static void main(String[] args) throws IFML2Exception, IOException, JAXBException
@@ -51,7 +36,7 @@ public class IFML2LibLoadUtility
             return;
         }
 
-        // chose lib from folder
+        // choose lib from folder
         File libFolder = new File(currentDirectoryPath + "\\libs\\");
         File[] libs = libFolder.listFiles();
         File selectedLib = (File) JOptionPane.showInputDialog(null, "Выберите библиотеку для заполнения:", "Библиотека ЯРИЛ",
@@ -173,6 +158,6 @@ public class IFML2LibLoadUtility
 
         String libNewFile = "filled_" + selectedLib.getName();
         log("\nСохраняем библиотеку под именем {0}.", libNewFile);
-        saveLib(library, libNewFile);
+        OMManager.saveLib(library, new File(libNewFile));
     }
 }
