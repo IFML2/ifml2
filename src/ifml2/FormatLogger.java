@@ -57,4 +57,14 @@ public class FormatLogger
     {
         info(MessageFormat.format(message, args));
     }
+
+    public void trace(String message, Object... args)
+    {
+        trace(MessageFormat.format(message, args));
+    }
+
+    public void trace(String message)
+    {
+        logger.trace(message);
+    }
 }
