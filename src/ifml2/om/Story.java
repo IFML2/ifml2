@@ -15,9 +15,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import static ifml2.om.xml.XmlSchemaConstants.*;
 
@@ -477,6 +475,25 @@ public class Story
             }
 
             return null;
+        }
+
+        /**
+         * Searches libraries list for the library by its path.
+         * @param libraries Libraries list.
+         * @param library Library to find by path.
+         * @return true if the same library is found and false otherwise.
+         */
+        public boolean isLibListContainsLib(List<Library> libraries, Library library)
+        {
+            for (Library lib : libraries)
+            {
+                if (lib.getPath().equalsIgnoreCase(library.getPath()))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

@@ -39,7 +39,7 @@ public abstract class AbstractEditor<T> extends JDialog
 
         setContentPane(editorContentPane);
 
-        getRootPane().setDefaultButton(buttonOK);
+        rootPane.setDefaultButton(buttonOK);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
         GUIUtils.packAndCenterWindow(this);

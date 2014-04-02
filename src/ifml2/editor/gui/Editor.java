@@ -568,9 +568,18 @@ public class Editor extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                UsedLibsEditor usedLibsEditor = new UsedLibsEditor(Editor.this, story.getLibraries());
+                EventList<Library> libraries = story.getLibraries();
+                UsedLibsEditor usedLibsEditor = new UsedLibsEditor(Editor.this, libraries, story.getDataHelper());
                 if (usedLibsEditor.showDialog())
                 {
+                    try
+                    {
+                        usedLibsEditor.getData(libraries);
+                    }
+                    catch (Throwable ex)
+                    {
+                        ReportError(ex, "Ошибка при редактировании списка использованных библиотек");
+                    }
                     markStoryEdited();
                 }
             }
@@ -684,12 +693,12 @@ public class Editor extends JFrame
             }
         });
 
-        if (storyFileChooser.showOpenDialog(this) != JFileChooser.APPROVE_OPTION)
+        if (storyFileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
         {
-            return null;
+            return storyFileChooser.getSelectedFile().getAbsolutePath();
         }
 
-        return storyFileChooser.getSelectedFile().getAbsolutePath();
+        return null;
     }
 
     private JPopupMenu createPopupMenus()
