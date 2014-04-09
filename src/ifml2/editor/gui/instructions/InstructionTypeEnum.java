@@ -14,7 +14,8 @@ public enum InstructionTypeEnum
     LOOP(LoopInstruction.class, null), //todo LoopInstruction Editor
     SET_VAR(SetVarInstruction.class, SetVarInstrEditor.class),
     MOVE_ITEM(MoveItemInstruction.class, MoveItemInstrEditor.class),
-    ROLL_DICE(RollDiceInstruction.class, RollDiceInstrEditor.class);
+    ROLL_DICE(RollDiceInstruction.class, RollDiceInstrEditor.class),
+    SET_PROPERTY(SetPropertyInstruction.class, null); // todo SetPropertyInstruction Editor
     private Class<? extends Instruction> instrClass;
     private String title;
     private Class<? extends AbstractInstrEditor> editorClass;

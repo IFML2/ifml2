@@ -19,11 +19,11 @@ public class RoleDefinition
     @XmlElementWrapper(name = "triggers")
     @XmlElement(name = "trigger")
     public List<Trigger> triggers = new BasicEventList<Trigger>();
+    @XmlAttribute(name = "name")
+    @XmlID
     private String name;
     private EventList<Attribute> attributes = new BasicEventList<Attribute>();
 
-    @XmlAttribute(name = "name")
-    @XmlID
     public String getName()
     {
         return name;
