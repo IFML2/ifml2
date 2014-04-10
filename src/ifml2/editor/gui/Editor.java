@@ -18,12 +18,9 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileView;
-import javax.xml.bind.ValidationEvent;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.text.MessageFormat;
 
 public class Editor extends JFrame
@@ -31,80 +28,17 @@ public class Editor extends JFrame
     private static final String FILE_MENU_NAME = "Файл";
     private static final String STORY_MENU_NAME = "История";
     private static final String OPEN_STORY_ACTION_NAME = "Открыть...";
-    private static final String EDIT_LOCATION_ACTION_NAME = "Редактировать...";
     private static final Logger LOG = Logger.getLogger(Editor.class);
-    private final AbstractAction newLocationAction = new AbstractAction("Добавить...", GUIUtils.ADD_ELEMENT_ICON)
-    {
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            Location location = new Location();
-            if (editLocation(location))
-            {
-                story.addLocation(location);
-                markStoryEdited();
-                reloadDataInForm();
-                locationsList.setSelectedValue(location, true);
-            }
-        }
-    };
-    private final AbstractAction editLocationAction = new AbstractAction(EDIT_LOCATION_ACTION_NAME,
-                                                                         GUIUtils.EDIT_ELEMENT_ICON)
-    {
-        {
-            setEnabled(false); // disabled at start
-            locationsList.addListSelectionListener(new ListSelectionListener()
-            {
-                @Override
-                public void valueChanged(ListSelectionEvent e)
-                {
-                    setEnabled(!locationsList.isSelectionEmpty()); // depends on selection
-                }
-            });
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            editLocation((Location) locationsList.getSelectedValue());
-        }
-    };
-    private final AbstractAction delLocationAction = new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
-    {
-        {
-            setEnabled(false); // disabled at start
-            locationsList.addListSelectionListener(new ListSelectionListener()
-            {
-                @Override
-                public void valueChanged(ListSelectionEvent e)
-                {
-                    setEnabled(!locationsList.isSelectionEmpty()); // depends on selection
-                }
-            });
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            Location location = (Location) locationsList.getSelectedValue();
-            if (location != null)
-            {
-                if (GUIUtils.showDeleteConfirmDialog(Editor.this, "локацию", "локации", Word.GenderEnum.FEMININE))
-                {
-                    story.getLocations().remove(location);
-                    markStoryEdited();
-                    reloadDataInForm();
-                }
-            }
-        }
-    };
+    private AbstractAction editLocationAction; // initializer moved to constructor due to forward declaration error
+    private AbstractAction newLocationAction; // initializer moved to constructor due to forward declaration error
+    private AbstractAction delLocationAction; // initializer moved to constructor due to forward declaration error
     private JPanel mainPanel;
     private JList locationsList;
     private JList itemsList;
     private JProgressBar progressBar;
     private JButton newLocButton;
-    private JButton editLocButton;
     private JButton delLocButton;
+    private JButton editLocButton;
     private JButton newItemButton;
     private JButton editItemButton;
     private JButton delItemButton;
@@ -138,7 +72,7 @@ public class Editor extends JFrame
                             }
                             catch (IFML2Exception ex)
                             {
-                                GUIUtils.showErrorMessage(Editor.this, ex);
+                                GUIUtils.ReportError(Editor.this, ex);
                             }
                             break;
                         case JOptionPane.NO_OPTION:
@@ -153,9 +87,72 @@ public class Editor extends JFrame
 
         GUIUtils.packAndCenterWindow(this);
 
-        newLocButton.setAction(newLocationAction);
-        editLocButton.setAction(editLocationAction);
-        delLocButton.setAction(delLocationAction);
+        newLocationAction = new ButtonAction(newLocButton)
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                Location location = new Location();
+                if (editLocation(location))
+                {
+                    story.addLocation(location);
+                    markStoryEdited();
+                    reloadDataInForm();
+                    locationsList.setSelectedValue(location, true);
+                }
+            }
+        };
+        editLocationAction = new ButtonAction(editLocButton, false)
+        {
+            @Override
+            public void registerListeners()
+            {
+                locationsList.addListSelectionListener(new ListSelectionListener()
+                {
+                    @Override
+                    public void valueChanged(ListSelectionEvent e)
+                    {
+                        setEnabled(!locationsList.isSelectionEmpty()); // depends on selection
+                    }
+                });
+            }
+
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                editLocation((Location) locationsList.getSelectedValue());
+            }
+        };
+        delLocationAction = new ButtonAction(delLocButton, false)
+        {
+            @Override
+            public void registerListeners()
+            {
+                locationsList.addListSelectionListener(new ListSelectionListener()
+                {
+                    @Override
+                    public void valueChanged(ListSelectionEvent e)
+                    {
+                        setEnabled(!locationsList.isSelectionEmpty()); // depends on selection
+                    }
+                });
+            }
+
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                Location location = (Location) locationsList.getSelectedValue();
+                if (location != null)
+                {
+                    if (GUIUtils.showDeleteConfirmDialog(Editor.this, "локацию", "локации", Word.GenderEnum.FEMININE))
+                    {
+                        story.getLocations().remove(location);
+                        markStoryEdited();
+                        reloadDataInForm();
+                    }
+                }
+            }
+        };
 
         newItemButton.setAction(new AbstractAction("Добавить...", GUIUtils.ADD_ELEMENT_ICON)
         {
@@ -309,16 +306,15 @@ public class Editor extends JFrame
     {
         File file = new File(storyFileName);
         String fileName = file.getName();
-        String editorTitle =
-                MessageFormat.format("ЯРИЛ 2.0 Редактор {0} -- {1}{2}", Engine.ENGINE_VERSION, fileName, isStoryEdited ? " - * история не сохранена" : "");
+        String editorTitle = MessageFormat.format("ЯРИЛ 2.0 Редактор {0} -- {1}{2}", Engine.ENGINE_VERSION, fileName,
+                                                  isStoryEdited ? " - * история не сохранена" : "");
         setTitle(editorTitle);
     }
 
     private int askAboutSavingStory()
     {
-        return JOptionPane
-                .showConfirmDialog(Editor.this, "Вы хотите сохранить историю перед выходом?", "История не сохранена",
-                                   JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+        return JOptionPane.showConfirmDialog(Editor.this, "Вы хотите сохранить историю перед выходом?", "История не сохранена",
+                                             JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
     }
 
     private void reloadDataInForm()
@@ -346,7 +342,7 @@ public class Editor extends JFrame
         {
             @Override
             public void run()
-            {
+            { //todo rewrite using SwingWorker
                 Cursor previousCursor = mainPanel.getCursor();
                 mainPanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 //getContentPane().setEnabled(false);
@@ -359,7 +355,7 @@ public class Editor extends JFrame
                 catch (Throwable e)
                 {
                     LOG.error("Error while loading story!", e);
-                    ReportError(e, "Ошибка при загрузке истории!");
+                    GUIUtils.ReportError(Editor.this, e);
                     //GUIUtils.showErrorMessage(Editor.this, e);
                 }
                 finally
@@ -370,34 +366,6 @@ public class Editor extends JFrame
                 }
             }
         }.start();
-    }
-
-    private void ReportError(Throwable exception, String dialogTitle)
-    {
-        exception.printStackTrace();
-        LOG.error(dialogTitle, exception);
-        String errorMessage = "";
-        if(!(exception instanceof IFML2LoadXmlException) && exception.getCause() instanceof IFML2LoadXmlException)
-        {
-            exception = exception.getCause();
-        }
-        if (exception instanceof IFML2LoadXmlException)
-        {
-            errorMessage += "В файле истории есть ошибки:";
-            for (ValidationEvent validationEvent : ((IFML2LoadXmlException) exception).getEvents())
-            {
-                errorMessage += MessageFormat.format("\n\"{0}\" at {1},{2}", validationEvent.getMessage(),
-                                                     validationEvent.getLocator().getLineNumber(),
-                                                     validationEvent.getLocator().getColumnNumber());
-            }
-        }
-        else
-        {
-            StringWriter stringWriter = new StringWriter();
-            exception.printStackTrace(new PrintWriter(stringWriter));
-            errorMessage += stringWriter.toString();
-        }
-        GUIUtils.showMemoDialog(this, "Произошла ошибка", errorMessage);
     }
 
     private JMenuBar createMainMenu()
@@ -483,7 +451,7 @@ public class Editor extends JFrame
                 catch (IFML2Exception ex)
                 {
                     JOptionPane.showMessageDialog(Editor.this, "Ошибка во время сохранения истории: " + ex.getMessage());
-                    ReportError(ex, "Ошибка во время сохранения истории");
+                    GUIUtils.ReportError(Editor.this, ex);
                 }
             }
         });
@@ -540,7 +508,7 @@ public class Editor extends JFrame
                     }
                     catch (IFML2Exception ex)
                     {
-                        ReportError(ex, "Произошла ошибка во время экспорта зашифрованной истории.");
+                        GUIUtils.ReportError(Editor.this, ex);
                     }
                 }
             }
@@ -553,8 +521,7 @@ public class Editor extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                StoryOptionsEditor storyOptionsEditor = new StoryOptionsEditor(Editor.this, story.getStoryOptions(),
-                                                                               story.getDataHelper());
+                StoryOptionsEditor storyOptionsEditor = new StoryOptionsEditor(Editor.this, story.getStoryOptions(), story.getDataHelper());
                 if (storyOptionsEditor.showDialog())
                 {
                     markStoryEdited();
@@ -578,7 +545,7 @@ public class Editor extends JFrame
                     }
                     catch (Throwable ex)
                     {
-                        ReportError(ex, "Ошибка при редактировании списка использованных библиотек");
+                        GUIUtils.ReportError(Editor.this, ex);
                     }
                     markStoryEdited();
                 }
@@ -590,8 +557,7 @@ public class Editor extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                ProceduresEditor proceduresEditor = new ProceduresEditor(Editor.this, story.getProcedures(),
-                                                                         story.getDataHelper());
+                ProceduresEditor proceduresEditor = new ProceduresEditor(Editor.this, story.getProcedures(), story.getDataHelper());
                 if (proceduresEditor.showDialog())
                 {
                     markStoryEdited();
@@ -642,7 +608,7 @@ public class Editor extends JFrame
                 }
                 catch (Throwable ex)
                 {
-                    ReportError(ex, "Ошибка во время сохранения истории во временный файл");
+                    GUIUtils.ReportError(Editor.this, ex);
                 }
             }
         });

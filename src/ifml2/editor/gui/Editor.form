@@ -9,129 +9,6 @@
     </properties>
     <border type="none"/>
     <children>
-      <splitpane id="2cb6b">
-        <constraints border-constraint="Center"/>
-        <properties>
-          <dividerLocation value="400"/>
-          <dividerSize value="5"/>
-          <preferredSize width="800" height="600"/>
-        </properties>
-        <border type="none"/>
-        <children>
-          <grid id="5108c" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-            <margin top="0" left="0" bottom="0" right="0"/>
-            <constraints>
-              <splitpane position="left"/>
-            </constraints>
-            <properties/>
-            <border type="none" title="Локации"/>
-            <children>
-              <scrollpane id="8e8f7">
-                <constraints>
-                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties/>
-                <border type="none"/>
-                <children>
-                  <component id="f5617" class="javax.swing.JList" binding="locationsList">
-                    <constraints/>
-                    <properties>
-                      <selectionMode value="0"/>
-                    </properties>
-                  </component>
-                </children>
-              </scrollpane>
-              <toolbar id="24de9">
-                <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
-                    <preferred-size width="-1" height="20"/>
-                  </grid>
-                </constraints>
-                <properties>
-                  <floatable value="false"/>
-                </properties>
-                <border type="none"/>
-                <children>
-                  <component id="8f274" class="javax.swing.JButton" binding="newLocButton">
-                    <constraints/>
-                    <properties>
-                      <text value="&amp;Новая..."/>
-                    </properties>
-                  </component>
-                  <component id="86c2f" class="javax.swing.JButton" binding="editLocButton">
-                    <constraints/>
-                    <properties>
-                      <text value="&amp;Редактировать..."/>
-                    </properties>
-                  </component>
-                  <component id="dd139" class="javax.swing.JButton" binding="delLocButton">
-                    <constraints/>
-                    <properties>
-                      <text value="&amp;Удалить..."/>
-                    </properties>
-                  </component>
-                </children>
-              </toolbar>
-            </children>
-          </grid>
-          <grid id="2ee7f" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-            <margin top="0" left="0" bottom="0" right="0"/>
-            <constraints>
-              <splitpane position="right"/>
-            </constraints>
-            <properties/>
-            <border type="none" title="Предметы"/>
-            <children>
-              <scrollpane id="35dfa">
-                <constraints>
-                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties/>
-                <border type="none"/>
-                <children>
-                  <component id="ef0f7" class="javax.swing.JList" binding="itemsList">
-                    <constraints/>
-                    <properties>
-                      <selectionMode value="0"/>
-                    </properties>
-                  </component>
-                </children>
-              </scrollpane>
-              <toolbar id="b9d5c">
-                <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
-                    <preferred-size width="-1" height="20"/>
-                  </grid>
-                </constraints>
-                <properties>
-                  <floatable value="false"/>
-                </properties>
-                <border type="none"/>
-                <children>
-                  <component id="97c69" class="javax.swing.JButton" binding="newItemButton">
-                    <constraints/>
-                    <properties>
-                      <text value="Но&amp;вый..."/>
-                    </properties>
-                  </component>
-                  <component id="d855a" class="javax.swing.JButton" binding="editItemButton">
-                    <constraints/>
-                    <properties>
-                      <text value="Р&amp;едактировать..."/>
-                    </properties>
-                  </component>
-                  <component id="e092a" class="javax.swing.JButton" binding="delItemButton">
-                    <constraints/>
-                    <properties>
-                      <text value="У&amp;далить..."/>
-                    </properties>
-                  </component>
-                </children>
-              </toolbar>
-            </children>
-          </grid>
-        </children>
-      </splitpane>
       <component id="c5968" class="javax.swing.JProgressBar" binding="progressBar">
         <constraints border-constraint="North"/>
         <properties>
@@ -141,6 +18,176 @@
           <visible value="false"/>
         </properties>
       </component>
+      <tabbedpane id="f7f9a">
+        <constraints border-constraint="Center"/>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <grid id="929c1" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints>
+              <tabbedpane title="Локации и предметы"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <splitpane id="2cb6b">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                    <preferred-size width="200" height="200"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <dividerLocation value="399"/>
+                  <dividerSize value="5"/>
+                  <preferredSize width="800" height="600"/>
+                </properties>
+                <border type="none"/>
+                <children>
+                  <grid id="5108c" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                    <margin top="0" left="0" bottom="0" right="0"/>
+                    <constraints>
+                      <splitpane position="left"/>
+                    </constraints>
+                    <properties/>
+                    <border type="none" title="Локации"/>
+                    <children>
+                      <scrollpane id="8e8f7">
+                        <constraints>
+                          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties/>
+                        <border type="none"/>
+                        <children>
+                          <component id="f5617" class="javax.swing.JList" binding="locationsList">
+                            <constraints/>
+                            <properties>
+                              <selectionMode value="0"/>
+                            </properties>
+                          </component>
+                        </children>
+                      </scrollpane>
+                      <toolbar id="24de9">
+                        <constraints>
+                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                            <preferred-size width="-1" height="20"/>
+                          </grid>
+                        </constraints>
+                        <properties>
+                          <floatable value="false"/>
+                        </properties>
+                        <border type="none"/>
+                        <children>
+                          <component id="8f274" class="javax.swing.JButton" binding="newLocButton">
+                            <constraints/>
+                            <properties>
+                              <icon value="ifml2/editor/gui/images/Add24.gif"/>
+                              <text value="&amp;Добавить..."/>
+                            </properties>
+                          </component>
+                          <component id="86c2f" class="javax.swing.JButton" binding="editLocButton">
+                            <constraints/>
+                            <properties>
+                              <icon value="ifml2/editor/gui/images/Edit24.gif"/>
+                              <text value="&amp;Редактировать..."/>
+                            </properties>
+                          </component>
+                          <component id="dd139" class="javax.swing.JButton" binding="delLocButton">
+                            <constraints/>
+                            <properties>
+                              <icon value="ifml2/editor/gui/images/Delete24.gif"/>
+                              <text value="&amp;Удалить..."/>
+                            </properties>
+                          </component>
+                        </children>
+                      </toolbar>
+                    </children>
+                  </grid>
+                  <grid id="2ee7f" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                    <margin top="0" left="0" bottom="0" right="0"/>
+                    <constraints>
+                      <splitpane position="right"/>
+                    </constraints>
+                    <properties/>
+                    <border type="none" title="Предметы"/>
+                    <children>
+                      <scrollpane id="35dfa">
+                        <constraints>
+                          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties/>
+                        <border type="none"/>
+                        <children>
+                          <component id="ef0f7" class="javax.swing.JList" binding="itemsList">
+                            <constraints/>
+                            <properties>
+                              <selectionMode value="0"/>
+                            </properties>
+                          </component>
+                        </children>
+                      </scrollpane>
+                      <toolbar id="b9d5c">
+                        <constraints>
+                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                            <preferred-size width="-1" height="20"/>
+                          </grid>
+                        </constraints>
+                        <properties>
+                          <floatable value="false"/>
+                        </properties>
+                        <border type="none"/>
+                        <children>
+                          <component id="97c69" class="javax.swing.JButton" binding="newItemButton">
+                            <constraints/>
+                            <properties>
+                              <icon value="ifml2/editor/gui/images/Add24.gif"/>
+                              <text value="Но&amp;вый..."/>
+                            </properties>
+                          </component>
+                          <component id="d855a" class="javax.swing.JButton" binding="editItemButton">
+                            <constraints/>
+                            <properties>
+                              <icon value="ifml2/editor/gui/images/Edit24.gif"/>
+                              <text value="Р&amp;едактировать..."/>
+                            </properties>
+                          </component>
+                          <component id="e092a" class="javax.swing.JButton" binding="delItemButton">
+                            <constraints/>
+                            <properties>
+                              <icon value="ifml2/editor/gui/images/Delete24.gif"/>
+                              <text value="Уд&amp;алить..."/>
+                            </properties>
+                          </component>
+                        </children>
+                      </toolbar>
+                    </children>
+                  </grid>
+                </children>
+              </splitpane>
+            </children>
+          </grid>
+          <grid id="e3e" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints>
+              <tabbedpane title="Процедуры и действия"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <splitpane id="e49c0">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                    <preferred-size width="200" height="200"/>
+                  </grid>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children/>
+              </splitpane>
+            </children>
+          </grid>
+        </children>
+      </tabbedpane>
     </children>
   </grid>
   <buttonGroups>
