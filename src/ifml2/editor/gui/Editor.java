@@ -1,6 +1,7 @@
 package ifml2.editor.gui;
 
 import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ifml2.CommonConstants;
 import ifml2.CommonUtils;
 import ifml2.GUIUtils;
@@ -42,7 +43,7 @@ public class Editor extends JFrame
     private JButton newItemButton;
     private JButton editItemButton;
     private JButton delItemButton;
-    private Story story = new Story();
+    private Story story;
     private boolean isStoryEdited = false;
     private String storyFileName = "новая история";
 
@@ -87,6 +88,7 @@ public class Editor extends JFrame
 
         GUIUtils.packAndCenterWindow(this);
 
+        // actions
         newLocationAction = new ButtonAction(newLocButton)
         {
             @Override
@@ -97,7 +99,6 @@ public class Editor extends JFrame
                 {
                     story.addLocation(location);
                     markStoryEdited();
-                    reloadDataInForm();
                     locationsList.setSelectedValue(location, true);
                 }
             }
@@ -148,13 +149,12 @@ public class Editor extends JFrame
                     {
                         story.getLocations().remove(location);
                         markStoryEdited();
-                        reloadDataInForm();
                     }
                 }
             }
         };
 
-        newItemButton.setAction(new AbstractAction("Добавить...", GUIUtils.ADD_ELEMENT_ICON)
+        newItemButton.setAction(new ButtonAction(newItemButton)
         {
             @Override
             public void actionPerformed(ActionEvent e)
@@ -164,7 +164,6 @@ public class Editor extends JFrame
                 {
                     story.addItem(item);
                     markStoryEdited();
-                    reloadDataInForm();
                     itemsList.setSelectedValue(item, true);
                 }
             }
@@ -190,7 +189,6 @@ public class Editor extends JFrame
                 if (editItem(item))
                 {
                     markStoryEdited();
-                    reloadDataInForm();
                     itemsList.setSelectedValue(item, true);
                 }
             }
@@ -219,7 +217,6 @@ public class Editor extends JFrame
                     {
                         story.getItems().remove(item);
                         markStoryEdited();
-                        reloadDataInForm();
                     }
                 }
             }
@@ -267,6 +264,9 @@ public class Editor extends JFrame
                 }
             }
         });
+
+        // create new story at start
+        setStory(new Story());
     }
 
     public static void main(String[] args)
@@ -285,7 +285,7 @@ public class Editor extends JFrame
     {
         this.story = story;
         setStoryEdited(false); // reset edited flag
-        reloadDataInForm();
+        loadStoryInForm();
     }
 
     public void setStoryEdited(boolean storyEdited)
@@ -317,23 +317,10 @@ public class Editor extends JFrame
                                              JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
     }
 
-    private void reloadDataInForm()
+    private void loadStoryInForm()
     {
-        // locations
-        DefaultListModel locationsListModel = new DefaultListModel();
-        for (Location location : story.getLocations())
-        {
-            locationsListModel.addElement(location);
-        }
-        locationsList.setModel(locationsListModel);
-
-        // items
-        DefaultListModel itemsListModel = new DefaultListModel();
-        for (Item item : story.getItems())
-        {
-            itemsListModel.addElement(item);
-        }
-        itemsList.setModel(itemsListModel);
+        locationsList.setModel(new DefaultEventListModel<Location>(story.getLocations()));
+        itemsList.setModel(new DefaultEventListModel<Item>(story.getItems()));
     }
 
     private void loadStory(final String storyFile)

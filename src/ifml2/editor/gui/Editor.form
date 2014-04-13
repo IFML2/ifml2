@@ -141,7 +141,7 @@
                             <constraints/>
                             <properties>
                               <icon value="ifml2/editor/gui/images/Add24.gif"/>
-                              <text value="Но&amp;вый..."/>
+                              <text value="Д&amp;обавить..."/>
                             </properties>
                           </component>
                           <component id="d855a" class="javax.swing.JButton" binding="editItemButton">
