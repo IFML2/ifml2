@@ -1,76 +1,81 @@
 package ifml2.om;
 
-
 import ifml2.IFML2Exception;
 import ifml2.vm.RunningContext;
 import ifml2.vm.values.CollectionValue;
 import ifml2.vm.values.ObjectValue;
 import ifml2.vm.values.Value;
+import org.jetbrains.annotations.NotNull;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlIDREF;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
-@XmlRootElement(name = "location")
-public class Location extends IFMLObject
+//@XmlAccessorType(XmlAccessType.NONE)
+public class Location extends IFMLObject implements Cloneable
 {
-    private Location north;
-    private Location east;
-    private Location south;
-    private Location west;
-    private Location up;
-    private Location down;
-    private List<Item> items = new ArrayList<Item>();
+    protected HashMap<ExitDirection, Location> exits = new HashMap<ExitDirection, Location>();
+
+    protected List<Item> items = new ArrayList<Item>();
+
+    public static String getClassName()
+    {
+        return "Локация";
+    }
+
+    @Override
+    public Location clone() throws CloneNotSupportedException
+    {
+        Location location = (Location) super.clone();
+        copyFieldsTo(location);
+        return location;
+    }
+
+    private void copyFieldsTo(Location location)
+    {
+        location.exits = new HashMap<ExitDirection, Location>(exits);
+        location.items = new ArrayList<Item>(items);
+    }
 
     public Location getNorth()
     {
-        return north;
+        return exits.get(ExitDirection.NORTH);
     }
 
-    @XmlElement(name = "north")
-    @XmlIDREF
     public void setNorth(Location north)
     {
-        this.north = north;
+        exits.put(ExitDirection.NORTH, north);
     }
 
     public Location getEast()
     {
-        return east;
+        return exits.get(ExitDirection.EAST);
     }
 
-    @XmlElement(name = "east")
-    @XmlIDREF
     public void setEast(Location east)
     {
-        this.east = east;
+        exits.put(ExitDirection.EAST, east);
     }
 
     public Location getSouth()
     {
-        return south;
+        return exits.get(ExitDirection.SOUTH);
     }
 
-    @XmlElement(name = "south")
-    @XmlIDREF
     public void setSouth(Location south)
     {
-        this.south = south;
+        exits.put(ExitDirection.SOUTH, south);
     }
 
     public Location getWest()
     {
-        return west;
+        return exits.get(ExitDirection.WEST);
     }
 
-    @XmlElement(name = "west")
-    @XmlIDREF
     public void setWest(Location west)
     {
-        this.west = west;
+        exits.put(ExitDirection.WEST, west);
     }
 
     public List<Item> getItems()
@@ -101,27 +106,27 @@ public class Location extends IFMLObject
     {
         if ("север".equalsIgnoreCase(propertyName))
         {
-            return new ObjectValue(north);
+            return new ObjectValue(getNorth());
         }
         else if ("восток".equalsIgnoreCase(propertyName))
         {
-            return new ObjectValue(east);
+            return new ObjectValue(getEast());
         }
         else if ("юг".equalsIgnoreCase(propertyName))
         {
-            return new ObjectValue(south);
+            return new ObjectValue(getSouth());
         }
         else if ("запад".equalsIgnoreCase(propertyName))
         {
-            return new ObjectValue(west);
+            return new ObjectValue(getWest());
         }
         else if ("верх".equalsIgnoreCase(propertyName))
         {
-            return new ObjectValue(up);
+            return new ObjectValue(getUp());
         }
         else if ("низ".equalsIgnoreCase(propertyName))
         {
-            return new ObjectValue(down);
+            return new ObjectValue(getDown());
         }
         else if ("предметы".equalsIgnoreCase(propertyName))
         {
@@ -135,30 +140,27 @@ public class Location extends IFMLObject
 
     public Location getDown()
     {
-        return down;
+        return exits.get(ExitDirection.DOWN);
     }
 
-    @XmlElement(name = "down")
-    @XmlIDREF
     public void setDown(Location down)
     {
-        this.down = down;
+        exits.put(ExitDirection.DOWN, down);
     }
 
     public Location getUp()
     {
-        return up;
+        return exits.get(ExitDirection.UP);
     }
 
-    @XmlElement(name = "up")
-    @XmlIDREF
     public void setUp(Location up)
     {
-        this.up = up;
+        exits.put(ExitDirection.UP, up);
     }
 
-    public static String getClassName()
+    public void copyTo(@NotNull Location location) throws CloneNotSupportedException
     {
-        return "Локация";
+        super.copyTo(location);
+        copyFieldsTo(location);
     }
 }

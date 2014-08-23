@@ -4,11 +4,9 @@ import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ifml2.vm.instructions.SetVarInstruction;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlIDREF;
+import javax.xml.bind.annotation.*;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class StoryOptions
 {
     @XmlElement(name = "startLocationOption")
@@ -17,6 +15,8 @@ public class StoryOptions
     private final StartProcedureOption startProcedureOption = new StartProcedureOption();
     @XmlElement(name = "storyDescription")
     private final StoryDescription storyDescription = new StoryDescription();
+    @XmlElementWrapper(name = "globalVars")
+    @XmlElement(name = "var")
     private EventList<SetVarInstruction> vars = new BasicEventList<SetVarInstruction>();
 
     public StartLocationOption getStartLocationOption()
@@ -39,16 +39,18 @@ public class StoryOptions
         return vars;
     }
 
-    @XmlElementWrapper(name = "globalVars")
-    @XmlElement(name = "var")
     public void setVars(EventList<SetVarInstruction> vars)
     {
         this.vars = vars;
     }
 
+    @XmlAccessorType(XmlAccessType.FIELD)
     public static class StartLocationOption
     {
+        @XmlAttribute(name = "location")
+        @XmlIDREF
         private Location location;
+        @XmlAttribute(name = "showStartLocDesc")
         private boolean showStartLocDesc;
 
         public Location getLocation()
@@ -56,8 +58,6 @@ public class StoryOptions
             return location;
         }
 
-        @XmlAttribute(name = "location")
-        @XmlIDREF
         public void setLocation(Location location)
         {
             this.location = location;
@@ -68,7 +68,6 @@ public class StoryOptions
             return showStartLocDesc;
         }
 
-        @XmlAttribute(name = "showStartLocDesc")
         public void setShowStartLocDesc(boolean showStartLocDesc)
         {
             this.showStartLocDesc = showStartLocDesc;

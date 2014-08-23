@@ -17,6 +17,7 @@ import java.text.MessageFormat;
 import static ifml2.om.Word.GramCaseEnum;
 import static ifml2.om.xml.XmlSchemaConstants.*;
 
+//@XmlAccessorType(XmlAccessType.NONE)
 public class IFMLObject implements Cloneable
 {
     private static final String NAME_PROPERTY_LITERAL = "имя";
@@ -24,6 +25,9 @@ public class IFMLObject implements Cloneable
     @XmlElementWrapper(name = ITEM_HOOKS_ELEMENT)
     @XmlElement(name = ITEM_HOOK_ELEMENT)
     public EventList<Hook> hooks = new BasicEventList<Hook>();
+    @XmlElementWrapper(name = IFML_OBJECT_ROLES_ELEMENT)
+    @XmlElement(name = IFML_OBJECT_ROLE_ELEMENT)
+    protected EventList<Role> roles = new BasicEventList<Role>();
     @XmlElementWrapper(name = OBJECT_PROPERTIES_ELEMENT)
     @XmlElement(name = OBJECT_PROPERTY_ELEMENT)
     private EventList<Property> properties = new BasicEventList<Property>();
@@ -32,17 +36,19 @@ public class IFMLObject implements Cloneable
     private String name;
     private String description;
     private EventList<Attribute> attributes = new BasicEventList<Attribute>();
-    @XmlElementWrapper(name = IFML_OBJECT_ROLES_ELEMENT)
-    @XmlElement(name = IFML_OBJECT_ROLE_ELEMENT)
-    protected EventList<Role> roles = new BasicEventList<Role>();
 
     @Override
     public IFMLObject clone() throws CloneNotSupportedException
     {
         IFMLObject ifmlObject = (IFMLObject) super.clone();
+        copyFieldsTo(ifmlObject);
+        return ifmlObject;
+    }
+
+    private void copyFieldsTo(IFMLObject ifmlObject) throws CloneNotSupportedException
+    {
         ifmlObject.wordLinks = wordLinks.clone();
         ifmlObject.attributes = GlazedLists.eventList(attributes);
-        return ifmlObject;
     }
 
     public String getId()
@@ -255,5 +261,10 @@ public class IFMLObject implements Cloneable
         }
 
         return null;
+    }
+
+    public void copyTo(IFMLObject ifmlObject) throws CloneNotSupportedException
+    {
+        copyFieldsTo(ifmlObject);
     }
 }

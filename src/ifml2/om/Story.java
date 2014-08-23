@@ -7,6 +7,7 @@ import ca.odell.glazedlists.event.ListEventListener;
 import ifml2.CommonUtils;
 import ifml2.IFML2Exception;
 import ifml2.om.xml.xmladapters.DictionaryAdapter;
+import ifml2.om.xml.xmladapters.LocationAdapter;
 import ifml2.om.xml.xmladapters.ProceduresAdapter;
 import ifml2.om.xml.xmladapters.UsedLibrariesAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -15,11 +16,14 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 import static ifml2.om.xml.XmlSchemaConstants.*;
 
 @XmlRootElement(name = "story")
+//@XmlAccessorType(XmlAccessType.NONE)
 public class Story
 {
     @XmlTransient
@@ -46,6 +50,8 @@ public class Story
     private HashMap<String, Word> dictionary = new HashMap<String, Word>();
     @XmlElementWrapper(name = STORY_LOCATIONS_ELEMENT)
     @XmlElement(name = LOCATIONS_LOCATION_ELEMENT)
+    @XmlJavaTypeAdapter(value = LocationAdapter.class)
+    //@XmlJavaTypeAdapter(value = LocationsAdapter.class)
     private EventList<Location> locations = new BasicEventList<Location>();
 
     // subscribe to location changes for object tree update
