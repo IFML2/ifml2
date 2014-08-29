@@ -17,7 +17,7 @@ import java.text.MessageFormat;
 import static ifml2.om.Word.GramCaseEnum;
 import static ifml2.om.xml.XmlSchemaConstants.*;
 
-//@XmlAccessorType(XmlAccessType.NONE)
+@XmlAccessorType(XmlAccessType.NONE)
 public class IFMLObject implements Cloneable
 {
     private static final String NAME_PROPERTY_LITERAL = "имя";

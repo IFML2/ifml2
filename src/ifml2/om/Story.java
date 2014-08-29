@@ -23,7 +23,7 @@ import java.util.List;
 import static ifml2.om.xml.XmlSchemaConstants.*;
 
 @XmlRootElement(name = "story")
-//@XmlAccessorType(XmlAccessType.NONE)
+@XmlAccessorType(XmlAccessType.NONE)
 public class Story
 {
     @XmlTransient
@@ -37,6 +37,7 @@ public class Story
     };
     @XmlElement(name = "storyOptions")
     private final StoryOptions storyOptions = new StoryOptions();
+
     @XmlJavaTypeAdapter(value = ProceduresAdapter.class)
     private final HashMap<String, Procedure> procedures = new HashMap<String, Procedure>();
     private Story.DataHelper dataHelper = new DataHelper();
@@ -48,10 +49,10 @@ public class Story
     private EventList<Library> libraries = new BasicEventList<Library>();
     @XmlJavaTypeAdapter(value = DictionaryAdapter.class)
     private HashMap<String, Word> dictionary = new HashMap<String, Word>();
+
     @XmlElementWrapper(name = STORY_LOCATIONS_ELEMENT)
     @XmlElement(name = LOCATIONS_LOCATION_ELEMENT)
     @XmlJavaTypeAdapter(value = LocationAdapter.class)
-    //@XmlJavaTypeAdapter(value = LocationsAdapter.class)
     private EventList<Location> locations = new BasicEventList<Location>();
 
     // subscribe to location changes for object tree update

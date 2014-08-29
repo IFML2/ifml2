@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-//@XmlAccessorType(XmlAccessType.NONE)
+@XmlTransient
 public class Location extends IFMLObject implements Cloneable
 {
     protected HashMap<ExitDirection, Location> exits = new HashMap<ExitDirection, Location>();
@@ -83,7 +83,7 @@ public class Location extends IFMLObject implements Cloneable
         return items;
     }
 
-    @XmlTransient // is loaded in OMManager through item.location
+    //@XmlTransient // is loaded in OMManager through item.location
     public void setItems(List<Item> items)
     {
         this.items = items;

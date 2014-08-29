@@ -6,6 +6,7 @@ import ifml2.CommonUtils;
 import ifml2.FormatLogger;
 import ifml2.IFML2Exception;
 import ifml2.engine.saved.SavedGame;
+import ifml2.om.xml.xmladapters.LocationAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.xml.sax.SAXException;
 
@@ -102,6 +103,7 @@ public class OMManager
                 JAXBContext context = JAXBContext.newInstance(Story.class);
                 Unmarshaller unmarshaller = context.createUnmarshaller();
                 unmarshaller.setProperty(IDResolver.class.getName(), new IFMLIDResolver());
+                unmarshaller.setAdapter(new LocationAdapter());
 
                 final HashMap<String, IFMLObject> ifmlObjectsHeap = new HashMap<String, IFMLObject>();
 
@@ -296,6 +298,7 @@ public class OMManager
         {
             JAXBContext context = JAXBContext.newInstance(Story.class);
             Marshaller marshaller = context.createMarshaller();
+            marshaller.setAdapter(new LocationAdapter());
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
             File file = new File(xmlFile);

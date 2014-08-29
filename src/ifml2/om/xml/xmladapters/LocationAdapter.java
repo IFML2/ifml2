@@ -5,16 +5,29 @@ import ifml2.om.Location;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlIDREF;
+import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class LocationAdapter extends XmlAdapter<LocationAdapter.AdaptedLocation, Location>
 {
+    private List<Location> locationsList = new ArrayList<Location>();
+    private Map<String, Location> locationsMap = new HashMap<String, Location>();
+
     @Override
     public Location unmarshal(AdaptedLocation v) throws Exception
     {
-        return v.clone();
+        /*Location location = locationsMap.get(v.getId());
+        if (location != null)
+        {
+            return location;
+        }*/
+        Location clone = v.clone();
+        //locationsMap.put(v.getId(), clone);
+        return clone;
     }
 
     @Override
@@ -23,7 +36,8 @@ public class LocationAdapter extends XmlAdapter<LocationAdapter.AdaptedLocation,
         return new AdaptedLocation(v); //todo check that location is fully copied
     }
 
-    //@XmlAccessorType(XmlAccessType.NONE)
+    @XmlAccessorType(XmlAccessType.NONE)
+    @XmlType(name="location")
     public static class AdaptedLocation extends Location implements Cloneable
     {
         @XmlElement(name = "north")
@@ -51,10 +65,10 @@ public class LocationAdapter extends XmlAdapter<LocationAdapter.AdaptedLocation,
         private Location down;
 
         @Override
-        public Location clone() throws CloneNotSupportedException
+        public AdaptedLocation clone() throws CloneNotSupportedException
         {
             fillExitsList();
-            return super.clone();
+            return (AdaptedLocation) super.clone();
         }
 
         private void fillExitsList()

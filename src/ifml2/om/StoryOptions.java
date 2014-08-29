@@ -6,7 +6,7 @@ import ifml2.vm.instructions.SetVarInstruction;
 
 import javax.xml.bind.annotation.*;
 
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorType(XmlAccessType.NONE)
 public class StoryOptions
 {
     @XmlElement(name = "startLocationOption")
@@ -44,11 +44,11 @@ public class StoryOptions
         this.vars = vars;
     }
 
-    @XmlAccessorType(XmlAccessType.FIELD)
+    @XmlAccessorType(XmlAccessType.NONE)
     public static class StartLocationOption
     {
-        @XmlAttribute(name = "location")
         @XmlIDREF
+        @XmlAttribute(name = "location")
         private Location location;
         @XmlAttribute(name = "showStartLocDesc")
         private boolean showStartLocDesc;
@@ -91,6 +91,7 @@ public class StoryOptions
         }
     }
 
+    @XmlAccessorType(XmlAccessType.NONE)
     public static class StoryDescription
     {
         private String name;

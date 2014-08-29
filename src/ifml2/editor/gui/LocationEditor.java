@@ -339,16 +339,17 @@ public class LocationEditor extends AbstractEditor<Location>
 
     private void updateLocationLinks(EventList<Location> locations)
     {
-        northCombo.setModel(new DefaultComboBoxModel(locations.toArray()));
+        Object[] locationsArray = locations.toArray();
+        northCombo.setModel(new DefaultComboBoxModel(locationsArray));
         northCombo.insertItemAt(null, 0);
 
-        eastCombo.setModel(new DefaultComboBoxModel(locations.toArray()));
+        eastCombo.setModel(new DefaultComboBoxModel(locationsArray));
         eastCombo.insertItemAt(null, 0);
 
-        southCombo.setModel(new DefaultComboBoxModel(locations.toArray()));
+        southCombo.setModel(new DefaultComboBoxModel(locationsArray));
         southCombo.insertItemAt(null, 0);
 
-        westCombo.setModel(new DefaultComboBoxModel(locations.toArray()));
+        westCombo.setModel(new DefaultComboBoxModel(locationsArray));
         westCombo.insertItemAt(null, 0);
     }
 

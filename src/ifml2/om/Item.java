@@ -9,15 +9,13 @@ import ifml2.vm.VirtualMachine;
 import ifml2.vm.values.Value;
 import org.jetbrains.annotations.NotNull;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlIDREF;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.*;
 import java.util.List;
 
 import static ifml2.om.xml.XmlSchemaConstants.ITEM_STARTING_POSITION_ELEMENT;
 import static ifml2.om.xml.XmlSchemaConstants.STARTING_POSITION_INVENTORY_ELEMENT;
 
+@XmlAccessorType(XmlAccessType.NONE)
 public class Item extends IFMLObject implements Cloneable
 {
     @XmlElement(name = ITEM_STARTING_POSITION_ELEMENT)
@@ -99,6 +97,7 @@ public class Item extends IFMLObject implements Cloneable
         return "Предмет";
     }
 
+    @XmlAccessorType(XmlAccessType.NONE)
     public static class ItemStartingPosition implements Cloneable
     {
         private boolean inventory = false;
