@@ -25,22 +25,30 @@ public class LocationAdapter extends XmlAdapter<LocationAdapter.AdaptedLocation,
     @XmlType(name="location")
     public static class AdaptedLocation extends Location implements Cloneable
     {
-        @Override
         /**
          * Override getExit() to yield exits from plain fields to HashMap
          */
-        protected Location getExit(ExitDirection exitDirection)
+        @Override
+        public Location getExit(ExitDirection exitDirection)
         {
             switch (exitDirection)
             {
                 case NORTH:
                     return north;
+                case NORTH_EAST:
+                    return northEast;
                 case EAST:
                     return east;
+                case SOUTH_EAST:
+                    return southEast;
                 case SOUTH:
                     return south;
+                case SOUTH_WEST:
+                    return southWest;
                 case WEST:
                     return west;
+                case NORTH_WEST:
+                    return northWest;
                 case UP:
                     return up;
                 case DOWN:
@@ -53,22 +61,33 @@ public class LocationAdapter extends XmlAdapter<LocationAdapter.AdaptedLocation,
         @Override
         /**
          * Override setExit() to set exits to plain fields from HashMap
-         */
-        protected void setExit(ExitDirection exitDirection, Location location)
+         */ public void setExit(ExitDirection exitDirection, Location location)
         {
             switch (exitDirection)
             {
                 case NORTH:
                     north = location;
                     break;
+                case NORTH_EAST:
+                    northEast = location;
+                    break;
                 case EAST:
                     east = location;
+                    break;
+                case SOUTH_EAST:
+                    southEast = location;
                     break;
                 case SOUTH:
                     south = location;
                     break;
+                case SOUTH_WEST:
+                    southWest = location;
+                    break;
                 case WEST:
                     west = location;
+                    break;
+                case NORTH_WEST:
+                    northWest = location;
                     break;
                 case UP:
                     up = location;
@@ -83,17 +102,33 @@ public class LocationAdapter extends XmlAdapter<LocationAdapter.AdaptedLocation,
         @XmlIDREF
         private Location north;
 
+        @XmlElement(name = "north-east")
+        @XmlIDREF
+        private Location northEast;
+
         @XmlElement(name = "east")
         @XmlIDREF
         private Location east;
+
+        @XmlElement(name = "south-east")
+        @XmlIDREF
+        private Location southEast;
 
         @XmlElement(name = "south")
         @XmlIDREF
         private Location south;
 
+        @XmlElement(name = "south-west")
+        @XmlIDREF
+        private Location southWest;
+
         @XmlElement(name = "west")
         @XmlIDREF
         private Location west;
+
+        @XmlElement(name = "north-west")
+        @XmlIDREF
+        private Location northWest;
 
         @XmlElement(name = "up")
         @XmlIDREF
@@ -117,9 +152,13 @@ public class LocationAdapter extends XmlAdapter<LocationAdapter.AdaptedLocation,
         private void fillFieldsFromLoc(Location location)
         {
             north = location.getNorth();
+            northEast = location.getExit(ExitDirection.NORTH_EAST);
             east = location.getEast();
+            southEast = location.getExit(ExitDirection.SOUTH_EAST);
             south = location.getSouth();
+            southWest = location.getExit(ExitDirection.SOUTH_WEST);
             west = location.getWest();
+            northWest = location.getExit(ExitDirection.NORTH_WEST);
             up = location.getUp();
             down = location.getDown();
         }

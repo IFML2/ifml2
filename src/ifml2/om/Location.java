@@ -38,12 +38,12 @@ public class Location extends IFMLObject implements Cloneable
         location.items = new ArrayList<Item>(items);
     }
 
-    protected Location getExit(ExitDirection exitDirection)
+    public Location getExit(ExitDirection exitDirection)
     {
         return exits.get(exitDirection);
     }
 
-    protected void setExit(ExitDirection exitDirection, Location location)
+    public void setExit(ExitDirection exitDirection, Location location)
     {
         exits.put(exitDirection, location);
     }
@@ -150,22 +150,22 @@ public class Location extends IFMLObject implements Cloneable
 
     public Location getDown()
     {
-        return exits.get(ExitDirection.DOWN);
+        return getExit(ExitDirection.DOWN);
     }
 
     public void setDown(Location down)
     {
-        exits.put(ExitDirection.DOWN, down);
+        setExit(ExitDirection.DOWN, down);
     }
 
     public Location getUp()
     {
-        return exits.get(ExitDirection.UP);
+        return getExit(ExitDirection.UP);
     }
 
     public void setUp(Location up)
     {
-        exits.put(ExitDirection.UP, up);
+        setExit(ExitDirection.UP, up);
     }
 
     public void copyTo(@NotNull Location location) throws CloneNotSupportedException

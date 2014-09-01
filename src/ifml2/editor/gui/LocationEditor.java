@@ -19,6 +19,7 @@ import java.awt.event.*;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class LocationEditor extends AbstractEditor<Location>
 {
@@ -44,12 +45,33 @@ public class LocationEditor extends AbstractEditor<Location>
     private JButton editHookButton;
     private JButton deleteHookButton;
     private JList hooksList;
+    private JComboBox upCombo;
+    private JComboBox downCombo;
+    private JComboBox northEastCombo;
+    private JComboBox southEastCombo;
+    private JComboBox southWestCombo;
+    private JComboBox northWestCombo;
     private boolean toGenerateId = false;
     private ArrayList<Item> itemsClone = null;
     private EventList<Attribute> attributesClone = null;
     private EventList<Hook> hooksClone = null;
     private Location location;
     private Story.DataHelper storyDataHelper;
+    private Map<ExitDirection, JComboBox> exitCombosMap = new HashMap<ExitDirection, JComboBox>()
+    {
+        {
+            put(ExitDirection.NORTH, northCombo);
+            put(ExitDirection.NORTH_EAST, northEastCombo);
+            put(ExitDirection.EAST, eastCombo);
+            put(ExitDirection.SOUTH_EAST, southEastCombo);
+            put(ExitDirection.SOUTH, southCombo);
+            put(ExitDirection.SOUTH_WEST, southWestCombo);
+            put(ExitDirection.WEST, westCombo);
+            put(ExitDirection.NORTH_WEST, northWestCombo);
+            put(ExitDirection.UP, upCombo);
+            put(ExitDirection.DOWN, downCombo);
+        }
+    };
 
     public LocationEditor(Window owner, Location location, final Story.DataHelper storyDataHelper)
     {
@@ -75,26 +97,12 @@ public class LocationEditor extends AbstractEditor<Location>
         });
         editItemButton.setAction(new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON)
         {
-            {
-                setEnabled(false); // disabled at start
-                itemsList.addListSelectionListener(new ListSelectionListener()
-                {
-                    @Override
-                    public void valueChanged(ListSelectionEvent e)
-                    {
-                        setEnabled(!itemsList.isSelectionEmpty()); // depends on selection
-                    }
-                });
-            }
-
             @Override
             public void actionPerformed(ActionEvent e)
             {
                 editItem((Item) itemsList.getSelectedValue());
             }
-        });
-        delItemButton.setAction(new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
-        {
+
             {
                 setEnabled(false); // disabled at start
                 itemsList.addListSelectionListener(new ListSelectionListener()
@@ -107,14 +115,17 @@ public class LocationEditor extends AbstractEditor<Location>
                 });
             }
 
+
+        });
+        delItemButton.setAction(new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
+        {
             @Override
             public void actionPerformed(ActionEvent e)
             {
                 Item item = (Item) itemsList.getSelectedValue();
                 if (item != null)
                 {
-                    int answer = JOptionPane
-                            .showConfirmDialog(LocationEditor.this, "Вы уверены, что хотите удалить этот предмет?");
+                    int answer = JOptionPane.showConfirmDialog(LocationEditor.this, "Вы уверены, что хотите удалить этот предмет?");
                     if (answer == 0)
                     {
                         itemsClone.remove(item);
@@ -122,14 +133,27 @@ public class LocationEditor extends AbstractEditor<Location>
                     }
                 }
             }
+
+            {
+                setEnabled(false); // disabled at start
+                itemsList.addListSelectionListener(new ListSelectionListener()
+                {
+                    @Override
+                    public void valueChanged(ListSelectionEvent e)
+                    {
+                        setEnabled(!itemsList.isSelectionEmpty()); // depends on selection
+                    }
+                });
+            }
+
+
         });
         editAttributesButton.setAction(new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON)
         {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                ObjectAttributesEditor objectAttributesEditor = new ObjectAttributesEditor(LocationEditor.this,
-                                                                                           attributesClone,
+                ObjectAttributesEditor objectAttributesEditor = new ObjectAttributesEditor(LocationEditor.this, attributesClone,
                                                                                            storyDataHelper);
                 if (objectAttributesEditor.showDialog())
                 {
@@ -153,18 +177,6 @@ public class LocationEditor extends AbstractEditor<Location>
         });
         editHookButton.setAction(new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON)
         {
-            {
-                setEnabled(false); // initially disabled
-                hooksList.addListSelectionListener(new ListSelectionListener()
-                {
-                    @Override
-                    public void valueChanged(ListSelectionEvent e)
-                    {
-                        setEnabled(!hooksList.isSelectionEmpty()); // dependent from selection
-                    }
-                });
-            }
-
             @Override()
             public void actionPerformed(ActionEvent e)
             {
@@ -174,9 +186,7 @@ public class LocationEditor extends AbstractEditor<Location>
                     editHook(selectedHook);
                 }
             }
-        });
-        deleteHookButton.setAction(new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
-        {
+
             {
                 setEnabled(false); // initially disabled
                 hooksList.addListSelectionListener(new ListSelectionListener()
@@ -189,20 +199,36 @@ public class LocationEditor extends AbstractEditor<Location>
                 });
             }
 
+
+        });
+        deleteHookButton.setAction(new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
+        {
             @Override
             public void actionPerformed(ActionEvent e)
             {
                 Hook selectedHook = (Hook) hooksList.getSelectedValue();
                 if (selectedHook != null && JOptionPane.showConfirmDialog(LocationEditor.this,
                                                                           "Вы действительно хотите удалить выбранный перехват?",
-                                                                          "Удаление перехвата",
-                                                                          JOptionPane.YES_NO_OPTION,
-                                                                          JOptionPane.QUESTION_MESSAGE) ==
-                                            JOptionPane.YES_OPTION)
+                                                                          "Удаление перехвата", JOptionPane.YES_NO_OPTION,
+                                                                          JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
                 {
                     hooksClone.remove(selectedHook);
                 }
             }
+
+            {
+                setEnabled(false); // initially disabled
+                hooksList.addListSelectionListener(new ListSelectionListener()
+                {
+                    @Override
+                    public void valueChanged(ListSelectionEvent e)
+                    {
+                        setEnabled(!hooksList.isSelectionEmpty()); // dependent from selection
+                    }
+                });
+            }
+
+
         });
 
         itemsList.addMouseListener(new MouseAdapter()
@@ -258,10 +284,11 @@ public class LocationEditor extends AbstractEditor<Location>
         //TODO:dictWordCombo.setSelectedItem(location.getWord());
 
         updateLocationLinks(storyDataHelper.getLocations());
-        northCombo.setSelectedItem(location.getNorth());
-        eastCombo.setSelectedItem(location.getEast());
-        southCombo.setSelectedItem(location.getSouth());
-        westCombo.setSelectedItem(location.getWest());
+        for (ExitDirection exitDirection : ExitDirection.values())
+        {
+            JComboBox combo = exitCombosMap.get(exitDirection);
+            combo.setSelectedItem(location.getExit(exitDirection));
+        }
 
         itemsClone = new ArrayList<Item>(location.getItems());
         updateItems();
@@ -340,17 +367,18 @@ public class LocationEditor extends AbstractEditor<Location>
     private void updateLocationLinks(EventList<Location> locations)
     {
         Object[] locationsArray = locations.toArray();
-        northCombo.setModel(new DefaultComboBoxModel(locationsArray));
-        northCombo.insertItemAt(null, 0);
 
-        eastCombo.setModel(new DefaultComboBoxModel(locationsArray));
-        eastCombo.insertItemAt(null, 0);
+        for (ExitDirection exitDirection : ExitDirection.values())
+        {
+            JComboBox combo = exitCombosMap.get(exitDirection);
+            initExitCombo(locationsArray, combo);
+        }
+    }
 
-        southCombo.setModel(new DefaultComboBoxModel(locationsArray));
-        southCombo.insertItemAt(null, 0);
-
-        westCombo.setModel(new DefaultComboBoxModel(locationsArray));
-        westCombo.insertItemAt(null, 0);
+    private void initExitCombo(Object[] locationsArray, @NotNull JComboBox combo)
+    {
+        combo.setModel(new DefaultComboBoxModel(locationsArray));
+        combo.insertItemAt(null, 0);
     }
 
     private void updateDictionaryLinks(HashMap<String, Word> dictionary)
@@ -404,18 +432,19 @@ public class LocationEditor extends AbstractEditor<Location>
             }
             throw new DataNotValidException(
                     "У локации должен быть уникальный идентификатор - не пересекаться с другими локациями, предметами и словарём.\n" +
-                    MessageFormat.format("Найден другой объект с тем же идентификатором: \"{0}\" типа \"{1}\".", object,
-                                         className), locationIDText);
+                    MessageFormat.format("Найден другой объект с тем же идентификатором: \"{0}\" типа \"{1}\".", object, className),
+                    locationIDText);
         }
     }
 
     @Override
     public void getData(@NotNull Location location)
     {
-        location.setNorth((Location) northCombo.getSelectedItem());
-        location.setEast((Location) eastCombo.getSelectedItem());
-        location.setSouth((Location) southCombo.getSelectedItem());
-        location.setWest((Location) westCombo.getSelectedItem());
+        for (ExitDirection exitDirection : ExitDirection.values())
+        {
+            JComboBox combo = exitCombosMap.get(exitDirection);
+            location.setExit(exitDirection, (Location) combo.getSelectedItem());
+        }
 
         location.setItems(itemsClone);
         location.setAttributes(attributesClone);
