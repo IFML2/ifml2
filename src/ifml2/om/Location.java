@@ -38,44 +38,54 @@ public class Location extends IFMLObject implements Cloneable
         location.items = new ArrayList<Item>(items);
     }
 
+    protected Location getExit(ExitDirection exitDirection)
+    {
+        return exits.get(exitDirection);
+    }
+
+    protected void setExit(ExitDirection exitDirection, Location location)
+    {
+        exits.put(exitDirection, location);
+    }
+
     public Location getNorth()
     {
-        return exits.get(ExitDirection.NORTH);
+        return getExit(ExitDirection.NORTH);
     }
 
     public void setNorth(Location north)
     {
-        exits.put(ExitDirection.NORTH, north);
+        setExit(ExitDirection.NORTH, north);
     }
 
     public Location getEast()
     {
-        return exits.get(ExitDirection.EAST);
+        return getExit(ExitDirection.EAST);
     }
 
     public void setEast(Location east)
     {
-        exits.put(ExitDirection.EAST, east);
+        setExit(ExitDirection.EAST, east);
     }
 
     public Location getSouth()
     {
-        return exits.get(ExitDirection.SOUTH);
+        return getExit(ExitDirection.SOUTH);
     }
 
     public void setSouth(Location south)
     {
-        exits.put(ExitDirection.SOUTH, south);
+        setExit(ExitDirection.SOUTH, south);
     }
 
     public Location getWest()
     {
-        return exits.get(ExitDirection.WEST);
+        return getExit(ExitDirection.WEST);
     }
 
     public void setWest(Location west)
     {
-        exits.put(ExitDirection.WEST, west);
+        setExit(ExitDirection.WEST, west);
     }
 
     public List<Item> getItems()

@@ -47,8 +47,14 @@ public class IFMLObject implements Cloneable
 
     private void copyFieldsTo(IFMLObject ifmlObject) throws CloneNotSupportedException
     {
-        ifmlObject.wordLinks = wordLinks.clone();
-        ifmlObject.attributes = GlazedLists.eventList(attributes);
+        ifmlObject.setId(id);
+        ifmlObject.setName(name);
+        ifmlObject.setDescription(description);
+        ifmlObject.setWordLinks(wordLinks.clone());
+        ifmlObject.setAttributes(GlazedLists.eventList(attributes));
+        ifmlObject.setProperties(GlazedLists.eventList(properties));
+        ifmlObject.setHooks(GlazedLists.eventList(hooks));
+        ifmlObject.setRoles(GlazedLists.eventList(roles));
     }
 
     public String getId()
@@ -69,7 +75,7 @@ public class IFMLObject implements Cloneable
     }
 
     @XmlElement(name = OBJECT_WORDS_TAG)
-    public void setWordLinks(@NotNull WordLinks wordLinks) throws IFML2Exception
+    public void setWordLinks(@NotNull WordLinks wordLinks)
     {
         this.wordLinks = wordLinks;
     }
@@ -266,5 +272,20 @@ public class IFMLObject implements Cloneable
     public void copyTo(IFMLObject ifmlObject) throws CloneNotSupportedException
     {
         copyFieldsTo(ifmlObject);
+    }
+
+    public void setHooks(EventList<Hook> hooks)
+    {
+        this.hooks = hooks;
+    }
+
+    public void setRoles(EventList<Role> roles)
+    {
+        this.roles = roles;
+    }
+
+    public void setProperties(EventList<Property> properties)
+    {
+        this.properties = properties;
     }
 }
