@@ -59,11 +59,10 @@ public class Procedure
 
     public Procedure(String name)
     {
-        this();
         this.name = name;
     }
 
-    private Procedure()
+    public Procedure()
     {
     }
 

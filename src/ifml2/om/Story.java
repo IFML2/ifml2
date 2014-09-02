@@ -2,13 +2,14 @@ package ifml2.om;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.FunctionList;
+import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.event.ListEvent;
 import ca.odell.glazedlists.event.ListEventListener;
 import ifml2.CommonUtils;
 import ifml2.IFML2Exception;
 import ifml2.om.xml.xmladapters.DictionaryAdapter;
 import ifml2.om.xml.xmladapters.LocationAdapter;
-import ifml2.om.xml.xmladapters.ProceduresAdapter;
 import ifml2.om.xml.xmladapters.UsedLibrariesAdapter;
 import org.jetbrains.annotations.NotNull;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -19,6 +20,7 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import static ifml2.om.xml.XmlSchemaConstants.*;
 
@@ -38,8 +40,20 @@ public class Story
     @XmlElement(name = "storyOptions")
     private final StoryOptions storyOptions = new StoryOptions();
 
-    @XmlJavaTypeAdapter(value = ProceduresAdapter.class)
-    private final HashMap<String, Procedure> procedures = new HashMap<String, Procedure>();
+    //@XmlJavaTypeAdapter(value = ProceduresAdapter.class)
+    //private final HashMap<String, Procedure> procedures = new HashMap<String, Procedure>();
+    @XmlElementWrapper(name = STORY_PROCEDURES_ELEMENT)
+    @XmlElement(name = PROCEDURES_PROCEDURE_ELEMENT)
+    private final EventList<Procedure> procedures = new BasicEventList<Procedure>();
+    private final Map<String, Procedure> proceduresMap = GlazedLists.syncEventListToMap(procedures, new FunctionList.Function<Procedure, String>()
+    {
+        @Override
+        public String evaluate(Procedure sourceValue)
+        {
+            return sourceValue.getName().toLowerCase();
+        }
+    });
+
     private Story.DataHelper dataHelper = new DataHelper();
     @SuppressWarnings("FieldCanBeLocal") // todo remove suppress after JAXB bug is fixed
     @XmlAttribute(name = "id")
@@ -252,7 +266,7 @@ public class Story
         return allRoleDefinitions;
     }
 
-    public HashMap<String, Procedure> getProcedures()
+    public EventList<Procedure> getProcedures()
     {
         return procedures;
     }
@@ -266,7 +280,7 @@ public class Story
     public Procedure getSystemInheritorProcedure(Procedure.SystemProcedureEnum systemProcedure)
     {
         // for this story
-        for (Procedure procedure : getProcedures().values())
+        for (Procedure procedure : procedures)
         {
             if (procedure.getInheritsSystemProcedure() == systemProcedure)
             {
@@ -277,7 +291,7 @@ public class Story
         // for libs
         for (Library library : libraries)
         {
-            for (Procedure procedure : library.procedures.values())
+            for (Procedure procedure : library.procedures)
             {
                 if (procedure.getInheritsSystemProcedure() == systemProcedure)
                 {
@@ -435,9 +449,9 @@ public class Story
                 return dictionary.get(loweredId);
             }
 
-            if (procedures.containsKey(loweredId))
+            if (proceduresMap.containsKey(loweredId))
             {
-                return procedures.get(loweredId);
+                return proceduresMap.get(loweredId);
             }
 
             return null;
@@ -453,7 +467,7 @@ public class Story
             return actions;
         }
 
-        public HashMap<String, Procedure> getProcedures()
+        public EventList<Procedure> getProcedures()
         {
             return procedures;
         }

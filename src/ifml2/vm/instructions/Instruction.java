@@ -143,4 +143,16 @@ public abstract class Instruction implements Cloneable
 
         return ((CollectionValue) collectionValue).getValue();
     }
+
+    protected String getTitle()
+    {
+        Class<? extends Instruction> aClass = this.getClass();
+        return getTitleFor(aClass);
+    }
+
+    public static String getTitleFor(Class<? extends Instruction> instrClass)
+    {
+        IFML2Instruction annotation = instrClass.getAnnotation(IFML2Instruction.class);
+        return annotation != null ? annotation.title() : instrClass.getSimpleName();
+    }
 }

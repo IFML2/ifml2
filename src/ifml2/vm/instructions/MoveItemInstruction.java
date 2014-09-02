@@ -11,15 +11,11 @@ import java.text.MessageFormat;
 import java.util.List;
 
 @XmlRootElement(name = "moveItem")
+@IFML2Instruction(title = "Переместить предмет")
 public class MoveItemInstruction extends Instruction
 {
     private String itemExpr = "";
     private String toCollectionExpr = "";
-
-    public static String getTitle()
-    {
-        return "Переместить предмет";
-    }
 
     @Override
     public void run(RunningContext runningContext) throws IFML2Exception

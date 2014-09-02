@@ -107,7 +107,7 @@ public class StoryOptionsEditor extends AbstractEditor<StoryOptions>
 
         // -- init form --
 
-        startProcedureCombo.setModel(new DefaultComboBoxModel(storyDataHelper.getProcedures().values().toArray()));
+        startProcedureCombo.setModel(new DefaultComboBoxModel(storyDataHelper.getProcedures().toArray()));
         startProcedureCombo.insertItemAt(null, 0);
         startProcedureCombo.setSelectedItem(storyOptions.getStartProcedureOption().getProcedure());
 

@@ -29,7 +29,7 @@ public class GoToLocInstrEditor extends AbstractInstrEditor
     public GoToLocInstrEditor(Window owner, GoToLocInstruction instruction, Story.DataHelper storyDataHelper)
     {
         super(owner);
-        initializeEditor(GoToLocInstruction.getTitle(), contentPane, buttonOK, buttonCancel);
+        initializeEditor(Instruction.getTitleFor(GoToLocInstruction.class), contentPane, buttonOK, buttonCancel);
 
         // set listeners
         ChangeListener radioChangeListener = new ChangeListener()

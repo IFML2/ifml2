@@ -19,7 +19,7 @@ import java.awt.event.MouseEvent;
 
 public class IfInstrEditor extends AbstractInstrEditor
 {
-    private static final String IF_INSTR_EDITOR_TITLE = IfInstruction.getTitle();
+    private static final String IF_INSTR_EDITOR_TITLE = Instruction.getTitleFor(IfInstruction.class);
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;

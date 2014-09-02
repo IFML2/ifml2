@@ -81,21 +81,21 @@
                           <component id="8f274" class="javax.swing.JButton" binding="newLocButton">
                             <constraints/>
                             <properties>
-                              <icon value="ifml2/editor/gui/images/Add24.gif"/>
+                              <icon value="Add24.gif"/>
                               <text value="&amp;Добавить..."/>
                             </properties>
                           </component>
                           <component id="86c2f" class="javax.swing.JButton" binding="editLocButton">
                             <constraints/>
                             <properties>
-                              <icon value="ifml2/editor/gui/images/Edit24.gif"/>
+                              <icon value="Edit24.gif"/>
                               <text value="&amp;Редактировать..."/>
                             </properties>
                           </component>
                           <component id="dd139" class="javax.swing.JButton" binding="delLocButton">
                             <constraints/>
                             <properties>
-                              <icon value="ifml2/editor/gui/images/Delete24.gif"/>
+                              <icon value="Delete24.gif"/>
                               <text value="&amp;Удалить..."/>
                             </properties>
                           </component>
@@ -140,21 +140,21 @@
                           <component id="97c69" class="javax.swing.JButton" binding="newItemButton">
                             <constraints/>
                             <properties>
-                              <icon value="ifml2/editor/gui/images/Add24.gif"/>
+                              <icon value="Add24.gif"/>
                               <text value="Д&amp;обавить..."/>
                             </properties>
                           </component>
                           <component id="d855a" class="javax.swing.JButton" binding="editItemButton">
                             <constraints/>
                             <properties>
-                              <icon value="ifml2/editor/gui/images/Edit24.gif"/>
+                              <icon value="Edit24.gif"/>
                               <text value="Р&amp;едактировать..."/>
                             </properties>
                           </component>
                           <component id="e092a" class="javax.swing.JButton" binding="delItemButton">
                             <constraints/>
                             <properties>
-                              <icon value="ifml2/editor/gui/images/Delete24.gif"/>
+                              <icon value="Delete24.gif"/>
                               <text value="Уд&amp;алить..."/>
                             </properties>
                           </component>
@@ -180,9 +180,127 @@
                     <preferred-size width="200" height="200"/>
                   </grid>
                 </constraints>
-                <properties/>
+                <properties>
+                  <dividerLocation value="399"/>
+                  <dividerSize value="5"/>
+                </properties>
                 <border type="none"/>
-                <children/>
+                <children>
+                  <grid id="ad5e6" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                    <margin top="0" left="0" bottom="0" right="0"/>
+                    <constraints>
+                      <splitpane position="left"/>
+                    </constraints>
+                    <properties/>
+                    <border type="none" title="Процедуры"/>
+                    <children>
+                      <toolbar id="55531">
+                        <constraints>
+                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                            <preferred-size width="-1" height="20"/>
+                          </grid>
+                        </constraints>
+                        <properties>
+                          <floatable value="false"/>
+                        </properties>
+                        <border type="none"/>
+                        <children>
+                          <component id="19294" class="javax.swing.JButton" binding="addProcedureButton">
+                            <constraints/>
+                            <properties>
+                              <icon value="Add24.gif"/>
+                              <text value="До&amp;бавить..."/>
+                            </properties>
+                          </component>
+                          <component id="300" class="javax.swing.JButton" binding="editProcedureButton">
+                            <constraints/>
+                            <properties>
+                              <icon value="Edit24.gif"/>
+                              <text value="Реда&amp;ктировать..."/>
+                            </properties>
+                          </component>
+                          <component id="2c155" class="javax.swing.JButton" binding="delProcedureButton">
+                            <constraints/>
+                            <properties>
+                              <icon value="Delete24.gif"/>
+                              <text value="Уда&amp;лить..."/>
+                            </properties>
+                          </component>
+                        </children>
+                      </toolbar>
+                      <scrollpane id="dd687">
+                        <constraints>
+                          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties/>
+                        <border type="none"/>
+                        <children>
+                          <component id="58900" class="javax.swing.JList" binding="proceduresList">
+                            <constraints/>
+                            <properties/>
+                          </component>
+                        </children>
+                      </scrollpane>
+                    </children>
+                  </grid>
+                  <grid id="4c54e" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                    <margin top="0" left="0" bottom="0" right="0"/>
+                    <constraints>
+                      <splitpane position="right"/>
+                    </constraints>
+                    <properties/>
+                    <border type="none" title="Действия"/>
+                    <children>
+                      <scrollpane id="3983">
+                        <constraints>
+                          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties/>
+                        <border type="none"/>
+                        <children>
+                          <component id="627d3" class="javax.swing.JList" binding="actionsList">
+                            <constraints/>
+                            <properties/>
+                          </component>
+                        </children>
+                      </scrollpane>
+                      <toolbar id="e3847">
+                        <constraints>
+                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                            <preferred-size width="-1" height="20"/>
+                          </grid>
+                        </constraints>
+                        <properties>
+                          <floatable value="false"/>
+                        </properties>
+                        <border type="none"/>
+                        <children>
+                          <component id="43415" class="javax.swing.JButton" binding="addActionButton">
+                            <constraints/>
+                            <properties>
+                              <icon value="Add24.gif"/>
+                              <text value="Доба&amp;вить..."/>
+                            </properties>
+                          </component>
+                          <component id="b759a" class="javax.swing.JButton" binding="editActionButton">
+                            <constraints/>
+                            <properties>
+                              <icon value="Edit24.gif"/>
+                              <text value="Редак&amp;тировать..."/>
+                            </properties>
+                          </component>
+                          <component id="83fa0" class="javax.swing.JButton" binding="delActionButton">
+                            <constraints/>
+                            <properties>
+                              <icon value="Delete24.gif"/>
+                              <text value="Удал&amp;ить..."/>
+                            </properties>
+                          </component>
+                        </children>
+                      </toolbar>
+                    </children>
+                  </grid>
+                </children>
               </splitpane>
             </children>
           </grid>

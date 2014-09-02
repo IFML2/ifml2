@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @XmlRootElement(name = "loop")
+@IFML2Instruction(title = "Цикл")
 public class LoopInstruction extends Instruction
 {
     @XmlElement(name = "empty")
@@ -41,11 +42,6 @@ public class LoopInstruction extends Instruction
     @XmlAttribute(name = "condition")
     private
     String conditionExpression;
-
-    public static String getTitle()
-    {
-        return "Цикл";
-    }
 
     @Override
     public void run(RunningContext runningContext) throws IFML2Exception

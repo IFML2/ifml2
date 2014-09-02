@@ -128,7 +128,7 @@ public class LibLoadUtilityConsole
                 procedure.getParameters().add(parameter);
             }
             procedure.getInstructions().add(showMessageInstr);
-            library.procedures.put(procedureName, procedure);
+            library.procedures.add(procedure);
             log("Добавлена/заменена процедура \"{0}\".", procedure.getName());
 
             // create Template

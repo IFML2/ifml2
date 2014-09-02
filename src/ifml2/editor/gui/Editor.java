@@ -43,6 +43,14 @@ public class Editor extends JFrame
     private JButton newItemButton;
     private JButton editItemButton;
     private JButton delItemButton;
+    private JList proceduresList;
+    private JList actionsList;
+    private JButton addProcedureButton;
+    private JButton editProcedureButton;
+    private JButton delProcedureButton;
+    private JButton addActionButton;
+    private JButton editActionButton;
+    private JButton delActionButton;
     private Story story;
     private boolean isStoryEdited = false;
     private String storyFileName = "новая история";
@@ -98,7 +106,6 @@ public class Editor extends JFrame
                 if (editLocation(location))
                 {
                     story.addLocation(location);
-                    markStoryEdited();
                     locationsList.setSelectedValue(location, true);
                 }
             }
@@ -163,7 +170,6 @@ public class Editor extends JFrame
                 if (editItem(item))
                 {
                     story.addItem(item);
-                    markStoryEdited();
                     itemsList.setSelectedValue(item, true);
                 }
             }
@@ -188,7 +194,6 @@ public class Editor extends JFrame
                 Item item = (Item) itemsList.getSelectedValue();
                 if (editItem(item))
                 {
-                    markStoryEdited();
                     itemsList.setSelectedValue(item, true);
                 }
             }
@@ -216,6 +221,129 @@ public class Editor extends JFrame
                     if (GUIUtils.showDeleteConfirmDialog(Editor.this, "предмет", "предмета", Word.GenderEnum.MASCULINE))
                     {
                         story.getItems().remove(item);
+                        markStoryEdited();
+                    }
+                }
+            }
+        });
+
+        addProcedureButton.setAction(new ButtonAction(addProcedureButton)
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                Procedure procedure = new Procedure();
+                if(editProcedure(procedure))
+                {
+                    story.getProcedures().add(procedure);
+                    proceduresList.setSelectedValue(procedure, true);
+                }
+            }
+        });
+        //todo edit procedure
+        delProcedureButton.setAction(new ButtonAction(delProcedureButton, false)
+        {
+            @Override
+            public void registerListeners()
+            {
+                proceduresList.addListSelectionListener(new ListSelectionListener()
+                {
+                    @Override
+                    public void valueChanged(ListSelectionEvent e)
+                    {
+                        setEnabled(!proceduresList.isSelectionEmpty()); // depends on selection
+                    }
+                });
+            }
+
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                Procedure procedure = (Procedure) proceduresList.getSelectedValue();
+                if (procedure != null)
+                {
+                    if (GUIUtils.showDeleteConfirmDialog(Editor.this, "процедуру", "процедуры", Word.GenderEnum.FEMININE))
+                    {
+                        story.getProcedures().remove(procedure);
+                        markStoryEdited();
+                    }
+                }
+            }
+        });
+
+        addActionButton.setAction(new ButtonAction(addActionButton)
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                Action action = new Action();
+                try
+                {
+                    if (editAction(action))
+                    {
+                        story.getActions().add(action);
+                        actionsList.setSelectedValue(action, true);
+                    }
+                }
+                catch (IFML2EditorException ex)
+                {
+                    GUIUtils.showErrorMessage(Editor.this, ex);
+                }
+            }
+        });
+        editActionButton.setAction(new ButtonAction(editActionButton, false)
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                Action action = (Action) actionsList.getSelectedValue();
+                try
+                {
+                    editAction(action);
+                }
+                catch (IFML2EditorException ex)
+                {
+                    GUIUtils.showErrorMessage(Editor.this, ex);
+                }
+            }
+
+            @Override
+            public void registerListeners()
+            {
+                actionsList.addListSelectionListener(new ListSelectionListener()
+                {
+                    @Override
+                    public void valueChanged(ListSelectionEvent e)
+                    {
+                        setEnabled(!actionsList.isSelectionEmpty()); // depends on selection
+                    }
+                });
+            }
+        });
+        delActionButton.setAction(new ButtonAction(delActionButton, false)
+        {
+            @Override
+            public void registerListeners()
+            {
+                actionsList.addListSelectionListener(new ListSelectionListener()
+                {
+                    @Override
+                    public void valueChanged(ListSelectionEvent e)
+                    {
+                        setEnabled(!actionsList.isSelectionEmpty()); // depends on selection
+                    }
+                });
+            }
+
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                Action action = (Action) actionsList.getSelectedValue();
+                if (action != null)
+                {
+                    if (GUIUtils.showDeleteConfirmDialog(Editor.this, "действие", "действия", Word.GenderEnum.NEUTER))
+                    {
+                        story.getActions().remove(action);
                         markStoryEdited();
                     }
                 }
@@ -265,8 +393,52 @@ public class Editor extends JFrame
             }
         });
 
+        actionsList.addMouseListener(new MouseAdapter()
+        {
+            @Override
+            public void mouseClicked(MouseEvent e)
+            {
+                if (e.getClickCount() == 2)
+                {
+                    Action action = (Action) actionsList.getSelectedValue();
+                    if (action != null)
+                    {
+                        try
+                        {
+                            editAction(action);
+                        }
+                        catch (IFML2EditorException ex)
+                        {
+                            GUIUtils.showErrorMessage(Editor.this, ex);
+                        }
+                    }
+                }
+            }
+        });
+
         // create new story at start
         setStory(new Story());
+    }
+
+    private boolean editProcedure(Procedure procedure)
+    {
+        return false; // todo editProcedure!!!
+    }
+
+    private boolean editAction(Action action) throws IFML2EditorException
+    {
+        if (action != null)
+        {
+            ActionEditor actionEditor = new ActionEditor(this, action, story.getDataHelper());
+            if (actionEditor.showDialog())
+            {
+                actionEditor.getData(action);
+                markStoryEdited();
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public static void main(String[] args)
@@ -321,6 +493,8 @@ public class Editor extends JFrame
     {
         locationsList.setModel(new DefaultEventListModel<Location>(story.getLocations()));
         itemsList.setModel(new DefaultEventListModel<Item>(story.getItems()));
+        proceduresList.setModel(new DefaultEventListModel<Procedure>(story.getProcedures()));
+        actionsList.setModel(new DefaultEventListModel<Action>(story.getActions()));
     }
 
     private void loadStory(final String storyFile)
@@ -782,6 +956,7 @@ public class Editor extends JFrame
             if (itemEditor.showDialog())
             {
                 itemEditor.getData(item);
+                markStoryEdited();
                 return true;
             }
         }

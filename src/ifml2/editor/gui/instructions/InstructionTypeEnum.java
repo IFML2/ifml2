@@ -27,11 +27,8 @@ public enum InstructionTypeEnum
 
         try
         {
-            this.title = (String) instrClass.getMethod("getTitle").invoke(instrClass);
-        }
-        catch (NoSuchMethodException e)
-        {
-            throw new RuntimeException(MessageFormat.format("{0} class hasn't getTitle() method!", instrClass.getSimpleName()));
+            IFML2Instruction annotation = instrClass.getAnnotation(IFML2Instruction.class);
+            this.title = annotation != null ? annotation.title() : instrClass.getSimpleName();
         }
         catch (Throwable e)
         {

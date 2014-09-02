@@ -1,5 +1,6 @@
 package ifml2.editor.gui;
 
+import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ifml2.GUIUtils;
 import ifml2.editor.IFML2EditorException;
@@ -30,7 +31,7 @@ public class ProceduresEditor extends AbstractEditor<HashMap<String, Procedure>>
 
     public static final String PROCEDURES_EDITOR_TITLE = "Процедуры";
 
-    private HashMap<String, Procedure> procedures = null;
+    private EventList<Procedure> procedures = null;
 
     private final AbstractAction delProcedureAction = new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
     {
@@ -47,7 +48,7 @@ public class ProceduresEditor extends AbstractEditor<HashMap<String, Procedure>>
             if(JOptionPane.showConfirmDialog(ProceduresEditor.this, "Вы действительно хотите удалить процедуру " + procedure.getName() + "?",
                     "Удаление процедуры", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
             {
-                procedures.values().remove(procedure);
+                procedures.remove(procedure);
                 updateAllData();
             }
         }
@@ -115,7 +116,7 @@ public class ProceduresEditor extends AbstractEditor<HashMap<String, Procedure>>
         }
     };
 
-    public ProceduresEditor(Window owner, final HashMap<String, Procedure> procedures, Story.DataHelper storyDataHelper)
+    public ProceduresEditor(Window owner, final EventList<Procedure> procedures, Story.DataHelper storyDataHelper)
     {
         super(owner);
         initializeEditor(PROCEDURES_EDITOR_TITLE, contentPane, buttonOK, null);
@@ -134,7 +135,7 @@ public class ProceduresEditor extends AbstractEditor<HashMap<String, Procedure>>
                 if(procedureName != null && !"".equals(procedureName))
                 {
                     Procedure procedure = new Procedure(procedureName);
-                    procedures.put(procedureName, procedure);
+                    procedures.add(procedure);
                     updateAllData();
                     proceduresList.setSelectedValue(procedure, true);
                 }
@@ -201,7 +202,7 @@ public class ProceduresEditor extends AbstractEditor<HashMap<String, Procedure>>
     private void updateAllData()
     {
         DefaultListModel proceduresListModel = new DefaultListModel();
-        for(Procedure procedure : procedures.values())
+        for(Procedure procedure : procedures)
         {
             proceduresListModel.addElement(procedure);
         }
