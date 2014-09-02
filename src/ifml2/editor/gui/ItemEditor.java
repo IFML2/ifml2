@@ -326,14 +326,14 @@ public class ItemEditor extends AbstractEditor<Item>
         item.setName(nameText.getText().trim());
         item.setDescription(descText.getText());
 
-        try
-        {
+        /*try
+        {*/
             item.setWordLinks(wordLinksClone);
-        }
+        /*}
         catch (IFML2Exception e)
         {
             GUIUtils.showErrorMessage(this, e);
-        }
+        }*/
 
         item.getStartingPosition().setInventory(itemInInventoryCheck.isSelected());
         EventList<Location> locations = item.getStartingPosition().getLocations();

@@ -101,9 +101,13 @@
             <extension base="ifml2:objectType">
                 <all minOccurs="1" maxOccurs="1">
                     <element name="north" type="ifml2:idType" minOccurs="0" maxOccurs="1"/>
+                    <element name="north-east" type="ifml2:idType" minOccurs="0" maxOccurs="1"/>
                     <element name="east" type="ifml2:idType" minOccurs="0" maxOccurs="1"/>
+                    <element name="south-east" type="ifml2:idType" minOccurs="0" maxOccurs="1"/>
                     <element name="south" type="ifml2:idType" minOccurs="0" maxOccurs="1"/>
+                    <element name="south-west" type="ifml2:idType" minOccurs="0" maxOccurs="1"/>
                     <element name="west" type="ifml2:idType" minOccurs="0" maxOccurs="1"/>
+                    <element name="north-west" type="ifml2:idType" minOccurs="0" maxOccurs="1"/>
                     <element name="up" type="ifml2:idType" minOccurs="0" maxOccurs="1"/>
                     <element name="down" type="ifml2:idType" minOccurs="0" maxOccurs="1"/>
                 </all>
