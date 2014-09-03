@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "goToLoc")
-@IFML2Instruction(title = "Перейти в локацию ")
+@IFML2Instruction(title = "Перейти в локацию")
 public class GoToLocInstruction extends Instruction
 {
     private String locationExpr = "";

@@ -1,13 +1,34 @@
 package ifml2.om;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 
+@XmlAccessorType(XmlAccessType.NONE)
 public class Parameter
 {
-    private String name;
     @XmlAttribute(name = "name")
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    private String name;
+
+    public Parameter(String name)
+    {
+        this.name = name;
+    }
+
+    public Parameter()
+    {
+
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
+    }
 
     @Override
     public String toString()

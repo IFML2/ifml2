@@ -7,12 +7,14 @@ import ifml2.CommonUtils;
 import ifml2.GUIUtils;
 import ifml2.IFML2Exception;
 import ifml2.editor.IFML2EditorException;
+import ifml2.editor.gui.editors.*;
 import ifml2.engine.Engine;
 import ifml2.om.Action;
 import ifml2.om.*;
 import ifml2.players.guiplayer.GUIPlayer;
 import ifml2.tests.gui.TestRunner;
 import org.apache.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -240,7 +242,34 @@ public class Editor extends JFrame
                 }
             }
         });
-        //todo edit procedure
+        editProcedureButton.setAction(new ButtonAction(editProcedureButton, false)
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                Procedure procedure = (Procedure) proceduresList.getSelectedValue();
+                if(procedure != null)
+                {
+                    if(editProcedure(procedure))
+                    {
+                        proceduresList.setSelectedValue(procedure, true);
+                    }
+                }
+            }
+
+            @Override
+            public void registerListeners()
+            {
+                proceduresList.addListSelectionListener(new ListSelectionListener()
+                {
+                    @Override
+                    public void valueChanged(ListSelectionEvent e)
+                    {
+                        setEnabled(!proceduresList.isSelectionEmpty()); // depends on selection
+                    }
+                });
+            }
+        });
         delProcedureButton.setAction(new ButtonAction(delProcedureButton, false)
         {
             @Override
@@ -393,6 +422,23 @@ public class Editor extends JFrame
             }
         });
 
+        proceduresList.addMouseListener(new MouseAdapter()
+        {
+            @Override
+            public void mouseClicked(MouseEvent e)
+            {
+                if (e.getClickCount() == 2)
+                {
+                    Procedure procedure = (Procedure) proceduresList.getSelectedValue();
+                    if (procedure != null)
+                    {
+                        editProcedure(procedure);
+                        proceduresList.setSelectedValue(procedure, true);
+                    }
+                }
+            }
+        });
+
         actionsList.addMouseListener(new MouseAdapter()
         {
             @Override
@@ -406,6 +452,7 @@ public class Editor extends JFrame
                         try
                         {
                             editAction(action);
+                            actionsList.setSelectedValue(action, true);
                         }
                         catch (IFML2EditorException ex)
                         {
@@ -420,9 +467,17 @@ public class Editor extends JFrame
         setStory(new Story());
     }
 
-    private boolean editProcedure(Procedure procedure)
+    private boolean editProcedure(@NotNull Procedure procedure)
     {
-        return false; // todo editProcedure!!!
+        ProcedureEditor procedureEditor = new ProcedureEditor(this, procedure, story.getDataHelper());
+
+        if(procedureEditor.showDialog())
+        {
+            markStoryEdited();
+            return true;
+        }
+
+        return false;
     }
 
     private boolean editAction(Action action) throws IFML2EditorException
