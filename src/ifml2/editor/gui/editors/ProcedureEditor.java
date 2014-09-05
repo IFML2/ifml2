@@ -75,20 +75,10 @@ public class ProcedureEditor extends AbstractEditor<Procedure>
                     }
                 }
             }
-
-            /*@Override
-            public void registerListeners()
-            {
-                parametersList.addListSelectionListener(new ListSelectionListener()
-                {
-                    @Override
-                    public void valueChanged(ListSelectionEvent e)
-                    {
-                        setEnabled(!parametersList.isSelectionEmpty()); // depends on selection
-                    }
-                });
-            }*/
         });
+
+        // clone data
+        ///parametersClone = GlazedLists.eventList(procedure.getParameters()); //todo no really clones!!!
     }
 
     @Override

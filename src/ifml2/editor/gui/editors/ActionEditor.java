@@ -260,8 +260,8 @@ public class ActionEditor extends AbstractEditor<Action>
         });
 
         // clone data
-        templatesClone = GlazedLists.eventList(action.getTemplates());
-        restrictionsClone = GlazedLists.eventList(action.getRestrictions());
+        templatesClone = GlazedLists.eventList(action.getTemplates()); //todo is that really clones members???
+        restrictionsClone = GlazedLists.eventList(action.getRestrictions()); //todo is that really clones members???
 
         // init form data
         nameText.setText(action.getName());
