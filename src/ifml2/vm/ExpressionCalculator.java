@@ -335,14 +335,14 @@ public class ExpressionCalculator
                         throw new IFML2ExpressionException("Величина не является именем свойства ({0})", rightValue);
                     }
 
-                    IFMLObject object = objectValue.value;
+                    IFMLObject object = objectValue.getValue();
 
                     if(object == null)
                     {
                         throw new IFML2ExpressionException("Объект {0} не задан (пуст)", leftValue);
                     }
 
-                    String propertyName = ((UnresolvedSymbolValue)rightValue).value;
+                    String propertyName = ((UnresolvedSymbolValue)rightValue).getValue();
 
                     Value propertyValue = object.getMemberValue(propertyName, runningContext);
 
@@ -429,8 +429,8 @@ public class ExpressionCalculator
                         throw new IFML2ExpressionException("Величина не является логической ({0})", rightValue);
                     }
 
-                    boolean leftBoolValue = ((BooleanValue) leftValue).value;
-                    boolean rightBoolValue = ((BooleanValue) rightValue).value;
+                    boolean leftBoolValue = ((BooleanValue) leftValue).getValue();
+                    boolean rightBoolValue = ((BooleanValue) rightValue).getValue();
 
                     result = new BooleanValue(leftBoolValue && rightBoolValue);
 
@@ -448,8 +448,8 @@ public class ExpressionCalculator
                         throw new IFML2ExpressionException("Величина не является логической ({0})", rightValue);
                     }
 
-                    boolean leftBoolValue = ((BooleanValue) leftValue).value;
-                    boolean rightBoolValue = ((BooleanValue) rightValue).value;
+                    boolean leftBoolValue = ((BooleanValue) leftValue).getValue();
+                    boolean rightBoolValue = ((BooleanValue) rightValue).getValue();
 
                     result = new BooleanValue(leftBoolValue || rightBoolValue);
 
@@ -463,7 +463,7 @@ public class ExpressionCalculator
                         throw new IFML2ExpressionException("Величина не является логической ({0})", rightValue);
                     }
 
-                    boolean booleanValue = ((BooleanValue) rightValue).value;
+                    boolean booleanValue = ((BooleanValue) rightValue).getValue();
 
                     result = new BooleanValue(!booleanValue);
 

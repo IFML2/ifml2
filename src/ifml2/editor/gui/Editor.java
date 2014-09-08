@@ -469,12 +469,20 @@ public class Editor extends JFrame
 
     private boolean editProcedure(@NotNull Procedure procedure)
     {
-        ProcedureEditor procedureEditor = new ProcedureEditor(this, procedure, story.getDataHelper());
-
-        if(procedureEditor.showDialog())
+        try
         {
-            markStoryEdited();
-            return true;
+            ProcedureEditor procedureEditor = new ProcedureEditor(this, procedure, story.getDataHelper());
+
+            if(procedureEditor.showDialog())
+            {
+                procedureEditor.getData(procedure);
+                markStoryEdited();
+                return true;
+            }
+        }
+        catch (IFML2EditorException e)
+        {
+            GUIUtils.showErrorMessage(this, e);
         }
 
         return false;

@@ -70,7 +70,7 @@ public abstract class Instruction implements Cloneable
             throw new IFML2VMException("Тип выражения ({0}) – не Объект у инструкции [{1}]", expression, instructionTitle);
         }
 
-        IFMLObject object = ((ObjectValue) itemValue).value;
+        IFMLObject object = ((ObjectValue) itemValue).getValue();
 
         // test for null
         if (!objectCanBeNull && object == null)
@@ -127,7 +127,7 @@ public abstract class Instruction implements Cloneable
             throw new IFML2VMException("Тип выражения ({0}) – не Логическое у инструкции [{1}]", expression, instructionTitle);
         }
 
-        return ((BooleanValue) boolValue).value;
+        return ((BooleanValue) boolValue).getValue();
     }
 
     protected List<?> getCollectionFromExpression(String expression, RunningContext runningContext, String instructionTitle, Object parameterName) throws IFML2Exception

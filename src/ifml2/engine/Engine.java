@@ -403,7 +403,7 @@ public class Engine
 
     public Location getCurrentLocation()
     {
-        return (Location) ((ObjectValue) systemVariables.get(SystemIdentifiers.CURRENT_LOCATION_SYSTEM_VARIABLE.toLowerCase())).value;
+        return (Location) ((ObjectValue) systemVariables.get(SystemIdentifiers.CURRENT_LOCATION_SYSTEM_VARIABLE.toLowerCase())).getValue();
     }
 
     public void setCurrentLocation(Location currentLocation)

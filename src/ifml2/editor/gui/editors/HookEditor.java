@@ -185,6 +185,6 @@ public class HookEditor extends AbstractEditor<Hook>
             throw new IFML2EditorException("No hook type selected!");
         }
 
-        hook.getInstructionList().rewriteInstructions(instructionListClone);
+        hook.getInstructionList().replaceInstructions(instructionListClone);
     }
 }

@@ -159,7 +159,7 @@
                       <text value="Добавить..."/>
                     </properties>
                   </component>
-                  <component id="1e716" class="javax.swing.JButton" binding="editParamaterButton">
+                  <component id="1e716" class="javax.swing.JButton" binding="editParameterButton">
                     <constraints/>
                     <properties>
                       <icon value="Edit24.gif"/>

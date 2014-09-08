@@ -186,6 +186,6 @@ public class InstructionsEditor extends AbstractEditor<InstructionList>
     @Override
     public void getData(@NotNull InstructionList instructionList)
     {
-        instructionList.rewriteInstructions(instructionListClone);
+        instructionList.replaceInstructions(instructionListClone);
     }
 }

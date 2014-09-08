@@ -72,6 +72,6 @@ public class RestrictionEditor extends AbstractEditor<Restriction>
     public void getData(@NotNull Restriction data) throws IFML2EditorException
     {
         data.setCondition(conditionText.getText());
-        data.getReaction().rewriteInstructions(reactionClone);
+        data.getReaction().replaceInstructions(reactionClone);
     }
 }
