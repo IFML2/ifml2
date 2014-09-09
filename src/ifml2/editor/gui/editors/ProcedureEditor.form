@@ -76,7 +76,7 @@
             </constraints>
             <properties/>
           </component>
-          <grid id="90b59" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="90b59" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -84,53 +84,11 @@
             <properties/>
             <border type="none" title="Инструкции"/>
             <children>
-              <toolbar id="483aa">
+              <nested-form id="d1689" form-file="ifml2/editor/gui/InstructionsEditForm.form" binding="instructionsEditForm">
                 <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
-                    <preferred-size width="-1" height="20"/>
-                  </grid>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                 </constraints>
-                <properties>
-                  <floatable value="false"/>
-                </properties>
-                <border type="none"/>
-                <children>
-                  <component id="b499a" class="javax.swing.JButton" binding="addInstructionButton">
-                    <constraints/>
-                    <properties>
-                      <icon value="Add24.gif"/>
-                      <text value="Добавить..."/>
-                    </properties>
-                  </component>
-                  <component id="45487" class="javax.swing.JButton" binding="editInstructionButton">
-                    <constraints/>
-                    <properties>
-                      <icon value="Edit24.gif"/>
-                      <text value="Изменить..."/>
-                    </properties>
-                  </component>
-                  <component id="1cc0" class="javax.swing.JButton" binding="deleteInstructionButton">
-                    <constraints/>
-                    <properties>
-                      <icon value="Delete24.gif"/>
-                      <text value="Удалить"/>
-                    </properties>
-                  </component>
-                </children>
-              </toolbar>
-              <scrollpane id="a6188">
-                <constraints>
-                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties/>
-                <border type="none"/>
-                <children>
-                  <component id="77dc7" class="javax.swing.JList" binding="instructionsList">
-                    <constraints/>
-                    <properties/>
-                  </component>
-                </children>
-              </scrollpane>
+              </nested-form>
             </children>
           </grid>
           <grid id="ffeec" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">

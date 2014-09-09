@@ -120,6 +120,11 @@
         <default-constraints vsize-policy="6" hsize-policy="0" anchor="0" fill="2" />
       </item>
     </group>
+    <group name="TOY Soft">
+      <item class="ifml2.editor.gui.InstructionsEditForm" icon="Edit24.gif" removable="true" auto-create-binding="true" can-attach-label="false">
+        <default-constraints vsize-policy="7" hsize-policy="7" anchor="0" fill="3" />
+      </item>
+    </group>
   </component>
 </project>
 

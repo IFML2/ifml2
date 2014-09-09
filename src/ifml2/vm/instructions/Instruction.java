@@ -52,9 +52,7 @@ public abstract class Instruction implements Cloneable
     @Override
     public Instruction clone() throws CloneNotSupportedException
     {
-        Instruction clone = (Instruction) super.clone();
-        clone.virtualMachine = virtualMachine; // just link
-        return clone;
+        return (Instruction) super.clone(); // all fields are copied by default
     }
 
     abstract public void run(RunningContext runningContext) throws IFML2Exception;

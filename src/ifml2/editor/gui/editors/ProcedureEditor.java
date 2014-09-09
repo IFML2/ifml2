@@ -5,11 +5,11 @@ import ifml2.GUIUtils;
 import ifml2.editor.IFML2EditorException;
 import ifml2.editor.gui.AbstractEditor;
 import ifml2.editor.gui.ButtonAction;
+import ifml2.editor.gui.InstructionsEditForm;
 import ifml2.om.Parameter;
 import ifml2.om.Procedure;
 import ifml2.om.Story;
 import ifml2.om.Word;
-import ifml2.vm.instructions.Instruction;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -25,18 +25,18 @@ public class ProcedureEditor extends AbstractEditor<Procedure>
     private JButton buttonCancel;
     private JTextField nameText;
     private JList parametersList;
-    private JList instructionsList;
     private JButton addParameterButton;
     private JButton editParameterButton;
     private JButton deleteParameterButton;
-    private JButton addInstructionButton;
-    private JButton editInstructionButton;
-    private JButton deleteInstructionButton;
+    private InstructionsEditForm instructionsEditForm;
+    private Story.DataHelper storyDataHelper;
 
     public ProcedureEditor(Window owner, @NotNull final Procedure procedure, Story.DataHelper storyDataHelper)
     {
         super(owner);
         initializeEditor(PROCEDURE_EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
+
+        this.storyDataHelper = storyDataHelper;
 
         // init buttons
         initButtons();
@@ -46,15 +46,20 @@ public class ProcedureEditor extends AbstractEditor<Procedure>
             // clone data
             procedureClone = procedure.clone();
 
-            // init form
-            nameText.setText(procedureClone.getName());
-            parametersList.setModel(new DefaultEventListModel<Parameter>(procedureClone.getParameters()));
-            instructionsList.setModel(new DefaultEventListModel<Instruction>(procedureClone.getInstructions()));
+            // bind data
+            bindData();
         }
         catch (CloneNotSupportedException e)
         {
             GUIUtils.showErrorMessage(this, e);
         }
+    }
+
+    private void bindData() throws CloneNotSupportedException
+    {
+        nameText.setText(procedureClone.getName());
+        parametersList.setModel(new DefaultEventListModel<Parameter>(procedureClone.getParameters()));
+        instructionsEditForm.init(this, procedureClone.getProcedureBody(), storyDataHelper);
     }
 
     private void initButtons()
@@ -73,7 +78,6 @@ public class ProcedureEditor extends AbstractEditor<Procedure>
                     procedureClone.getParameters().add(parameter);
                     parametersList.setSelectedValue(parameter, true);
                 }
-
             }
         });
         editParameterButton.setAction(new ButtonAction(editParameterButton, parametersList)
@@ -107,6 +111,8 @@ public class ProcedureEditor extends AbstractEditor<Procedure>
                 }
             }
         });
+
+
     }
 
     @Override
@@ -114,7 +120,11 @@ public class ProcedureEditor extends AbstractEditor<Procedure>
     {
         try
         {
+            // copy data from form to procedureClone
             procedureClone.setName(nameText.getText());
+            instructionsEditForm.saveInstructions(procedureClone.getProcedureBody());
+
+            // copy data from procedureClone to procedure
             procedureClone.copyTo(data);
         }
         catch (CloneNotSupportedException e)
