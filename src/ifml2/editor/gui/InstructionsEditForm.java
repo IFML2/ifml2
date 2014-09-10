@@ -86,7 +86,7 @@ public class InstructionsEditForm extends JInternalFrame
             public void actionPerformed(ActionEvent e)
             {
                 Instruction selectedInstr = (Instruction) instructionsList.getSelectedValue();
-                if(selectedInstr != null)
+                if (selectedInstr != null)
                 {
                     EditorUtils.showAssociatedEditor(owner, selectedInstr, storyDataHelper);
                 }
@@ -98,10 +98,10 @@ public class InstructionsEditForm extends JInternalFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                if(GUIUtils.showDeleteConfirmDialog(owner, "инструкцию", "инструкции", Word.GenderEnum.FEMININE))
+                if (GUIUtils.showDeleteConfirmDialog(owner, "инструкцию", "инструкции", Word.GenderEnum.FEMININE))
                 {
                     Instruction selectedInstr = (Instruction) instructionsList.getSelectedValue();
-                    if(selectedInstr != null)
+                    if (selectedInstr != null)
                     {
                         instructionListClone.getInstructions().remove(selectedInstr);
                     }
@@ -115,7 +115,7 @@ public class InstructionsEditForm extends JInternalFrame
             public void actionPerformed(ActionEvent e)
             {
                 int selIdx = instructionsList.getSelectedIndex();
-                if(selIdx > 0)
+                if (selIdx > 0)
                 {
                     Collections.swap(instructionListClone.getInstructions(), selIdx, selIdx - 1);
                     instructionsList.setSelectedIndex(selIdx - 1);
@@ -123,17 +123,23 @@ public class InstructionsEditForm extends JInternalFrame
             }
 
             @Override
-            public void registerListeners()
+            public void init()
             {
+                updateState();
+
                 instructionsList.addListSelectionListener(new ListSelectionListener()
                 {
                     @Override
                     public void valueChanged(ListSelectionEvent e)
                     {
-                        int selectedInstrIdx = instructionsList.getSelectedIndex();
-                        setEnabled(selectedInstrIdx > 0);
+                        updateState();
                     }
                 });
+            }
+
+            private void updateState()
+            {
+                setEnabled(instructionsList.getSelectedIndex() > 0);
             }
         });
 
@@ -144,7 +150,7 @@ public class InstructionsEditForm extends JInternalFrame
             {
                 int selIdx = instructionsList.getSelectedIndex();
                 EventList<Instruction> instructions = instructionListClone.getInstructions();
-                if(selIdx < instructions.size() - 1)
+                if (selIdx < instructions.size() - 1)
                 {
                     Collections.swap(instructions, selIdx, selIdx + 1);
                     instructionsList.setSelectedIndex(selIdx + 1);
@@ -152,7 +158,21 @@ public class InstructionsEditForm extends JInternalFrame
             }
 
             @Override
-            public void registerListeners()
+            public void init()
+            {
+                updateState();
+
+                instructionsList.addListSelectionListener(new ListSelectionListener()
+                {
+                    @Override
+                    public void valueChanged(ListSelectionEvent e)
+                    {
+                        updateState();
+                    }
+                });
+            }
+
+            private void updateState()
             {
                 int selectedInstrIdx = instructionsList.getSelectedIndex();
                 int listSize = instructionsList.getModel().getSize();
@@ -161,8 +181,8 @@ public class InstructionsEditForm extends JInternalFrame
         });
     }
 
-    public void saveInstructions(@NotNull InstructionList instructionList)
+    /*public void saveInstructions(@NotNull InstructionList instructionList)
     {
         instructionList.replaceInstructions(instructionListClone);
-    }
+    }*/
 }

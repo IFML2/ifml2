@@ -115,7 +115,7 @@ public class Editor extends JFrame
         editLocationAction = new ButtonAction(editLocButton, false)
         {
             @Override
-            public void registerListeners()
+            public void init()
             {
                 locationsList.addListSelectionListener(new ListSelectionListener()
                 {
@@ -136,7 +136,7 @@ public class Editor extends JFrame
         delLocationAction = new ButtonAction(delLocButton, false)
         {
             @Override
-            public void registerListeners()
+            public void init()
             {
                 locationsList.addListSelectionListener(new ListSelectionListener()
                 {
@@ -258,7 +258,7 @@ public class Editor extends JFrame
             }
 
             @Override
-            public void registerListeners()
+            public void init()
             {
                 proceduresList.addListSelectionListener(new ListSelectionListener()
                 {
@@ -273,7 +273,7 @@ public class Editor extends JFrame
         delProcedureButton.setAction(new ButtonAction(delProcedureButton, false)
         {
             @Override
-            public void registerListeners()
+            public void init()
             {
                 proceduresList.addListSelectionListener(new ListSelectionListener()
                 {
@@ -337,7 +337,7 @@ public class Editor extends JFrame
             }
 
             @Override
-            public void registerListeners()
+            public void init()
             {
                 actionsList.addListSelectionListener(new ListSelectionListener()
                 {
@@ -352,7 +352,7 @@ public class Editor extends JFrame
         delActionButton.setAction(new ButtonAction(delActionButton, false)
         {
             @Override
-            public void registerListeners()
+            public void init()
             {
                 actionsList.addListSelectionListener(new ListSelectionListener()
                 {
@@ -776,6 +776,7 @@ public class Editor extends JFrame
             }
         });
         //storyMenu.add(new EditDictAction()); //https://www.hostedredmine.com/issues/11947
+        /* moved to main window tab
         storyMenu.add(new AbstractAction("Редактировать процедуры...")
         {
             @Override
@@ -808,7 +809,7 @@ public class Editor extends JFrame
                     markStoryEdited();
                 }
             }
-        });
+        });*/
         storyMenu.addSeparator();
         storyMenu.add(new AbstractAction("Запустить историю в Плеере...", GUIUtils.PLAY_ICON)
         {
