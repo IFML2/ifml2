@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="5.1.13" transformSequenceNumber="4">
-  <directoryPresets config="../../../../../Documents/ЯРИЛ 2.0/ifml2 project/log4j.xml" />
-  <application name="ЯРИЛ 2.0" distributionSourceDir="" applicationId="5434-6524-6365-4741" mediaDir="." mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="9" lzmaCompression="true" pack200Compression="true" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="true" shortName="${compiler:sys.fullName}" publisher="TOY Soft" publisherWeb="http://toysoft.narod.ru" version="navigation" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" installerName="" javaMinVersion="1.6" javaMaxVersion="1.6" allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
+  <directoryPresets config="../../lib/glazedlists_java15-1.9.0.jar" />
+  <application name="ЯРИЛ 2.0 Developer version" distributionSourceDir="" applicationId="5434-6524-6365-4741" mediaDir="." mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="9" lzmaCompression="true" pack200Compression="true" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="true" shortName="${compiler:sys.fullName}" publisher="TOY Soft" publisherWeb="http://toysoft.narod.ru" version="proc params" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" installerName="" javaMinVersion="1.6" javaMaxVersion="1.6" allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="true" languageSelectionInPrincipalLanguage="false">
       <principalLanguage id="ru" customLocalizationFile="" />
       <additionalLanguages>
@@ -38,7 +38,7 @@
         <exclude />
       </dirEntry>
       <fileEntry mountPoint="23" file="../../out/artifacts/ifml2/ifml2.jar" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
-      <fileEntry mountPoint="23" file="../../lib/glazedlists_java15-1.9-20110828.184933-10.jar" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
+      <fileEntry mountPoint="23" file="../../lib/glazedlists_java15-1.9.0.jar" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
       <fileEntry mountPoint="23" file="../../lib/apache-log4j-1.2.17/log4j-1.2.17.jar" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
       <fileEntry mountPoint="23" file="../../docs/notes.txt" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
       <fileEntry mountPoint="23" file="../../log4j.xml" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
@@ -100,7 +100,7 @@
       <java mainClass="ifml2.Launcher" vmParameters="-version:&quot;1.6*&quot; -Dlog4j.configuration=file:log4j.xml" arguments="&quot;player&quot;" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
         <classPath>
           <archive location="IFML2.jar" failOnError="false" />
-          <archive location="glazedlists_java15-1.9-20110828.184933-10.jar" failOnError="false" />
+          <archive location="glazedlists_java15-1.9.0.jar" failOnError="false" />
           <archive location="log4j-1.2.17.jar" failOnError="false" />
         </classPath>
         <nativeLibraryDirectories />
@@ -131,7 +131,7 @@
       <java mainClass="ifml2.Launcher" vmParameters="-version:&quot;1.6*&quot; -Dlog4j.configuration=file:log4j.xml" arguments="&quot;editor&quot;" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
         <classPath>
           <archive location="IFML2.jar" failOnError="false" />
-          <archive location="glazedlists_java15-1.9-20110828.184933-10.jar" failOnError="false" />
+          <archive location="glazedlists_java15-1.9.0.jar" failOnError="false" />
           <archive location="log4j-1.2.17.jar" failOnError="false" />
         </classPath>
         <nativeLibraryDirectories />
@@ -162,7 +162,7 @@
       <java mainClass="ifml2.tests.gui.TestRunner" vmParameters="-version:&quot;1.6*&quot; -Dlog4j.configuration=file:log4j.xml" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
         <classPath>
           <archive location="IFML2.jar" failOnError="false" />
-          <archive location="glazedlists_java15-1.9-20110828.184933-10.jar" failOnError="false" />
+          <archive location="glazedlists_java15-1.9.0.jar" failOnError="false" />
           <archive location="log4j-1.2.17.jar" failOnError="false" />
         </classPath>
         <nativeLibraryDirectories />
@@ -254,7 +254,11 @@
           <screen name="" id="4" customizedId="" beanClass="com.install4j.runtime.beans.screens.InstallationDirectoryScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
             <serializedBean>
               <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.screens.InstallationDirectoryScreen" />
+                <object class="com.install4j.runtime.beans.screens.InstallationDirectoryScreen">
+                  <void property="allowNewFolderCreation">
+                    <boolean>true</boolean>
+                  </void>
+                </object>
               </java>
             </serializedBean>
             <condition>!context.getBooleanVariable("sys.confirmedUpdateInstallation")</condition>
