@@ -25,6 +25,11 @@ import java.util.concurrent.Callable;
  */
 public class ListEditForm<T> extends JInternalFrame
 {
+    /*
+    * todo rewrite using internal options class with default options ("element" for RP and VP and so on) -> call init with new Options and override actions and params if needed
+    * */
+
+
     private JPanel contentPane;
     private JList elementsList;
     private JButton upButton;
