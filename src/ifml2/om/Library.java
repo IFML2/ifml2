@@ -22,8 +22,6 @@ public class Library
     @XmlElement(name = "action")
     public final EventList<Action> actions = new BasicEventList<Action>();
 
-    //@XmlJavaTypeAdapter(value = ProceduresAdapter.class)
-    //public final HashMap<String, Procedure> procedures = new HashMap<String, Procedure>();
     @XmlElementWrapper(name = LIBRARY_PROCEDURES_ELEMENT)
     @XmlElement(name = PROCEDURES_PROCEDURE_ELEMENT)
     public final EventList<Procedure> procedures = new BasicEventList<Procedure>();

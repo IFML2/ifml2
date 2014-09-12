@@ -25,6 +25,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.concurrent.Callable;
 
 public class Editor extends JFrame
 {
@@ -45,14 +47,11 @@ public class Editor extends JFrame
     private JButton newItemButton;
     private JButton editItemButton;
     private JButton delItemButton;
-    private JList proceduresList;
     private JList actionsList;
-    private JButton addProcedureButton;
-    private JButton editProcedureButton;
-    private JButton delProcedureButton;
     private JButton addActionButton;
     private JButton editActionButton;
     private JButton delActionButton;
+    private ListEditForm<Procedure> proceduresListEditForm;
     private Story story;
     private boolean isStoryEdited = false;
     private String storyFileName = "новая история";
@@ -229,77 +228,6 @@ public class Editor extends JFrame
             }
         });
 
-        addProcedureButton.setAction(new ButtonAction(addProcedureButton)
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                Procedure procedure = new Procedure();
-                if(editProcedure(procedure))
-                {
-                    story.getProcedures().add(procedure);
-                    proceduresList.setSelectedValue(procedure, true);
-                }
-            }
-        });
-        editProcedureButton.setAction(new ButtonAction(editProcedureButton, false)
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                Procedure procedure = (Procedure) proceduresList.getSelectedValue();
-                if(procedure != null)
-                {
-                    if(editProcedure(procedure))
-                    {
-                        proceduresList.setSelectedValue(procedure, true);
-                    }
-                }
-            }
-
-            @Override
-            public void init()
-            {
-                proceduresList.addListSelectionListener(new ListSelectionListener()
-                {
-                    @Override
-                    public void valueChanged(ListSelectionEvent e)
-                    {
-                        setEnabled(!proceduresList.isSelectionEmpty()); // depends on selection
-                    }
-                });
-            }
-        });
-        delProcedureButton.setAction(new ButtonAction(delProcedureButton, false)
-        {
-            @Override
-            public void init()
-            {
-                proceduresList.addListSelectionListener(new ListSelectionListener()
-                {
-                    @Override
-                    public void valueChanged(ListSelectionEvent e)
-                    {
-                        setEnabled(!proceduresList.isSelectionEmpty()); // depends on selection
-                    }
-                });
-            }
-
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                Procedure procedure = (Procedure) proceduresList.getSelectedValue();
-                if (procedure != null)
-                {
-                    if (GUIUtils.showDeleteConfirmDialog(Editor.this, "процедуру", "процедуры", Word.GenderEnum.FEMININE))
-                    {
-                        story.getProcedures().remove(procedure);
-                        markStoryEdited();
-                    }
-                }
-            }
-        });
-
         addActionButton.setAction(new ButtonAction(addActionButton)
         {
             @Override
@@ -422,23 +350,6 @@ public class Editor extends JFrame
             }
         });
 
-        proceduresList.addMouseListener(new MouseAdapter()
-        {
-            @Override
-            public void mouseClicked(MouseEvent e)
-            {
-                if (e.getClickCount() == 2)
-                {
-                    Procedure procedure = (Procedure) proceduresList.getSelectedValue();
-                    if (procedure != null)
-                    {
-                        editProcedure(procedure);
-                        proceduresList.setSelectedValue(procedure, true);
-                    }
-                }
-            }
-        });
-
         actionsList.addMouseListener(new MouseAdapter()
         {
             @Override
@@ -467,13 +378,25 @@ public class Editor extends JFrame
         setStory(new Story());
     }
 
+    public static void main(String[] args)
+    {
+        Editor editor = new Editor();
+        editor.setVisible(true);
+
+        if (args != null && args.length >= 1)
+        {
+            // load story
+            editor.loadStory(args[0]);
+        }
+    }
+
     private boolean editProcedure(@NotNull Procedure procedure)
     {
         try
         {
             ProcedureEditor procedureEditor = new ProcedureEditor(this, procedure, story.getDataHelper());
 
-            if(procedureEditor.showDialog())
+            if (procedureEditor.showDialog())
             {
                 procedureEditor.getData(procedure);
                 markStoryEdited();
@@ -504,18 +427,6 @@ public class Editor extends JFrame
         return false;
     }
 
-    public static void main(String[] args)
-    {
-        Editor editor = new Editor();
-        editor.setVisible(true);
-
-        if (args != null && args.length >= 1)
-        {
-            // load story
-            editor.loadStory(args[0]);
-        }
-    }
-
     public void setStory(Story story)
     {
         this.story = story;
@@ -542,21 +453,94 @@ public class Editor extends JFrame
         File file = new File(storyFileName);
         String fileName = file.getName();
         String editorTitle = MessageFormat.format("ЯРИЛ 2.0 Редактор {0} -- {1}{2}", Engine.ENGINE_VERSION, fileName,
-                                                  isStoryEdited ? " - * история не сохранена" : "");
+                isStoryEdited ? " - * история не сохранена" : "");
         setTitle(editorTitle);
     }
 
     private int askAboutSavingStory()
     {
         return JOptionPane.showConfirmDialog(Editor.this, "Вы хотите сохранить историю перед выходом?", "История не сохранена",
-                                             JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+                JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
     }
 
     private void loadStoryInForm()
     {
         locationsList.setModel(new DefaultEventListModel<Location>(story.getLocations()));
+
         itemsList.setModel(new DefaultEventListModel<Item>(story.getItems()));
-        proceduresList.setModel(new DefaultEventListModel<Procedure>(story.getProcedures()));
+
+        proceduresListEditForm.init(Editor.this, story.getProcedures(), "процедуру", "процедуры", Word.GenderEnum.FEMININE, true,
+                new Callable<Procedure>()
+                {
+                    @Override
+                    public Procedure call() throws Exception
+                    {
+                        Procedure procedure = new Procedure();
+                        if (editProcedure(procedure))
+                        {
+                            return procedure;
+                        }
+                        return null;
+                    }
+                }, new Callable<Boolean>()
+                {
+                    @Override
+                    public Boolean call() throws Exception
+                    {
+                        Procedure procedure = proceduresListEditForm.getSelectedElement();
+                        return procedure != null && editProcedure(procedure);
+                    }
+                }, new Callable<Boolean>()
+                {
+
+                    @Override
+                    public Boolean call() throws Exception
+                    {
+                        Procedure procedure = proceduresListEditForm.getSelectedElement();
+                        if (procedure != null)
+                        {
+                            boolean toDelete = true;
+
+                            // search for usages in actions
+                            ArrayList<Action> affectedActionsList = story.getDataHelper().findActionsByProcedure(procedure);
+                            if (affectedActionsList.size() > 0)
+                            {
+                                String message = MessageFormat
+                                        .format("Это процедура вызывается в действиях:\n{0}\n" + "Поэтому она не может быть удалена.",
+                                                affectedActionsList.toString());
+                                JOptionPane.showMessageDialog(Editor.this, message, "Процедура используется", JOptionPane.WARNING_MESSAGE);
+                                return false;
+                            }
+
+                            // check for usage as started procedure
+                            if (procedure.equals(story.getStoryOptions().getStartProcedureOption().getProcedure()))
+                            {
+                                int answer = JOptionPane
+                                        .showConfirmDialog(Editor.this, "Эта процедура установлена как стартовая. Всё равно удалить?\n" +
+                                                                        "В этом случае стартовая процедура будет сброшена.",
+                                                "Процедура используется", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                                if (answer != JOptionPane.YES_OPTION)
+                                {
+                                    return false;
+                                }
+                            }
+                            else
+                            {
+                                // final answer
+                                toDelete = proceduresListEditForm.showDeleteConfirmDialog();
+                            }
+
+                            if (toDelete)
+                            {
+                                story.getProcedures().remove(procedure);
+                                return true;
+                            }
+                        }
+
+                        return false;
+                    }
+                });
+
         actionsList.setModel(new DefaultEventListModel<Action>(story.getActions()));
     }
 
@@ -776,40 +760,6 @@ public class Editor extends JFrame
             }
         });
         //storyMenu.add(new EditDictAction()); //https://www.hostedredmine.com/issues/11947
-        /* moved to main window tab
-        storyMenu.add(new AbstractAction("Редактировать процедуры...")
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                ProceduresEditor proceduresEditor = new ProceduresEditor(Editor.this, story.getProcedures(), story.getDataHelper());
-                if (proceduresEditor.showDialog())
-                {
-                    markStoryEdited();
-                }
-            }
-        });
-        storyMenu.add(new AbstractAction("Редактировать действия...")
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                EventList<Action> actions = story.getActions();
-                ActionsEditor actionsEditor = new ActionsEditor(Editor.this, story.getDataHelper());
-                if (actionsEditor.showDialog())
-                {
-                    try
-                    {
-                        actionsEditor.getData(actions);
-                    }
-                    catch (IFML2EditorException ex)
-                    {
-                        GUIUtils.showErrorMessage(Editor.this, ex);
-                    }
-                    markStoryEdited();
-                }
-            }
-        });*/
         storyMenu.addSeparator();
         storyMenu.add(new AbstractAction("Запустить историю в Плеере...", GUIUtils.PLAY_ICON)
         {

@@ -3,63 +3,57 @@ package ifml2.om;
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 
+@XmlAccessorType(XmlAccessType.NONE)
 public class Action
 {
     @XmlElementWrapper(name = "templates")
     @XmlElement(name = "template")
     private final EventList<Template> templates = new BasicEventList<Template>();
-    @XmlElement(name = "procedureCall")
-    public ProcedureCall procedureCall = new ProcedureCall();
-    private EventList<Restriction> restrictions = new BasicEventList<Restriction>();
-    private String name;
-    private String description;
-
     public EventList<Template> getTemplates()
     {
         return templates;
     }
 
-    public EventList<Restriction> getRestrictions()
-    {
-        return restrictions;
-    }
-
-    @XmlElementWrapper(name = "restrictions")
-    @XmlElement(name = "restriction")
-    public void setRestrictions(EventList<Restriction> restrictions)
-    {
-        this.restrictions = restrictions;
-    }
-
+    @XmlElement(name = "procedureCall")
+    public ProcedureCall procedureCall = new ProcedureCall();
     public ProcedureCall getProcedureCall()
     {
         return procedureCall;
     }
 
-    public String getName()
+    @XmlElementWrapper(name = "restrictions")
+    @XmlElement(name = "restriction")
+    private EventList<Restriction> restrictions = new BasicEventList<Restriction>();
+    public EventList<Restriction> getRestrictions()
     {
-        return name;
+        return restrictions;
+    }
+    public void setRestrictions(EventList<Restriction> restrictions)
+    {
+        this.restrictions = restrictions;
     }
 
     @XmlAttribute(name = "name")
     @XmlID
+    private String name;
+    public String getName()
+    {
+        return name;
+    }
     public void setName(String name)
     {
         this.name = name;
     }
 
+    @XmlAttribute(name = "description")
+    private String description;
     public String getDescription()
     {
         return description;
     }
-
-    @XmlAttribute(name = "description")
     public void setDescription(String description)
     {
         this.description = description;
@@ -87,5 +81,27 @@ public class Action
         }
 
         return parameters.toArray();
+    }
+
+    @XmlAccessorType(XmlAccessType.NONE)
+    public static class ProcedureCall
+    {
+        @XmlAttribute(name = "procedure")
+        @XmlIDREF
+        private Procedure procedure;
+        public Procedure getProcedure()
+        {
+            return procedure;
+        }
+        public void setProcedure(Procedure procedure)
+        {
+            this.procedure = procedure;
+        }
+
+        @Override
+        public String toString()
+        {
+            return procedure != null ? procedure.toString() : "";
+        }
     }
 }

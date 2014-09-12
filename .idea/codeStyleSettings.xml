@@ -19,10 +19,11 @@
           <option name="CATCH_ON_NEW_LINE" value="true" />
           <option name="FINALLY_ON_NEW_LINE" value="true" />
           <option name="ALIGN_MULTILINE_CHAINED_METHODS" value="true" />
-          <option name="ALIGN_MULTILINE_PARAMETERS_IN_CALLS" value="true" />
+          <option name="ALIGN_MULTILINE_PARAMETERS" value="false" />
           <option name="ALIGN_MULTILINE_BINARY_OPERATION" value="true" />
           <option name="ALIGN_MULTILINE_TERNARY_OPERATION" value="true" />
           <option name="CALL_PARAMETERS_WRAP" value="1" />
+          <option name="METHOD_PARAMETERS_WRAP" value="1" />
           <option name="METHOD_CALL_CHAIN_WRAP" value="1" />
           <option name="BINARY_OPERATION_WRAP" value="1" />
           <option name="TERNARY_OPERATION_WRAP" value="1" />
@@ -35,7 +36,6 @@
       </value>
     </option>
     <option name="USE_PER_PROJECT_SETTINGS" value="true" />
-    <option name="PREFERRED_PROJECT_CODE_STYLE" value="Default (1)" />
   </component>
 </project>
 

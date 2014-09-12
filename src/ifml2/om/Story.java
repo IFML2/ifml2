@@ -2,8 +2,6 @@ package ifml2.om;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.FunctionList;
-import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.event.ListEvent;
 import ca.odell.glazedlists.event.ListEventListener;
 import ifml2.CommonUtils;
@@ -17,10 +15,10 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import static ifml2.om.xml.XmlSchemaConstants.*;
 
@@ -40,27 +38,19 @@ public class Story
     @XmlElement(name = "storyOptions")
     private final StoryOptions storyOptions = new StoryOptions();
 
-    //@XmlJavaTypeAdapter(value = ProceduresAdapter.class)
-    //private final HashMap<String, Procedure> procedures = new HashMap<String, Procedure>();
     @XmlElementWrapper(name = STORY_PROCEDURES_ELEMENT)
     @XmlElement(name = PROCEDURES_PROCEDURE_ELEMENT)
     private final EventList<Procedure> procedures = new BasicEventList<Procedure>();
-    private final Map<String, Procedure> proceduresMap = GlazedLists.syncEventListToMap(procedures, new FunctionList.Function<Procedure, String>()
-    {
-        @Override
-        public String evaluate(Procedure sourceValue)
-        {
-            return sourceValue.getName().toLowerCase();
-        }
-    });
 
     private Story.DataHelper dataHelper = new DataHelper();
     @SuppressWarnings("FieldCanBeLocal") // todo remove suppress after JAXB bug is fixed
     @XmlAttribute(name = "id")
     @XmlID
     private String id = "story";
+
     @XmlJavaTypeAdapter(value = UsedLibrariesAdapter.class)
     private EventList<Library> libraries = new BasicEventList<Library>();
+
     @XmlJavaTypeAdapter(value = DictionaryAdapter.class)
     private HashMap<String, Word> dictionary = new HashMap<String, Word>();
 
@@ -69,8 +59,8 @@ public class Story
     @XmlJavaTypeAdapter(value = LocationAdapter.class)
     private EventList<Location> locations = new BasicEventList<Location>();
 
-    // subscribe to location changes for object tree update
     {
+        // subscribe to locations changes for object tree update
         locations.addListEventListener(new ListEventListener<Location>()
         {
             @Override
@@ -78,13 +68,15 @@ public class Story
             {
                 while (listChanges.next() && listChanges.getType() == ListEvent.DELETE)
                 {
+                    EventList<Location> locList = listChanges.getSourceList();
+
                     // delete from items
                     for (Item item : items)
                     {
                         EventList<Location> startLocations = item.getStartingPosition().getLocations();
                         for (Location startLocation : startLocations)
                         {
-                            if (!locations.contains(startLocation))
+                            if (!locList.contains(startLocation))
                             {
                                 startLocations.remove(startLocation);
                             }
@@ -92,40 +84,25 @@ public class Story
                     }
 
                     // delete from locations
-                    for(Location location : locations)
+                    for(Location location : locList)
                     {
-                        if(!locations.contains(location.getNorth()))
+                        for (ExitDirection direction : ExitDirection.values())
                         {
-                            location.setNorth(null);
+                            Location destination = location.getExit(direction);
+                            if(destination != null && !locList.contains(destination))
+                            {
+                                location.setExit(direction, null);
+                            }
                         }
-                        if(!locations.contains(location.getEast()))
-                        {
-                            location.setEast(null);
-                        }
-                        if(!locations.contains(location.getSouth()))
-                        {
-                            location.setSouth(null);
-                        }
-                        if(!locations.contains(location.getWest()))
-                        {
-                            location.setWest(null);
-                        }
-                        if(!locations.contains(location.getUp()))
-                        {
-                            location.setUp(null);
-                        }
-                        if(!locations.contains(location.getDown()))
-                        {
-                            location.setDown(null);
-                        }
-                        //todo: delete links from semi-directions (NE, NW, ...)
                     }
+
+                    // todo delete from instructions - procedures, hooks and so on...
 
                     // delete from heap
                     for (Iterator<IFMLObject> iterator = objectsHeap.values().iterator(); iterator.hasNext(); )
                     {
                         IFMLObject object = iterator.next();
-                        if (object instanceof Location && !locations.contains(object))
+                        if (object instanceof Location && !locList.contains(object))
                         {
                             iterator.remove();
                         }
@@ -133,6 +110,40 @@ public class Story
                 }
             }
         });
+
+        // subscribe to procedures changes for object tree update
+        procedures.addListEventListener(new ListEventListener<Procedure>()
+        {
+            @Override
+            public void listChanged(ListEvent<Procedure> listChanges)
+            {
+                while (listChanges.next() && listChanges.getType() == ListEvent.DELETE)
+                {
+                    EventList<Procedure> proceduresList = listChanges.getSourceList();
+
+                    // delete from actions
+                    for (Action action : actions)
+                    {
+                        Action.ProcedureCall procedureCall = action.getProcedureCall();
+                        Procedure procedure = procedureCall.getProcedure();
+                        if (procedure != null && !proceduresList.contains(procedure))
+                        {
+                            procedureCall.setProcedure(null);
+                        }
+                    }
+
+                    // delete from start procedure
+                    StoryOptions.StartProcedureOption startProcedureOption = storyOptions.getStartProcedureOption();
+                    Procedure procedure = startProcedureOption.getProcedure();
+                    if (procedure != null && !proceduresList.contains(procedure))
+                    {
+                        startProcedureOption.setProcedure(null);
+                    }
+                }
+            }
+        });
+
+        // todo subscribe to other lists changes
     }
 
     @XmlElementWrapper(name = STORY_ITEMS_ELEMENT)
@@ -282,7 +293,7 @@ public class Story
         // for this story
         for (Procedure procedure : procedures)
         {
-            if (procedure.getInheritsSystemProcedure() == systemProcedure)
+            if (systemProcedure.equals(procedure.getInheritsSystemProcedure()))
             {
                 return procedure;
             }
@@ -293,7 +304,7 @@ public class Story
         {
             for (Procedure procedure : library.procedures)
             {
-                if (procedure.getInheritsSystemProcedure() == systemProcedure)
+                if (systemProcedure.equals(procedure.getInheritsSystemProcedure()))
                 {
                     return procedure;
                 }
@@ -449,11 +460,18 @@ public class Story
                 return dictionary.get(loweredId);
             }
 
-            if (proceduresMap.containsKey(loweredId))
-            {
-                return proceduresMap.get(loweredId);
-            }
+            return findProcedureById(loweredId);
+        }
 
+        private Procedure findProcedureById(@NotNull String name)
+        {
+            for (Procedure procedure : procedures)
+            {
+                if (name.equalsIgnoreCase(procedure.getName()))
+                {
+                    return procedure;
+                }
+            }
             return null;
         }
 
@@ -515,6 +533,27 @@ public class Story
             }
 
             return false;
+        }
+
+        /**
+         * Find actions where procedure is called
+         * @param procedure procedure for search
+         * @return list of affected actions
+         */
+        @NotNull
+        public ArrayList<Action> findActionsByProcedure(@NotNull Procedure procedure)
+        {
+            ArrayList<Action> results = new ArrayList<Action>();
+
+            for (Action action : actions)
+            {
+                Action.ProcedureCall procedureCall = action.getProcedureCall();
+                if(procedure.equals(procedureCall.getProcedure()))
+                {
+                    results.add(action);
+                }
+            }
+            return results;
         }
     }
 }
