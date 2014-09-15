@@ -8,12 +8,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.Callable;
 
@@ -25,11 +28,6 @@ import java.util.concurrent.Callable;
  */
 public class ListEditForm<T> extends JInternalFrame
 {
-    /*
-    * todo rewrite using internal options class with default options ("element" for RP and VP and so on) -> call init with new Options and override actions and params if needed
-    * */
-
-
     private JPanel contentPane;
     private JList elementsList;
     private JButton upButton;
@@ -43,17 +41,14 @@ public class ListEditForm<T> extends JInternalFrame
     private String objectNameVP;
     private String objectNameRP;
     private Word.GenderEnum gender;
-
-    public ListEditForm()
-    {
-        setContentPane(contentPane);
-    }
+    private JPopupMenu popupMenu;
+    private EventList<T> clonedList;
+    private java.util.List<ChangeListener> listChangeListeners = new ArrayList<ChangeListener>();
 
     /**
      * Initializes form.
      *
      * @param owner             Dialog - owner of form - for showing sub dialog on him.
-     * @param clonedList        Already cloned list. All changes are made with him.
      * @param objectNameVP      Element VP.
      * @param objectNameRP      Element RP.
      * @param gender            Element gender.
@@ -61,29 +56,12 @@ public class ListEditForm<T> extends JInternalFrame
      * @param addAction         Callable&lt;T&gt; - add action method. Runs when Add button pressed. If it returns not null, add it to list and selects.
      * @param editAction        Callable&lt;Boolean&gt; - edit action method. Runs when Edit button pressed. If it returns true selects it.
      */
-    public void init(@Nullable final Window owner, @NotNull final EventList<T> clonedList, @NotNull final String objectNameVP,
-            @NotNull final String objectNameRP, @NotNull final Word.GenderEnum gender, @NotNull final Boolean showUpDownButtons,
-            @NotNull final Callable<T> addAction, @NotNull final Callable<Boolean> editAction)
+    public ListEditForm(@Nullable final Window owner, @NotNull final String objectNameVP, @NotNull final String objectNameRP,
+            @NotNull final Word.GenderEnum gender, @NotNull final Boolean showUpDownButtons, @NotNull final Callable<T> addAction,
+            @NotNull final Callable<Boolean> editAction, @Nullable final Callable<Boolean> delAction)
     {
-        init(owner, clonedList, objectNameVP, objectNameRP, gender, showUpDownButtons, addAction, editAction, null);
-    }
+        this();
 
-    /**
-     * Initializes form.
-     *
-     * @param owner             Dialog - owner of form - for showing sub dialog on him.
-     * @param clonedList        Already cloned list. All changes are made with him.
-     * @param objectNameVP      Element VP.
-     * @param objectNameRP      Element RP.
-     * @param gender            Element gender.
-     * @param showUpDownButtons To show Up-Down buttons toolbar or not.
-     * @param addAction         Callable&lt;T&gt; - add action method. Runs when Add button pressed. If it returns not null, add it to list and selects.
-     * @param editAction        Callable&lt;Boolean&gt; - edit action method. Runs when Edit button pressed. If it returns true selects it.
-     */
-    public void init(@Nullable final Window owner, @NotNull final EventList<T> clonedList, @NotNull final String objectNameVP,
-            @NotNull final String objectNameRP, @NotNull final Word.GenderEnum gender, @NotNull final Boolean showUpDownButtons,
-            @NotNull final Callable<T> addAction, @NotNull final Callable<Boolean> editAction, @Nullable final Callable<Boolean> delAction)
-    {
         this.owner = owner;
         this.objectNameVP = objectNameVP;
         this.objectNameRP = objectNameRP;
@@ -91,7 +69,7 @@ public class ListEditForm<T> extends JInternalFrame
         this.editAction = editAction;
 
         // init buttons
-        addElementButton.setAction(new ButtonAction(addElementButton)
+        final ButtonAction addButtonAction = new ButtonAction(addElementButton)
         {
             @Override
             public void actionPerformed(ActionEvent e)
@@ -103,6 +81,7 @@ public class ListEditForm<T> extends JInternalFrame
                     {
                         clonedList.add(element);
                         elementsList.setSelectedValue(element, true);
+                        fireListChangeListeners();
                     }
                 }
                 catch (Exception ex)
@@ -110,24 +89,26 @@ public class ListEditForm<T> extends JInternalFrame
                     GUIUtils.showErrorMessage(owner, ex);
                 }
             }
-        });
+        };
+        addElementButton.setAction(addButtonAction);
 
-        editElementButton.setAction(new ButtonAction(editElementButton, elementsList)
+        final ButtonAction editButtonAction = new ButtonAction(editElementButton, elementsList)
         {
             @Override
             public void actionPerformed(ActionEvent e)
             {
                 editElement();
             }
-        });
+        };
+        editElementButton.setAction(editButtonAction);
 
-        delElementButton.setAction(new ButtonAction(delElementButton, elementsList)
+        final ButtonAction delButtonAction = new ButtonAction(delElementButton, elementsList)
         {
             @Override
             public void actionPerformed(ActionEvent e)
             {
                 int selectedIndex = elementsList.getSelectedIndex();
-                T selectedElement = (T) elementsList.getSelectedValue();
+                T selectedElement = getSelectedElement();
 
                 Boolean isDeleted = false;
 
@@ -154,12 +135,49 @@ public class ListEditForm<T> extends JInternalFrame
                 if (isDeleted)
                 {
                     elementsList.setSelectedIndex(selectedIndex);
+                    fireListChangeListeners();
                 }
             }
-        });
+        };
+        delElementButton.setAction(delButtonAction);
 
+        // init popup menu
+        popupMenu = new JPopupMenu()
+        {
+            {
+                add(addButtonAction);
+                addSeparator();
+                add(editButtonAction);
+                add(delButtonAction);
+            }
+        };
+
+        // double and right clicks
         elementsList.addMouseListener(new MouseAdapter()
         {
+            // right click show popup
+            @Override
+            public void mouseReleased(MouseEvent e)
+            {
+                showPopup(e);
+            }
+
+            // right click show popup
+            @Override
+            public void mousePressed(MouseEvent e)
+            {
+                showPopup(e);
+            }
+
+            public void showPopup(MouseEvent e)
+            {
+                if (e.isPopupTrigger())
+                {
+                    popupMenu.show(e.getComponent(), e.getX(), e.getY());
+                }
+            }
+
+            // double click edits
             @Override
             public void mouseClicked(MouseEvent e)
             {
@@ -169,8 +187,6 @@ public class ListEditForm<T> extends JInternalFrame
                 }
             }
         });
-
-        upDownToolbar.setVisible(showUpDownButtons);
 
         upButton.setAction(new ButtonAction(upButton)
         {
@@ -182,25 +198,23 @@ public class ListEditForm<T> extends JInternalFrame
                 {
                     Collections.swap(clonedList, selIdx, selIdx - 1);
                     elementsList.setSelectedIndex(selIdx - 1);
+                    fireListChangeListeners();
                 }
             }
 
             @Override
             public void init()
             {
-                if (showUpDownButtons)
-                {
-                    updateState();
+                updateState();
 
-                    elementsList.addListSelectionListener(new ListSelectionListener()
+                elementsList.addListSelectionListener(new ListSelectionListener()
+                {
+                    @Override
+                    public void valueChanged(ListSelectionEvent e)
                     {
-                        @Override
-                        public void valueChanged(ListSelectionEvent e)
-                        {
-                            updateState();
-                        }
-                    });
-                }
+                        updateState();
+                    }
+                });
             }
 
             private void updateState()
@@ -219,25 +233,23 @@ public class ListEditForm<T> extends JInternalFrame
                 {
                     Collections.swap(clonedList, selIdx, selIdx + 1);
                     elementsList.setSelectedIndex(selIdx + 1);
+                    fireListChangeListeners();
                 }
             }
 
             @Override
             public void init()
             {
-                if (showUpDownButtons)
-                {
-                    updateState();
+                updateState();
 
-                    elementsList.addListSelectionListener(new ListSelectionListener()
+                elementsList.addListSelectionListener(new ListSelectionListener()
+                {
+                    @Override
+                    public void valueChanged(ListSelectionEvent e)
                     {
-                        @Override
-                        public void valueChanged(ListSelectionEvent e)
-                        {
-                            updateState();
-                        }
-                    });
-                }
+                        updateState();
+                    }
+                });
             }
 
             private void updateState()
@@ -249,7 +261,32 @@ public class ListEditForm<T> extends JInternalFrame
         });
 
         // init form
-        elementsList.setModel(new DefaultEventListModel<T>(clonedList));
+        upDownToolbar.setVisible(showUpDownButtons);
+    }
+
+    private ListEditForm()
+    {
+        setContentPane(contentPane);
+    }
+
+    public ListEditForm(@Nullable final Window owner, @NotNull final String objectNameVP, @NotNull final String objectNameRP,
+            @NotNull final Word.GenderEnum gender, @NotNull final Boolean showUpDownButtons, @NotNull final Callable<T> addAction,
+            @NotNull final Callable<Boolean> editAction)
+    {
+        this(owner, objectNameVP, objectNameRP, gender, showUpDownButtons, addAction, editAction, null);
+    }
+
+    public void addListChangeListener(ChangeListener changeListener)
+    {
+        listChangeListeners.add(changeListener);
+    }
+
+    private void fireListChangeListeners()
+    {
+        for (ChangeListener changeListener : listChangeListeners)
+        {
+            changeListener.stateChanged(new ChangeEvent(clonedList));
+        }
     }
 
     public boolean showDeleteConfirmDialog()
@@ -263,13 +300,14 @@ public class ListEditForm<T> extends JInternalFrame
         {
             try
             {
-                Object selectedElement = elementsList.getSelectedValue();
+                T selectedElement = getSelectedElement();
                 if (selectedElement != null)
                 {
                     Boolean isEdited = editAction.call();
                     if (isEdited)
                     {
                         elementsList.setSelectedValue(selectedElement, true);
+                        fireListChangeListeners();
                     }
                 }
             }
@@ -280,8 +318,24 @@ public class ListEditForm<T> extends JInternalFrame
         }
     }
 
+    /**
+     * Returns selected list element.
+     *
+     * @return selected list element.
+     */
     public T getSelectedElement()
     {
         return (T) elementsList.getSelectedValue();
+    }
+
+    /**
+     * Binds data and updates form.
+     *
+     * @param clonedList Already cloned list. All changes are made with him.
+     */
+    public void bindData(EventList<T> clonedList)
+    {
+        this.clonedList = clonedList;
+        elementsList.setModel(new DefaultEventListModel<T>(clonedList));
     }
 }

@@ -54,71 +54,8 @@ public class ProcedureEditor extends AbstractEditor<Procedure>
     private void bindData()
     {
         nameText.setText(procedureClone.getName());
-
-        paramsEditForm.init(this, procedureClone.getParameters(), "параметр", "параметра", Word.GenderEnum.MASCULINE,
-            false, new Callable<Parameter>()
-            {
-                @Override
-                public Parameter call() throws Exception
-                {
-                    String parameterName = JOptionPane.showInputDialog(ProcedureEditor.this,
-                        "Название нового параметра:", "Новый параметр", JOptionPane.QUESTION_MESSAGE);
-
-                    if (parameterName != null && !"".equals(parameterName))
-                    {
-                        return new Parameter(parameterName);
-                    }
-                    return null;
-                }
-            }, new Callable<Boolean>()
-            {
-                @Override
-                public Boolean call() throws Exception
-                {
-                    Parameter selectedParam = paramsEditForm.getSelectedElement();
-                    if (selectedParam != null)
-                    {
-                        String parameterName = selectedParam.getName();
-                        parameterName = JOptionPane.showInputDialog(ProcedureEditor.this, "Название параметра:",
-                            parameterName);
-                        if (parameterName != null && !"".equals(parameterName))
-                        {
-                            selectedParam.setName(parameterName);
-                            return true;
-                        }
-                    }
-                    return false;
-                }
-            });
-
-        instructionsEditForm.init(this, procedureClone.getInstructions(), "инструкцию", "инструкции",
-            Word.GenderEnum.FEMININE, true, new Callable<Instruction>()
-            {
-                @Override
-                public Instruction call() throws Exception
-                {
-                    InstructionTypeEnum instrType = EditorUtils.askInstructionType(ProcedureEditor.this);
-
-                    if (instrType != null)
-                    {
-                        Instruction instruction = instrType.createInstrInstance();
-                        if (EditorUtils.showAssociatedEditor(ProcedureEditor.this, instruction, storyDataHelper))
-                        {
-                            return instruction;
-                        }
-                    }
-                    return null;
-                }
-            }, new Callable<Boolean>()
-            {
-                @Override
-                public Boolean call() throws Exception
-                {
-                    Instruction selectedInstr = instructionsEditForm.getSelectedElement();
-                    return selectedInstr != null && EditorUtils.showAssociatedEditor(ProcedureEditor.this,
-                        selectedInstr, storyDataHelper);
-                }
-            });
+        paramsEditForm.bindData(procedureClone.getParameters());
+        instructionsEditForm.bindData(procedureClone.getInstructions());
     }
 
     @Override
@@ -136,5 +73,72 @@ public class ProcedureEditor extends AbstractEditor<Procedure>
         {
             throw new IFML2EditorException("Ошибка при сохранении объекта: {0}", e.getMessage());
         }
+    }
+
+    private void createUIComponents()
+    {
+        paramsEditForm = new ListEditForm<Parameter>(this, "параметр", "параметра", Word.GenderEnum.MASCULINE, false,
+                new Callable<Parameter>()
+                {
+                    @Override
+                    public Parameter call() throws Exception
+                    {
+                        String parameterName = JOptionPane
+                                .showInputDialog(ProcedureEditor.this, "Название нового параметра:", "Новый параметр",
+                                        JOptionPane.QUESTION_MESSAGE);
+
+                        if (parameterName != null && !"".equals(parameterName))
+                        {
+                            return new Parameter(parameterName);
+                        }
+                        return null;
+                    }
+                }, new Callable<Boolean>()
+        {
+            @Override
+            public Boolean call() throws Exception
+            {
+                Parameter selectedParam = paramsEditForm.getSelectedElement();
+                if (selectedParam != null)
+                {
+                    String parameterName = selectedParam.getName();
+                    parameterName = JOptionPane.showInputDialog(ProcedureEditor.this, "Название параметра:", parameterName);
+                    if (parameterName != null && !"".equals(parameterName))
+                    {
+                        selectedParam.setName(parameterName);
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
+
+        instructionsEditForm = new ListEditForm<Instruction>(this, "инструкцию", "инструкции", Word.GenderEnum.FEMININE, true,
+                new Callable<Instruction>()
+                {
+                    @Override
+                    public Instruction call() throws Exception
+                    {
+                        InstructionTypeEnum instrType = EditorUtils.askInstructionType(ProcedureEditor.this);
+
+                        if (instrType != null)
+                        {
+                            Instruction instruction = instrType.createInstrInstance();
+                            if (EditorUtils.showAssociatedEditor(ProcedureEditor.this, instruction, storyDataHelper))
+                            {
+                                return instruction;
+                            }
+                        }
+                        return null;
+                    }
+                }, new Callable<Boolean>()
+        {
+            @Override
+            public Boolean call() throws Exception
+            {
+                Instruction selectedInstr = instructionsEditForm.getSelectedElement();
+                return selectedInstr != null && EditorUtils.showAssociatedEditor(ProcedureEditor.this, selectedInstr, storyDataHelper);
+            }
+        });
     }
 }

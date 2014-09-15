@@ -44,7 +44,7 @@
                 </properties>
                 <border type="none"/>
                 <children>
-                  <grid id="5108c" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                  <grid id="5108c" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                     <margin top="0" left="0" bottom="0" right="0"/>
                     <constraints>
                       <splitpane position="left"/>
@@ -52,55 +52,11 @@
                     <properties/>
                     <border type="none" title="Локации"/>
                     <children>
-                      <scrollpane id="8e8f7">
+                      <nested-form id="b7647" form-file="ifml2/editor/gui/ListEditForm.form" binding="locationsListEditForm" custom-create="true">
                         <constraints>
-                          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                         </constraints>
-                        <properties/>
-                        <border type="none"/>
-                        <children>
-                          <component id="f5617" class="javax.swing.JList" binding="locationsList">
-                            <constraints/>
-                            <properties>
-                              <selectionMode value="0"/>
-                            </properties>
-                          </component>
-                        </children>
-                      </scrollpane>
-                      <toolbar id="24de9">
-                        <constraints>
-                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
-                            <preferred-size width="-1" height="20"/>
-                          </grid>
-                        </constraints>
-                        <properties>
-                          <floatable value="false"/>
-                        </properties>
-                        <border type="none"/>
-                        <children>
-                          <component id="8f274" class="javax.swing.JButton" binding="newLocButton">
-                            <constraints/>
-                            <properties>
-                              <icon value="Add24.gif"/>
-                              <text value="&amp;Добавить..."/>
-                            </properties>
-                          </component>
-                          <component id="86c2f" class="javax.swing.JButton" binding="editLocButton">
-                            <constraints/>
-                            <properties>
-                              <icon value="Edit24.gif"/>
-                              <text value="&amp;Редактировать..."/>
-                            </properties>
-                          </component>
-                          <component id="dd139" class="javax.swing.JButton" binding="delLocButton">
-                            <constraints/>
-                            <properties>
-                              <icon value="Delete24.gif"/>
-                              <text value="&amp;Удалить..."/>
-                            </properties>
-                          </component>
-                        </children>
-                      </toolbar>
+                      </nested-form>
                     </children>
                   </grid>
                   <grid id="2ee7f" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
@@ -194,7 +150,7 @@
                     <properties/>
                     <border type="none" title="Процедуры"/>
                     <children>
-                      <nested-form id="e981b" form-file="ifml2/editor/gui/ListEditForm.form" binding="proceduresListEditForm">
+                      <nested-form id="e981b" form-file="ifml2/editor/gui/ListEditForm.form" binding="proceduresListEditForm" custom-create="true">
                         <constraints>
                           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                         </constraints>
