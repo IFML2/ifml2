@@ -20,14 +20,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 /**
- * JInternalFrame with JList and buttons Add, Edit, Delete and optional Up and Down arrows.
- * Usage: add to form and call init(...).
+ * JInternalFrame with JList and buttons <b>Add</b>, <b>Edit</b>, <b>Delete</b> and optional <b>Up</b> and <b>Down</b> arrows.<br/>
+ * Usage: add to form, tick "Custom create" property, create and override abstract methods <i>createElement()</i>,
+ * <i>editElement(T selectedElement)</i> and, if needed, <i>beforeDelete(T selectedElement)</i>. Call bindData(EventList<T> clonedList)
+ * then you need update data in list.
  *
  * @param <T> Edited type.
  */
 public abstract class ListEditForm<T> extends JInternalFrame
 {
     protected Window owner;
+    /**
+     * Flag to show or hide toolbar with up/down buttons. Set it to other value in static constructor to change behaviour.
+     */
     protected boolean showUpDownButtons = true;
     private JPanel contentPane;
     private JList elementsList;
@@ -55,7 +60,7 @@ public abstract class ListEditForm<T> extends JInternalFrame
     public ListEditForm(@Nullable final Window owner, @NotNull final String objectNameVP, @NotNull final String objectNameRP,
             @NotNull final Word.GenderEnum gender)
     {
-        this();
+        setContentPane(contentPane);
 
         this.owner = owner;
         this.objectNameVP = objectNameVP;
@@ -70,7 +75,7 @@ public abstract class ListEditForm<T> extends JInternalFrame
             {
                 try
                 {
-                    T element = addElement();
+                    T element = createElement();
                     if (element != null)
                     {
                         clonedList.add(element);
@@ -91,7 +96,7 @@ public abstract class ListEditForm<T> extends JInternalFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                doEditElement();
+                doEditElement(getSelectedElement());
             }
         };
         editElementButton.setAction(editButtonAction);
@@ -170,7 +175,7 @@ public abstract class ListEditForm<T> extends JInternalFrame
             {
                 if (e.getClickCount() == 2)
                 {
-                    doEditElement();
+                    doEditElement(getSelectedElement());
                 }
             }
         });
@@ -251,20 +256,45 @@ public abstract class ListEditForm<T> extends JInternalFrame
         upDownToolbar.setVisible(showUpDownButtons);
     }
 
-    private ListEditForm()
-    {
-        setContentPane(contentPane);
-    }
+    /**
+     * Creates element. You should override this method to implement element creation logic.
+     * If you return not null, it will be added to list and events fired.
+     *
+     * @return Return element if created and null if not.
+     * @throws Exception will be shown.
+     */
+    protected abstract T createElement() throws Exception;
 
-    protected abstract T addElement() throws Exception;
+    /**
+     * Edits element. You should override this method to implement element edition logic.
+     * If you return true, list will be updated and events fired.
+     *
+     * @param selectedElement currently selected element.
+     * @return true if edit was made and false vise versa.
+     * @throws Exception will be shown.
+     */
+    protected abstract boolean editElement(T selectedElement) throws Exception;
 
-    protected abstract boolean editElement() throws Exception;
-
+    /**
+     * Fired before deletion of element. Returns true if element should be deleted.
+     * Override if you need custom logic (verifications before deletion etc).
+     * Original implementation just asks about deletion in dialog box.
+     * (You can call it to ask with standard dialog.)
+     *
+     * @param selectedElement currently selected element.
+     * @return true if element should be deleted and false vise versa.
+     * @throws Exception will be shown.
+     */
     protected boolean beforeDelete(T selectedElement) throws Exception
     {
         return showDeleteConfirmDialog();
     }
 
+    /**
+     * Adds list change listened. Event of change fired then elements are added, edited, deleted or swapped (using arrow buttons).
+     *
+     * @param changeListener ChangeListener to receive events.
+     */
     public void addListChangeListener(ChangeListener changeListener)
     {
         listChangeListeners.add(changeListener);
@@ -283,14 +313,13 @@ public abstract class ListEditForm<T> extends JInternalFrame
         return GUIUtils.showDeleteConfirmDialog(owner, objectNameVP, objectNameRP, gender);
     }
 
-    private void doEditElement()
+    private void doEditElement(@Nullable T selectedElement)
     {
         try
         {
-            T selectedElement = getSelectedElement();
             if (selectedElement != null)
             {
-                Boolean isEdited = editElement();//editAction.call();
+                Boolean isEdited = editElement(selectedElement);
                 if (isEdited)
                 {
                     elementsList.setSelectedValue(selectedElement, true);
@@ -309,7 +338,7 @@ public abstract class ListEditForm<T> extends JInternalFrame
      *
      * @return selected list element.
      */
-    public T getSelectedElement()
+    protected T getSelectedElement()
     {
         return (T) elementsList.getSelectedValue();
     }

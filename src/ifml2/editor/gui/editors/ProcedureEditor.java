@@ -79,7 +79,7 @@ public class ProcedureEditor extends AbstractEditor<Procedure>
         paramsEditForm = new ListEditForm<Parameter>(this, "параметр", "параметра", Word.GenderEnum.MASCULINE)
         {
             @Override
-            protected Parameter addElement() throws Exception
+            protected Parameter createElement() throws Exception
             {
                 String parameterName = JOptionPane.showInputDialog(ProcedureEditor.this, "Название нового параметра:", "Новый параметр",
                         JOptionPane.QUESTION_MESSAGE);
@@ -87,16 +87,15 @@ public class ProcedureEditor extends AbstractEditor<Procedure>
             }
 
             @Override
-            protected boolean editElement() throws Exception
+            protected boolean editElement(Parameter selectedElement) throws Exception
             {
-                Parameter selectedParam = getSelectedElement();
-                if (selectedParam != null)
+                if (selectedElement != null)
                 {
-                    String parameterName = selectedParam.getName();
+                    String parameterName = selectedElement.getName();
                     parameterName = JOptionPane.showInputDialog(ProcedureEditor.this, "Название параметра:", parameterName);
                     if (parameterName != null && !"".equals(parameterName))
                     {
-                        selectedParam.setName(parameterName);
+                        selectedElement.setName(parameterName);
                         return true;
                     }
                 }
@@ -107,7 +106,7 @@ public class ProcedureEditor extends AbstractEditor<Procedure>
         instructionsEditForm = new ListEditForm<Instruction>(this, "инструкцию", "инструкции", Word.GenderEnum.FEMININE)
         {
             @Override
-            protected Instruction addElement() throws Exception
+            protected Instruction createElement() throws Exception
             {
                 InstructionTypeEnum instrType = EditorUtils.askInstructionType(ProcedureEditor.this);
                 if (instrType != null)
@@ -122,10 +121,9 @@ public class ProcedureEditor extends AbstractEditor<Procedure>
             }
 
             @Override
-            protected boolean editElement() throws Exception
+            protected boolean editElement(Instruction selectedElement) throws Exception
             {
-                Instruction selectedInstr = getSelectedElement();
-                return selectedInstr != null && EditorUtils.showAssociatedEditor(owner, selectedInstr, storyDataHelper);
+                return selectedElement != null && EditorUtils.showAssociatedEditor(owner, selectedElement, storyDataHelper);
             }
         };
     }

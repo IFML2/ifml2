@@ -598,16 +598,16 @@ public class Editor extends JFrame
             }
 
             @Override
-            protected Location addElement() throws Exception
+            protected Location createElement() throws Exception
             {
                 Location location = new Location();
                 return editLocation(location) ? location : null;
             }
 
             @Override
-            protected boolean editElement()
+            protected boolean editElement(Location selectedElement)
             {
-                return editLocation(getSelectedElement());
+                return editLocation(selectedElement);
             }
         };
 
@@ -625,16 +625,16 @@ public class Editor extends JFrame
             }
 
             @Override
-            protected Item addElement() throws Exception
+            protected Item createElement() throws Exception
             {
                 Item item = new Item();
                 return editItem(item) ? item : null;
             }
 
             @Override
-            protected boolean editElement()
+            protected boolean editElement(Item selectedElement)
             {
-                return editItem(getSelectedElement());
+                return editItem(selectedElement);
             }
         };
 
@@ -652,16 +652,16 @@ public class Editor extends JFrame
             }
 
             @Override
-            protected Procedure addElement() throws Exception
+            protected Procedure createElement() throws Exception
             {
                 Procedure procedure = new Procedure();
                 return editProcedure(procedure) ? procedure : null;
             }
 
             @Override
-            protected boolean editElement()
+            protected boolean editElement(Procedure selectedElement)
             {
-                return editProcedure(getSelectedElement());
+                return editProcedure(selectedElement);
             }
 
             @Override
@@ -711,16 +711,16 @@ public class Editor extends JFrame
             }
 
             @Override
-            protected Action addElement() throws Exception
+            protected Action createElement() throws Exception
             {
                 Action action = new Action();
                 return editAction(action) ? action : null;
             }
 
             @Override
-            protected boolean editElement() throws Exception
+            protected boolean editElement(Action selectedElement) throws Exception
             {
-                return editAction(getSelectedElement());
+                return editAction(selectedElement);
             }
         };
     }
