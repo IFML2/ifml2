@@ -18,7 +18,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.concurrent.Callable;
 
 /**
  * JInternalFrame with JList and buttons Add, Edit, Delete and optional Up and Down arrows.
@@ -26,8 +25,10 @@ import java.util.concurrent.Callable;
  *
  * @param <T> Edited type.
  */
-public class ListEditForm<T> extends JInternalFrame
+public abstract class ListEditForm<T> extends JInternalFrame
 {
+    protected Window owner;
+    protected boolean showUpDownButtons = true;
     private JPanel contentPane;
     private JList elementsList;
     private JButton upButton;
@@ -36,8 +37,6 @@ public class ListEditForm<T> extends JInternalFrame
     private JButton editElementButton;
     private JButton delElementButton;
     private JToolBar upDownToolbar;
-    private Callable<Boolean> editAction;
-    private Window owner;
     private String objectNameVP;
     private String objectNameRP;
     private Word.GenderEnum gender;
@@ -48,17 +47,13 @@ public class ListEditForm<T> extends JInternalFrame
     /**
      * Initializes form.
      *
-     * @param owner             Dialog - owner of form - for showing sub dialog on him.
-     * @param objectNameVP      Element VP.
-     * @param objectNameRP      Element RP.
-     * @param gender            Element gender.
-     * @param showUpDownButtons To show Up-Down buttons toolbar or not.
-     * @param addAction         Callable&lt;T&gt; - add action method. Runs when Add button pressed. If it returns not null, add it to list and selects.
-     * @param editAction        Callable&lt;Boolean&gt; - edit action method. Runs when Edit button pressed. If it returns true selects it.
+     * @param owner        Dialog - owner of form - for showing sub dialog on him.
+     * @param objectNameVP Element VP.
+     * @param objectNameRP Element RP.
+     * @param gender       Element gender.
      */
     public ListEditForm(@Nullable final Window owner, @NotNull final String objectNameVP, @NotNull final String objectNameRP,
-            @NotNull final Word.GenderEnum gender, @NotNull final Boolean showUpDownButtons, @NotNull final Callable<T> addAction,
-            @NotNull final Callable<Boolean> editAction, @Nullable final Callable<Boolean> delAction)
+            @NotNull final Word.GenderEnum gender)
     {
         this();
 
@@ -66,7 +61,6 @@ public class ListEditForm<T> extends JInternalFrame
         this.objectNameVP = objectNameVP;
         this.objectNameRP = objectNameRP;
         this.gender = gender;
-        this.editAction = editAction;
 
         // init buttons
         final ButtonAction addButtonAction = new ButtonAction(addElementButton)
@@ -76,7 +70,7 @@ public class ListEditForm<T> extends JInternalFrame
             {
                 try
                 {
-                    T element = addAction.call();
+                    T element = addElement();
                     if (element != null)
                     {
                         clonedList.add(element);
@@ -97,7 +91,7 @@ public class ListEditForm<T> extends JInternalFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                editElement();
+                doEditElement();
             }
         };
         editElementButton.setAction(editButtonAction);
@@ -107,34 +101,27 @@ public class ListEditForm<T> extends JInternalFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                int selectedIndex = elementsList.getSelectedIndex();
                 T selectedElement = getSelectedElement();
+                int selectedIndex = elementsList.getSelectedIndex();
 
-                Boolean isDeleted = false;
+                Boolean toRemove = false;
 
-                if (delAction != null)
+                try
                 {
-                    try
-                    {
-                        isDeleted = delAction.call();
-                    }
-                    catch (Exception ex)
-                    {
-                        GUIUtils.showErrorMessage(owner, ex);
-                    }
+                    toRemove = beforeDelete(selectedElement);
                 }
-                else
+                catch (Exception ex)
                 {
-                    if (showDeleteConfirmDialog())
-                    {
-                        clonedList.remove(selectedElement);
-                        isDeleted = true;
-                    }
+                    GUIUtils.showErrorMessage(owner, ex);
                 }
 
-                if (isDeleted)
+                if (toRemove)
                 {
+                    clonedList.remove(selectedElement);
+
+                    selectedIndex = Math.min(selectedIndex, elementsList.getModel().getSize() - 1); // make index not exceeding limit
                     elementsList.setSelectedIndex(selectedIndex);
+
                     fireListChangeListeners();
                 }
             }
@@ -183,7 +170,7 @@ public class ListEditForm<T> extends JInternalFrame
             {
                 if (e.getClickCount() == 2)
                 {
-                    editElement();
+                    doEditElement();
                 }
             }
         });
@@ -269,11 +256,13 @@ public class ListEditForm<T> extends JInternalFrame
         setContentPane(contentPane);
     }
 
-    public ListEditForm(@Nullable final Window owner, @NotNull final String objectNameVP, @NotNull final String objectNameRP,
-            @NotNull final Word.GenderEnum gender, @NotNull final Boolean showUpDownButtons, @NotNull final Callable<T> addAction,
-            @NotNull final Callable<Boolean> editAction)
+    protected abstract T addElement() throws Exception;
+
+    protected abstract boolean editElement() throws Exception;
+
+    protected boolean beforeDelete(T selectedElement) throws Exception
     {
-        this(owner, objectNameVP, objectNameRP, gender, showUpDownButtons, addAction, editAction, null);
+        return showDeleteConfirmDialog();
     }
 
     public void addListChangeListener(ChangeListener changeListener)
@@ -294,27 +283,24 @@ public class ListEditForm<T> extends JInternalFrame
         return GUIUtils.showDeleteConfirmDialog(owner, objectNameVP, objectNameRP, gender);
     }
 
-    private void editElement()
+    private void doEditElement()
     {
-        if (editAction != null)
+        try
         {
-            try
+            T selectedElement = getSelectedElement();
+            if (selectedElement != null)
             {
-                T selectedElement = getSelectedElement();
-                if (selectedElement != null)
+                Boolean isEdited = editElement();//editAction.call();
+                if (isEdited)
                 {
-                    Boolean isEdited = editAction.call();
-                    if (isEdited)
-                    {
-                        elementsList.setSelectedValue(selectedElement, true);
-                        fireListChangeListeners();
-                    }
+                    elementsList.setSelectedValue(selectedElement, true);
+                    fireListChangeListeners();
                 }
             }
-            catch (Exception ex)
-            {
-                GUIUtils.showErrorMessage(owner, ex);
-            }
+        }
+        catch (Exception ex)
+        {
+            GUIUtils.showErrorMessage(owner, ex);
         }
     }
 
