@@ -1,13 +1,9 @@
 package ifml2.parser;
 
-import ca.odell.glazedlists.BasicEventList;
 import ifml2.CommonUtils;
 import ifml2.IFML2Exception;
 import ifml2.engine.Engine;
 import ifml2.om.*;
-import ifml2.vm.IFML2VMException;
-import ifml2.vm.values.CollectionValue;
-import ifml2.vm.values.Value;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -54,34 +50,44 @@ public class Parser
         {
             for (Template template : action.getTemplates())
             {
+                int templateSize = template.getSize();
                 try
                 {
-                    ArrayList<FittedFormalElement> fittedFormalElements =
-                            fitPhraseWithTemplate(phraseAsList, template.getElements());
+                    ArrayList<FittedFormalElement> fittedFormalElements = fitPhraseWithTemplate(phraseAsList, template.getElements());
 
                     FittedTemplate fittedTemplate = new FittedTemplate(action, fittedFormalElements);
                     fittedTemplates.add(fittedTemplate);
                 }
                 catch (IFML2ParsePhraseTooLong e)
                 {
-                    if (lastException == null
-                            || (lastException instanceof IFML2ParseException
-                            && e.isMoreFull((IFML2ParseException) lastException, template.getSize())))
+                    if (lastException == null ||
+                        (lastException instanceof IFML2ParseException && e.isMoreFull((IFML2ParseException) lastException, templateSize)))
                     {
-                        lastException = new IFML2ParseException(MessageFormat.format(
-                                "Я бы понял, если бы вы сказали \"{0}\", но я не понял вот эту часть фразы: \"{1}\".",
-                                convertFittedToString(e.getFittedFormalElements()), e.getPhraseRest()), // convert phrase rest to normal string
-                                e.getUsedWords(), template.getSize());
+                        lastException = new IFML2ParseException(MessageFormat
+                                                                        .format("Я бы понял, если бы вы сказали \"{0}\", но я не понял вот эту часть фразы: \"{1}\".",
+                                                                                convertFittedToString(e.getFittedFormalElements()),
+                                                                                convertArrayToString(e.getPhraseRest())),
+                                                                e.getUsedWords(), templateSize);
                     }
                 }
                 catch (IFML2ParseException e)
                 {
-                    if (lastException == null
-                            || (lastException instanceof IFML2ParseException
-                            && e.isMoreFull((IFML2ParseException) lastException, template.getSize())))
+                    if (lastException == null)
                     {
+                        e.setTemplateSize(templateSize);
                         lastException = e;
-                        ((IFML2ParseException) lastException).setTemplateSize(template.getSize());
+                    }
+                    else if (lastException instanceof IFML2ParseException)
+                    {
+                        e.setTemplateSize(templateSize);
+                        if (e.isMoreFull((IFML2ParseException) lastException, templateSize))
+                        {
+                            lastException = e;
+                        }
+                        else if (e.isEquallyFull((IFML2ParseException) lastException, templateSize))
+                        {
+                            lastException = Math.round(Math.random()) == 0 ? lastException : e; // randomly take one of error :)
+                        }
                     }
                 }
                 catch (IFML2Exception e)
@@ -123,7 +129,8 @@ public class Parser
                 List<IFMLObject> objects = ((FittedObjects) fittedFormalElement).objects;
                 if (objects.size() > 1)
                 {
-                    throw new IFML2ParseException("Не понятно, что за " + objects.get(0).getWordLinks().getMainWord() + " имеется в виду.", phraseAsList.size());
+                    throw new IFML2ParseException("Не понятно, что за " + objects.get(0).getWordLinks().getMainWord() + " имеется в виду.",
+                                                  phraseAsList.size());
                 }
             }
         }
@@ -144,15 +151,29 @@ public class Parser
             }
             else
             {
-                throw new IFML2Exception("Системная ошибка: ПодходящийФомральныйЭлемент имеет неизвестный тип\n"
-                        + "Фраза: " + phrase + "\n"
-                        + "Шаблон: " + firstFittedTemplate.fittedFormalElements + ".");
+                throw new IFML2Exception(
+                        "Системная ошибка: ПодходящийФомральныйЭлемент имеет неизвестный тип\n" + "Фраза: " + phrase + "\n" + "Шаблон: " +
+                        firstFittedTemplate.fittedFormalElements + ".");
             }
 
             formalElements.add(formalElement);
         }
 
         return new ParseResult(firstFittedTemplate.action, formalElements);
+    }
+
+    private String convertArrayToString(ArrayList<String> stringArrayList)
+    {
+        String result = "";
+        for (String element : stringArrayList)
+        {
+            if (result.length() > 0)
+            {
+                result += " ";
+            }
+            result += element;
+        }
+        return result;
     }
 
     private String convertFittedToString(ArrayList<FittedFormalElement> fittedFormalElements) throws IFML2Exception
@@ -177,8 +198,8 @@ public class Parser
                 else
                 {
                     throw new IFML2Exception("Системная ошибка: в FittedObjects кол-во объектов = 0\n" +
-                            "fittedFormalElements = " + fittedFormalElements + '\n' +
-                            "fittedFormalElement = " + fittedFormalElement);
+                                             "fittedFormalElements = " + fittedFormalElements + '\n' +
+                                             "fittedFormalElement = " + fittedFormalElement);
                 }
             }
             result += " " + element;
@@ -206,7 +227,7 @@ public class Parser
 
                     for (IFMLObject object : fittedObjects)
                     {
-                        if (!isObjectAccessible(object))
+                        if (!engine.isObjectAccessible(object))
                         {
                             objectsToRemove.add(object);
 
@@ -240,96 +261,18 @@ public class Parser
         {
             if (inaccessibleObject != null)
             {
-                throw new IFML2ParseException("Не вижу здесь " + inaccessibleObject.getName(Word.GramCaseEnum.VP)
-                        + ".");
+                throw new IFML2ParseException("Не вижу здесь " + inaccessibleObject.getName(Word.GramCaseEnum.RP) + ".");
             }
             else
             {
-                throw new IFML2Exception("Системная ошибка: inaccessibleObject = null в Parser.removeInaccessibleObjects() при result.size() = 0.");
+                throw new IFML2Exception(
+                        "Системная ошибка: inaccessibleObject = null в Parser.removeInaccessibleObjects() при result.size() = 0.");
             }
             // it doesn't require word count because it's outstanding exception
         }
     }
 
-    /**
-     * Checks if object is inaccessible for player's actions
-     *
-     * @param object IFMLObject for check
-     * @return true if object is inaccessible
-     * @throws IFML2Exception when tested objects neither location or item
-     */
-    private boolean isObjectAccessible(IFMLObject object) throws IFML2Exception
-    {
-        Location currentLocation = engine.getCurrentLocation();
-
-        // test locations
-        if (object instanceof Location)
-        {
-            return object.equals(currentLocation);
-        }
-        else
-
-            // test items
-            if (object instanceof Item)
-            {
-                Item item = (Item) object;
-
-                // test if object is in current location or player's inventory
-                boolean isInLocOrInv = currentLocation.contains(item) || engine.getInventory().contains(item);
-                if (isInLocOrInv)
-                {
-                    return isInLocOrInv;
-                }
-                else
-                {
-                    // test contents of current location's items using item triggers
-                    return checkDeepContent(item, currentLocation.getItems());
-                }
-            }
-            else
-            {
-                throw new IFML2Exception("Системная ошибка: Неизвестный тип объекта: \"{0}\".", object);
-            }
-    }
-
-    private boolean checkDeepContent(Item item, List<Item> items) throws IFML2Exception
-    {
-        for (Item locItem : items)
-        {
-            Value itemContents = locItem.getAccessibleContent(engine.getVirtualMachine());
-            if (itemContents != null)
-            {
-                if (!(itemContents instanceof CollectionValue))
-                {
-                    throw new IFML2VMException("Триггер доступного содержимого у предмета \"{0}\" вернул не коллекцию, а \"{1}\"!",
-                            item, itemContents.getTypeName());
-                }
-
-                List itemContentsList = ((CollectionValue) itemContents).getValue();
-                List<Item> itemContentsItemList = new BasicEventList<Item>();
-                for (Object object : itemContentsList)
-                {
-                    if (!(object instanceof Item))
-                    {
-                        throw new IFML2VMException("Триггер доступного содержимого у предмета \"{0}\" вернул в коллекции не предмет, а \"{1}\"!",
-                                item, object);
-                    }
-
-                    itemContentsItemList.add((Item) object);
-                }
-
-                if (itemContentsList.contains(item) || checkDeepContent(item, itemContentsItemList))
-                {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    private ArrayList<FittedFormalElement> fitPhraseWithTemplate(ArrayList<String> phraseAsList,
-                                                                 List<TemplateElement> template) throws IFML2Exception
+    private ArrayList<FittedFormalElement> fitPhraseWithTemplate(ArrayList<String> phraseAsList, List<TemplateElement> template) throws IFML2Exception
     {
         // get vars into local copy
         ArrayList<String> phraseRest = new ArrayList<String>(phraseAsList);
@@ -402,9 +345,18 @@ public class Parser
                 }
                 catch (IFML2ParseException e)
                 {
-                    if (lastException == null || ((e.getUsedWords() > ((IFML2ParseException) lastException).getUsedWords())))
+                    if (lastException == null)
                     {
                         lastException = e;
+                    }
+                    else if (e.getUsedWords() > ((IFML2ParseException) lastException).getUsedWords())
+                    {
+                        lastException = e;
+                    }
+                    else if (e.getUsedWords() == ((IFML2ParseException) lastException).getUsedWords())
+                    {
+                        // take random of these exceptions :)
+                        lastException = Math.round(Math.random()) == 0 ? lastException : e;
                     }
                 }
             }
@@ -415,7 +367,8 @@ public class Parser
             }
             else
             {
-                throw new IFML2Exception("Системная ошибка: при сопоставлении ЭлементаШаблона с началом фразы проверка синонимов ни к чему не привел.");
+                throw new IFML2Exception(
+                        "Системная ошибка: при сопоставлении ЭлементаШаблона с началом фразы проверка синонимов ни к чему не привел.");
             }
         }
 
@@ -427,23 +380,7 @@ public class Parser
             ArrayList<IFMLObject> objects = fitObjectWithPhraseResult.getObjects();
             int usedWordsQty = fitObjectWithPhraseResult.getUsedWordsQty();
 
-            /*
-            ArrayList<IFMLObject> objects;
-            String word = phrase.get(0);
-
-            Word.GramCaseEnum gramCase = ((ObjectTemplateElement) templateElement).gramCase;
-
-            objects = fitObjectWithWord(gramCase, word);
-            */
-
-            /*if(objects == null || objects.size() == 0)
-            {
-                throw new IFML2ParseException("Не знаю, что такое \"" + word + "\".", 1);
-            }
-            else
-            {*/
             return new TemplateElementFitResult(new FittedObjects(objects, gramCase, templateElement.getParameter()), usedWordsQty);
-            /*}*/
         }
         else
         {
@@ -477,9 +414,10 @@ public class Parser
                 if (usedWords > 0)
                 {
                     // case when dict word has no links to objects
-                    if (dictWord.linkerObjects.size() == 0)
+                    if (dictWord.getLinkerObjects().size() == 0)
                     {
-                        throw new IFML2ParseException(MessageFormat.format("Нигде не вижу {0}.", dictWord.getFormByGramCase(Word.GramCaseEnum.VP)), allUsedWords);
+                        throw new IFML2ParseException(
+                                MessageFormat.format("Нигде не вижу {0}.", dictWord.getFormByGramCase(Word.GramCaseEnum.RP)), allUsedWords);
                     }
 
                     if (fittedWords.contains(dictWord))
@@ -490,7 +428,8 @@ public class Parser
                             usedPhrase += " " + word;
                         }
 
-                        throw new IFML2ParseException(MessageFormat.format("Я бы понял фразу, если бы вы сказали \"{0}\"", usedPhrase.trim()), allUsedWords);
+                        throw new IFML2ParseException(
+                                MessageFormat.format("Я бы понял фразу, если бы вы сказали \"{0}\"", usedPhrase.trim()), allUsedWords);
                     }
 
                     fittedWords.add(dictWord);
@@ -516,7 +455,7 @@ public class Parser
         // Stage II
 
         ArrayList<IFMLObject> objects = new ArrayList<IFMLObject>();
-        objects.addAll(fittedWords.get(0).linkerObjects);
+        objects.addAll(fittedWords.get(0).getLinkerObjects());
 
         if (fittedWords.size() == 1)
         {
@@ -528,7 +467,7 @@ public class Parser
             for (Iterator<IFMLObject> iterator = objects.iterator(); iterator.hasNext(); )
             {
                 IFMLObject object = iterator.next();
-                if (!word.linkerObjects.contains(object))
+                if (!word.getLinkerObjects().contains(object))
                 {
                     if (objects.size() > 1)
                     {
@@ -574,23 +513,31 @@ public class Parser
     {
         ArrayList<String> synonymWords = new ArrayList<String>(Arrays.asList(synonym.split("\\s+")));
 
-        if (synonymWords.size() > phrase.size())
-        {
-            throw new IFML2ParseException("Я бы понял, если бы вы упомянули \"" + synonym + "\".", 0);
-        }
+        int synonymSize = synonymWords.size();
 
-        int wordNum = 0;
-        for (String synonymWord : synonymWords)
+        // take length of shortest (synonym of phrase)
+        int minLength = Math.min(synonymSize, phrase.size());
+
+        int usedWordsQty = 0; // fitted words for generating the most suitable exception
+
+        for (int wordIdx = 0; wordIdx <= minLength - 1; wordIdx++)
         {
-            String phraseWord = phrase.get(wordNum);
+            String phraseWord = phrase.get(wordIdx);
+            String synonymWord = synonymWords.get(wordIdx);
             if (!synonymWord.equalsIgnoreCase(phraseWord))
             {
-                throw new IFML2ParseException("Не знаю, что такое \"" + phraseWord + "\".", wordNum);
+                throw new IFML2ParseException("Не знаю, что такое \"" + phraseWord + "\".", usedWordsQty);
             }
-            wordNum++;
+            usedWordsQty++;
         }
 
-        return wordNum;
+        // check if synonym is not fully used
+        if (usedWordsQty < synonymSize)
+        {
+            throw new IFML2ParseException("Команду не совсем понял, прошу уточнить.", usedWordsQty);
+        }
+
+        return usedWordsQty;
     }
 
     private String makeQuestionsForTemplate(ArrayList<TemplateElement> templateRest) throws IFML2Exception
@@ -733,6 +680,5 @@ public class Parser
         {
             return objects;
         }
-
     }
 }

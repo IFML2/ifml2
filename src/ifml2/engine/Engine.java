@@ -1,12 +1,14 @@
 package ifml2.engine;
 
+import ca.odell.glazedlists.BasicEventList;
 import ifml2.FormatLogger;
 import ifml2.IFML2Exception;
 import ifml2.SystemIdentifiers;
-import ifml2.interfaces.Interface;
+import ifml2.engine.saved.SavedGame;
 import ifml2.om.*;
 import ifml2.parser.FormalElement;
 import ifml2.parser.Parser;
+import ifml2.players.GameInterface;
 import ifml2.vm.ExpressionCalculator;
 import ifml2.vm.IFML2VMException;
 import ifml2.vm.RunningContext;
@@ -27,13 +29,13 @@ import java.util.concurrent.Callable;
 
 public class Engine
 {
-    public static final String ENGINE_VERSION = "Прототип 10 выпуск 4 правка 4";
+    public static final String ENGINE_VERSION = "Хоббит, глава 4";
     public static final FormatLogger LOG = FormatLogger.getLogger(Engine.class);
     private final HashMap<String, Value> globalVariables = new HashMap<String, Value>();
     private final Parser parser = new Parser(this);
     private final VirtualMachine virtualMachine = new VirtualMachine();
     private final HashMap<String, Value> systemVariables = new HashMap<String, Value>();
-    private Interface gameInterface = null;
+    private GameInterface gameInterface = null;
     private Story story = null;
     private ArrayList<Item> inventory = new ArrayList<Item>();
     private ArrayList<Item> abyss = new ArrayList<Item>();
@@ -77,27 +79,30 @@ public class Engine
             });
         }
     };
+    private DataHelper dataHelper = new DataHelper();
+    private String storyFileName;
 
-    public Engine(Interface gameInterface)
+    public Engine(GameInterface gameInterface)
     {
         this.gameInterface = gameInterface;
         virtualMachine.setEngine(this);
         LOG.info("Engine created.");
     }
 
-    public void loadStory(String storyFile) throws IFML2Exception
+    public void loadStory(String storyFileName, boolean isAllowedOpenCipherFiles) throws IFML2Exception
     {
-        LOG.info("Loading story \"{0}\"...", storyFile);
+        LOG.info("Loading story \"{0}\"...", storyFileName);
 
-        if (!new File(storyFile).exists())
+        if (!new File(storyFileName).exists())
         {
             throw new IFML2Exception("Файл истории не найден");
         }
 
         //TODO validate xml
 
-        OMManager.LoadStoryResult loadStoryResult = OMManager.loadStoryFromXmlFile(storyFile, true);
+        OMManager.LoadStoryResult loadStoryResult = OMManager.loadStoryFromFile(storyFileName, true, isAllowedOpenCipherFiles);
         story = loadStoryResult.getStory();
+        this.storyFileName = storyFileName;
         parser.setStory(story);
         inventory = loadStoryResult.getInventory();
 
@@ -204,8 +209,9 @@ public class Engine
 
         // check help command
         if ("помощь".equalsIgnoreCase(trimmedCommand) || "помоги".equalsIgnoreCase(trimmedCommand) ||
-                "помогите".equalsIgnoreCase(trimmedCommand) || "help".equalsIgnoreCase(trimmedCommand) ||
-                "info".equalsIgnoreCase(trimmedCommand) || "инфо".equalsIgnoreCase(trimmedCommand)) // todo refactor to List.contains() or something similar
+            "помогите".equalsIgnoreCase(trimmedCommand) || "help".equalsIgnoreCase(trimmedCommand) ||
+            "info".equalsIgnoreCase(trimmedCommand) ||
+            "инфо".equalsIgnoreCase(trimmedCommand)) // todo refactor to List.contains() or something similar
         {
             outTextLn("Попробуйте одну из команд: " + story.getAllActions());
             return true;
@@ -218,7 +224,7 @@ public class Engine
             try
             {
                 Value value = ExpressionCalculator.calculate(virtualMachine.createGlobalRunningContext(), expression);
-                outTextLn(MessageFormat.format("[ОТЛАДКА] ({0}) {1}", value.getClass().getSimpleName(), value));
+                outTextLn(MessageFormat.format("[ОТЛАДКА] ({0}) {1}", value.getTypeName(), value));
             }
             catch (IFML2Exception e)
             {
@@ -372,7 +378,8 @@ public class Engine
                 Value isRestricted = ExpressionCalculator.calculate(runningContext, restriction.getCondition());
                 if (!(isRestricted instanceof BooleanValue))
                 {
-                    throw new IFML2Exception("Выражение (%s) условия ограничения действия \"%s\" не логического типа.", restriction.getCondition(), action);
+                    throw new IFML2Exception("Выражение (%s) условия ограничения действия \"%s\" не логического типа.",
+                                             restriction.getCondition(), action);
                 }
                 if (((BooleanValue) isRestricted).getValue()) // if condition is true, run reaction
                 {
@@ -382,7 +389,8 @@ public class Engine
             }
             catch (IFML2Exception e)
             {
-                throw new IFML2Exception(e, "{0}\n  при вычислении ограничения \"{1}\" действия \"{2}\"", e.getMessage(), restriction.getCondition(), action);
+                throw new IFML2Exception(e, "{0}\n  при вычислении ограничения \"{1}\" действия \"{2}\"", e.getMessage(),
+                                         restriction.getCondition(), action);
             }
         }
         return false;
@@ -395,7 +403,7 @@ public class Engine
 
     public Location getCurrentLocation()
     {
-        return (Location) ((ObjectValue) systemVariables.get(SystemIdentifiers.CURRENT_LOCATION_SYSTEM_VARIABLE.toLowerCase())).value;
+        return (Location) ((ObjectValue) systemVariables.get(SystemIdentifiers.CURRENT_LOCATION_SYSTEM_VARIABLE.toLowerCase())).getValue();
     }
 
     public void setCurrentLocation(Location currentLocation)
@@ -445,5 +453,147 @@ public class Engine
     public VirtualMachine getVirtualMachine()
     {
         return virtualMachine;
+    }
+
+    public void saveGame(String saveFileName) throws IFML2Exception
+    {
+        SavedGame savedGame = new SavedGame(dataHelper, story.getDataHelper());
+        OMManager.saveGame(saveFileName, savedGame);
+        outTextLn(MessageFormat.format("Игра сохранена в файл {0}.", saveFileName));
+    }
+
+    public void loadGame(String saveFileName) throws IFML2Exception
+    {
+        try
+        {
+            SavedGame savedGame = OMManager.loadGame(saveFileName);
+            savedGame.restoreGame(dataHelper, story.getDataHelper());
+            outTextLn(MessageFormat.format("Игра восстановлена из файла {0}.", saveFileName));
+        }
+        catch (IFML2Exception e)
+        {
+            String errorText = "Ошибка при загрузке игры! " + e.getMessage();
+            outTextLn(errorText);
+            LOG.error(errorText);
+        }
+    }
+
+    /**
+     * Checks if item is in deep content of other items
+     *
+     * @param itemToCheck item to check
+     * @param items       items with deep content
+     * @return true if item is in deep content of items
+     * @throws ifml2.IFML2Exception
+     */
+    public boolean checkDeepContent(Item itemToCheck, List<Item> items) throws IFML2Exception
+    {
+        for (Item item : items)
+        {
+            Value itemContents = item.getAccessibleContent(getVirtualMachine());
+            if (itemContents != null)
+            {
+                if (!(itemContents instanceof CollectionValue))
+                {
+                    throw new IFML2VMException("Триггер доступного содержимого у предмета \"{0}\" вернул не коллекцию, а \"{1}\"!",
+                                               itemToCheck, itemContents.getTypeName());
+                }
+
+                List itemContentsList = ((CollectionValue) itemContents).getValue();
+                List<Item> itemContentsItemList = new BasicEventList<Item>();
+                for (Object object : itemContentsList)
+                {
+                    if (!(object instanceof Item))
+                    {
+                        throw new IFML2VMException(
+                                "Триггер доступного содержимого у предмета \"{0}\" вернул в коллекции не предмет, а \"{1}\"!", itemToCheck,
+                                object);
+                    }
+
+                    itemContentsItemList.add((Item) object);
+                }
+
+                if (itemContentsList.contains(itemToCheck) || checkDeepContent(itemToCheck, itemContentsItemList))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if object is inaccessible for player's actions
+     *
+     * @param object IFMLObject for check
+     * @return true if object is accessible including deep content
+     * @throws ifml2.IFML2Exception when tested objects neither location or item
+     */
+    public boolean isObjectAccessible(IFMLObject object) throws IFML2Exception
+    {
+        Location currentLocation = getCurrentLocation();
+
+        // test locations
+        if (object instanceof Location)
+        {
+            return object.equals(currentLocation);
+        }
+        else if (object instanceof Item)   // test items
+        {
+            Item item = (Item) object;
+
+            // test if object is in current location or player's inventory
+            return currentLocation.contains(item) || inventory.contains(item) || checkDeepContent(item, currentLocation.getItems()) || checkDeepContent(item, inventory);
+        }
+        else
+        {
+            throw new IFML2Exception("Системная ошибка: Неизвестный тип объекта: \"{0}\".", object);
+        }
+    }
+
+    /**
+     * Helper for saved games data.
+     */
+    public class DataHelper
+    {
+        public HashMap<String, Value> getGlobalVariables()
+        {
+            return globalVariables;
+        }
+
+        public HashMap<String, Value> getSystemVariables()
+        {
+            return systemVariables;
+        }
+
+        public ArrayList<Item> getInventory()
+        {
+            return inventory;
+        }
+
+        public List<Location> getLocations()
+        {
+            return story.getLocations();
+        }
+
+        public void setGlobalVariable(String name, String expression) throws IFML2Exception
+        {
+            Value value = ExpressionCalculator.calculate(virtualMachine.createGlobalRunningContext(), expression);
+            globalVariables.put(name, value);
+        }
+
+        public void setSystemVariable(String name, String expression) throws IFML2Exception
+        {
+            Value value = ExpressionCalculator.calculate(virtualMachine.createGlobalRunningContext(), expression);
+            systemVariables.put(name, value);
+        }
+
+        public
+        @NotNull
+        String getStoryFileName()
+        {
+            return new File(storyFileName).getName();
+        }
     }
 }

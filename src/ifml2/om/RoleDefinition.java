@@ -11,31 +11,36 @@ import static ifml2.om.xml.XmlSchemaConstants.ROLE_DEFINITION_ATTRIBUTE_ELEMENT;
 
 public class RoleDefinition
 {
+    @XmlAttribute(name = "description")
+    public String description;
+    @XmlElementWrapper(name = "properties")
+    @XmlElement(name = "property")
+    public List<PropertyDefinition> propertyDefinitions = new BasicEventList<PropertyDefinition>();
+    @XmlElementWrapper(name = "triggers")
+    @XmlElement(name = "trigger")
+    public List<Trigger> triggers = new BasicEventList<Trigger>();
     @XmlAttribute(name = "name")
     @XmlID
     private String name;
+    private EventList<Attribute> attributes = new BasicEventList<Attribute>();
+
     public String getName()
     {
         return name;
     }
 
-    @XmlAttribute(name = "description")
-    public String description;
-
-    private EventList<Attribute> attributes = new BasicEventList<Attribute>();
     @XmlElementWrapper(name = ROLE_DEFINITION_ATTRIBUTES_ELEMENT)
     @XmlElement(name = ROLE_DEFINITION_ATTRIBUTE_ELEMENT)
     @XmlIDREF
-    public EventList<Attribute> getAttributes() { return attributes; }
-    public void setAttributes(EventList<Attribute> attributes) { this.attributes = attributes; }
+    public EventList<Attribute> getAttributes()
+    {
+        return attributes;
+    }
 
-    @XmlElementWrapper(name = "properties")
-    @XmlElement(name = "property")
-    public List<PropertyDefinition> propertyDefinitions = new BasicEventList<PropertyDefinition>();
-
-    @XmlElementWrapper(name = "triggers")
-    @XmlElement(name = "trigger")
-    public List<Trigger> triggers = new BasicEventList<Trigger>();
+    public void setAttributes(EventList<Attribute> attributes)
+    {
+        this.attributes = attributes;
+    }
 
     @Override
     public String toString()
@@ -43,14 +48,14 @@ public class RoleDefinition
         return "определение роли " + name;
     }
 
-    public PropertyDefinition getPropertyDefinitionByName(String name)
+    public PropertyDefinition findPropertyDefinitionByName(String name)
     {
         assert name != null;
-        for(PropertyDefinition propertyDefinition : propertyDefinitions)
+        for (PropertyDefinition propertyDefinition : propertyDefinitions)
         {
-            if(name.equalsIgnoreCase(propertyDefinition.getName()))
+            if (name.equalsIgnoreCase(propertyDefinition.getName()))
             {
-               return propertyDefinition;
+                return propertyDefinition;
             }
         }
         return null;
@@ -60,7 +65,7 @@ public class RoleDefinition
     {
         for (Trigger trigger : triggers)
         {
-            if(triggerType.equals(trigger.getType()))
+            if (triggerType.equals(trigger.getType()))
             {
                 return trigger;
             }

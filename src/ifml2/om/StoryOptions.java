@@ -4,11 +4,9 @@ import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ifml2.vm.instructions.SetVarInstruction;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlIDREF;
+import javax.xml.bind.annotation.*;
 
+@XmlAccessorType(XmlAccessType.NONE)
 public class StoryOptions
 {
     @XmlElement(name = "startLocationOption")
@@ -17,6 +15,8 @@ public class StoryOptions
     private final StartProcedureOption startProcedureOption = new StartProcedureOption();
     @XmlElement(name = "storyDescription")
     private final StoryDescription storyDescription = new StoryDescription();
+    @XmlElementWrapper(name = "globalVars")
+    @XmlElement(name = "var")
     private EventList<SetVarInstruction> vars = new BasicEventList<SetVarInstruction>();
 
     public StartLocationOption getStartLocationOption()
@@ -39,16 +39,18 @@ public class StoryOptions
         return vars;
     }
 
-    @XmlElementWrapper(name = "globalVars")
-    @XmlElement(name = "var")
     public void setVars(EventList<SetVarInstruction> vars)
     {
         this.vars = vars;
     }
 
+    @XmlAccessorType(XmlAccessType.NONE)
     public static class StartLocationOption
     {
+        @XmlIDREF
+        @XmlAttribute(name = "location")
         private Location location;
+        @XmlAttribute(name = "showStartLocDesc")
         private boolean showStartLocDesc;
 
         public Location getLocation()
@@ -56,8 +58,6 @@ public class StoryOptions
             return location;
         }
 
-        @XmlAttribute(name = "location")
-        @XmlIDREF
         public void setLocation(Location location)
         {
             this.location = location;
@@ -68,7 +68,6 @@ public class StoryOptions
             return showStartLocDesc;
         }
 
-        @XmlAttribute(name = "showStartLocDesc")
         public void setShowStartLocDesc(boolean showStartLocDesc)
         {
             this.showStartLocDesc = showStartLocDesc;
@@ -92,20 +91,23 @@ public class StoryOptions
         }
     }
 
+    @XmlAccessorType(XmlAccessType.NONE)
     public static class StoryDescription
     {
-        @XmlAttribute(name = "name")
-        public String name;
-        @XmlAttribute(name = "description")
-        public String description;
-        @XmlAttribute(name = "version")
-        public String version;
-        @XmlAttribute(name = "author")
-        public String author;
+        private String name;
+        private String description;
+        private String version;
+        private String author;
 
         public String getName()
         {
             return name;
+        }
+
+        @XmlAttribute(name = "name")
+        public void setName(String name)
+        {
+            this.name = name;
         }
 
         public String getDescription()
@@ -113,14 +115,32 @@ public class StoryOptions
             return description;
         }
 
+        @XmlAttribute(name = "description")
+        public void setDescription(String description)
+        {
+            this.description = description;
+        }
+
         public String getVersion()
         {
             return version;
         }
 
+        @XmlAttribute(name = "version")
+        public void setVersion(String version)
+        {
+            this.version = version;
+        }
+
         public String getAuthor()
         {
             return author;
+        }
+
+        @XmlAttribute(name = "author")
+        public void setAuthor(String author)
+        {
+            this.author = author;
         }
     }
 }

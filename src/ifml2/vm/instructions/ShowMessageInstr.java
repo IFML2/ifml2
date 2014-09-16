@@ -11,17 +11,13 @@ import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "showMessage")
+@IFML2Instruction(title = "Вывести сообщение")
 public class ShowMessageInstr extends Instruction
 {
     private MessageTypeEnum type = MessageTypeEnum.TEXT; // default type
     private Boolean carriageReturn = true;
     private Boolean beginWithCap = false;
     private String messageExpr;
-
-    public static String getTitle()
-    {
-        return "Вывести сообщение";
-    }
 
     public MessageTypeEnum getType()
     {

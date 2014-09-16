@@ -2,36 +2,11 @@ package ifml2.vm.values;
 
 import ifml2.om.IFMLObject;
 
-public class ObjectValue extends Value
+public class ObjectValue extends Value<IFMLObject>
 {
-    public final IFMLObject value;
-
-    @Override
-    public boolean equals(Object o)
-    {
-        if (this == o)
-        {
-            return true;
-        }
-        if (!(o instanceof ObjectValue))
-        {
-            return false;
-        }
-
-        ObjectValue that = (ObjectValue) o;
-
-        return !(value != null ? !value.equals(that.value) : that.value != null);
-    }
-
-    @Override
-    public String toString()
-    {
-        return value.toString();
-    }
-
     public ObjectValue(IFMLObject value)
     {
-        this.value = value;
+        super(value);
     }
 
     @Override
@@ -40,8 +15,9 @@ public class ObjectValue extends Value
         return "объект";
     }
 
-    public IFMLObject getValue()
+    @Override
+    public String toLiteral()
     {
-        return value;
+        return value.getId();
     }
 }

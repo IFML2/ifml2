@@ -32,7 +32,7 @@ public class EditorUtils
      * @param storyDataHelper Story.DataHelper for acquiring additional data
      * @return true if Ok button was pressed and instruction was updated and false in other case
      */
-    public static boolean showAssociatedEditor(Dialog owner, @NotNull Instruction instruction, Story.DataHelper storyDataHelper)
+    public static boolean showAssociatedEditor(Window owner, @NotNull Instruction instruction, Story.DataHelper storyDataHelper)
     {
         try
         {

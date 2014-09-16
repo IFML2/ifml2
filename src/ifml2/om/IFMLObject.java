@@ -9,6 +9,7 @@ import ifml2.vm.RunningContext;
 import ifml2.vm.values.BooleanValue;
 import ifml2.vm.values.TextValue;
 import ifml2.vm.values.Value;
+import org.jetbrains.annotations.NotNull;
 
 import javax.xml.bind.annotation.*;
 import java.text.MessageFormat;
@@ -16,6 +17,7 @@ import java.text.MessageFormat;
 import static ifml2.om.Word.GramCaseEnum;
 import static ifml2.om.xml.XmlSchemaConstants.*;
 
+@XmlAccessorType(XmlAccessType.NONE)
 public class IFMLObject implements Cloneable
 {
     private static final String NAME_PROPERTY_LITERAL = "имя";
@@ -23,6 +25,9 @@ public class IFMLObject implements Cloneable
     @XmlElementWrapper(name = ITEM_HOOKS_ELEMENT)
     @XmlElement(name = ITEM_HOOK_ELEMENT)
     public EventList<Hook> hooks = new BasicEventList<Hook>();
+    @XmlElementWrapper(name = IFML_OBJECT_ROLES_ELEMENT)
+    @XmlElement(name = IFML_OBJECT_ROLE_ELEMENT)
+    protected EventList<Role> roles = new BasicEventList<Role>();
     @XmlElementWrapper(name = OBJECT_PROPERTIES_ELEMENT)
     @XmlElement(name = OBJECT_PROPERTY_ELEMENT)
     private EventList<Property> properties = new BasicEventList<Property>();
@@ -31,17 +36,25 @@ public class IFMLObject implements Cloneable
     private String name;
     private String description;
     private EventList<Attribute> attributes = new BasicEventList<Attribute>();
-    @XmlElementWrapper(name = IFML_OBJECT_ROLES_ELEMENT)
-    @XmlElement(name = IFML_OBJECT_ROLE_ELEMENT)
-    private EventList<Role> roles = new BasicEventList<Role>();
 
     @Override
     public IFMLObject clone() throws CloneNotSupportedException
     {
         IFMLObject ifmlObject = (IFMLObject) super.clone();
-        ifmlObject.wordLinks = wordLinks.clone();
-        ifmlObject.attributes = GlazedLists.eventList(attributes);
+        copyFieldsTo(ifmlObject);
         return ifmlObject;
+    }
+
+    private void copyFieldsTo(IFMLObject ifmlObject) throws CloneNotSupportedException
+    {
+        ifmlObject.setId(id);
+        ifmlObject.setName(name);
+        ifmlObject.setDescription(description);
+        ifmlObject.setWordLinks(wordLinks.clone());
+        ifmlObject.setAttributes(GlazedLists.eventList(attributes));
+        ifmlObject.setProperties(GlazedLists.eventList(properties));
+        ifmlObject.setHooks(GlazedLists.eventList(hooks));
+        ifmlObject.setRoles(GlazedLists.eventList(roles));
     }
 
     public String getId()
@@ -62,7 +75,7 @@ public class IFMLObject implements Cloneable
     }
 
     @XmlElement(name = OBJECT_WORDS_TAG)
-    public void setWordLinks(WordLinks wordLinks)
+    public void setWordLinks(@NotNull WordLinks wordLinks)
     {
         this.wordLinks = wordLinks;
     }
@@ -203,8 +216,8 @@ public class IFMLObject implements Cloneable
             }
         }
 
-        throw new IFML2VMException("У объекта \"{0}\" нет свойства \"{1}\", а также в игре" +
-                " нет признаков и ролей с таким названием.", this, propertyName);
+        throw new IFML2VMException("У объекта \"{0}\" нет свойства \"{1}\", а также в игре нет признаков и ролей с таким названием.", this,
+                                   propertyName);
     }
 
     public Value tryGetMemberValue(String symbol, RunningContext runningContext)
@@ -219,7 +232,7 @@ public class IFMLObject implements Cloneable
         }
     }
 
-    public Property getPropertyByName(String name)
+    public Property findPropertyByName(String name)
     {
         // search in local properties
         for (Property property : properties)
@@ -233,7 +246,7 @@ public class IFMLObject implements Cloneable
         // search in roles' properties
         for (Role role : roles)
         {
-            Property property = role.getPropertyByName(name);
+            Property property = role.findPropertyByName(name);
             if (property != null)
             {
                 return property;
@@ -241,5 +254,38 @@ public class IFMLObject implements Cloneable
         }
 
         return null;
+    }
+
+    public Role findRoleByName(String name)
+    {
+        for (Role role : roles)
+        {
+            if (role.getName().equalsIgnoreCase(name))
+            {
+                return role;
+            }
+        }
+
+        return null;
+    }
+
+    public void copyTo(IFMLObject ifmlObject) throws CloneNotSupportedException
+    {
+        copyFieldsTo(ifmlObject);
+    }
+
+    public void setHooks(EventList<Hook> hooks)
+    {
+        this.hooks = hooks;
+    }
+
+    public void setRoles(EventList<Role> roles)
+    {
+        this.roles = roles;
+    }
+
+    public void setProperties(EventList<Property> properties)
+    {
+        this.properties = properties;
     }
 }

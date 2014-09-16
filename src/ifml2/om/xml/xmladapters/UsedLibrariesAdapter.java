@@ -13,33 +13,33 @@ import java.util.ArrayList;
 
 public class UsedLibrariesAdapter extends XmlAdapter<XmlUsedLibrary, EventList<Library>>
 {
-	private final static Logger LOG = Logger.getLogger(UsedLibrariesAdapter.class);
+    private final static Logger LOG = Logger.getLogger(UsedLibrariesAdapter.class);
 
     @Override
-	public XmlUsedLibrary marshal(EventList<Library> v)
+    public XmlUsedLibrary marshal(EventList<Library> v)
     {
-		XmlUsedLibrary xmlUsedLibrary = new XmlUsedLibrary();
+        XmlUsedLibrary xmlUsedLibrary = new XmlUsedLibrary();
         ArrayList<String> usedLibrary = new ArrayList<String>();
-        for(Library library : v)
+        for (Library library : v)
         {
             usedLibrary.add(library.getPath());
         }
         xmlUsedLibrary.usedLibrary = usedLibrary;
         return xmlUsedLibrary;
-	}
+    }
 
-	@Override
-	public EventList<Library> unmarshal(XmlUsedLibrary v) throws IFML2Exception
+    @Override
+    public EventList<Library> unmarshal(XmlUsedLibrary v) throws IFML2Exception
     {
         LOG.trace(String.format("unmarshal(XmlUsedLibrary = %s)", v));
 
         EventList<Library> libraries = new BasicEventList<Library>();
-		for(String libPath : v.usedLibrary)
-		{
-			libraries.add(OMManager.loadLibrary(libPath));
-		}
-		
-		LOG.trace("unmarshal() :: END");
+        for (String libPath : v.usedLibrary)
+        {
+            libraries.add(OMManager.loadLibrary(libPath));
+        }
+
+        LOG.trace("unmarshal() :: END");
         return libraries;
-	}
+    }
 }

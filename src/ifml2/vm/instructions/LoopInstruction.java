@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @XmlRootElement(name = "loop")
+@IFML2Instruction(title = "Цикл")
 public class LoopInstruction extends Instruction
 {
     @XmlElement(name = "empty")
@@ -42,16 +43,13 @@ public class LoopInstruction extends Instruction
     private
     String conditionExpression;
 
-    public static String getTitle()
-    {
-        return "Цикл";
-    }
-
     @Override
     public void run(RunningContext runningContext) throws IFML2Exception
     {
         // get the collection
-        List<IFMLObject> collection = (List<IFMLObject>) getCollectionFromExpression(collectionExpression, runningContext, getTitle(), "Коллекция");
+        List<IFMLObject> collection = ConvertToClassedList(
+                getCollectionFromExpression(collectionExpression, runningContext, getTitle(), "Коллекция"),
+                IFMLObject.class);
         //todo solve unsafe cast problem...
 
         List<IFMLObject> filteredCollection = new ArrayList<IFMLObject>();
