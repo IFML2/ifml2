@@ -609,6 +609,8 @@ public class Editor extends JFrame
             {
                 return editLocation(selectedElement);
             }
+
+            //todo warn that location will be deleted from items
         };
 
         itemsListEditForm = new ListEditForm<Item>(this, "предмет", "предмета", Word.GenderEnum.MASCULINE)
