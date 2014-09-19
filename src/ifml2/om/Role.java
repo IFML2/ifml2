@@ -2,22 +2,34 @@ package ifml2.om;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
+import ifml2.IFMLEntity;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlIDREF;
+import javax.xml.bind.annotation.*;
 
 import static ifml2.om.xml.XmlSchemaConstants.*;
 
-public class Role
+@XmlAccessorType(XmlAccessType.NONE)
+public class Role extends IFMLEntity
 {
+    @SuppressWarnings("UnusedDeclaration")
     @XmlAttribute(name = ROLE_NAME_ATTRIBUTE)
     @XmlIDREF
-    private RoleDefinition roleDefinition;
+    private RoleDefinition roleDefinition; // reference, don't clone
+
     @XmlElementWrapper(name = ROLE_PROPERTIES_ELEMENT)
     @XmlElement(name = ROLE_PROPERTY_ELEMENT)
     private EventList<Property> properties = new BasicEventList<Property>();
+
+    @Override
+    protected Role clone() throws CloneNotSupportedException
+    {
+        Role clone = (Role) super.clone(); // flat clone
+
+        // deep clone
+        clone.properties = deepCloneEventList(properties, Property.class);
+
+        return clone;
+    }
 
     public RoleDefinition getRoleDefinition()
     {
@@ -32,7 +44,7 @@ public class Role
     @Override
     public String toString()
     {
-        return /*"роль " + */(roleDefinition != null ? roleDefinition.getName() : "не задана");
+        return roleDefinition != null ? roleDefinition.getName() : "не задана";
     }
 
     public String getName()

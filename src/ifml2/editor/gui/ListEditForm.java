@@ -48,6 +48,7 @@ public abstract class ListEditForm<T> extends JInternalFrame
     private JPopupMenu popupMenu;
     private EventList<T> clonedList;
     private java.util.List<ChangeListener> listChangeListeners = new ArrayList<ChangeListener>();
+    private Class<T> clazz;
 
     /**
      * Initializes form.
@@ -56,12 +57,14 @@ public abstract class ListEditForm<T> extends JInternalFrame
      * @param objectNameVP Element VP.
      * @param objectNameRP Element RP.
      * @param gender       Element gender.
+     * @param clazz        T class.
      */
     public ListEditForm(@Nullable final Window owner, @NotNull final String objectNameVP, @NotNull final String objectNameRP,
-            @NotNull final Word.GenderEnum gender)
+            @NotNull final Word.GenderEnum gender, Class<T> clazz)
     {
         setContentPane(contentPane);
 
+        this.clazz = clazz;
         this.owner = owner;
         this.objectNameVP = objectNameVP;
         this.objectNameRP = objectNameRP;
@@ -340,7 +343,9 @@ public abstract class ListEditForm<T> extends JInternalFrame
      */
     protected T getSelectedElement()
     {
-        return (T) elementsList.getSelectedValue();
+
+        final Object selectedValue = elementsList.getSelectedValue();
+        return clazz.isInstance(selectedValue) ? clazz.cast(selectedValue) : null;
     }
 
     /**

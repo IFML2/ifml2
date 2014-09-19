@@ -19,38 +19,35 @@ import java.util.List;
 public class LoopInstruction extends Instruction
 {
     @XmlElement(name = "empty")
-    private final
-    InstructionList emptyInstructions = null;
+    private final InstructionList emptyInstructions = null;
+
     @XmlElement(name = "alone")
-    private final
-    InstructionList aloneInstructions = null;
+    private final InstructionList aloneInstructions = null;
+
     @XmlElement(name = "first")
-    private final
-    InstructionList firstInstructions = null;
+    private final InstructionList firstInstructions = null;
+
     @XmlElement(name = "next")
-    private final
-    InstructionList nextInstructions = null;
+    private final InstructionList nextInstructions = null;
+
     @XmlElement(name = "last")
-    private final
-    InstructionList lastInstructions = null;
+    private final InstructionList lastInstructions = null;
+
     @XmlAttribute(name = "collection")
-    private
-    String collectionExpression;
+    private String collectionExpression;
+
     @XmlAttribute(name = "element")
-    private
-    String elementName;
+    private String elementName;
+
     @XmlAttribute(name = "condition")
-    private
-    String conditionExpression;
+    private String conditionExpression;
 
     @Override
     public void run(RunningContext runningContext) throws IFML2Exception
     {
         // get the collection
-        List<IFMLObject> collection = ConvertToClassedList(
-                getCollectionFromExpression(collectionExpression, runningContext, getTitle(), "Коллекция"),
-                IFMLObject.class);
-        //todo solve unsafe cast problem...
+        List<IFMLObject> collection = convertToClassedList(
+                getCollectionFromExpression(collectionExpression, runningContext, getTitle(), "Коллекция"), IFMLObject.class);
 
         List<IFMLObject> filteredCollection = new ArrayList<IFMLObject>();
 
@@ -155,6 +152,7 @@ public class LoopInstruction extends Instruction
     @Override
     public String toString()
     {
-        return MessageFormat.format("Цикл: для каждого \"{0}\" из \"{1}\" с учётом \"{2}\"", elementName, collectionExpression, conditionExpression);
+        return MessageFormat
+                .format("Цикл: для каждого \"{0}\" из \"{1}\" с учётом \"{2}\"", elementName, collectionExpression, conditionExpression);
     }
 }

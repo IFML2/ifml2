@@ -2,31 +2,34 @@ package ifml2.om;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.GlazedLists;
 import ifml2.IFML2Exception;
+import ifml2.IFMLEntity;
 import ifml2.vm.ExpressionCalculator;
 import ifml2.vm.RunningContext;
 import ifml2.vm.values.*;
 
 import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlIDREF;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.*;
 import java.text.MessageFormat;
 
 import static ifml2.om.xml.XmlSchemaConstants.*;
 
-public class Property
+@XmlAccessorType(XmlAccessType.NONE)
+public class Property extends IFMLEntity
 {
     @XmlAttribute(name = PROPERTY_NAME_ATTRIBUTE)
     private String name; //can't load as IDREF because this name isn't unique
+
     @XmlTransient
-    private Role parentRole;
+    private Role parentRole; // reference
+
     @XmlAttribute(name = PROPERTY_VALUE_ATTRIBUTE)
     private String valueExpression;
+
     @XmlElement(name = PROPERTY_COLLECTION_ITEM_ELEMENT)
     @XmlIDREF
-    private EventList<IFMLObject> collectionItems = new BasicEventList<IFMLObject>();
+    private EventList<IFMLObject> collectionItems = new BasicEventList<IFMLObject>(); // references
     @XmlTransient
     private Value value;
 
@@ -43,6 +46,18 @@ public class Property
         valueExpression = propertyDefinition.getValue();
 
         parentRole.getProperties().add(this);
+    }
+
+    @Override
+    protected Property clone() throws CloneNotSupportedException
+    {
+        Property clone = (Property) super.clone(); // flat clone
+
+        // deep clone
+        clone.value = value != null ? value.clone() : null;
+        clone.collectionItems = GlazedLists.eventList(collectionItems); // just copy refs
+
+        return clone;
     }
 
     public String getName()
@@ -102,7 +117,7 @@ public class Property
                 if (!(logicValue instanceof BooleanValue))
                 {
                     throw new IFML2Exception("Выражение \"{0}\" для свойства \"{1}\" не логического типа", valueExpression,
-                                             propertyDefinition.getName());
+                            propertyDefinition.getName());
                 }
                 value = logicValue;
                 break;
@@ -112,7 +127,7 @@ public class Property
                 if (!(numberValue instanceof NumberValue))
                 {
                     throw new IFML2Exception("Выражение \"{0}\" для свойства \"{1}\" не числового типа", valueExpression,
-                                             propertyDefinition.getName());
+                            propertyDefinition.getName());
                 }
                 value = numberValue;
                 break;
@@ -122,7 +137,7 @@ public class Property
                 if (!(textValue instanceof TextValue))
                 {
                     throw new IFML2Exception("Выражение \"{0}\" для свойства \"{1}\" не текстового типа", valueExpression,
-                                             propertyDefinition.getName());
+                            propertyDefinition.getName());
                 }
                 value = textValue;
                 break;

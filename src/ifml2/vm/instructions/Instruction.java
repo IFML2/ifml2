@@ -2,6 +2,7 @@ package ifml2.vm.instructions;
 
 import ca.odell.glazedlists.BasicEventList;
 import ifml2.IFML2Exception;
+import ifml2.IFMLEntity;
 import ifml2.om.IFMLObject;
 import ifml2.om.Item;
 import ifml2.om.Location;
@@ -24,7 +25,8 @@ public abstract class Instruction implements Cloneable
     @XmlTransient
     public VirtualMachine virtualMachine; // links
 
-    private static void validateParameterForNull(String parameterValue, String instructionTitle, Object parameterName) throws IFML2VMException
+    private static void validateParameterForNull(String parameterValue, String instructionTitle,
+            Object parameterName) throws IFML2VMException
     {
         if (parameterValue == null || "".equals(parameterValue))
         {
@@ -32,12 +34,13 @@ public abstract class Instruction implements Cloneable
         }
     }
 
-    protected static <T> List<T> ConvertToClassedList(List<?> unknownList, Class<T> convertingClass) throws IFML2VMException
+    protected static <T> List<T> convertToClassedList(List<? extends IFMLEntity> unknownList,
+            Class<T> convertingClass) throws IFML2VMException
     {
         List<T> ifmlObjects = new BasicEventList<T>();
-        for(Object obj : unknownList)
+        for (Object obj : unknownList)
         {
-            if(convertingClass.isInstance(obj))
+            if (convertingClass.isInstance(obj))
             {
                 ifmlObjects.add(convertingClass.cast(obj));
             }
@@ -49,6 +52,12 @@ public abstract class Instruction implements Cloneable
         return ifmlObjects;
     }
 
+    public static String getTitleFor(Class<? extends Instruction> instrClass)
+    {
+        IFML2Instruction annotation = instrClass.getAnnotation(IFML2Instruction.class);
+        return annotation != null ? annotation.title() : instrClass.getSimpleName();
+    }
+
     @Override
     public Instruction clone() throws CloneNotSupportedException
     {
@@ -57,7 +66,8 @@ public abstract class Instruction implements Cloneable
 
     abstract public void run(RunningContext runningContext) throws IFML2Exception;
 
-    protected IFMLObject getObjectFromExpression(String expression, RunningContext runningContext, String instructionTitle, Object parameterName, boolean objectCanBeNull) throws IFML2Exception
+    protected IFMLObject getObjectFromExpression(String expression, RunningContext runningContext, String instructionTitle,
+            Object parameterName, boolean objectCanBeNull) throws IFML2Exception
     {
         validateParameterForNull(expression, instructionTitle, parameterName);
 
@@ -79,7 +89,8 @@ public abstract class Instruction implements Cloneable
         return object;
     }
 
-    protected Item getItemFromExpression(String expression, RunningContext runningContext, String instructionTitle, Object parameterName, boolean objectCanBeNull) throws IFML2Exception
+    protected Item getItemFromExpression(String expression, RunningContext runningContext, String instructionTitle, Object parameterName,
+            boolean objectCanBeNull) throws IFML2Exception
     {
         IFMLObject object = getObjectFromExpression(expression, runningContext, instructionTitle, parameterName, objectCanBeNull);
 
@@ -96,7 +107,8 @@ public abstract class Instruction implements Cloneable
         return (Item) object;
     }
 
-    protected Location getLocationFromExpression(String expression, RunningContext runningContext, String instructionTitle, Object parameterName, boolean objectCanBeNull) throws IFML2Exception
+    protected Location getLocationFromExpression(String expression, RunningContext runningContext, String instructionTitle,
+            Object parameterName, boolean objectCanBeNull) throws IFML2Exception
     {
         IFMLObject object = getObjectFromExpression(expression, runningContext, instructionTitle, parameterName, objectCanBeNull);
 
@@ -114,7 +126,7 @@ public abstract class Instruction implements Cloneable
     }
 
     boolean getBooleanFromExpression(String expression, RunningContext runningContext, String instructionTitle,
-                                     Object parameterName) throws IFML2Exception
+            Object parameterName) throws IFML2Exception
     {
         validateParameterForNull(expression, instructionTitle, parameterName);
 
@@ -128,7 +140,8 @@ public abstract class Instruction implements Cloneable
         return ((BooleanValue) boolValue).getValue();
     }
 
-    protected List<?> getCollectionFromExpression(String expression, RunningContext runningContext, String instructionTitle, Object parameterName) throws IFML2Exception
+    protected List<? extends IFMLEntity> getCollectionFromExpression(String expression, RunningContext runningContext,
+            String instructionTitle, Object parameterName) throws IFML2Exception
     {
         validateParameterForNull(expression, instructionTitle, parameterName);
 
@@ -146,11 +159,5 @@ public abstract class Instruction implements Cloneable
     {
         Class<? extends Instruction> aClass = this.getClass();
         return getTitleFor(aClass);
-    }
-
-    public static String getTitleFor(Class<? extends Instruction> instrClass)
-    {
-        IFML2Instruction annotation = instrClass.getAnnotation(IFML2Instruction.class);
-        return annotation != null ? annotation.title() : instrClass.getSimpleName();
     }
 }
