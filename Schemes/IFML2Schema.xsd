@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<schema xmlns:ifml2="http://toysoft.narod.ru/IFML2Schema" elementFormDefault="qualified"
-        targetNamespace="http://toysoft.narod.ru/IFML2Schema" xmlns="http://www.w3.org/2001/XMLSchema"
-        xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<schema xmlns:ifml2="http://toysoft.narod.ru/IFML2Schema" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="qualified" targetNamespace="http://toysoft.narod.ru/IFML2Schema"
+        xmlns="http://www.w3.org/2001/XMLSchema">
 
     <complexType name="storyType">
         <annotation>
@@ -251,7 +251,7 @@
     </simpleType>
 
     <complexType name="procedureCallType">
-        <attribute name="procedure" type="IDREF" use="required"/>
+        <attribute name="procedure" type="string" use="required"/>
     </complexType>
 
     <complexType name="proceduresType">
@@ -280,7 +280,7 @@
             <element name="procedureVariables" minOccurs="0" maxOccurs="1" type="ifml2:procedureVariablesType"/>
             <element name="procedureBody" minOccurs="1" maxOccurs="1" type="ifml2:instructionsType"/>
         </all>
-        <attribute name="name" type="ID" use="required"/>
+        <attribute name="name" type="string" use="required"/>
         <attribute name="inheritsSystemProcedure" type="ifml2:systemProcedureEnumType" use="optional"/>
     </complexType>
 
@@ -565,7 +565,7 @@
     </complexType>
 
     <complexType name="startProcedureOptionType">
-        <attribute name="procedure" type="IDREF"/>
+        <attribute name="procedure" type="string"/>
     </complexType>
 
     <complexType name="storyDescriptionType">
