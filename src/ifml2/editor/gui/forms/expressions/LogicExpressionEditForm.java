@@ -1,12 +1,15 @@
 package ifml2.editor.gui.forms.expressions;
 
+import ifml2.SystemIdentifiers;
+
 import javax.swing.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LogicExpressionEditForm extends ExpressionEditForm
 {
-    private final String yesLiteral = "да";
     private JPanel contentPane;
     private JRadioButton logicRadioButton;
     private JRadioButton expressionRadioButton;
@@ -21,9 +24,24 @@ public class LogicExpressionEditForm extends ExpressionEditForm
         super(expression);
         setContentPane(contentPane);
 
-        //fixme control enable states
-
-        //fixme change expression by logic value
+        logicRadioButton.addItemListener(new ItemListener()
+        {
+            @Override
+            public void itemStateChanged(ItemEvent e)
+            {
+                final boolean toEnable = e.getStateChange() == ItemEvent.SELECTED;
+                yesRadioButton.setEnabled(toEnable);
+                noRadioButton.setEnabled(toEnable);
+            }
+        });
+        expressionRadioButton.addItemListener(new ItemListener()
+        {
+            @Override
+            public void itemStateChanged(ItemEvent e)
+            {
+                expressionTextArea.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+            }
+        });
 
         bindData();
     }
@@ -33,9 +51,9 @@ public class LogicExpressionEditForm extends ExpressionEditForm
     {
         expressionTextArea.setText(expression);
 
-        if (expression != null && pattern.matcher(expression).matches())
+        if (expression == null || pattern.matcher(expression).matches())
         {
-            Boolean logic = extractLogic(expression);
+            Boolean logic = expression != null ? extractLogic(expression) : false;
 
             if (logic)
             {
@@ -57,12 +75,17 @@ public class LogicExpressionEditForm extends ExpressionEditForm
     private Boolean extractLogic(String expression)
     {
         Matcher matcher = pattern.matcher(expression);
-        return matcher.matches() && yesLiteral.equalsIgnoreCase(matcher.group(1));
+        return matcher.matches() && SystemIdentifiers.TRUE_BOOL_LITERAL.equalsIgnoreCase(matcher.group(1));
     }
 
     @Override
     public String getEditedExpression()
     {
-        return null;
+        return logicRadioButton.isSelected() ? createLiteral(yesRadioButton.isSelected()) : expressionTextArea.getText();
+    }
+
+    private String createLiteral(boolean logic)
+    {
+        return logic ? SystemIdentifiers.TRUE_BOOL_LITERAL : SystemIdentifiers.FALSE_BOOL_LITERAL;
     }
 }
