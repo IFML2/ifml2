@@ -35,6 +35,23 @@ public class Item extends IFMLObject implements Cloneable
         return startingPosition;
     }
 
+    public void setStartingPosition(ItemStartingPosition startingPosition)
+    {
+        this.startingPosition = startingPosition;
+    }
+
+    /**
+     * Copies all field of item but container.
+     *
+     * @param item item to copy to
+     * @throws CloneNotSupportedException
+     */
+    public void copyTo(@NotNull Item item) throws CloneNotSupportedException
+    {
+        super.copyTo(item);
+        item.setStartingPosition(startingPosition.clone());
+    }
+
     @Override
     public String toString()
     {

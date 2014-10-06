@@ -4,7 +4,7 @@ import ifml2.GUIUtils;
 import ifml2.editor.IFML2EditorException;
 import ifml2.editor.gui.AbstractEditor;
 import ifml2.editor.gui.EditorUtils;
-import ifml2.editor.gui.ListEditForm;
+import ifml2.editor.gui.forms.ListEditForm;
 import ifml2.editor.gui.instructions.InstructionTypeEnum;
 import ifml2.om.Parameter;
 import ifml2.om.Procedure;

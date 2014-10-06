@@ -52,7 +52,7 @@
                     <properties/>
                     <border type="none" title="Локации"/>
                     <children>
-                      <nested-form id="b7647" form-file="ifml2/editor/gui/ListEditForm.form" binding="locationsListEditForm" custom-create="true">
+                      <nested-form id="b7647" form-file="ifml2/editor/gui/forms/ListEditForm.form" binding="locationsListEditForm" custom-create="true">
                         <constraints>
                           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                         </constraints>
@@ -67,7 +67,7 @@
                     <properties/>
                     <border type="none" title="Предметы"/>
                     <children>
-                      <nested-form id="69b1b" form-file="ifml2/editor/gui/ListEditForm.form" binding="itemsListEditForm" custom-create="true">
+                      <nested-form id="69b1b" form-file="ifml2/editor/gui/forms/ListEditForm.form" binding="itemsListEditForm" custom-create="true">
                         <constraints>
                           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                         </constraints>
@@ -106,7 +106,7 @@
                     <properties/>
                     <border type="none" title="Процедуры"/>
                     <children>
-                      <nested-form id="e981b" form-file="ifml2/editor/gui/ListEditForm.form" binding="proceduresListEditForm" custom-create="true">
+                      <nested-form id="e981b" form-file="ifml2/editor/gui/forms/ListEditForm.form" binding="proceduresListEditForm" custom-create="true">
                         <constraints>
                           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                         </constraints>
@@ -121,7 +121,7 @@
                     <properties/>
                     <border type="none" title="Действия"/>
                     <children>
-                      <nested-form id="318b3" form-file="ifml2/editor/gui/ListEditForm.form" binding="actionsListEditForm" custom-create="true">
+                      <nested-form id="318b3" form-file="ifml2/editor/gui/forms/ListEditForm.form" binding="actionsListEditForm" custom-create="true">
                         <constraints>
                           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                         </constraints>

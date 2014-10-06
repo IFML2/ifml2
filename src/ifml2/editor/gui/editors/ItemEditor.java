@@ -1,7 +1,6 @@
 package ifml2.editor.gui.editors;
 
 import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ifml2.GUIUtils;
@@ -9,7 +8,7 @@ import ifml2.IFML2Exception;
 import ifml2.editor.DataNotValidException;
 import ifml2.editor.gui.AbstractEditor;
 import ifml2.editor.gui.ButtonAction;
-import ifml2.editor.gui.ListEditForm;
+import ifml2.editor.gui.forms.ListEditForm;
 import ifml2.om.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,6 +23,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.text.MessageFormat;
+import java.util.List;
 
 public class ItemEditor extends AbstractEditor<Item>
 {
@@ -45,11 +45,13 @@ public class ItemEditor extends AbstractEditor<Item>
     private boolean toGenerateId = false;
     private Item itemClone;
     private Story.DataHelper storyDataHelper;
+    private Item originalItem;
 
     public ItemEditor(Window owner, @NotNull final Item item, final Story.DataHelper storyDataHelper)
     {
         super(owner);
 
+        this.originalItem = item;
         this.storyDataHelper = storyDataHelper;
 
         initializeEditor(ITEM_EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
@@ -234,7 +236,7 @@ public class ItemEditor extends AbstractEditor<Item>
         }
 
         Object object = storyDataHelper.findObjectById(id);
-        if (object != null && !object.equals(itemClone))
+        if (object != null && !object.equals(originalItem))
         {
             String className = null;
             try
@@ -255,22 +257,27 @@ public class ItemEditor extends AbstractEditor<Item>
     @Override
     public void getData(@NotNull Item item)
     {
-        item.setId(idText.getText().trim());
-        item.setName(nameText.getText().trim());
-        item.setDescription(descText.getText());
-
-        item.setWordLinks(itemClone.getWordLinks());
-
-        item.getStartingPosition().setInventory(itemInInventoryCheck.isSelected());
-        EventList<Location> locations = item.getStartingPosition().getLocations();
-        locations.clear();
-        for (Object object : itemInLocationsList.getSelectedValues())
+        try
         {
-            locations.add((Location) object);
-        }
+            // update clone's local data
+            itemClone.setId(idText.getText().trim());
+            itemClone.setName(nameText.getText().trim());
+            itemClone.setDescription(descText.getText());
+            itemClone.getStartingPosition().setInventory(itemInInventoryCheck.isSelected());
+            EventList<Location> locations = itemClone.getStartingPosition().getLocations();
+            locations.clear();
+            for (Object object : itemInLocationsList.getSelectedValues())
+            {
+                locations.add((Location) object);
+            }
 
-        item.setAttributes(itemClone.getAttributes());
-        item.setHooks(GlazedLists.eventList(itemClone.getHooks())); // rewrite data in EventList
+            // copy clone to orig obj
+            itemClone.copyTo(item);
+        }
+        catch (CloneNotSupportedException e)
+        {
+            GUIUtils.showErrorMessage(this, e);
+        }
     }
 
     private void createUIComponents()
@@ -280,13 +287,38 @@ public class ItemEditor extends AbstractEditor<Item>
             @Override
             protected Role createElement() throws Exception
             {
-                return null; //todo create role
+                final List<RoleDefinition> allRoleDefinitions = storyDataHelper.getCopyOfAllRoleDefinitions();
+
+                // remove all definitions that already used
+                for (Role role : itemClone.getRoles())
+                {
+                    allRoleDefinitions.remove(role.getRoleDefinition());
+                }
+
+                if (allRoleDefinitions.size() == 0)
+                {
+                    JOptionPane.showMessageDialog(ItemEditor.this, "Уже добавлены все возможные роли", "Нет больше ролей",
+                            JOptionPane.INFORMATION_MESSAGE);
+                    return null;
+                }
+
+                final RoleDefinition roleDefinition = (RoleDefinition) JOptionPane
+                        .showInputDialog(ItemEditor.this, "Выберите роль", "Добавление роли", JOptionPane.QUESTION_MESSAGE, null,
+                                allRoleDefinitions.toArray(), null);
+
+                if (roleDefinition != null)
+                {
+                    Role role = new Role(roleDefinition);
+                    return editRole(role) ? role : null;
+                }
+
+                return null;
             }
 
             @Override
             protected boolean editElement(Role selectedElement) throws Exception
             {
-                return false; //todo edit role
+                return editRole(selectedElement);
             }
         };
 
@@ -302,8 +334,29 @@ public class ItemEditor extends AbstractEditor<Item>
             @Override
             protected boolean editElement(Hook selectedElement) throws Exception
             {
-                return selectedElement != null && editHook(selectedElement);
+                return editHook(selectedElement);
             }
         };
+    }
+
+    private boolean editRole(@Nullable Role role)
+    {
+        if (role != null)
+        {
+            try
+            {
+                RoleEditor roleEditor = new RoleEditor(ItemEditor.this, role);
+                if (roleEditor.showDialog())
+                {
+                    roleEditor.getData(role);
+                    return true;
+                }
+            }
+            catch (IFML2Exception e)
+            {
+                GUIUtils.showErrorMessage(this, e);
+            }
+        }
+        return false;
     }
 }

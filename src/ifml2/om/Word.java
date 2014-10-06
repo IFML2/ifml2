@@ -10,8 +10,7 @@ import java.util.ArrayList;
 public class Word extends IFMLEntity
 {
     /**
-     * IFML objects which is linked to the word
-     * Are set in OMManager
+     * IFML objects which is linked to the word. Are set in OMManager
      */
     @XmlTransient
     private final ArrayList<IFMLObject> linkerObjects = new ArrayList<IFMLObject>();

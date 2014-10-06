@@ -156,6 +156,7 @@ public class Engine
                     {
                         // property is default (not set in role instance) -- create it in role instance
                         property = new Property(propertyDefinition, role);
+                        role.getProperties().add(property);
                     }
 
                     // calculate property

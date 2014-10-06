@@ -11,7 +11,6 @@ import ifml2.vm.values.*;
 
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.*;
-import java.text.MessageFormat;
 
 import static ifml2.om.xml.XmlSchemaConstants.*;
 
@@ -45,7 +44,7 @@ public class Property extends IFMLEntity
         this.parentRole = parentRole;
         valueExpression = propertyDefinition.getValue();
 
-        parentRole.getProperties().add(this);
+        //parentRole.getProperties().add(this); //it's bad!
     }
 
     @Override
@@ -150,6 +149,16 @@ public class Property extends IFMLEntity
     @Override
     public String toString()
     {
-        return MessageFormat.format("Свойство \"{0}\" = {1}", name, value);
+        return name; /*MessageFormat.format("Свойство \"{0}\" = {1}", name, value);*/
+    }
+
+    public PropertyDefinition findDefinition()
+    {
+        return parentRole.getRoleDefinition().findPropertyDefinitionByName(name);
+    }
+
+    public String getValueExpression()
+    {
+        return valueExpression;
     }
 }

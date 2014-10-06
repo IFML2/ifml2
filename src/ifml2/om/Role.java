@@ -20,8 +20,25 @@ public class Role extends IFMLEntity
     @XmlElement(name = ROLE_PROPERTY_ELEMENT)
     private EventList<Property> properties = new BasicEventList<Property>();
 
+    public Role(RoleDefinition roleDefinition)
+    {
+        this.roleDefinition = roleDefinition;
+
+        // fill with properties
+        for (PropertyDefinition propertyDefinition : roleDefinition.getPropertyDefinitions())
+        {
+            properties.add(new Property(propertyDefinition, this));
+        }
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    public Role()
+    {
+
+    }
+
     @Override
-    protected Role clone() throws CloneNotSupportedException
+    public Role clone() throws CloneNotSupportedException
     {
         Role clone = (Role) super.clone(); // flat clone
 

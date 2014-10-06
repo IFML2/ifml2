@@ -10,11 +10,12 @@ import java.awt.*;
 import java.awt.event.*;
 
 /**
- * Common abstract ancestor for all editors.
- * Usage:
+ * Common abstract ancestor for all editors.<br/>
+ * <b>Usage:</b>
  * Create descendant JDialog with needed type. In constructor first of all call super(owner) and  initializeEditor().
  * Implement getData() where fill data object with data from editor.
  * Implement validateData() if you need validation.
+ *
  * @param <T> Edited object type.
  */
 public abstract class AbstractEditor<T> extends JDialog
@@ -28,10 +29,11 @@ public abstract class AbstractEditor<T> extends JDialog
 
     /**
      * Initialize editor.
-     * @param editorTitle editor title.
+     *
+     * @param editorTitle       editor title.
      * @param editorContentPane editor main JPanel.
-     * @param buttonOK editor OK button.
-     * @param buttonCancel editor Cancel button.
+     * @param buttonOK          editor OK button.
+     * @param buttonCancel      editor Cancel button.
      */
     protected void initializeEditor(String editorTitle, @NotNull JPanel editorContentPane, JButton buttonOK, JButton buttonCancel)
     {
@@ -46,14 +48,20 @@ public abstract class AbstractEditor<T> extends JDialog
 
         buttonOK.addActionListener(new ActionListener()
         {
-            public void actionPerformed(ActionEvent e) {onOK();}
+            public void actionPerformed(ActionEvent e)
+            {
+                onOK();
+            }
         });
 
         if (buttonCancel != null)
         {
             buttonCancel.addActionListener(new ActionListener()
             {
-                public void actionPerformed(ActionEvent e) {onCancel();}
+                public void actionPerformed(ActionEvent e)
+                {
+                    onCancel();
+                }
             });
         }
 
@@ -80,6 +88,7 @@ public abstract class AbstractEditor<T> extends JDialog
     /**
      * Validate input date in case of pressing OK button. Returns true by default. Override for custom logic.
      * Overriding: if data is incorrect throw DataNotValidException.
+     *
      * @see DataNotValidException
      */
     protected void validateData() throws DataNotValidException
@@ -89,6 +98,7 @@ public abstract class AbstractEditor<T> extends JDialog
 
     /**
      * Call this method to get edited data. Custom method should write data in given variable 'data'.
+     *
      * @param data object what should be filled with edited data.
      * @throws IFML2EditorException if something goes wrong.
      */
@@ -121,6 +131,7 @@ public abstract class AbstractEditor<T> extends JDialog
 
     /**
      * Show dialog and wait for closing by buttons (OK or Cancel) or by cross.
+     *
      * @return true if OK was pressed.
      */
     public boolean showDialog()

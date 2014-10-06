@@ -26,6 +26,15 @@ public class WordLinksEditor extends AbstractEditor<WordLinks>
     public static final String NEW_WORD_ACTION = "Новое...";
     public static final String DELETE_WORD_ACTION = "Удалить";
     public static final String MAIN_WORD_MUST_BE_SET_ERROR_MESSAGE_DIALOG = "Основное слово не установлено. Его необходимо установить.";
+    private static final String DICTIONARY_EDITOR_TITLE = "Словарь";
+    private static final String CASE_DOC_PROPERTY = "case";
+    private static final String WORD_IP_QUERY_PROMPT = "Именительный падеж:";
+    private static final String DUPLICATED_WORD_INFO_MESSAGE = "Такое слово уже есть в словаре, оно будет использовано";
+    private static final String DUPLICATED_WORD_INFO_DIALOG_TITLE = "Дубликат";
+    private static final String WORD_DELETION_QUERY_PROMPT = "Вы уверены, что хотите удалить это слово из словаря?";
+    private static final String WRONG_DOC_PROP_SYSTEM_ERROR = "Системная ошибка: неверное свойство case у DocumentEvent.getDocument() в wordDocListener";
+    private static final String SET_MAIN_WORD_QUERY_PROMPT = "Основное слово ещё не установлено. Установить только что добавленное?";
+    private static final String SET_MAIN_WORD_DIALOG_TITLE = "Установка основного слова";
     private JPanel contentPane;
     private JButton buttonOK;
     private JList wordList;
@@ -39,17 +48,6 @@ public class WordLinksEditor extends AbstractEditor<WordLinks>
     private JButton delWordButton;
     private JPanel casesPanel;
     private JComboBox mainWordCombo;
-
-    private static final String DICTIONARY_EDITOR_TITLE = "Словарь";
-    private static final String CASE_DOC_PROPERTY = "case";
-    private static final String WORD_IP_QUERY_PROMPT = "Именительный падеж:";
-    private static final String DUPLICATED_WORD_INFO_MESSAGE = "Такое слово уже есть в словаре, оно будет использовано";
-    private static final String DUPLICATED_WORD_INFO_DIALOG_TITLE = "Дубликат";
-    private static final String WORD_DELETION_QUERY_PROMPT = "Вы уверены, что хотите удалить это слово из словаря?";
-    private static final String WRONG_DOC_PROP_SYSTEM_ERROR = "Системная ошибка: неверное свойство case у DocumentEvent.getDocument() в wordDocListener";
-    private static final String SET_MAIN_WORD_QUERY_PROMPT = "Основное слово ещё не установлено. Установить только что добавленное?";
-    private static final String SET_MAIN_WORD_DIALOG_TITLE = "Установка основного слова";
-
     private boolean isUpdatingText = false;
     private ArrayList<Word> wordsClone = null;
 
@@ -78,9 +76,9 @@ public class WordLinksEditor extends AbstractEditor<WordLinks>
                 {
                     updateCurrentWord(e.getDocument());
                 }
-                catch (IFML2EditorException e1)
+                catch (IFML2EditorException ex)
                 {
-                    GUIUtils.showErrorMessage(WordLinksEditor.this, e1);
+                    GUIUtils.showErrorMessage(WordLinksEditor.this, ex);
                 }
             }
 
@@ -91,9 +89,9 @@ public class WordLinksEditor extends AbstractEditor<WordLinks>
                 {
                     updateCurrentWord(e.getDocument());
                 }
-                catch (IFML2EditorException e1)
+                catch (IFML2EditorException ex)
                 {
-                    GUIUtils.showErrorMessage(WordLinksEditor.this, e1);
+                    GUIUtils.showErrorMessage(WordLinksEditor.this, ex);
                 }
             }
 
@@ -145,10 +143,10 @@ public class WordLinksEditor extends AbstractEditor<WordLinks>
                     updateLinksAndMain(word);
 
                     // set main word in case it isn't set
-                    if(mainWordCombo.getSelectedItem() == null)
+                    if (mainWordCombo.getSelectedItem() == null)
                     {
-                        if (JOptionPane.showConfirmDialog(WordLinksEditor.this, SET_MAIN_WORD_QUERY_PROMPT, SET_MAIN_WORD_DIALOG_TITLE, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) ==
-                                JOptionPane.YES_OPTION)
+                        if (JOptionPane.showConfirmDialog(WordLinksEditor.this, SET_MAIN_WORD_QUERY_PROMPT, SET_MAIN_WORD_DIALOG_TITLE,
+                                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
                         {
                             mainWordCombo.setSelectedItem(word);
                         }
@@ -172,10 +170,10 @@ public class WordLinksEditor extends AbstractEditor<WordLinks>
         });
 
         wordsClone = new ArrayList<Word>(wordLinks.getWords());
-        
+
         Word firstWord = wordsClone.size() > 0 ? wordsClone.get(0) : null;
         updateWordLinks(firstWord);
-        
+
         updateMainWord();
         mainWordCombo.setSelectedItem(wordLinks.getMainWord());
     }
@@ -207,7 +205,7 @@ public class WordLinksEditor extends AbstractEditor<WordLinks>
         }
 
         Word word = (Word) wordList.getSelectedValue();
-        if(word != null)
+        if (word != null)
         {
 
             String text = null;
@@ -257,7 +255,7 @@ public class WordLinksEditor extends AbstractEditor<WordLinks>
         isUpdatingText = true;
         try
         {
-            if(word != null)
+            if (word != null)
             {
                 casesPanel.setBorder(new TitledBorder(word.ip));
             }
@@ -277,7 +275,7 @@ public class WordLinksEditor extends AbstractEditor<WordLinks>
     private void updateWordLinks()
     {
         DefaultListModel wordLinksListModel = new DefaultListModel();
-        for(Word word : wordsClone)
+        for (Word word : wordsClone)
         {
             wordLinksListModel.addElement(word);
         }
@@ -298,7 +296,7 @@ public class WordLinksEditor extends AbstractEditor<WordLinks>
     protected void validateData() throws DataNotValidException
     {
         // check if main word is set
-        if(mainWordCombo.getSelectedItem() == null)
+        if (mainWordCombo.getSelectedItem() == null)
         {
             throw new DataNotValidException(MAIN_WORD_MUST_BE_SET_ERROR_MESSAGE_DIALOG, mainWordCombo);
         }

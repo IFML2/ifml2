@@ -9,19 +9,27 @@ import java.util.List;
 import static ifml2.om.xml.XmlSchemaConstants.ROLE_DEFINITION_ATTRIBUTES_ELEMENT;
 import static ifml2.om.xml.XmlSchemaConstants.ROLE_DEFINITION_ATTRIBUTE_ELEMENT;
 
+@XmlAccessorType(XmlAccessType.NONE)
 public class RoleDefinition
 {
-    @XmlAttribute(name = "description")
-    public String description;
     @XmlElementWrapper(name = "properties")
     @XmlElement(name = "property")
-    public List<PropertyDefinition> propertyDefinitions = new BasicEventList<PropertyDefinition>();
+    private List<PropertyDefinition> propertyDefinitions = new BasicEventList<PropertyDefinition>();
+
+    @XmlAttribute(name = "description")
+    private String description;
+
     @XmlElementWrapper(name = "triggers")
     @XmlElement(name = "trigger")
-    public List<Trigger> triggers = new BasicEventList<Trigger>();
+    private List<Trigger> triggers = new BasicEventList<Trigger>();
+
     @XmlAttribute(name = "name")
     @XmlID
     private String name;
+
+    @XmlElementWrapper(name = ROLE_DEFINITION_ATTRIBUTES_ELEMENT)
+    @XmlElement(name = ROLE_DEFINITION_ATTRIBUTE_ELEMENT)
+    @XmlIDREF
     private EventList<Attribute> attributes = new BasicEventList<Attribute>();
 
     public String getName()
@@ -29,9 +37,6 @@ public class RoleDefinition
         return name;
     }
 
-    @XmlElementWrapper(name = ROLE_DEFINITION_ATTRIBUTES_ELEMENT)
-    @XmlElement(name = ROLE_DEFINITION_ATTRIBUTE_ELEMENT)
-    @XmlIDREF
     public EventList<Attribute> getAttributes()
     {
         return attributes;
@@ -45,7 +50,7 @@ public class RoleDefinition
     @Override
     public String toString()
     {
-        return "определение роли " + name;
+        return /*"определение роли " + */name;
     }
 
     public PropertyDefinition findPropertyDefinitionByName(String name)
@@ -63,7 +68,7 @@ public class RoleDefinition
 
     public Trigger getTrigger(Trigger.TriggerTypeEnum triggerType)
     {
-        for (Trigger trigger : triggers)
+        for (Trigger trigger : getTriggers())
         {
             if (triggerType.equals(trigger.getType()))
             {
@@ -77,5 +82,15 @@ public class RoleDefinition
     public List<PropertyDefinition> getPropertyDefinitions()
     {
         return propertyDefinitions;
+    }
+
+    public String getDescription()
+    {
+        return description;
+    }
+
+    public List<Trigger> getTriggers()
+    {
+        return triggers;
     }
 }

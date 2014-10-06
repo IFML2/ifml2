@@ -69,18 +69,6 @@ public class IFMLObject extends IFMLEntity implements Cloneable
         return clone;
     }
 
-    private void copyFieldsTo(IFMLObject ifmlObject) throws CloneNotSupportedException
-    {
-        ifmlObject.setId(id);
-        ifmlObject.setName(name);
-        ifmlObject.setDescription(description);
-        ifmlObject.setWordLinks(wordLinks.clone());
-        ifmlObject.setAttributes(GlazedLists.eventList(attributes));
-        ifmlObject.setProperties(GlazedLists.eventList(properties));
-        ifmlObject.setHooks(GlazedLists.eventList(hooks));
-        ifmlObject.setRoles(GlazedLists.eventList(roles));
-    }
-
     public String getId()
     {
         return id;
@@ -292,7 +280,14 @@ public class IFMLObject extends IFMLEntity implements Cloneable
 
     public void copyTo(IFMLObject ifmlObject) throws CloneNotSupportedException
     {
-        copyFieldsTo(ifmlObject);
+        ifmlObject.setId(id);
+        ifmlObject.setName(name);
+        ifmlObject.setDescription(description);
+        ifmlObject.setWordLinks(wordLinks.clone());
+        ifmlObject.setAttributes(GlazedLists.eventList(attributes)); // copy refs
+        ifmlObject.setProperties(deepCloneEventList(properties, Property.class));
+        ifmlObject.setHooks(deepCloneEventList(hooks, Hook.class));
+        ifmlObject.setRoles(deepCloneEventList(roles, Role.class));
     }
 
     public void setProperties(EventList<Property> properties)

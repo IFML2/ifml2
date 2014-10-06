@@ -252,7 +252,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <nested-form id="19a5e" form-file="ifml2/editor/gui/ListEditForm.form" binding="rolesListEditForm" custom-create="true">
+              <nested-form id="19a5e" form-file="ifml2/editor/gui/forms/ListEditForm.form" binding="rolesListEditForm" custom-create="true">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -267,7 +267,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <nested-form id="8d742" form-file="ifml2/editor/gui/ListEditForm.form" binding="hooksListEditForm" custom-create="true">
+              <nested-form id="8d742" form-file="ifml2/editor/gui/forms/ListEditForm.form" binding="hooksListEditForm" custom-create="true">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                 </constraints>

@@ -7,6 +7,7 @@ import ifml2.GUIUtils;
 import ifml2.IFML2Exception;
 import ifml2.editor.IFML2EditorException;
 import ifml2.editor.gui.editors.*;
+import ifml2.editor.gui.forms.ListEditForm;
 import ifml2.engine.Engine;
 import ifml2.om.Action;
 import ifml2.om.*;
