@@ -5,11 +5,11 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import ifml2.GUIUtils;
 import ifml2.editor.IFML2EditorException;
 import ifml2.editor.gui.AbstractEditor;
-import ifml2.editor.gui.forms.expressions.ExpressionEditForm;
-import ifml2.editor.gui.forms.expressions.LogicExpressionEditForm;
-import ifml2.editor.gui.forms.expressions.TextExpressionEditForm;
+import ifml2.editor.gui.forms.expressions.*;
+import ifml2.om.Item;
 import ifml2.om.Property;
 import ifml2.om.Role;
+import ifml2.om.Story;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +30,7 @@ public class RoleEditor extends AbstractEditor<Role>
     private JPanel expressionPanel;
     private JTextArea descriptionTextArea;
 
-    public RoleEditor(@Nullable Window owner, @NotNull Role role)
+    public RoleEditor(@Nullable Window owner, @NotNull Role role, final Story.DataHelper dataHelper)
     {
         super(owner);
 
@@ -49,37 +49,71 @@ public class RoleEditor extends AbstractEditor<Role>
         // list listeners
         propertiesList.addListSelectionListener(new ListSelectionListener()
         {
+            private Property currentProperty;
+            private JInternalFrame currentForm;
+
             @Override
             public void valueChanged(ListSelectionEvent e)
             {
-                final JList source = (JList) e.getSource();
-                final Property selectedValue = (Property) source.getSelectedValue();
-                if (selectedValue != null)
+                try
                 {
-                    expressionPanel.removeAll();
-                    final String expression = selectedValue.getValueExpression();
-                    switch (selectedValue.findDefinition().getType())
+                    savePreviousProperty();
+                }
+                catch (IFML2EditorException ex)
+                {
+                    GUIUtils.showErrorMessage(RoleEditor.this, ex);
+                }
+
+                final JList source = (JList) e.getSource();
+                currentProperty = (Property) source.getSelectedValue();
+
+                if (currentProperty != null)
+                {
+                    final String expression = currentProperty.getValueExpression();
+                    switch (currentProperty.findDefinition().getType())
                     {
                         case TEXT:
-                            TextExpressionEditForm textExpressionEditForm = new TextExpressionEditForm(expression);
-                            addExpressionEditForm(textExpressionEditForm);
+                            changeEditForm(new TextExpressionEditForm(expression));
                             break;
                         case NUMBER:
-                            //fixme fill
+                            changeEditForm(new NumberExpressionEditForm(expression));
                             break;
                         case LOGIC:
-                            LogicExpressionEditForm logicExpressionEditForm = new LogicExpressionEditForm(expression);
-                            addExpressionEditForm(logicExpressionEditForm);
+                            changeEditForm(new LogicExpressionEditForm(expression));
                             break;
                         case COLLECTION:
-                            //fixme fill
+                            changeEditForm(
+                                    new CollectionEditForm(RoleEditor.this, currentProperty.getCollectionItems(), Item.class, dataHelper));
                             break;
                     }
                 }
             }
 
-            private void addExpressionEditForm(ExpressionEditForm expressionEditForm)
+            private void savePreviousProperty() throws IFML2EditorException
             {
+                if (currentProperty != null && currentForm != null)
+                {
+                    if (currentForm instanceof ExpressionEditForm)
+                    {
+                        ExpressionEditForm expressionEditForm = (ExpressionEditForm) currentForm;
+                        currentProperty.setValueExpression(expressionEditForm.getEditedExpression());
+                    }
+                    else if (currentForm instanceof CollectionEditForm)
+                    {
+                        CollectionEditForm collectionEditForm = (CollectionEditForm) currentForm;
+                        currentProperty.setCollectionItems(collectionEditForm.getEditedCollection());
+                    }
+                    else
+                    {
+                        throw new IFML2EditorException("Неизвестный тип формы для свойства: {0}", currentForm.getClass().getName());
+                    }
+                }
+            }
+
+            private void changeEditForm(JInternalFrame expressionEditForm)
+            {
+                currentForm = expressionEditForm;
+                expressionPanel.removeAll();
                 expressionPanel.add(expressionEditForm.getContentPane(),
                         new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH,
                                 GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null));
@@ -99,8 +133,8 @@ public class RoleEditor extends AbstractEditor<Role>
     }
 
     @Override
-    public void getData(@NotNull Role data) throws IFML2EditorException
+    public void getData(@NotNull Role role) throws IFML2EditorException
     {
-        //fixme getData
+        roleClone.copyTo(role);
     }
 }

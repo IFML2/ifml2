@@ -3,6 +3,7 @@ package ifml2.om;
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ifml2.IFMLEntity;
+import org.jetbrains.annotations.NotNull;
 
 import javax.xml.bind.annotation.*;
 
@@ -99,5 +100,10 @@ public class Role extends IFMLEntity
         }
 
         return null;
+    }
+
+    public void copyTo(@NotNull Role role)
+    {
+        //fixme
     }
 }

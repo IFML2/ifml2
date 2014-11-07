@@ -16,10 +16,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import static ifml2.om.xml.XmlSchemaConstants.*;
 
@@ -569,6 +566,11 @@ public class Story
         public List<RoleDefinition> getCopyOfAllRoleDefinitions()
         {
             return GlazedLists.eventList(Story.this.getAllRoleDefinitions()); // clone list to prevent deleting
+        }
+
+        public Collection<IFMLObject> getCopyOfAllObjects()
+        {
+            return GlazedLists.eventList(objectsHeap.values());
         }
     }
 }

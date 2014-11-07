@@ -124,9 +124,6 @@
       <item class="ifml2.editor.gui.forms.ListEditForm" icon="Edit24.gif" removable="true" auto-create-binding="true" can-attach-label="false">
         <default-constraints vsize-policy="7" hsize-policy="7" anchor="0" fill="3" />
       </item>
-      <item class="ifml2.editor.gui.forms.expressions.TextExpressionEditForm" icon="Edit24.gif" removable="true" auto-create-binding="true" can-attach-label="true">
-        <default-constraints vsize-policy="3" hsize-policy="3" anchor="0" fill="0" />
-      </item>
     </group>
   </component>
 </project>

@@ -599,6 +599,15 @@ public class Editor extends JFrame
             }
 
             @Override
+            protected void addElementToList(Location location)
+            {
+                if (location != null)
+                {
+                    story.addLocation(location);
+                }
+            }
+
+            @Override
             protected Location createElement() throws Exception
             {
                 Location location = new Location();
@@ -625,6 +634,15 @@ public class Editor extends JFrame
                         markStoryEdited();
                     }
                 });
+            }
+
+            @Override
+            protected void addElementToList(Item item)
+            {
+                if (item != null)
+                {
+                    story.addItem(item);
+                }
             }
 
             @Override

@@ -54,7 +54,7 @@ public class Property extends IFMLEntity
 
         // deep clone
         clone.value = value != null ? value.clone() : null;
-        clone.collectionItems = GlazedLists.eventList(collectionItems); // just copy refs
+        clone.setCollectionItems(GlazedLists.eventList(collectionItems)); // just copy refs
 
         return clone;
     }
@@ -160,5 +160,20 @@ public class Property extends IFMLEntity
     public String getValueExpression()
     {
         return valueExpression;
+    }
+
+    public void setValueExpression(String valueExpression)
+    {
+        this.valueExpression = valueExpression;
+    }
+
+    public EventList<IFMLObject> getCollectionItems()
+    {
+        return collectionItems;
+    }
+
+    public void setCollectionItems(EventList<IFMLObject> collectionItems)
+    {
+        this.collectionItems = collectionItems;
     }
 }

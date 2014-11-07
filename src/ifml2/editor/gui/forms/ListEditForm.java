@@ -19,6 +19,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * JInternalFrame with JList and buttons <b>Add</b>, <b>Edit</b>, <b>Delete</b> and optional <b>Up</b> and <b>Down</b> arrows.<br/>
@@ -35,6 +36,10 @@ public abstract class ListEditForm<T> extends JInternalFrame
      * Flag to show or hide toolbar with up/down buttons. Set it to other value in static constructor to change behaviour.
      */
     protected boolean showUpDownButtons = true;
+    /**
+     * Flag to show or hide edit button and edit item in popup menu.
+     */
+    protected boolean showEditButton = true;
     private JPanel contentPane;
     private JList elementsList;
     private JButton upButton;
@@ -48,7 +53,7 @@ public abstract class ListEditForm<T> extends JInternalFrame
     private Word.GenderEnum gender;
     private JPopupMenu popupMenu;
     private EventList<T> clonedList;
-    private java.util.List<ChangeListener> listChangeListeners = new ArrayList<ChangeListener>();
+    private List<ChangeListener> listChangeListeners = new ArrayList<ChangeListener>();
     private Class<T> clazz;
 
     /**
@@ -82,7 +87,7 @@ public abstract class ListEditForm<T> extends JInternalFrame
                     T element = createElement();
                     if (element != null)
                     {
-                        clonedList.add(element);
+                        addElementToList(element);
                         elementsList.setSelectedValue(element, true);
                         fireListChangeListeners();
                     }
@@ -143,7 +148,10 @@ public abstract class ListEditForm<T> extends JInternalFrame
             {
                 add(addButtonAction);
                 addSeparator();
-                add(editButtonAction);
+                if (showEditButton)
+                {
+                    add(editButtonAction);
+                }
                 add(delButtonAction);
             }
         };
@@ -258,6 +266,18 @@ public abstract class ListEditForm<T> extends JInternalFrame
 
         // init form
         upDownToolbar.setVisible(showUpDownButtons);
+        editElementButton.setVisible(showEditButton);
+    }
+
+    /**
+     * Add element logic. By default adds element to clonedList. <br/>
+     * Override if needed other logic.
+     *
+     * @param element adding element.
+     */
+    protected void addElementToList(T element)
+    {
+        clonedList.add(element);
     }
 
     /**
@@ -272,12 +292,16 @@ public abstract class ListEditForm<T> extends JInternalFrame
     /**
      * Edits element. You should override this method to implement element edition logic.
      * If you return true, list will be updated and events fired.
+     * Don't override if you have set showEditButton = false
      *
      * @param selectedElement currently selected element.
      * @return true if edit was made and false vise versa.
      * @throws Exception will be shown.
      */
-    protected abstract boolean editElement(T selectedElement) throws Exception;
+    protected boolean editElement(T selectedElement) throws Exception
+    {
+        return false;
+    }
 
     /**
      * Fired before deletion of element. Returns true if element should be deleted.
