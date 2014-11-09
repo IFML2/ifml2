@@ -94,7 +94,7 @@ public class HookEditor extends AbstractEditor<Hook>
                     prevSelectedAction = selectedAction;
                     if (parameterCombo.isVisible())
                     {
-                        parameterCombo.setModel(new DefaultComboBoxModel(selectedAction.getAllParameters()));
+                        parameterCombo.setModel(new DefaultComboBoxModel(selectedAction.getAllObjectParameters()));
                         if (parameterCombo.getItemCount() > 0) // if there are elements ...
                         {
                             parameterCombo.setSelectedIndex(0); // ... select first element
@@ -105,13 +105,12 @@ public class HookEditor extends AbstractEditor<Hook>
         });
 
         // filter actions due to areObjectHooks
-        //actionCombo.setModel(new DefaultComboBoxModel(actionList.toArray()));
         actionCombo.setModel(new DefaultEventComboBoxModel<Action>(new FilterList<Action>(storyDataHelper.getAllActions(), new Matcher<Action>()
         {
             @Override
             public boolean matches(Action item)
             {
-                return areObjectHooks && item.getAllParameters().length > 0 || !areObjectHooks;
+                return areObjectHooks && item.getAllObjectParameters().length > 0 || !areObjectHooks;
             }
         })));
 
