@@ -40,7 +40,7 @@ public class Story
     @XmlElement(name = PROCEDURES_PROCEDURE_ELEMENT)
     private final EventList<Procedure> procedures = new BasicEventList<Procedure>();
 
-    private Story.DataHelper dataHelper = new DataHelper();
+    private DataHelper dataHelper = new DataHelper();
     @SuppressWarnings("FieldCanBeLocal") // todo remove suppress after JAXB bug is fixed
     @XmlAttribute(name = "id")
     @XmlID
@@ -156,8 +156,6 @@ public class Story
     @XmlElement(name = "action")
     private EventList<Action> actions = new BasicEventList<Action>();
     @XmlTransient
-    private EventList<Action> allActions = null;
-    @XmlTransient
     private EventList<Attribute> allAttributes = null;
     @XmlTransient
     private EventList<RoleDefinition> allRoleDefinitions = null;
@@ -225,19 +223,16 @@ public class Story
 
     public EventList<Action> getAllActions()
     {
-        if (allActions == null)
+        EventList<Action> allActions = new BasicEventList<Action>();
+        if (actions != null)
         {
-            allActions = new BasicEventList<Action>();
-            if (actions != null)
+            allActions.addAll(actions);
+        }
+        if (libraries != null)
+        {
+            for (Library library : libraries)
             {
-                allActions.addAll(actions);
-            }
-            if (libraries != null)
-            {
-                for (Library library : libraries)
-                {
-                    allActions.addAll(library.actions);
-                }
+                allActions.addAll(library.actions);
             }
         }
         return allActions;

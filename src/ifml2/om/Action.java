@@ -65,7 +65,7 @@ public class Action
         return name;
     }
 
-    public Object[] getAllParameters()
+    public Object[] getAllObjectParameters()
     {
         ArrayList<Object> parameters = new ArrayList<Object>();
 
