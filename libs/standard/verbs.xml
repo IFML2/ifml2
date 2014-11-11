@@ -108,6 +108,7 @@
             </templates>
             <procedureCall procedure="Описать"/>
         </action>
+
         <action name="идти на север" description="Переходит в локацию на севере">
             <templates>
                 <template>
@@ -120,17 +121,17 @@
             </templates>
             <procedureCall procedure="ПерейтиНаСевер"/>
         </action>
-        <action name="идти на юг" description="Переходит в локацию на юге">
+        <action name="идти на северо-восток" description="Переходит в локацию на северо-востоке">
             <templates>
                 <template>
                     <literalElement position="1">
-                        <synonym>идти на юг</synonym>
-                        <synonym>юг</synonym>
-                        <synonym>ю</synonym>
+                        <synonym>идти на северо-восток</synonym>
+                        <synonym>северо-восток</synonym>
+                        <synonym>св</synonym>
                     </literalElement>
                 </template>
             </templates>
-            <procedureCall procedure="ПерейтиНаЮг"/>
+            <procedureCall procedure="ПерейтиНаСевероВосток"/>
         </action>
         <action name="идти на восток" description="Переходит в локацию на востоке">
             <templates>
@@ -144,6 +145,42 @@
             </templates>
             <procedureCall procedure="ПерейтиНаВосток"/>
         </action>
+        <action name="идти на юго-восток" description="Переходит в локацию на юго-востоке">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>идти на юго-восток</synonym>
+                        <synonym>юго-восток</synonym>
+                        <synonym>юв</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="ПерейтиНаЮгоВосток"/>
+        </action>
+        <action name="идти на юг" description="Переходит в локацию на юге">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>идти на юг</synonym>
+                        <synonym>юг</synonym>
+                        <synonym>ю</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="ПерейтиНаЮг"/>
+        </action>
+        <action name="идти на юго-запад" description="Переходит в локацию на юго-западе">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>идти на юго-запад</synonym>
+                        <synonym>юго-запад</synonym>
+                        <synonym>юз</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="ПерейтиНаЮгоЗапад"/>
+        </action>
         <action name="идти на запад" description="Переходит в локацию на запад">
             <templates>
                 <template>
@@ -155,6 +192,18 @@
                 </template>
             </templates>
             <procedureCall procedure="ПерейтиНаЗапад"/>
+        </action>
+        <action name="идти на северо-запад" description="Переходит в локацию на северо-запад">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>идти на северо-запад</synonym>
+                        <synonym>северо-запад</synonym>
+                        <synonym>сз</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="ПерейтиНаСевероЗапад"/>
         </action>
         <action name="идти вниз" description="Переходит в локацию вниз">
             <templates>
@@ -185,6 +234,7 @@
             </templates>
             <procedureCall procedure="ПерейтиНаверх"/>
         </action>
+
         <action name="инвентарий" description="Выдать инвентарий">
             <templates>
                 <template>
@@ -930,9 +980,9 @@
                 <goToLoc position="1" location="ТекущаяЛокация.Север"/>
             </procedureBody>
         </procedure>
-        <procedure name="ПерейтиНаЮг">
+        <procedure name="ПерейтиНаСевероВосток">
             <procedureBody>
-                <goToLoc position="1" location="ТекущаяЛокация.Юг"/>
+                <goToLoc position="1" location="ТекущаяЛокация.СевероВосток"/>
             </procedureBody>
         </procedure>
         <procedure name="ПерейтиНаВосток">
@@ -940,9 +990,29 @@
                 <goToLoc position="1" location="ТекущаяЛокация.Восток"/>
             </procedureBody>
         </procedure>
+        <procedure name="ПерейтиНаЮгоВосток">
+            <procedureBody>
+                <goToLoc position="1" location="ТекущаяЛокация.ЮгоВосток"/>
+            </procedureBody>
+        </procedure>
+        <procedure name="ПерейтиНаЮг">
+            <procedureBody>
+                <goToLoc position="1" location="ТекущаяЛокация.Юг"/>
+            </procedureBody>
+        </procedure>
+        <procedure name="ПерейтиНаЮгоЗапад">
+            <procedureBody>
+                <goToLoc position="1" location="ТекущаяЛокация.ЮгоЗапад"/>
+            </procedureBody>
+        </procedure>
         <procedure name="ПерейтиНаЗапад">
             <procedureBody>
                 <goToLoc position="1" location="ТекущаяЛокация.Запад"/>
+            </procedureBody>
+        </procedure>
+        <procedure name="ПерейтиНаСевероЗапад">
+            <procedureBody>
+                <goToLoc position="1" location="ТекущаяЛокация.СевероЗапад"/>
             </procedureBody>
         </procedure>
         <procedure name="ПерейтиНаверх">
