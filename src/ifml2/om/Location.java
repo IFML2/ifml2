@@ -11,13 +11,106 @@ import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 @XmlTransient
 public class Location extends IFMLObject implements Cloneable
 {
     protected HashMap<ExitDirection, Location> exits = new HashMap<ExitDirection, Location>();
-
     protected List<Item> items = new ArrayList<Item>();
+    private HashMap<String, Callable<? extends Value>> LOCATION_SYMBOLS = new HashMap<String, Callable<? extends Value>>()
+    {
+        {
+            put("север", new Callable<Value>()
+            {
+                @Override
+                public Value call() throws Exception
+                {
+                    return new ObjectValue(getExit(ExitDirection.NORTH));
+                }
+            });
+            put("северовосток", new Callable<Value>()
+            {
+                @Override
+                public Value call() throws Exception
+                {
+                    return new ObjectValue(getExit(ExitDirection.NORTH_EAST));
+                }
+            });
+            put("восток", new Callable<Value>()
+            {
+                @Override
+                public Value call() throws Exception
+                {
+                    return new ObjectValue(getExit(ExitDirection.EAST));
+                }
+            });
+            put("юговосток", new Callable<Value>()
+            {
+                @Override
+                public Value call() throws Exception
+                {
+                    return new ObjectValue(getExit(ExitDirection.SOUTH_EAST));
+                }
+            });
+            put("юг", new Callable<Value>()
+            {
+                @Override
+                public Value call() throws Exception
+                {
+                    return new ObjectValue(getExit(ExitDirection.SOUTH));
+                }
+            });
+            put("югозапад", new Callable<Value>()
+            {
+                @Override
+                public Value call() throws Exception
+                {
+                    return new ObjectValue(getExit(ExitDirection.SOUTH_WEST));
+                }
+            });
+            put("запад", new Callable<Value>()
+            {
+                @Override
+                public Value call() throws Exception
+                {
+                    return new ObjectValue(getExit(ExitDirection.WEST));
+                }
+            });
+            put("северозапад", new Callable<Value>()
+            {
+                @Override
+                public Value call() throws Exception
+                {
+                    return new ObjectValue(getExit(ExitDirection.NORTH_WEST));
+                }
+            });
+            put("верх", new Callable<Value>()
+            {
+                @Override
+                public Value call() throws Exception
+                {
+                    return new ObjectValue(getExit(ExitDirection.UP));
+                }
+            });
+            put("низ", new Callable<Value>()
+            {
+                @Override
+                public Value call() throws Exception
+                {
+                    return new ObjectValue(getExit(ExitDirection.DOWN));
+                }
+            });
+            put("предметы", new Callable<Value>()
+            {
+                @Override
+                public Value call() throws Exception
+                {
+                    return new CollectionValue(items);
+                }
+            });
+        }
+    };
 
     public static String getClassName()
     {
@@ -112,35 +205,20 @@ public class Location extends IFMLObject implements Cloneable
     }
 
     @Override
-    public Value getMemberValue(String propertyName, RunningContext runningContext) throws IFML2Exception
+    public Value getMemberValue(@NotNull String propertyName, RunningContext runningContext) throws IFML2Exception
     {
-        if ("север".equalsIgnoreCase(propertyName))
+        String loweredPropName = propertyName.toLowerCase();
+
+        if (LOCATION_SYMBOLS.containsKey(loweredPropName))
         {
-            return new ObjectValue(getNorth());
-        }
-        else if ("восток".equalsIgnoreCase(propertyName))
-        {
-            return new ObjectValue(getEast());
-        }
-        else if ("юг".equalsIgnoreCase(propertyName))
-        {
-            return new ObjectValue(getSouth());
-        }
-        else if ("запад".equalsIgnoreCase(propertyName))
-        {
-            return new ObjectValue(getWest());
-        }
-        else if ("верх".equalsIgnoreCase(propertyName))
-        {
-            return new ObjectValue(getUp());
-        }
-        else if ("низ".equalsIgnoreCase(propertyName))
-        {
-            return new ObjectValue(getDown());
-        }
-        else if ("предметы".equalsIgnoreCase(propertyName))
-        {
-            return new CollectionValue(items);
+            try
+            {
+                return LOCATION_SYMBOLS.get(loweredPropName).call();
+            }
+            catch (Exception e)
+            {
+                throw new IFML2Exception(e, "Ошибка при вычислении свойства \"{0}\" у локации {1}", propertyName, getId());
+            }
         }
         else
         {
