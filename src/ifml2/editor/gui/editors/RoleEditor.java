@@ -135,6 +135,13 @@ public class RoleEditor extends AbstractEditor<Role>
     @Override
     public void getData(@NotNull Role role) throws IFML2EditorException
     {
-        roleClone.copyTo(role);
+        try
+        {
+            roleClone.copyTo(role);
+        }
+        catch (CloneNotSupportedException e)
+        {
+            throw new IFML2EditorException("Внутренняя ошибка: {0}", e.getMessage());
+        }
     }
 }

@@ -102,8 +102,9 @@ public class Role extends IFMLEntity
         return null;
     }
 
-    public void copyTo(@NotNull Role role)
+    public void copyTo(@NotNull Role role) throws CloneNotSupportedException
     {
-        //fixme
+        role.roleDefinition = roleDefinition;
+        role.properties = deepCloneEventList(properties, Property.class);
     }
 }

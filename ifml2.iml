@@ -15,7 +15,6 @@
     <orderEntry type="library" name="annotations" level="application" />
     <orderEntry type="library" name="junit" level="application" />
     <orderEntry type="library" exported="" name="log4j-1.2.17" level="project" />
-    <orderEntry type="library" name="forms_rt" level="application" />
+    <orderEntry type="library" name="forms_rt" level="project" />
   </component>
 </module>
-
