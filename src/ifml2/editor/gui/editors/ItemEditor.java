@@ -345,7 +345,7 @@ public class ItemEditor extends AbstractEditor<Item>
         {
             try
             {
-                RoleEditor roleEditor = new RoleEditor(ItemEditor.this, role, storyDataHelper);
+                RoleEditor roleEditor = new RoleEditor(ItemEditor.this, role, originalItem, storyDataHelper);
                 if (roleEditor.showDialog())
                 {
                     roleEditor.getData(role);

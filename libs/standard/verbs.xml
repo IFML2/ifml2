@@ -946,8 +946,37 @@
                 </if>
                 <if condition="предмет.контейнер">
                     <then>
-                        <if condition="предмет.открыт">
+                        <if condition="предмет.открываемый">
                             <then>
+                                <if condition="предмет.открыт">
+                                    <then>
+                                        <!-- предмет открываемый, поэтому предметы видно, если только он открыт -->
+                                        <loop collection="предмет.предметыВнутри" element="предметВнутри">
+                                            <empty>
+                                                <showMessage position="1" type="text" message="Внутри ничего нет." carriageReturn="true"/>
+                                            </empty>
+                                            <alone>
+                                                <showMessage position="1" type="expression" message="'Внутри ' + предметВнутри.имя + '.'"
+                                                             carriageReturn="true"/>
+                                            </alone>
+                                            <first>
+                                                <showMessage position="1" type="expression" message="'Внутри ' + предметВнутри.имя"
+                                                             carriageReturn="false"/>
+                                            </first>
+                                            <next>
+                                                <showMessage position="1" type="expression" message="', ' + предметВнутри.имя"
+                                                             carriageReturn="false"/>
+                                            </next>
+                                            <last>
+                                                <showMessage position="1" type="expression" message="' и ' + предметВнутри.имя + '.'"
+                                                             carriageReturn="true"/>
+                                            </last>
+                                        </loop>
+                                    </then>
+                                </if>
+                            </then>
+                            <else>
+                                <!-- предмет не открываемый, поэтому он по логике открыт всегда -->
                                 <loop collection="предмет.предметыВнутри" element="предметВнутри">
                                     <empty>
                                         <showMessage position="1" type="text" message="Внутри ничего нет." carriageReturn="true"/>
@@ -969,7 +998,7 @@
                                                      carriageReturn="true"/>
                                     </last>
                                 </loop>
-                            </then>
+                            </else>
                         </if>
                     </then>
                 </if>

@@ -29,10 +29,14 @@ public class RoleEditor extends AbstractEditor<Role>
     private JList propertiesList;
     private JPanel expressionPanel;
     private JTextArea descriptionTextArea;
+    private Property currentProperty;
+    private JInternalFrame currentForm;
+    private Item holder;
 
-    public RoleEditor(@Nullable Window owner, @NotNull Role role, final Story.DataHelper dataHelper)
+    public RoleEditor(@Nullable Window owner, @NotNull Role role, @NotNull Item holder, final Story.DataHelper dataHelper)
     {
         super(owner);
+        this.holder = holder;
 
         initializeEditor(ROLE_EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
 
@@ -49,15 +53,12 @@ public class RoleEditor extends AbstractEditor<Role>
         // list listeners
         propertiesList.addListSelectionListener(new ListSelectionListener()
         {
-            private Property currentProperty;
-            private JInternalFrame currentForm;
-
             @Override
             public void valueChanged(ListSelectionEvent e)
             {
                 try
                 {
-                    savePreviousProperty();
+                    saveCurrentProperty();
                 }
                 catch (IFML2EditorException ex)
                 {
@@ -82,30 +83,9 @@ public class RoleEditor extends AbstractEditor<Role>
                             changeEditForm(new LogicExpressionEditForm(expression));
                             break;
                         case COLLECTION:
-                            changeEditForm(
-                                    new CollectionEditForm(RoleEditor.this, currentProperty.getCollectionItems(), Item.class, dataHelper));
+                            changeEditForm(new CollectionEditForm(RoleEditor.this, currentProperty.getCollectionItems(), Item.class,
+                                    RoleEditor.this.holder, dataHelper));
                             break;
-                    }
-                }
-            }
-
-            private void savePreviousProperty() throws IFML2EditorException
-            {
-                if (currentProperty != null && currentForm != null)
-                {
-                    if (currentForm instanceof ExpressionEditForm)
-                    {
-                        ExpressionEditForm expressionEditForm = (ExpressionEditForm) currentForm;
-                        currentProperty.setValueExpression(expressionEditForm.getEditedExpression());
-                    }
-                    else if (currentForm instanceof CollectionEditForm)
-                    {
-                        CollectionEditForm collectionEditForm = (CollectionEditForm) currentForm;
-                        currentProperty.setCollectionItems(collectionEditForm.getEditedCollection());
-                    }
-                    else
-                    {
-                        throw new IFML2EditorException("Неизвестный тип формы для свойства: {0}", currentForm.getClass().getName());
                     }
                 }
             }
@@ -124,6 +104,27 @@ public class RoleEditor extends AbstractEditor<Role>
         bindData();
     }
 
+    private void saveCurrentProperty() throws IFML2EditorException
+    {
+        if (currentProperty != null && currentForm != null)
+        {
+            if (currentForm instanceof ExpressionEditForm)
+            {
+                ExpressionEditForm expressionEditForm = (ExpressionEditForm) currentForm;
+                currentProperty.setValueExpression(expressionEditForm.getEditedExpression());
+            }
+            else if (currentForm instanceof CollectionEditForm)
+            {
+                CollectionEditForm collectionEditForm = (CollectionEditForm) currentForm;
+                currentProperty.setCollectionItems(collectionEditForm.getEditedCollection());
+            }
+            else
+            {
+                throw new IFML2EditorException("Неизвестный тип формы для свойства: {0}", currentForm.getClass().getName());
+            }
+        }
+    }
+
     private void bindData()
     {
         roleDefinitionText.setText(roleClone.getName());
@@ -137,6 +138,7 @@ public class RoleEditor extends AbstractEditor<Role>
     {
         try
         {
+            saveCurrentProperty();
             roleClone.copyTo(role);
         }
         catch (CloneNotSupportedException e)

@@ -32,14 +32,7 @@ import java.util.List;
 public abstract class ListEditForm<T> extends JInternalFrame
 {
     protected Window owner;
-    /**
-     * Flag to show or hide toolbar with up/down buttons. Set it to other value in static constructor to change behaviour.
-     */
-    protected boolean showUpDownButtons = true;
-    /**
-     * Flag to show or hide edit button and edit item in popup menu.
-     */
-    protected boolean showEditButton = true;
+    protected EventList<T> clonedList;
     private JPanel contentPane;
     private JList elementsList;
     private JButton upButton;
@@ -47,12 +40,10 @@ public abstract class ListEditForm<T> extends JInternalFrame
     private JButton addElementButton;
     private JButton editElementButton;
     private JButton delElementButton;
-    private JToolBar upDownToolbar;
     private String objectNameVP;
     private String objectNameRP;
     private Word.GenderEnum gender;
     private JPopupMenu popupMenu;
-    private EventList<T> clonedList;
     private List<ChangeListener> listChangeListeners = new ArrayList<ChangeListener>();
     private Class<T> clazz;
 
@@ -148,7 +139,7 @@ public abstract class ListEditForm<T> extends JInternalFrame
             {
                 add(addButtonAction);
                 addSeparator();
-                if (showEditButton)
+                if (isShowEditButton())
                 {
                     add(editButtonAction);
                 }
@@ -263,10 +254,6 @@ public abstract class ListEditForm<T> extends JInternalFrame
                 setEnabled(selectedInstrIdx < listSize - 1);
             }
         });
-
-        // init form
-        upDownToolbar.setVisible(showUpDownButtons);
-        editElementButton.setVisible(showEditButton);
     }
 
     /**
@@ -382,5 +369,32 @@ public abstract class ListEditForm<T> extends JInternalFrame
     {
         this.clonedList = clonedList;
         elementsList.setModel(new DefaultEventListModel<T>(clonedList));
+    }
+
+/*    public boolean isShowUpDownButtons()
+    {
+        return upDownToolbar.isVisible();
+    }
+
+    */
+
+    /**
+     * Flag to show or hide toolbar with up/down buttons. Set it to other value in static constructor to change behaviour.
+     *//*
+    public void setShowUpDownButtons(boolean showUpDownButtons)
+    {
+        upDownToolbar.setVisible(showUpDownButtons);
+    }*/
+    public boolean isShowEditButton()
+    {
+        return editElementButton.isVisible();
+    }
+
+    /**
+     * Flag to show or hide edit button and edit item in popup menu.
+     */
+    public void setShowEditButton(boolean showEditButton)
+    {
+        editElementButton.setVisible(showEditButton);
     }
 }

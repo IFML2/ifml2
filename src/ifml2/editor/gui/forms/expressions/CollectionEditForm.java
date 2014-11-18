@@ -4,8 +4,10 @@ import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
 import ifml2.editor.gui.forms.ListEditForm;
 import ifml2.om.IFMLObject;
+import ifml2.om.Item;
 import ifml2.om.Story;
 import ifml2.om.Word;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,13 +22,15 @@ public class CollectionEditForm extends JInternalFrame
     private Window owner;
     private Class<? extends IFMLObject> filterByClass;
     private Story.DataHelper dataHelper;
+    private Item holder;
 
-    public CollectionEditForm(Window owner, EventList<IFMLObject> collectionItems, Class<? extends IFMLObject> filterByClass,
-            Story.DataHelper dataHelper)
+    public CollectionEditForm(Window owner, @NotNull EventList<IFMLObject> collectionItems, Class<? extends IFMLObject> filterByClass,
+            @NotNull Item holder, Story.DataHelper dataHelper)
     {
         this.owner = owner;
         this.filterByClass = filterByClass;
         this.dataHelper = dataHelper;
+        this.holder = holder;
         setContentPane(contentPane);
 
         editedCollection = GlazedLists.eventList(collectionItems);
@@ -38,29 +42,39 @@ public class CollectionEditForm extends JInternalFrame
     {
         collectionListEditForm = new ListEditForm<IFMLObject>(owner, "элемент", "элемента", Word.GenderEnum.MASCULINE, IFMLObject.class)
         {
-            {
-                showEditButton = false;
-            }
-
             @Override
             protected IFMLObject createElement() throws Exception
             {
                 final Collection<IFMLObject> allObjects = dataHelper.getCopyOfAllObjects();
 
-                // filter objects by type
+                // filter objects by type and presence in collection
                 for (Iterator<IFMLObject> iterator = allObjects.iterator(); iterator.hasNext(); )
                 {
                     IFMLObject object = iterator.next();
-                    if (!filterByClass.isInstance(object))
+                    if (!filterByClass.isInstance(object) || clonedList.contains(object) || holder.equals(object))
                     {
                         iterator.remove();
                     }
                 }
 
-                return (IFMLObject) JOptionPane
-                        .showInputDialog(owner, "Выберите объект для добавления", "Новый элемент коллекции", JOptionPane.QUESTION_MESSAGE,
-                                null, allObjects.toArray(), null);
+                if (!allObjects.isEmpty())
+                {
+                    return (IFMLObject) JOptionPane.showInputDialog(owner, "Выберите объект для добавления", "Новый элемент коллекции",
+                            JOptionPane.QUESTION_MESSAGE, null, allObjects.toArray(), null);
+                }
+                else
+                {
+                    JOptionPane
+                            .showMessageDialog(owner, "Не осталось предметов для добавления", "Нет предметов", JOptionPane.WARNING_MESSAGE);
+                    return null;
+                }
             }
+
+            {
+                setShowEditButton(false);
+            }
+
+
         };
     }
 
