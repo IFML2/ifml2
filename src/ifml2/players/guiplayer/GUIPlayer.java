@@ -5,6 +5,7 @@ import ifml2.CommonUtils;
 import ifml2.GUIUtils;
 import ifml2.IFML2Exception;
 import ifml2.engine.Engine;
+import ifml2.engine.EngineVersion;
 import ifml2.om.IFML2LoadXmlException;
 import ifml2.players.GameInterface;
 import org.apache.log4j.Logger;
@@ -42,7 +43,7 @@ public class GUIPlayer extends JFrame
 
     private GUIPlayer(boolean fromTempFile)
     {
-        super("ЯРИЛ 2.0 Плеер " + Engine.ENGINE_VERSION);
+        super("ЯРИЛ 2.0 Плеер " + EngineVersion.VERSION);
         this.isFromTempFile = fromTempFile;
 
         setContentPane(mainPanel);
@@ -109,6 +110,90 @@ public class GUIPlayer extends JFrame
 
         commandText.requestFocusInWindow();
         setVisible(true);
+    }
+
+    private static String acquireStoryFileNameForPlay(String[] args)
+    {
+        String storyFile;
+
+        // option #1 -- the first argument is file name
+        if (args != null && args.length >= 1)
+        {
+            // first parameter is story file name
+            storyFile = args[0];
+            if (new File(storyFile).exists())
+            {
+                return storyFile;
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(null, "Файл истории \"" + storyFile + "\" не найден.\n" +
+                                                    "Файл будет выбран вручную.", "Файл не найден",
+                                              JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+        // option #2 -- show open file dialog
+        return showOpenStoryFileDialog(null);
+    }
+
+    private static String showOpenStoryFileDialog(Window owner)
+    {
+        JFileChooser storyFileChooser = new JFileChooser(CommonUtils.getSamplesDirectory());
+        storyFileChooser.removeChoosableFileFilter(storyFileChooser.getAcceptAllFileFilter()); // remove All files filter
+        storyFileChooser.setFileFilter(new FileFilter()
+        {
+            @Override
+            public String getDescription()
+            {
+                return CommonConstants.STORY_ALL_TYPES_FILE_FILTER_NAME;
+            }
+
+            @Override
+            public boolean accept(File f)
+            {
+                return f.isDirectory() || f.getName().toLowerCase().endsWith(CommonConstants.STORY_EXTENSION) ||
+                       f.getName().toLowerCase().endsWith(CommonConstants.CIPHERED_STORY_EXTENSION);
+            }
+        });
+
+        storyFileChooser.setFileView(new FileView()
+        {
+            @Override
+            public Icon getIcon(File f)
+            {
+                if (f.isDirectory())
+                {
+                    return GUIUtils.DIRECTORY_ICON;
+                }
+                return GUIUtils.STORY_FILE_ICON;
+            }
+        });
+
+        if (storyFileChooser.showOpenDialog(owner) == JFileChooser.APPROVE_OPTION)
+        {
+            return storyFileChooser.getSelectedFile().getAbsolutePath();
+        }
+
+        return null;
+    }
+
+    public static void main(String[] args)
+    {
+        startFromFile(acquireStoryFileNameForPlay(args), false);
+    }
+
+    public static void startFromFile(String fileName, boolean isFromTempFile)
+    {
+        if (fileName != null)
+        {
+            GUIPlayer player = new GUIPlayer(isFromTempFile);
+            player.loadStory(fileName);
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(null, "История не выбрана, Плеер завершает свою работу");
+        }
     }
 
     private void processCommand(String gamerCommand)
@@ -260,90 +345,6 @@ public class GUIPlayer extends JFrame
         else
         {
             gameInterface.outputText("Сохранение отменено.\n");
-        }
-    }
-
-    private static String acquireStoryFileNameForPlay(String[] args)
-    {
-        String storyFile;
-
-        // option #1 -- the first argument is file name
-        if (args != null && args.length >= 1)
-        {
-            // first parameter is story file name
-            storyFile = args[0];
-            if (new File(storyFile).exists())
-            {
-                return storyFile;
-            }
-            else
-            {
-                JOptionPane.showMessageDialog(null, "Файл истории \"" + storyFile + "\" не найден.\n" +
-                                                    "Файл будет выбран вручную.", "Файл не найден",
-                                              JOptionPane.ERROR_MESSAGE);
-            }
-        }
-
-        // option #2 -- show open file dialog
-        return showOpenStoryFileDialog(null);
-    }
-
-    private static String showOpenStoryFileDialog(Window owner)
-    {
-        JFileChooser storyFileChooser = new JFileChooser(CommonUtils.getSamplesDirectory());
-        storyFileChooser.removeChoosableFileFilter(storyFileChooser.getAcceptAllFileFilter()); // remove All files filter
-        storyFileChooser.setFileFilter(new FileFilter()
-        {
-            @Override
-            public String getDescription()
-            {
-                return CommonConstants.STORY_ALL_TYPES_FILE_FILTER_NAME;
-            }
-
-            @Override
-            public boolean accept(File f)
-            {
-                return f.isDirectory() || f.getName().toLowerCase().endsWith(CommonConstants.STORY_EXTENSION) ||
-                       f.getName().toLowerCase().endsWith(CommonConstants.CIPHERED_STORY_EXTENSION);
-            }
-        });
-
-        storyFileChooser.setFileView(new FileView()
-        {
-            @Override
-            public Icon getIcon(File f)
-            {
-                if (f.isDirectory())
-                {
-                    return GUIUtils.DIRECTORY_ICON;
-                }
-                return GUIUtils.STORY_FILE_ICON;
-            }
-        });
-
-        if (storyFileChooser.showOpenDialog(owner) == JFileChooser.APPROVE_OPTION)
-        {
-            return storyFileChooser.getSelectedFile().getAbsolutePath();
-        }
-
-        return null;
-    }
-
-    public static void main(String[] args)
-    {
-        startFromFile(acquireStoryFileNameForPlay(args), false);
-    }
-
-    public static void startFromFile(String fileName, boolean isFromTempFile)
-    {
-        if (fileName != null)
-        {
-            GUIPlayer player = new GUIPlayer(isFromTempFile);
-            player.loadStory(fileName);
-        }
-        else
-        {
-            JOptionPane.showMessageDialog(null, "История не выбрана, Плеер завершает свою работу");
         }
     }
 
@@ -516,7 +517,7 @@ public class GUIPlayer extends JFrame
                 titleFile = file.getName();
             }
         }
-        setTitle("ЯРИЛ 2.0 Плеер " + Engine.ENGINE_VERSION + " -- " + titleFile);
+        setTitle("ЯРИЛ 2.0 Плеер " + EngineVersion.VERSION + " -- " + titleFile);
     }
 
     private class GUIPlayerGameInterface implements GameInterface
