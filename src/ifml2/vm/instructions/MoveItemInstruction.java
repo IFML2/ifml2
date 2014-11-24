@@ -32,7 +32,7 @@ public class MoveItemInstruction extends Instruction
         }
 
         // move item from parent to new collection
-        item.moveTo(convertToClassedList(collection, Item.class));
+        item.moveTo((List<Item>) collection);
     }
 
     @Override
