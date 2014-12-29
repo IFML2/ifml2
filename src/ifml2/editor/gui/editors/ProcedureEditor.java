@@ -1,6 +1,7 @@
 package ifml2.editor.gui.editors;
 
 import ifml2.GUIUtils;
+import ifml2.editor.DataNotValidException;
 import ifml2.editor.IFML2EditorException;
 import ifml2.editor.gui.AbstractEditor;
 import ifml2.editor.gui.EditorUtils;
@@ -27,6 +28,25 @@ public class ProcedureEditor extends AbstractEditor<Procedure>
     private ListEditForm<Instruction> instructionsEditForm;
     private ListEditForm<Parameter> paramsEditForm;
     private Story.DataHelper storyDataHelper;
+
+    @Override
+    protected void validateData() throws DataNotValidException
+    {
+        // check name for null
+        String trimmedName = nameText.getText().trim();
+
+        if (trimmedName.length() == 0)
+        {
+            throw new DataNotValidException("У процедуры должно быть задано имя.", nameText);
+        }
+
+        // check name for duplicates
+        Procedure procedure = storyDataHelper.findProcedureById(trimmedName);
+        if (procedure != null)
+        {
+            throw new DataNotValidException("У процедуры должно быть уникальное имя. Процедура с таким именем уже есть в истории.", nameText);
+        }
+    }
 
     public ProcedureEditor(Window owner, @NotNull final Procedure procedure, Story.DataHelper storyDataHelper)
     {

@@ -457,7 +457,7 @@ public class Story
             return findProcedureById(loweredId);
         }
 
-        private Procedure findProcedureById(@NotNull String name)
+        public Procedure findProcedureById(@NotNull String name)
         {
             for (Procedure procedure : procedures)
             {
