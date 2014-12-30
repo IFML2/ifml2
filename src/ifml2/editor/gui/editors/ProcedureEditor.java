@@ -28,6 +28,29 @@ public class ProcedureEditor extends AbstractEditor<Procedure>
     private ListEditForm<Instruction> instructionsEditForm;
     private ListEditForm<Parameter> paramsEditForm;
     private Story.DataHelper storyDataHelper;
+    private Procedure originalProcedure;
+
+    public ProcedureEditor(Window owner, @NotNull final Procedure procedure, Story.DataHelper storyDataHelper)
+    {
+        super(owner);
+        initializeEditor(PROCEDURE_EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
+
+        originalProcedure = procedure;
+        this.storyDataHelper = storyDataHelper;
+
+        try
+        {
+            // clone data
+            procedureClone = procedure.clone();
+        }
+        catch (CloneNotSupportedException e)
+        {
+            GUIUtils.showErrorMessage(this, e);
+        }
+
+        // bind data
+        bindData();
+    }
 
     @Override
     protected void validateData() throws DataNotValidException
@@ -42,32 +65,11 @@ public class ProcedureEditor extends AbstractEditor<Procedure>
 
         // check name for duplicates
         Procedure procedure = storyDataHelper.findProcedureById(trimmedName);
-        if (procedure != null)
+        if (procedure != null && !procedure.equals(originalProcedure))
         {
-            throw new DataNotValidException("У процедуры должно быть уникальное имя. Процедура с таким именем уже есть в истории.", nameText);
+            throw new DataNotValidException("У процедуры должно быть уникальное имя. Процедура с таким именем уже есть в истории.",
+                    nameText);
         }
-    }
-
-    public ProcedureEditor(Window owner, @NotNull final Procedure procedure, Story.DataHelper storyDataHelper)
-    {
-        super(owner);
-        initializeEditor(PROCEDURE_EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
-
-        this.storyDataHelper = storyDataHelper;
-
-        try
-        {
-            // clone data
-            procedureClone = procedure.clone();
-
-        }
-        catch (CloneNotSupportedException e)
-        {
-            GUIUtils.showErrorMessage(this, e);
-        }
-
-        // bind data
-        bindData();
     }
 
     private void bindData()
