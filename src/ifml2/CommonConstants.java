@@ -9,15 +9,15 @@ public interface CommonConstants
     String TESTS_DIRECTORY = "\\Tests";
     String SAVES_DIRECTORY = "\\Saved Games";
     String STORY_EXTENSION = ".ifml";
+    String STORY_FILE_FILTER_NAME = MessageFormat.format("Файл истории (*{0})", STORY_EXTENSION);
     String TEST_EXTENSION = ".xml";
+    String TEST_FILE_FILTER_NAME = MessageFormat.format("Файл теста (*{0})", TEST_EXTENSION);
     String SAVE_EXTENSION = ".ifml-save";
-    String STORY_FILE_FILTER_NAME = "Файл истории (*" + STORY_EXTENSION + ")";
-    String TEST_FILE_FILTER_NAME = "Файл теста (*" + TEST_EXTENSION + ")";
-    String SAVE_FILE_FILTER_NAME = "Файл сохранённой игры (*" + SAVE_EXTENSION + ")";
-    @SuppressWarnings("SpellCheckingInspection")
+    String SAVE_FILE_FILTER_NAME = MessageFormat.format("Файл сохранённой игры (*{0})", SAVE_EXTENSION);
     String CIPHERED_STORY_EXTENSION = ".cifml";
+    String STORY_ALL_TYPES_FILE_FILTER_NAME = MessageFormat.format("Файл истории (*{0}, *{1})", STORY_EXTENSION, CIPHERED_STORY_EXTENSION);
     String CIPHERED_STORY_FILE_FILTER_NAME = MessageFormat.format("Файл зашифрованной истории (*{0})", CIPHERED_STORY_EXTENSION);
-    //String IFML_EXTENSION = ".ifml";
-    String STORY_ALL_TYPES_FILE_FILTER_NAME = MessageFormat
-            .format("Файлы истории (*{0},*{1})", STORY_EXTENSION, CIPHERED_STORY_EXTENSION);
+    String LIBS_FOLDER = "libs"; //todo merge with LIBRARIES_DIRECTORY constant
+    String LIBRARY_EXTENSION = ".xml";
+    String LIBRARY_FILE_FILTER_NAME = MessageFormat.format("Файл библиотеки (*{0})", LIBRARY_EXTENSION);
 }

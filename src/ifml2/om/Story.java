@@ -2,12 +2,13 @@ package ifml2.om;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.event.ListEvent;
 import ca.odell.glazedlists.event.ListEventListener;
 import ifml2.CommonUtils;
 import ifml2.IFML2Exception;
 import ifml2.om.xml.xmladapters.DictionaryAdapter;
-import ifml2.om.xml.xmladapters.ProceduresAdapter;
+import ifml2.om.xml.xmladapters.LocationAdapter;
 import ifml2.om.xml.xmladapters.UsedLibrariesAdapter;
 import org.jetbrains.annotations.NotNull;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -15,13 +16,12 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import static ifml2.om.xml.XmlSchemaConstants.*;
 
 @XmlRootElement(name = "story")
+@XmlAccessorType(XmlAccessType.NONE)
 public class Story
 {
     @XmlTransient
@@ -35,23 +35,30 @@ public class Story
     };
     @XmlElement(name = "storyOptions")
     private final StoryOptions storyOptions = new StoryOptions();
-    @XmlJavaTypeAdapter(value = ProceduresAdapter.class)
-    private final HashMap<String, Procedure> procedures = new HashMap<String, Procedure>();
-    private Story.DataHelper dataHelper = new DataHelper();
+
+    @XmlElementWrapper(name = STORY_PROCEDURES_ELEMENT)
+    @XmlElement(name = PROCEDURES_PROCEDURE_ELEMENT)
+    private final EventList<Procedure> procedures = new BasicEventList<Procedure>();
+
+    private DataHelper dataHelper = new DataHelper();
     @SuppressWarnings("FieldCanBeLocal") // todo remove suppress after JAXB bug is fixed
     @XmlAttribute(name = "id")
     @XmlID
     private String id = "story";
+
     @XmlJavaTypeAdapter(value = UsedLibrariesAdapter.class)
     private EventList<Library> libraries = new BasicEventList<Library>();
+
     @XmlJavaTypeAdapter(value = DictionaryAdapter.class)
     private HashMap<String, Word> dictionary = new HashMap<String, Word>();
+
     @XmlElementWrapper(name = STORY_LOCATIONS_ELEMENT)
     @XmlElement(name = LOCATIONS_LOCATION_ELEMENT)
+    @XmlJavaTypeAdapter(value = LocationAdapter.class)
     private EventList<Location> locations = new BasicEventList<Location>();
 
-    // subscribe to location changes for object tree update
     {
+        // subscribe to locations changes for object tree update
         locations.addListEventListener(new ListEventListener<Location>()
         {
             @Override
@@ -59,13 +66,15 @@ public class Story
             {
                 while (listChanges.next() && listChanges.getType() == ListEvent.DELETE)
                 {
+                    EventList<Location> locList = listChanges.getSourceList();
+
                     // delete from items
                     for (Item item : items)
                     {
                         EventList<Location> startLocations = item.getStartingPosition().getLocations();
                         for (Location startLocation : startLocations)
                         {
-                            if (!locations.contains(startLocation))
+                            if (!locList.contains(startLocation))
                             {
                                 startLocations.remove(startLocation);
                             }
@@ -73,40 +82,25 @@ public class Story
                     }
 
                     // delete from locations
-                    for(Location location : locations)
+                    for (Location location : locList)
                     {
-                        if(!locations.contains(location.getNorth()))
+                        for (ExitDirection direction : ExitDirection.values())
                         {
-                            location.setNorth(null);
+                            Location destination = location.getExit(direction);
+                            if (destination != null && !locList.contains(destination))
+                            {
+                                location.setExit(direction, null);
+                            }
                         }
-                        if(!locations.contains(location.getEast()))
-                        {
-                            location.setEast(null);
-                        }
-                        if(!locations.contains(location.getSouth()))
-                        {
-                            location.setSouth(null);
-                        }
-                        if(!locations.contains(location.getWest()))
-                        {
-                            location.setWest(null);
-                        }
-                        if(!locations.contains(location.getUp()))
-                        {
-                            location.setUp(null);
-                        }
-                        if(!locations.contains(location.getDown()))
-                        {
-                            location.setDown(null);
-                        }
-                        //todo: delete links from semi-directions (NE, NW, ...)
                     }
+
+                    // todo delete from instructions - procedures, hooks and so on...
 
                     // delete from heap
                     for (Iterator<IFMLObject> iterator = objectsHeap.values().iterator(); iterator.hasNext(); )
                     {
                         IFMLObject object = iterator.next();
-                        if (object instanceof Location && !locations.contains(object))
+                        if (object instanceof Location && !locList.contains(object))
                         {
                             iterator.remove();
                         }
@@ -114,6 +108,40 @@ public class Story
                 }
             }
         });
+
+        // subscribe to procedures changes for object tree update
+        procedures.addListEventListener(new ListEventListener<Procedure>()
+        {
+            @Override
+            public void listChanged(ListEvent<Procedure> listChanges)
+            {
+                while (listChanges.next() && listChanges.getType() == ListEvent.DELETE)
+                {
+                    EventList<Procedure> proceduresList = listChanges.getSourceList();
+
+                    // delete from actions
+                    for (Action action : actions)
+                    {
+                        Action.ProcedureCall procedureCall = action.getProcedureCall();
+                        Procedure procedure = procedureCall.getProcedure();
+                        if (procedure != null && !proceduresList.contains(procedure))
+                        {
+                            procedureCall.setProcedure(null);
+                        }
+                    }
+
+                    // delete from start procedure
+                    StoryOptions.StartProcedureOption startProcedureOption = storyOptions.getStartProcedureOption();
+                    Procedure procedure = startProcedureOption.getProcedure();
+                    if (procedure != null && !proceduresList.contains(procedure))
+                    {
+                        startProcedureOption.setProcedure(null);
+                    }
+                }
+            }
+        });
+
+        // todo subscribe to other lists changes
     }
 
     @XmlElementWrapper(name = STORY_ITEMS_ELEMENT)
@@ -127,8 +155,6 @@ public class Story
     @XmlElementWrapper(name = "actions")
     @XmlElement(name = "action")
     private EventList<Action> actions = new BasicEventList<Action>();
-    @XmlTransient
-    private EventList<Action> allActions = null;
     @XmlTransient
     private EventList<Attribute> allAttributes = null;
     @XmlTransient
@@ -197,19 +223,16 @@ public class Story
 
     public EventList<Action> getAllActions()
     {
-        if (allActions == null)
+        EventList<Action> allActions = new BasicEventList<Action>();
+        if (actions != null)
         {
-            allActions = new BasicEventList<Action>();
-            if (actions != null)
+            allActions.addAll(actions);
+        }
+        if (libraries != null)
+        {
+            for (Library library : libraries)
             {
-                allActions.addAll(actions);
-            }
-            if (libraries != null)
-            {
-                for (Library library : libraries)
-                {
-                    allActions.addAll(library.actions);
-                }
+                allActions.addAll(library.actions);
             }
         }
         return allActions;
@@ -247,7 +270,7 @@ public class Story
         return allRoleDefinitions;
     }
 
-    public HashMap<String, Procedure> getProcedures()
+    public EventList<Procedure> getProcedures()
     {
         return procedures;
     }
@@ -261,9 +284,9 @@ public class Story
     public Procedure getSystemInheritorProcedure(Procedure.SystemProcedureEnum systemProcedure)
     {
         // for this story
-        for (Procedure procedure : getProcedures().values())
+        for (Procedure procedure : procedures)
         {
-            if (procedure.getInheritsSystemProcedure() == systemProcedure)
+            if (systemProcedure.equals(procedure.getInheritsSystemProcedure()))
             {
                 return procedure;
             }
@@ -272,9 +295,9 @@ public class Story
         // for libs
         for (Library library : libraries)
         {
-            for (Procedure procedure : library.procedures.values())
+            for (Procedure procedure : library.procedures)
             {
-                if (procedure.getInheritsSystemProcedure() == systemProcedure)
+                if (systemProcedure.equals(procedure.getInheritsSystemProcedure()))
                 {
                     return procedure;
                 }
@@ -325,6 +348,7 @@ public class Story
 
         /**
          * Tries to find location by id. Id shouldn't be null. If finds returns it, else returns null.
+         *
          * @param id Location id.
          * @return Location if finds and null otherwise.
          */
@@ -430,17 +454,24 @@ public class Story
                 return dictionary.get(loweredId);
             }
 
-            if (procedures.containsKey(loweredId))
-            {
-                return procedures.get(loweredId);
-            }
+            return findProcedureById(loweredId);
+        }
 
+        public Procedure findProcedureById(@NotNull String name)
+        {
+            for (Procedure procedure : procedures)
+            {
+                if (name.equalsIgnoreCase(procedure.getName()))
+                {
+                    return procedure;
+                }
+            }
             return null;
         }
 
         public EventList<Library> getLibraries()
         {
-            return Story.this.getLibraries();
+            return libraries;
         }
 
         public EventList<Action> getActions()
@@ -448,7 +479,7 @@ public class Story
             return actions;
         }
 
-        public HashMap<String, Procedure> getProcedures()
+        public EventList<Procedure> getProcedures()
         {
             return procedures;
         }
@@ -460,6 +491,7 @@ public class Story
 
         /**
          * Tries to find item by id. Id shouldn't be null. If finds returns it, else returns null.
+         *
          * @param id Item id.
          * @return Item if finds and null otherwise.
          */
@@ -477,6 +509,63 @@ public class Story
             }
 
             return null;
+        }
+
+        /**
+         * Searches libraries list for the library by its path.
+         *
+         * @param libraries Libraries list.
+         * @param library   Library to find by path.
+         * @return true if the same library is found and false otherwise.
+         */
+        public boolean isLibListContainsLib(List<Library> libraries, Library library)
+        {
+            for (Library lib : libraries)
+            {
+                if (lib.getPath().equalsIgnoreCase(library.getPath()))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /**
+         * Find actions where procedure is called
+         *
+         * @param procedure procedure for search
+         * @return list of affected actions
+         */
+        @NotNull
+        public ArrayList<Action> findActionsByProcedure(@NotNull Procedure procedure)
+        {
+            ArrayList<Action> results = new ArrayList<Action>();
+
+            for (Action action : actions)
+            {
+                Action.ProcedureCall procedureCall = action.getProcedureCall();
+                if (procedure.equals(procedureCall.getProcedure()))
+                {
+                    results.add(action);
+                }
+            }
+            return results;
+        }
+
+        /**
+         * Returns all role definitions in story and libraries. List is copied to prevent modification.
+         *
+         * @return copied list of all role definitions
+         */
+        public List<RoleDefinition> getCopyOfAllRoleDefinitions()
+        {
+            return GlazedLists.eventList(Story.this.getAllRoleDefinitions()); // clone list to prevent deleting
+        }
+
+        public Collection<IFMLObject> getCopyOfAllObjects()
+        {
+            return GlazedLists.eventList(objectsHeap.values());
         }
     }
 }

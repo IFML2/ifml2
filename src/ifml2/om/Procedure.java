@@ -2,18 +2,43 @@ package ifml2.om;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
+import ifml2.IFMLEntity;
 import ifml2.vm.instructions.Instruction;
 
 import javax.xml.bind.annotation.*;
 
-@XmlRootElement(name="procedure")
-public class Procedure
+@XmlRootElement(name = "procedure")
+@XmlAccessorType(XmlAccessType.NONE)
+public class Procedure extends IFMLEntity implements Cloneable
 {
+    @XmlAttribute(name = "inheritsSystemProcedure")
+    private SystemProcedureEnum inheritsSystemProcedure = null;
+    @XmlElementWrapper(name = "procedureVariables")
+    @XmlElement(name = "procedureVariable")
+    private EventList<ProcedureVariable> variables = new BasicEventList<ProcedureVariable>();
+    @XmlElement(name = "procedureBody")
+    private InstructionList procedureBody = new InstructionList();
+    @XmlAttribute(name = "name")
+    @XmlID
+    private String name;
+    @XmlElementWrapper(name = "parameters")
+    @XmlElement(name = "parameter")
+    private EventList<Parameter> parameters = new BasicEventList<Parameter>();
+
+    public Procedure(String name)
+    {
+        this.name = name;
+    }
+
+    public Procedure()
+    {
+    }
+
     public Parameter getParameterByName(String parameterName)
     {
-        for(Parameter parameter : parameters)
+        for (Parameter parameter : parameters)
         {
-            if(parameter.getName().equalsIgnoreCase(parameterName))
+            if (parameter.getName().equalsIgnoreCase(parameterName))
             {
                 return parameter;
             }
@@ -22,54 +47,73 @@ public class Procedure
         return null;
     }
 
-    @XmlEnum
-    public enum SystemProcedureEnum
+    public String getName()
     {
-        @XmlEnumValue(value = "showLocName")
-        SHOW_LOC_NAME
+        return name;
     }
 
-    @XmlAttribute(name="name")
-    @XmlID
-    private String name;
-    public String getName() { return name; }
+    public SystemProcedureEnum getInheritsSystemProcedure()
+    {
+        return inheritsSystemProcedure;
+    }
 
-    @XmlAttribute(name = "inheritsSystemProcedure")
-    private final SystemProcedureEnum inheritsSystemProcedure = null;
-    public SystemProcedureEnum getInheritsSystemProcedure() { return inheritsSystemProcedure; }
+    public EventList<Parameter> getParameters()
+    {
+        return parameters;
+    }
 
-    private EventList<Parameter> parameters = new BasicEventList<Parameter>();
-    @XmlElementWrapper(name = "parameters")
-    @XmlElement(name = "parameter")
-    public EventList<Parameter> getParameters() { return parameters; }
+    public EventList<ProcedureVariable> getVariables()
+    {
+        return variables;
+    }
 
-    @XmlElementWrapper(name = "procedureVariables")
-    @XmlElement(name = "procedureVariable")
-    private final EventList<ProcedureVariable> variables = new BasicEventList<ProcedureVariable>();
-    public EventList<ProcedureVariable> getVariables() { return variables; }
-
-    @XmlElement(name = "procedureBody")
-    private final InstructionList procedureBody = new InstructionList();
-    public InstructionList getProcedureBody() { return procedureBody; }
+    public InstructionList getProcedureBody()
+    {
+        return procedureBody;
+    }
 
     public EventList<Instruction> getInstructions()
     {
         return procedureBody.getInstructions();
     }
 
-    public Procedure(String name)
+    @Override
+    public Procedure clone() throws CloneNotSupportedException
     {
-        this();
-        this.name = name;
+        Procedure clone = (Procedure) super.clone(); // clone flat fields
+
+        // clone deeper
+        clone.variables = deepCloneEventList(variables, ProcedureVariable.class);
+        clone.procedureBody = procedureBody.clone();
+        clone.parameters = deepCloneEventList(parameters, Parameter.class);
+
+        return clone;
     }
 
-    private Procedure()
+    public void copyTo(Procedure procedure) throws CloneNotSupportedException
     {
+        procedure.name = name;
+        procedure.inheritsSystemProcedure = inheritsSystemProcedure;
+        procedure.variables = deepCloneEventList(variables, ProcedureVariable.class);
+        procedure.procedureBody = procedureBody.clone();
+        procedure.parameters = deepCloneEventList(parameters, Parameter.class);
     }
 
     @Override
-	public String toString()
-	{
-		return getName();
-	}
+    public String toString()
+    {
+        return name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
+    @XmlEnum
+    public enum SystemProcedureEnum
+    {
+        @XmlEnumValue(value = "showLocName")
+        SHOW_LOC_NAME
+    }
 }

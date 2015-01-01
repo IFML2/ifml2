@@ -1,3 +1,4 @@
 # List of generated media files. The columns are tab-separated:
 # id | media file type | display name | media file path
-29	windows	Windows w/o JRE	C:\Users\realsonic\dev\ЯРИЛ 2.0\ifml2 project\install4j project\IFML2_Hobbit_2_20131130.exe
+29	windows	Windows w/o JRE	C:\Users\mbalanov\IdeaProjects\IFML2j\install4j project\IFML2_2014_20141219_191625.exe
+37	windows	Windows with JRE 6	C:\Users\mbalanov\IdeaProjects\IFML2j\install4j project\IFML2_2014_JRE6_20141219_191625.exe

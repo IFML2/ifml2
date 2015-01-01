@@ -6,109 +6,42 @@ import ifml2.CommonUtils;
 import ifml2.GUIUtils;
 import ifml2.IFML2Exception;
 import ifml2.editor.IFML2EditorException;
-import ifml2.engine.Engine;
+import ifml2.editor.gui.editors.*;
+import ifml2.editor.gui.forms.ListEditForm;
+import ifml2.engine.EngineVersion;
 import ifml2.om.Action;
 import ifml2.om.*;
 import ifml2.players.guiplayer.GUIPlayer;
 import ifml2.tests.gui.TestRunner;
 import org.apache.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileView;
-import javax.xml.bind.ValidationEvent;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 
 public class Editor extends JFrame
 {
     private static final String FILE_MENU_NAME = "Файл";
     private static final String STORY_MENU_NAME = "История";
     private static final String OPEN_STORY_ACTION_NAME = "Открыть...";
-    private static final String EDIT_LOCATION_ACTION_NAME = "Редактировать...";
     private static final Logger LOG = Logger.getLogger(Editor.class);
-    private final AbstractAction newLocationAction = new AbstractAction("Добавить...", GUIUtils.ADD_ELEMENT_ICON)
-    {
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            Location location = new Location();
-            if (editLocation(location))
-            {
-                story.addLocation(location);
-                markStoryEdited();
-                reloadDataInForm();
-                locationsList.setSelectedValue(location, true);
-            }
-        }
-    };
-    private final AbstractAction editLocationAction = new AbstractAction(EDIT_LOCATION_ACTION_NAME,
-                                                                         GUIUtils.EDIT_ELEMENT_ICON)
-    {
-        {
-            setEnabled(false); // disabled at start
-            locationsList.addListSelectionListener(new ListSelectionListener()
-            {
-                @Override
-                public void valueChanged(ListSelectionEvent e)
-                {
-                    setEnabled(!locationsList.isSelectionEmpty()); // depends on selection
-                }
-            });
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            editLocation((Location) locationsList.getSelectedValue());
-        }
-    };
-    private final AbstractAction delLocationAction = new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
-    {
-        {
-            setEnabled(false); // disabled at start
-            locationsList.addListSelectionListener(new ListSelectionListener()
-            {
-                @Override
-                public void valueChanged(ListSelectionEvent e)
-                {
-                    setEnabled(!locationsList.isSelectionEmpty()); // depends on selection
-                }
-            });
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            Location location = (Location) locationsList.getSelectedValue();
-            if (location != null)
-            {
-                if (GUIUtils.showDeleteConfirmDialog(Editor.this, "локацию", "локации", Word.GenderEnum.FEMININE))
-                {
-                    story.getLocations().remove(location);
-                    markStoryEdited();
-                    reloadDataInForm();
-                }
-            }
-        }
-    };
     private JPanel mainPanel;
-    private JList locationsList;
-    private JList itemsList;
     private JProgressBar progressBar;
-    private JButton newLocButton;
-    private JButton editLocButton;
-    private JButton delLocButton;
-    private JButton newItemButton;
-    private JButton editItemButton;
-    private JButton delItemButton;
-    private Story story = new Story();
+    private ListEditForm<Procedure> proceduresListEditForm;
+    private ListEditForm<Location> locationsListEditForm;
+    private ListEditForm<Item> itemsListEditForm;
+    private ListEditForm<Action> actionsListEditForm;
+    private Story story;
     private boolean isStoryEdited = false;
     private String storyFileName = "новая история";
 
@@ -138,7 +71,7 @@ public class Editor extends JFrame
                             }
                             catch (IFML2Exception ex)
                             {
-                                GUIUtils.showErrorMessage(Editor.this, ex);
+                                GUIUtils.ReportError(Editor.this, ex);
                             }
                             break;
                         case JOptionPane.NO_OPTION:
@@ -153,123 +86,8 @@ public class Editor extends JFrame
 
         GUIUtils.packAndCenterWindow(this);
 
-        newLocButton.setAction(newLocationAction);
-        editLocButton.setAction(editLocationAction);
-        delLocButton.setAction(delLocationAction);
-
-        newItemButton.setAction(new AbstractAction("Добавить...", GUIUtils.ADD_ELEMENT_ICON)
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                Item item = new Item();
-                if (editItem(item))
-                {
-                    story.addItem(item);
-                    markStoryEdited();
-                    reloadDataInForm();
-                    itemsList.setSelectedValue(item, true);
-                }
-            }
-        });
-        editItemButton.setAction(new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON)
-        {
-            {
-                setEnabled(false); // disabled at start
-                itemsList.addListSelectionListener(new ListSelectionListener()
-                {
-                    @Override
-                    public void valueChanged(ListSelectionEvent e)
-                    {
-                        setEnabled(!itemsList.isSelectionEmpty()); // depends on selection
-                    }
-                });
-            }
-
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                Item item = (Item) itemsList.getSelectedValue();
-                if (editItem(item))
-                {
-                    markStoryEdited();
-                    reloadDataInForm();
-                    itemsList.setSelectedValue(item, true);
-                }
-            }
-        });
-        delItemButton.setAction(new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
-        {
-            {
-                setEnabled(false); // disabled at start
-                itemsList.addListSelectionListener(new ListSelectionListener()
-                {
-                    @Override
-                    public void valueChanged(ListSelectionEvent e)
-                    {
-                        setEnabled(!itemsList.isSelectionEmpty()); // depends on selection
-                    }
-                });
-            }
-
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                Item item = (Item) itemsList.getSelectedValue();
-                if (item != null)
-                {
-                    if (GUIUtils.showDeleteConfirmDialog(Editor.this, "предмет", "предмета", Word.GenderEnum.MASCULINE))
-                    {
-                        story.getItems().remove(item);
-                        markStoryEdited();
-                        reloadDataInForm();
-                    }
-                }
-            }
-        });
-
-        final JPopupMenu locationPopupMenu = createPopupMenus();
-
-        locationsList.addMouseListener(new MouseAdapter()
-        {
-            @Override
-            public void mouseReleased(MouseEvent e)
-            {
-                if (e.isPopupTrigger())
-                {
-                    locationPopupMenu.show(e.getComponent(), e.getX(), e.getY());
-                }
-            }
-
-            @Override
-            public void mouseClicked(MouseEvent e)
-            {
-                if (e.getClickCount() == 2)
-                {
-                    Location location = (Location) locationsList.getSelectedValue();
-                    if (location != null)
-                    {
-                        editLocation(location);
-                    }
-                }
-            }
-        });
-
-        itemsList.addMouseListener(new MouseAdapter()
-        {
-            @Override
-            public void mouseClicked(MouseEvent e)
-            {
-                if (e.getClickCount() == 2)
-                {
-                    Item item = (Item) itemsList.getSelectedValue();
-                    if (item != null)
-                    {
-                        editItem(item);
-                    }
-                }
-            }
-        });
+        // create new story at start
+        setStory(new Story());
     }
 
     public static void main(String[] args)
@@ -284,11 +102,48 @@ public class Editor extends JFrame
         }
     }
 
+    private boolean editProcedure(@Nullable Procedure procedure)
+    {
+        if (procedure != null)
+        {
+            try
+            {
+                ProcedureEditor procedureEditor = new ProcedureEditor(this, procedure, story.getDataHelper());
+                if (procedureEditor.showDialog())
+                {
+                    procedureEditor.getData(procedure);
+                    return true;
+                }
+            }
+            catch (IFML2EditorException e)
+            {
+                GUIUtils.showErrorMessage(this, e);
+            }
+        }
+
+        return false;
+    }
+
+    private boolean editAction(@Nullable Action action) throws IFML2EditorException
+    {
+        if (action != null)
+        {
+            ActionEditor actionEditor = new ActionEditor(this, action, story.getDataHelper());
+            if (actionEditor.showDialog())
+            {
+                actionEditor.getData(action);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public void setStory(Story story)
     {
         this.story = story;
         setStoryEdited(false); // reset edited flag
-        reloadDataInForm();
+        bindData();
     }
 
     public void setStoryEdited(boolean storyEdited)
@@ -309,35 +164,23 @@ public class Editor extends JFrame
     {
         File file = new File(storyFileName);
         String fileName = file.getName();
-        String editorTitle =
-                MessageFormat.format("ЯРИЛ 2.0 Редактор {0} -- {1}{2}", Engine.ENGINE_VERSION, fileName, isStoryEdited ? " - * история не сохранена" : "");
+        String editorTitle = MessageFormat.format("ЯРИЛ 2.0 Редактор {0} -- {1}{2}", EngineVersion.VERSION, fileName,
+                isStoryEdited ? " - * история не сохранена" : "");
         setTitle(editorTitle);
     }
 
     private int askAboutSavingStory()
     {
-        return JOptionPane
-                .showConfirmDialog(Editor.this, "Вы хотите сохранить историю перед выходом?", "История не сохранена",
-                                   JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+        return JOptionPane.showConfirmDialog(Editor.this, "Вы хотите сохранить историю перед выходом?", "История не сохранена",
+                JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
     }
 
-    private void reloadDataInForm() //todo refactor this -- remake to glazed lists
+    private void bindData()
     {
-        // locations
-        DefaultListModel locationsListModel = new DefaultListModel();
-        for (Location location : story.getLocations())
-        {
-            locationsListModel.addElement(location);
-        }
-        locationsList.setModel(locationsListModel);
-
-        // items
-        DefaultListModel itemsListModel = new DefaultListModel();
-        for (Item item : story.getItems())
-        {
-            itemsListModel.addElement(item);
-        }
-        itemsList.setModel(itemsListModel);
+        locationsListEditForm.bindData(story.getLocations());
+        itemsListEditForm.bindData(story.getItems());
+        proceduresListEditForm.bindData(story.getProcedures());
+        actionsListEditForm.bindData(story.getActions());
     }
 
     private void loadStory(final String storyFile)
@@ -346,7 +189,7 @@ public class Editor extends JFrame
         {
             @Override
             public void run()
-            {
+            { //todo rewrite using SwingWorker
                 Cursor previousCursor = mainPanel.getCursor();
                 mainPanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 //getContentPane().setEnabled(false);
@@ -359,7 +202,7 @@ public class Editor extends JFrame
                 catch (Throwable e)
                 {
                     LOG.error("Error while loading story!", e);
-                    ReportError(e, "Ошибка при загрузке истории!");
+                    GUIUtils.ReportError(Editor.this, e);
                     //GUIUtils.showErrorMessage(Editor.this, e);
                 }
                 finally
@@ -370,30 +213,6 @@ public class Editor extends JFrame
                 }
             }
         }.start();
-    }
-
-    private void ReportError(Throwable exception, String dialogTitle)
-    {
-        exception.printStackTrace();
-        LOG.error(dialogTitle, exception);
-        String errorMessage = "";
-        if (exception instanceof IFML2LoadXmlException)
-        {
-            errorMessage += "В файле истории есть ошибки:";
-            for (ValidationEvent validationEvent : ((IFML2LoadXmlException) exception).getEvents())
-            {
-                errorMessage += MessageFormat.format("\n\"{0}\" at {1},{2}", validationEvent.getMessage(),
-                                                     validationEvent.getLocator().getLineNumber(),
-                                                     validationEvent.getLocator().getColumnNumber());
-            }
-        }
-        else
-        {
-            StringWriter stringWriter = new StringWriter();
-            exception.printStackTrace(new PrintWriter(stringWriter));
-            errorMessage += stringWriter.toString();
-        }
-        GUIUtils.showMemoDialog(this, "Произошла ошибка", errorMessage);
     }
 
     private JMenuBar createMainMenu()
@@ -479,7 +298,7 @@ public class Editor extends JFrame
                 catch (IFML2Exception ex)
                 {
                     JOptionPane.showMessageDialog(Editor.this, "Ошибка во время сохранения истории: " + ex.getMessage());
-                    ReportError(ex, "Ошибка во время сохранения истории");
+                    GUIUtils.ReportError(Editor.this, ex);
                 }
             }
         });
@@ -536,7 +355,7 @@ public class Editor extends JFrame
                     }
                     catch (IFML2Exception ex)
                     {
-                        ReportError(ex, "Произошла ошибка во время экспорта зашифрованной истории.");
+                        GUIUtils.ReportError(Editor.this, ex);
                     }
                 }
             }
@@ -549,8 +368,7 @@ public class Editor extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                StoryOptionsEditor storyOptionsEditor = new StoryOptionsEditor(Editor.this, story.getStoryOptions(),
-                                                                               story.getDataHelper());
+                StoryOptionsEditor storyOptionsEditor = new StoryOptionsEditor(Editor.this, story.getStoryOptions(), story.getDataHelper());
                 if (storyOptionsEditor.showDialog())
                 {
                     markStoryEdited();
@@ -564,43 +382,17 @@ public class Editor extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                UsedLibsEditor usedLibsEditor = new UsedLibsEditor(Editor.this, story.getLibraries());
+                EventList<Library> libraries = story.getLibraries();
+                UsedLibsEditor usedLibsEditor = new UsedLibsEditor(Editor.this, libraries, story.getDataHelper());
                 if (usedLibsEditor.showDialog())
-                {
-                    markStoryEdited();
-                }
-            }
-        });
-        //storyMenu.add(new EditDictAction()); //https://www.hostedredmine.com/issues/11947
-        storyMenu.add(new AbstractAction("Редактировать процедуры...")
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                ProceduresEditor proceduresEditor = new ProceduresEditor(Editor.this, story.getProcedures(),
-                                                                         story.getDataHelper());
-                if (proceduresEditor.showDialog())
-                {
-                    markStoryEdited();
-                }
-            }
-        });
-        storyMenu.add(new AbstractAction("Редактировать действия...")
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                EventList<Action> actions = story.getActions();
-                ActionsEditor actionsEditor = new ActionsEditor(Editor.this, story.getDataHelper());
-                if (actionsEditor.showDialog())
                 {
                     try
                     {
-                        actionsEditor.getData(actions);
+                        usedLibsEditor.getData(libraries);
                     }
-                    catch (IFML2EditorException ex)
+                    catch (Throwable ex)
                     {
-                        GUIUtils.showErrorMessage(Editor.this, ex);
+                        GUIUtils.ReportError(Editor.this, ex);
                     }
                     markStoryEdited();
                 }
@@ -629,7 +421,7 @@ public class Editor extends JFrame
                 }
                 catch (Throwable ex)
                 {
-                    ReportError(ex, "Ошибка во время сохранения истории во временный файл");
+                    GUIUtils.ReportError(Editor.this, ex);
                 }
             }
         });
@@ -672,56 +464,19 @@ public class Editor extends JFrame
             @Override
             public Icon getIcon(File f)
             {
-                if (f.isDirectory())
-                {
-                    return GUIUtils.DIRECTORY_ICON;
-                }
-                return GUIUtils.STORY_FILE_ICON;
+                return f.isDirectory() ? GUIUtils.DIRECTORY_ICON : GUIUtils.STORY_FILE_ICON;
             }
         });
 
-        if (storyFileChooser.showOpenDialog(this) != JFileChooser.APPROVE_OPTION)
+        if (storyFileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
         {
-            return null;
+            return storyFileChooser.getSelectedFile().getAbsolutePath();
         }
 
-        return storyFileChooser.getSelectedFile().getAbsolutePath();
+        return null;
     }
 
-    private JPopupMenu createPopupMenus()
-    {
-        // locations popup
-        JPopupMenu locationPopupMenu = new JPopupMenu();
-
-        locationPopupMenu.add(newLocationAction);
-        locationPopupMenu.addSeparator();
-        locationPopupMenu.add(editLocationAction);
-        locationPopupMenu.add(delLocationAction);
-
-        return locationPopupMenu;
-    }
-
-    /*private class EditDictAction extends AbstractAction
-    {
-        private EditDictAction()
-        {
-            super("Редактировать словарь...");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            editDict();
-        }
-    }*/
-
-    /*private void editDict()
-    {
-        DictionaryEditor dictionaryEditor = new DictionaryEditor(story.dictionary);
-        dictionaryEditor.setVisible(true);
-    }*/
-
-    private boolean editLocation(Location location)
+    private boolean editLocation(@Nullable Location location)
     {
         if (location != null)
         {
@@ -729,7 +484,6 @@ public class Editor extends JFrame
             if (locationEditor.showDialog())
             {
                 locationEditor.getData(location);
-                markStoryEdited();
                 return true;
             }
         }
@@ -808,7 +562,7 @@ public class Editor extends JFrame
         return fileName;
     }
 
-    private boolean editItem(Item item)
+    private boolean editItem(@Nullable Item item)
     {
         if (item != null)
         {
@@ -827,5 +581,175 @@ public class Editor extends JFrame
     {
         this.storyFileName = storyFileName;
         updateTitle();
+    }
+
+    private void createUIComponents()
+    {
+        locationsListEditForm = new ListEditForm<Location>(this, "локацию", "локации", Word.GenderEnum.FEMININE, Location.class)
+        {
+            @Override
+            protected void addElementToList(Location location)
+            {
+                if (location != null)
+                {
+                    story.addLocation(location);
+                }
+            }
+
+            {
+                addListChangeListener(new ChangeListener()
+                {
+                    @Override
+                    public void stateChanged(ChangeEvent e)
+                    {
+                        markStoryEdited();
+                    }
+                });
+            }
+
+            @Override
+            protected Location createElement() throws Exception
+            {
+                Location location = new Location();
+                return editLocation(location) ? location : null;
+            }
+
+            @Override
+            protected boolean editElement(Location selectedElement)
+            {
+                return editLocation(selectedElement);
+            }
+
+
+            //todo warn that location will be deleted from items
+        };
+
+        itemsListEditForm = new ListEditForm<Item>(this, "предмет", "предмета", Word.GenderEnum.MASCULINE, Item.class)
+        {
+            @Override
+            protected void addElementToList(Item item)
+            {
+                if (item != null)
+                {
+                    story.addItem(item);
+                }
+            }
+
+            {
+                addListChangeListener(new ChangeListener()
+                {
+                    @Override
+                    public void stateChanged(ChangeEvent e)
+                    {
+                        markStoryEdited();
+                    }
+                });
+            }
+
+            @Override
+            protected Item createElement() throws Exception
+            {
+                Item item = new Item();
+                return editItem(item) ? item : null;
+            }
+
+            @Override
+            protected boolean editElement(Item selectedElement)
+            {
+                return editItem(selectedElement);
+            }
+
+
+        };
+
+        proceduresListEditForm = new ListEditForm<Procedure>(this, "процедуру", "процедуры", Word.GenderEnum.FEMININE, Procedure.class)
+        {
+            @Override
+            protected Procedure createElement() throws Exception
+            {
+                Procedure procedure = new Procedure();
+                return editProcedure(procedure) ? procedure : null;
+            }
+
+            {
+                addListChangeListener(new ChangeListener()
+                {
+                    @Override
+                    public void stateChanged(ChangeEvent e)
+                    {
+                        markStoryEdited();
+                    }
+                });
+            }
+
+            @Override
+            protected boolean editElement(Procedure selectedElement)
+            {
+                return editProcedure(selectedElement);
+            }
+
+            @Override
+            protected boolean beforeDelete(Procedure selectedElement) throws Exception
+            {
+                if (selectedElement != null)
+                {
+                    // search for usages in actions
+                    ArrayList<Action> affectedActionsList = story.getDataHelper().findActionsByProcedure(selectedElement);
+                    if (affectedActionsList.size() > 0)
+                    {
+                        String message = MessageFormat
+                                .format("Это процедура вызывается в действиях:\n{0}\n" + "Поэтому она не может быть удалена.",
+                                        affectedActionsList.toString());
+                        JOptionPane.showMessageDialog(Editor.this, message, "Процедура используется", JOptionPane.WARNING_MESSAGE);
+                        return false;
+                    }
+
+                    // check for usage as started procedure
+                    if (selectedElement.equals(story.getStoryOptions().getStartProcedureOption().getProcedure()))
+                    {
+                        int answer = JOptionPane.showConfirmDialog(Editor.this,
+                                "Эта процедура установлена как стартовая. Всё равно удалить?\n" +
+                                "В этом случае стартовая процедура будет сброшена.", "Процедура используется", JOptionPane.YES_NO_OPTION,
+                                JOptionPane.WARNING_MESSAGE);
+                        return answer == JOptionPane.YES_OPTION;
+                    }
+
+                    return super.beforeDelete(selectedElement); // do standard asking
+                }
+
+                return false;
+            }
+
+
+        };
+
+        actionsListEditForm = new ListEditForm<Action>(this, "действие", "действия", Word.GenderEnum.NEUTER, Action.class)
+        {
+            @Override
+            protected Action createElement() throws Exception
+            {
+                Action action = new Action();
+                return editAction(action) ? action : null;
+            }
+
+            {
+                addListChangeListener(new ChangeListener()
+                {
+                    @Override
+                    public void stateChanged(ChangeEvent e)
+                    {
+                        markStoryEdited();
+                    }
+                });
+            }
+
+            @Override
+            protected boolean editElement(Action selectedElement) throws Exception
+            {
+                return editAction(selectedElement);
+            }
+
+
+        };
     }
 }

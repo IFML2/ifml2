@@ -29,7 +29,6 @@ import java.util.concurrent.Callable;
 
 public class Engine
 {
-    public static final String ENGINE_VERSION = "Хоббит, глава 3";
     public static final FormatLogger LOG = FormatLogger.getLogger(Engine.class);
     private final HashMap<String, Value> globalVariables = new HashMap<String, Value>();
     private final Parser parser = new Parser(this);
@@ -156,6 +155,7 @@ public class Engine
                     {
                         // property is default (not set in role instance) -- create it in role instance
                         property = new Property(propertyDefinition, role);
+                        role.getProperties().add(property);
                     }
 
                     // calculate property
@@ -287,7 +287,8 @@ public class Engine
         return true;
     }
 
-    private void fireAfterHooks(List<FormalElement> formalElements, HashMap<Hook.HookTypeEnum, List<Hook>> objectHooks, HashMap<Hook.HookTypeEnum, List<Hook>> locationHooks) throws IFML2Exception
+    private void fireAfterHooks(List<FormalElement> formalElements, HashMap<Hook.HookTypeEnum, List<Hook>> objectHooks,
+            HashMap<Hook.HookTypeEnum, List<Hook>> locationHooks) throws IFML2Exception
     {
         // ... object hooks
         for (Hook hook : objectHooks.get(Hook.HookTypeEnum.AFTER))
@@ -301,7 +302,8 @@ public class Engine
         }
     }
 
-    private void fireBeforeHooks(List<FormalElement> formalElements, HashMap<Hook.HookTypeEnum, List<Hook>> objectHooks, HashMap<Hook.HookTypeEnum, List<Hook>> locationHooks) throws IFML2Exception
+    private void fireBeforeHooks(List<FormalElement> formalElements, HashMap<Hook.HookTypeEnum, List<Hook>> objectHooks,
+            HashMap<Hook.HookTypeEnum, List<Hook>> locationHooks) throws IFML2Exception
     {
         // ... object hooks
         for (Hook hook : objectHooks.get(Hook.HookTypeEnum.BEFORE))
@@ -328,7 +330,7 @@ public class Engine
         };
 
         // collect current location hooks
-        for (Hook hook : getCurrentLocation().hooks)
+        for (Hook hook : getCurrentLocation().getHooks())
         {
             if (action.equals(hook.getAction()))
             {
@@ -379,7 +381,7 @@ public class Engine
                 if (!(isRestricted instanceof BooleanValue))
                 {
                     throw new IFML2Exception("Выражение (%s) условия ограничения действия \"%s\" не логического типа.",
-                                             restriction.getCondition(), action);
+                            restriction.getCondition(), action);
                 }
                 if (((BooleanValue) isRestricted).getValue()) // if condition is true, run reaction
                 {
@@ -390,7 +392,7 @@ public class Engine
             catch (IFML2Exception e)
             {
                 throw new IFML2Exception(e, "{0}\n  при вычислении ограничения \"{1}\" действия \"{2}\"", e.getMessage(),
-                                         restriction.getCondition(), action);
+                        restriction.getCondition(), action);
             }
         }
         return false;
@@ -403,7 +405,7 @@ public class Engine
 
     public Location getCurrentLocation()
     {
-        return (Location) ((ObjectValue) systemVariables.get(SystemIdentifiers.CURRENT_LOCATION_SYSTEM_VARIABLE.toLowerCase())).value;
+        return (Location) ((ObjectValue) systemVariables.get(SystemIdentifiers.CURRENT_LOCATION_SYSTEM_VARIABLE.toLowerCase())).getValue();
     }
 
     public void setCurrentLocation(Location currentLocation)
@@ -496,7 +498,7 @@ public class Engine
                 if (!(itemContents instanceof CollectionValue))
                 {
                     throw new IFML2VMException("Триггер доступного содержимого у предмета \"{0}\" вернул не коллекцию, а \"{1}\"!",
-                                               itemToCheck, itemContents.getTypeName());
+                            itemToCheck, itemContents.getTypeName());
                 }
 
                 List itemContentsList = ((CollectionValue) itemContents).getValue();
@@ -544,16 +546,8 @@ public class Engine
             Item item = (Item) object;
 
             // test if object is in current location or player's inventory
-            boolean isInLocOrInv = currentLocation.contains(item) || inventory.contains(item);
-            if (isInLocOrInv)
-            {
-                return isInLocOrInv;
-            }
-            else
-            {
-                // test contents of current location's items and inventory items using item triggers
-                return checkDeepContent(item, currentLocation.getItems()) || checkDeepContent(item, inventory);
-            }
+            return currentLocation.contains(item) || inventory.contains(item) || checkDeepContent(item, currentLocation.getItems()) ||
+                   checkDeepContent(item, inventory);
         }
         else
         {
