@@ -52,12 +52,6 @@ public class LocationEditor extends AbstractEditor<Location>
     private JComboBox southEastCombo;
     private JComboBox southWestCombo;
     private JComboBox northWestCombo;
-    private boolean toGenerateId = false;
-    private ArrayList<Item> itemsClone = null;
-    private EventList<Attribute> attributesClone = null;
-    private EventList<Hook> hooksClone = null;
-    private Location location;
-    private Story.DataHelper storyDataHelper;
     private Map<ExitDirection, JComboBox> exitCombosMap = new HashMap<ExitDirection, JComboBox>()
     {
         {
@@ -73,6 +67,12 @@ public class LocationEditor extends AbstractEditor<Location>
             put(ExitDirection.DOWN, downCombo);
         }
     };
+    private boolean toGenerateId = false;
+    private ArrayList<Item> itemsClone = null;
+    private EventList<Attribute> attributesClone = null;
+    private EventList<Hook> hooksClone = null;
+    private Location location;
+    private Story.DataHelper storyDataHelper;
 
     public LocationEditor(Window owner, Location location, final Story.DataHelper storyDataHelper)
     {
@@ -155,7 +155,7 @@ public class LocationEditor extends AbstractEditor<Location>
             public void actionPerformed(ActionEvent e)
             {
                 ObjectAttributesEditor objectAttributesEditor = new ObjectAttributesEditor(LocationEditor.this, attributesClone,
-                                                                                           storyDataHelper);
+                        storyDataHelper);
                 if (objectAttributesEditor.showDialog())
                 {
                     updateAttributes();
@@ -209,9 +209,8 @@ public class LocationEditor extends AbstractEditor<Location>
             {
                 Hook selectedHook = (Hook) hooksList.getSelectedValue();
                 if (selectedHook != null && JOptionPane.showConfirmDialog(LocationEditor.this,
-                                                                          "Вы действительно хотите удалить выбранный перехват?",
-                                                                          "Удаление перехвата", JOptionPane.YES_NO_OPTION,
-                                                                          JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
+                        "Вы действительно хотите удалить выбранный перехват?", "Удаление перехвата", JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
                 {
                     hooksClone.remove(selectedHook);
                 }
@@ -305,7 +304,7 @@ public class LocationEditor extends AbstractEditor<Location>
         toGenerateId = id == null || "".equals(id);
 
         // set hooks
-        hooksClone = GlazedLists.eventList(location.hooks);
+        hooksClone = GlazedLists.eventList(location.getHooks());
         hooksList.addMouseListener(new MouseAdapter()
         {
             @Override
@@ -453,7 +452,7 @@ public class LocationEditor extends AbstractEditor<Location>
         location.setName(locationNameText.getText().trim());
         location.setId(locationIDText.getText().trim());
         location.setDescription(descriptionText.getText());
-        location.hooks = GlazedLists.eventList(hooksClone); // rewrite data in EventList
+        location.setHooks(GlazedLists.eventList(hooksClone)); // rewrite data in EventList
     }
 
 

@@ -2,6 +2,7 @@ package ifml2.om;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.event.ListEvent;
 import ca.odell.glazedlists.event.ListEventListener;
 import ifml2.CommonUtils;
@@ -15,10 +16,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import static ifml2.om.xml.XmlSchemaConstants.*;
 
@@ -84,12 +82,12 @@ public class Story
                     }
 
                     // delete from locations
-                    for(Location location : locList)
+                    for (Location location : locList)
                     {
                         for (ExitDirection direction : ExitDirection.values())
                         {
                             Location destination = location.getExit(direction);
-                            if(destination != null && !locList.contains(destination))
+                            if (destination != null && !locList.contains(destination))
                             {
                                 location.setExit(direction, null);
                             }
@@ -350,6 +348,7 @@ public class Story
 
         /**
          * Tries to find location by id. Id shouldn't be null. If finds returns it, else returns null.
+         *
          * @param id Location id.
          * @return Location if finds and null otherwise.
          */
@@ -458,7 +457,7 @@ public class Story
             return findProcedureById(loweredId);
         }
 
-        private Procedure findProcedureById(@NotNull String name)
+        public Procedure findProcedureById(@NotNull String name)
         {
             for (Procedure procedure : procedures)
             {
@@ -472,7 +471,7 @@ public class Story
 
         public EventList<Library> getLibraries()
         {
-            return Story.this.getLibraries();
+            return libraries;
         }
 
         public EventList<Action> getActions()
@@ -492,6 +491,7 @@ public class Story
 
         /**
          * Tries to find item by id. Id shouldn't be null. If finds returns it, else returns null.
+         *
          * @param id Item id.
          * @return Item if finds and null otherwise.
          */
@@ -513,8 +513,9 @@ public class Story
 
         /**
          * Searches libraries list for the library by its path.
+         *
          * @param libraries Libraries list.
-         * @param library Library to find by path.
+         * @param library   Library to find by path.
          * @return true if the same library is found and false otherwise.
          */
         public boolean isLibListContainsLib(List<Library> libraries, Library library)
@@ -532,6 +533,7 @@ public class Story
 
         /**
          * Find actions where procedure is called
+         *
          * @param procedure procedure for search
          * @return list of affected actions
          */
@@ -543,12 +545,27 @@ public class Story
             for (Action action : actions)
             {
                 Action.ProcedureCall procedureCall = action.getProcedureCall();
-                if(procedure.equals(procedureCall.getProcedure()))
+                if (procedure.equals(procedureCall.getProcedure()))
                 {
                     results.add(action);
                 }
             }
             return results;
+        }
+
+        /**
+         * Returns all role definitions in story and libraries. List is copied to prevent modification.
+         *
+         * @return copied list of all role definitions
+         */
+        public List<RoleDefinition> getCopyOfAllRoleDefinitions()
+        {
+            return GlazedLists.eventList(Story.this.getAllRoleDefinitions()); // clone list to prevent deleting
+        }
+
+        public Collection<IFMLObject> getCopyOfAllObjects()
+        {
+            return GlazedLists.eventList(objectsHeap.values());
         }
     }
 }

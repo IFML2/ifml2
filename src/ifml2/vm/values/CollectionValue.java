@@ -1,12 +1,13 @@
 package ifml2.vm.values;
 
+import ifml2.IFMLEntity;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.List;
 
-public class CollectionValue extends Value<List<?>>
+public class CollectionValue extends Value<List<? extends IFMLEntity>>
 {
-    public CollectionValue(List<?> value)
+    public CollectionValue(List<? extends IFMLEntity> value)
     {
         super(value);
     }

@@ -7,7 +7,8 @@ import ifml2.GUIUtils;
 import ifml2.IFML2Exception;
 import ifml2.editor.IFML2EditorException;
 import ifml2.editor.gui.editors.*;
-import ifml2.engine.Engine;
+import ifml2.editor.gui.forms.ListEditForm;
+import ifml2.engine.EngineVersion;
 import ifml2.om.Action;
 import ifml2.om.*;
 import ifml2.players.guiplayer.GUIPlayer;
@@ -163,7 +164,7 @@ public class Editor extends JFrame
     {
         File file = new File(storyFileName);
         String fileName = file.getName();
-        String editorTitle = MessageFormat.format("ЯРИЛ 2.0 Редактор {0} -- {1}{2}", Engine.ENGINE_VERSION, fileName,
+        String editorTitle = MessageFormat.format("ЯРИЛ 2.0 Редактор {0} -- {1}{2}", EngineVersion.VERSION, fileName,
                 isStoryEdited ? " - * история не сохранена" : "");
         setTitle(editorTitle);
     }
@@ -584,8 +585,17 @@ public class Editor extends JFrame
 
     private void createUIComponents()
     {
-        locationsListEditForm = new ListEditForm<Location>(this, "локацию", "локации", Word.GenderEnum.FEMININE)
+        locationsListEditForm = new ListEditForm<Location>(this, "локацию", "локации", Word.GenderEnum.FEMININE, Location.class)
         {
+            @Override
+            protected void addElementToList(Location location)
+            {
+                if (location != null)
+                {
+                    story.addLocation(location);
+                }
+            }
+
             {
                 addListChangeListener(new ChangeListener()
                 {
@@ -610,11 +620,21 @@ public class Editor extends JFrame
                 return editLocation(selectedElement);
             }
 
+
             //todo warn that location will be deleted from items
         };
 
-        itemsListEditForm = new ListEditForm<Item>(this, "предмет", "предмета", Word.GenderEnum.MASCULINE)
+        itemsListEditForm = new ListEditForm<Item>(this, "предмет", "предмета", Word.GenderEnum.MASCULINE, Item.class)
         {
+            @Override
+            protected void addElementToList(Item item)
+            {
+                if (item != null)
+                {
+                    story.addItem(item);
+                }
+            }
+
             {
                 addListChangeListener(new ChangeListener()
                 {
@@ -638,10 +658,19 @@ public class Editor extends JFrame
             {
                 return editItem(selectedElement);
             }
+
+
         };
 
-        proceduresListEditForm = new ListEditForm<Procedure>(this, "процедуру", "процедуры", Word.GenderEnum.FEMININE)
+        proceduresListEditForm = new ListEditForm<Procedure>(this, "процедуру", "процедуры", Word.GenderEnum.FEMININE, Procedure.class)
         {
+            @Override
+            protected Procedure createElement() throws Exception
+            {
+                Procedure procedure = new Procedure();
+                return editProcedure(procedure) ? procedure : null;
+            }
+
             {
                 addListChangeListener(new ChangeListener()
                 {
@@ -651,13 +680,6 @@ public class Editor extends JFrame
                         markStoryEdited();
                     }
                 });
-            }
-
-            @Override
-            protected Procedure createElement() throws Exception
-            {
-                Procedure procedure = new Procedure();
-                return editProcedure(procedure) ? procedure : null;
             }
 
             @Override
@@ -697,10 +719,19 @@ public class Editor extends JFrame
 
                 return false;
             }
+
+
         };
 
-        actionsListEditForm = new ListEditForm<Action>(this, "действие", "действия", Word.GenderEnum.NEUTER)
+        actionsListEditForm = new ListEditForm<Action>(this, "действие", "действия", Word.GenderEnum.NEUTER, Action.class)
         {
+            @Override
+            protected Action createElement() throws Exception
+            {
+                Action action = new Action();
+                return editAction(action) ? action : null;
+            }
+
             {
                 addListChangeListener(new ChangeListener()
                 {
@@ -713,17 +744,12 @@ public class Editor extends JFrame
             }
 
             @Override
-            protected Action createElement() throws Exception
-            {
-                Action action = new Action();
-                return editAction(action) ? action : null;
-            }
-
-            @Override
             protected boolean editElement(Action selectedElement) throws Exception
             {
                 return editAction(selectedElement);
             }
+
+
         };
     }
 }

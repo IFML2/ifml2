@@ -2,6 +2,7 @@ package ifml2.vm.instructions;
 
 import ifml2.CommonUtils;
 import ifml2.IFML2Exception;
+import ifml2.IFMLEntity;
 import ifml2.om.Item;
 import ifml2.vm.RunningContext;
 
@@ -23,7 +24,7 @@ public class MoveItemInstruction extends Instruction
         Item item = getItemFromExpression(itemExpr, runningContext, getTitle(), "предмет", false);
         assert item.getContainer() != null;
 
-        List<?> collection = getCollectionFromExpression(toCollectionExpr, runningContext, getTitle(), "куда");
+        List<? extends IFMLEntity> collection = getCollectionFromExpression(toCollectionExpr, runningContext, getTitle(), "куда");
 
         if (collection.contains(item))
         {

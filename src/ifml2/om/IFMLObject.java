@@ -4,6 +4,7 @@ import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
 import ifml2.IFML2Exception;
+import ifml2.IFMLEntity;
 import ifml2.vm.IFML2VMException;
 import ifml2.vm.RunningContext;
 import ifml2.vm.values.BooleanValue;
@@ -18,43 +19,54 @@ import static ifml2.om.Word.GramCaseEnum;
 import static ifml2.om.xml.XmlSchemaConstants.*;
 
 @XmlAccessorType(XmlAccessType.NONE)
-public class IFMLObject implements Cloneable
+public class IFMLObject extends IFMLEntity implements Cloneable
 {
     private static final String NAME_PROPERTY_LITERAL = "имя";
     private static final String DESCRIPTION_PROPERTY_LITERAL = "описание";
+
     @XmlElementWrapper(name = ITEM_HOOKS_ELEMENT)
     @XmlElement(name = ITEM_HOOK_ELEMENT)
-    public EventList<Hook> hooks = new BasicEventList<Hook>();
+    protected EventList<Hook> hooks = new BasicEventList<Hook>();
+
     @XmlElementWrapper(name = IFML_OBJECT_ROLES_ELEMENT)
     @XmlElement(name = IFML_OBJECT_ROLE_ELEMENT)
     protected EventList<Role> roles = new BasicEventList<Role>();
+
     @XmlElementWrapper(name = OBJECT_PROPERTIES_ELEMENT)
     @XmlElement(name = OBJECT_PROPERTY_ELEMENT)
-    private EventList<Property> properties = new BasicEventList<Property>();
-    private String id;
-    private WordLinks wordLinks = new WordLinks();
-    private String name;
-    private String description;
-    private EventList<Attribute> attributes = new BasicEventList<Attribute>();
+    protected EventList<Property> properties = new BasicEventList<Property>();
+
+    @XmlAttribute(name = "id")
+    @XmlID
+    protected String id;
+
+    @XmlElement(name = OBJECT_WORDS_TAG)
+    protected WordLinks wordLinks = new WordLinks();
+
+    @XmlAttribute(name = "name")
+    protected String name;
+
+    @XmlElement(name = "description")
+    protected String description;
+
+    @XmlElementWrapper(name = IFML_OBJECT_ATTRIBUTES_ELEMENT)
+    @XmlElement(name = IFML_OBJECT_ATTRIBUTE_ELEMENT)
+    @XmlIDREF
+    protected EventList<Attribute> attributes = new BasicEventList<Attribute>();
 
     @Override
     public IFMLObject clone() throws CloneNotSupportedException
     {
-        IFMLObject ifmlObject = (IFMLObject) super.clone();
-        copyFieldsTo(ifmlObject);
-        return ifmlObject;
-    }
+        IFMLObject clone = (IFMLObject) super.clone(); // clone flat fields
 
-    private void copyFieldsTo(IFMLObject ifmlObject) throws CloneNotSupportedException
-    {
-        ifmlObject.setId(id);
-        ifmlObject.setName(name);
-        ifmlObject.setDescription(description);
-        ifmlObject.setWordLinks(wordLinks.clone());
-        ifmlObject.setAttributes(GlazedLists.eventList(attributes));
-        ifmlObject.setProperties(GlazedLists.eventList(properties));
-        ifmlObject.setHooks(GlazedLists.eventList(hooks));
-        ifmlObject.setRoles(GlazedLists.eventList(roles));
+        // clone deeper
+        clone.hooks = deepCloneEventList(hooks, Hook.class);
+        clone.roles = deepCloneEventList(roles, Role.class);
+        clone.properties = deepCloneEventList(properties, Property.class);
+        clone.wordLinks = wordLinks.clone();
+        clone.attributes = GlazedLists.eventList(attributes); // copy refs
+
+        return clone;
     }
 
     public String getId()
@@ -62,8 +74,6 @@ public class IFMLObject implements Cloneable
         return id;
     }
 
-    @XmlAttribute(name = "id")
-    @XmlID
     public void setId(String id)
     {
         this.id = id;
@@ -74,7 +84,6 @@ public class IFMLObject implements Cloneable
         return wordLinks;
     }
 
-    @XmlElement(name = OBJECT_WORDS_TAG)
     public void setWordLinks(@NotNull WordLinks wordLinks)
     {
         this.wordLinks = wordLinks;
@@ -85,7 +94,6 @@ public class IFMLObject implements Cloneable
         return name;
     }
 
-    @XmlAttribute(name = "name")
     public void setName(String name)
     {
         this.name = name;
@@ -96,7 +104,6 @@ public class IFMLObject implements Cloneable
         return description;
     }
 
-    @XmlElement(name = "description")
     public void setDescription(String description)
     {
         this.description = description;
@@ -107,9 +114,6 @@ public class IFMLObject implements Cloneable
         return attributes;
     }
 
-    @XmlElementWrapper(name = IFML_OBJECT_ATTRIBUTES_ELEMENT)
-    @XmlElement(name = IFML_OBJECT_ATTRIBUTE_ELEMENT)
-    @XmlIDREF
     public void setAttributes(EventList<Attribute> attributes)
     {
         this.attributes = attributes;
@@ -118,6 +122,11 @@ public class IFMLObject implements Cloneable
     public EventList<Role> getRoles()
     {
         return roles;
+    }
+
+    public void setRoles(EventList<Role> roles)
+    {
+        this.roles = roles;
     }
 
     @Override
@@ -217,7 +226,7 @@ public class IFMLObject implements Cloneable
         }
 
         throw new IFML2VMException("У объекта \"{0}\" нет свойства \"{1}\", а также в игре нет признаков и ролей с таким названием.", this,
-                                   propertyName);
+                propertyName);
     }
 
     public Value tryGetMemberValue(String symbol, RunningContext runningContext)
@@ -271,21 +280,28 @@ public class IFMLObject implements Cloneable
 
     public void copyTo(IFMLObject ifmlObject) throws CloneNotSupportedException
     {
-        copyFieldsTo(ifmlObject);
-    }
-
-    public void setHooks(EventList<Hook> hooks)
-    {
-        this.hooks = hooks;
-    }
-
-    public void setRoles(EventList<Role> roles)
-    {
-        this.roles = roles;
+        ifmlObject.setId(id);
+        ifmlObject.setName(name);
+        ifmlObject.setDescription(description);
+        ifmlObject.setWordLinks(wordLinks.clone());
+        ifmlObject.setAttributes(GlazedLists.eventList(attributes)); // copy refs
+        ifmlObject.setProperties(deepCloneEventList(properties, Property.class));
+        ifmlObject.setHooks(deepCloneEventList(hooks, Hook.class));
+        ifmlObject.setRoles(deepCloneEventList(roles, Role.class));
     }
 
     public void setProperties(EventList<Property> properties)
     {
         this.properties = properties;
+    }
+
+    public EventList<Hook> getHooks()
+    {
+        return hooks;
+    }
+
+    public void setHooks(EventList<Hook> hooks)
+    {
+        this.hooks = hooks;
     }
 }

@@ -1,22 +1,42 @@
 package ifml2.om;
 
+import ifml2.IFMLEntity;
+
 import javax.xml.bind.annotation.*;
 
-public class Hook
+@XmlAccessorType(XmlAccessType.NONE)
+public class Hook extends IFMLEntity
 {
     @XmlElement(name = "instructions")
-    public final InstructionList instructionList = new InstructionList();
-    private Action action;
+    public InstructionList instructionList = new InstructionList();
+
+    @XmlAttribute(name = "action")
+    @XmlIDREF
+    private Action action; // reference, don't clone
+
+    @XmlAttribute(name = "objectElement")
     private String objectElement = "";
+
+    @XmlAttribute(name = "type")
     private HookTypeEnum type = HookTypeEnum.INSTEAD; // default value for new hook in editors
+
+    @Override
+    protected Hook clone() throws CloneNotSupportedException
+    {
+        final Hook clone = (Hook) super.clone(); // clone flat
+
+        // clone deep
+        clone.instructionList = instructionList.clone();
+        // action is reference, already copied
+
+        return clone;
+    }
 
     public Action getAction()
     {
         return action;
     }
 
-    @XmlAttribute(name = "action")
-    @XmlIDREF
     public void setAction(Action action)
     {
         this.action = action;
@@ -27,7 +47,6 @@ public class Hook
         return objectElement;
     }
 
-    @XmlAttribute(name = "objectElement")
     public void setObjectElement(String objectElement)
     {
         this.objectElement = objectElement;
@@ -38,7 +57,6 @@ public class Hook
         return type;
     }
 
-    @XmlAttribute(name = "type")
     public void setType(HookTypeEnum type)
     {
         this.type = type;
