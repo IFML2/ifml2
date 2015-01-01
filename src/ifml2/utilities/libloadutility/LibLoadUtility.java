@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -148,132 +149,141 @@ public class LibLoadUtility extends JFrame
                     @Override
                     protected Void doInBackground() throws Exception
                     {
-                        log("Старт...");
-
-                        // load library
-                        log("Грузим либу {0}...", libFile.getAbsolutePath());
-                        Library library = OMManager.loadLibrary(libFile);
-                        log("Загружена.");
-
-                        // process text file...
-                        log("\nОбработка файла {0}...", textFile.getAbsolutePath());
-
-                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(textFile), "UTF8"));
-                        int lineNo = 0;
-                        String lineStr;
-                        while ((lineStr = bufferedReader.readLine()) != null)
+                        try
                         {
-                            lineNo++;
-                            log("\nОбработка строки №{0}: {1}", lineNo, lineStr);
+                            log("Старт...");
 
-                            String[] parts = lineStr.split("\\|");
-                            if (parts.length < 3)
-                            {
-                                log("В строке меньше 3х частей => строка отброшена.");
-                                continue;
-                            }
-                            else if (parts.length > 3)
-                            {
-                                log("В строке больше 3х частей => строка отброшена.");
-                                continue;
-                            }
-                            String verb = parts[0];
-                            String type = parts[1];
-                            String message = parts[2];
-                            log("Разбивка строки:\n\tглагол: {0}\n\tтип: {1}\n\tсообщение: {2}", verb, type, message);
+                            // load library
+                            log("Грузим либу {0}...", libFile.getAbsolutePath());
+                            Library library = OMManager.loadLibrary(libFile);
+                            log("Загружена.");
 
-                            ShowMessageInstr.MessageTypeEnum messageType;
-                            if ("текст".equalsIgnoreCase(type))
-                            {
-                                messageType = ShowMessageInstr.MessageTypeEnum.TEXT;
-                            }
-                            else if ("выражение".equalsIgnoreCase(type))
-                            {
-                                messageType = ShowMessageInstr.MessageTypeEnum.EXPRESSION;
-                            }
-                            else
-                            {
-                                log("\tТип не текст и не выражение => строка отброшена.");
-                                continue;
-                            }
+                            // process text file...
+                            log("\nОбработка файла {0}...", textFile.getAbsolutePath());
 
-                            // create instr
-                            ShowMessageInstr showMessageInstr = new ShowMessageInstr();
-                            showMessageInstr.setType(messageType);
-                            showMessageInstr.setBeginWithCap(true);
-                            if (messageType == ShowMessageInstr.MessageTypeEnum.TEXT)
+                            BufferedReader bufferedReader = new BufferedReader(
+                                    new InputStreamReader(new FileInputStream(textFile), "UTF8"));
+                            int lineNo = 0;
+                            String lineStr;
+                            while ((lineStr = bufferedReader.readLine()) != null)
                             {
-                                showMessageInstr.setMessageExpr(message);
-                            }
-                            else
-                            {
-                                // get constant and var
-                                String[] messParts = message.split("\\+");
-                                if (messParts.length < 2)
+                                lineNo++;
+                                log("\nОбработка строки №{0}: {1}", lineNo, lineStr);
+
+                                String[] parts = lineStr.split("\\|");
+                                if (parts.length < 3)
                                 {
-                                    log("В сообщении не найдена запятая, невозможно найти выражение => строка отброшена.");
+                                    log("В строке меньше 3х частей => строка отброшена.");
                                     continue;
                                 }
-                                else if (messParts.length > 2)
+                                else if (parts.length > 3)
                                 {
-                                    log("В сообщении больше одной запятой, невозможно найти выражение => строка отброшена.");
+                                    log("В строке больше 3х частей => строка отброшена.");
                                     continue;
                                 }
-                                String constPart = messParts[0];
-                                String exprPart = messParts[1];
+                                String verb = parts[0];
+                                String type = parts[1];
+                                String message = parts[2];
+                                log("Разбивка строки:\n\tглагол: {0}\n\tтип: {1}\n\tсообщение: {2}", verb, type, message);
 
-                                // set expr
-                                showMessageInstr.setMessageExpr("'" + constPart + " ' + " + exprPart);
-                            }
-                            // create procedure
-                            String procedureName = messageType == ShowMessageInstr.MessageTypeEnum.TEXT ? verb : verb + "Предмет";
-                            Procedure procedure = new Procedure(procedureName);
-                            if (messageType == ShowMessageInstr.MessageTypeEnum.EXPRESSION)
-                            {
-                                // add parameter to procedure
-                                Parameter parameter = new Parameter();
-                                parameter.setName("предмет");
-                                procedure.getParameters().add(parameter);
-                            }
-                            procedure.getInstructions().add(showMessageInstr);
-                            library.procedures.add(procedure);
-                            log("Добавлена/заменена процедура \"{0}\".", procedure.getName());
+                                ShowMessageInstr.MessageTypeEnum messageType;
+                                if ("текст".equalsIgnoreCase(type))
+                                {
+                                    messageType = ShowMessageInstr.MessageTypeEnum.TEXT;
+                                }
+                                else if ("выражение".equalsIgnoreCase(type))
+                                {
+                                    messageType = ShowMessageInstr.MessageTypeEnum.EXPRESSION;
+                                }
+                                else
+                                {
+                                    log("\tТип не текст и не выражение => строка отброшена.");
+                                    continue;
+                                }
 
-                            // create Template
-                            Template template = new Template();
-                            LiteralTemplateElement verbLit = new LiteralTemplateElement();
-                            verbLit.getSynonyms().add(verb);
-                            template.getElements().add(verbLit);
-                            if (messageType == ShowMessageInstr.MessageTypeEnum.EXPRESSION)
-                            {
-                                // add object element
-                                ObjectTemplateElement itemTem = new ObjectTemplateElement();
-                                itemTem.setGramCase(Word.GramCaseEnum.VP);
-                                itemTem.setParameter("предмет");
-                                template.getElements().add(itemTem);
-                            }
+                                // create instr
+                                ShowMessageInstr showMessageInstr = new ShowMessageInstr();
+                                showMessageInstr.setType(messageType);
+                                showMessageInstr.setBeginWithCap(true);
+                                if (messageType == ShowMessageInstr.MessageTypeEnum.TEXT)
+                                {
+                                    showMessageInstr.setMessageExpr(message);
+                                }
+                                else
+                                {
+                                    // get constant and var
+                                    String[] messParts = message.split("\\+");
+                                    if (messParts.length < 2)
+                                    {
+                                        log("В сообщении не найдена запятая, невозможно найти выражение => строка отброшена.");
+                                        continue;
+                                    }
+                                    else if (messParts.length > 2)
+                                    {
+                                        log("В сообщении больше одной запятой, невозможно найти выражение => строка отброшена.");
+                                        continue;
+                                    }
+                                    String constPart = messParts[0];
+                                    String exprPart = messParts[1];
 
-                            // create action
-                            ifml2.om.Action action = new ifml2.om.Action();
-                            String actionName = messageType == ShowMessageInstr.MessageTypeEnum.TEXT ? verb : verb + " [что]";
-                            action.setName(actionName);
-                            action.setDescription(procedureName);
-                            action.getTemplates().add(template);
-                            action.getProcedureCall().setProcedure(procedure);
-                            library.actions.add(action);
-                            log("Добавлено действие \"{0}\" с шаблоном {1} и ссылкой на процу \"{2}\".", action.getName(), template,
-                                action.getProcedureCall().getProcedure().getName());
+                                    // set expr
+                                    showMessageInstr.setMessageExpr("'" + constPart + " ' + " + exprPart);
+                                }
+                                // create procedure
+                                String procedureName = messageType == ShowMessageInstr.MessageTypeEnum.TEXT ? verb : verb + "Предмет";
+                                Procedure procedure = new Procedure(procedureName);
+                                if (messageType == ShowMessageInstr.MessageTypeEnum.EXPRESSION)
+                                {
+                                    // add parameter to procedure
+                                    Parameter parameter = new Parameter();
+                                    parameter.setName("предмет");
+                                    procedure.getParameters().add(parameter);
+                                }
+                                procedure.getInstructions().add(showMessageInstr);
+                                library.procedures.add(procedure);
+                                log("Добавлена/заменена процедура \"{0}\".", procedure.getName());
+
+                                // create Template
+                                Template template = new Template();
+                                LiteralTemplateElement verbLit = new LiteralTemplateElement();
+                                verbLit.getSynonyms().add(verb);
+                                template.getElements().add(verbLit);
+                                if (messageType == ShowMessageInstr.MessageTypeEnum.EXPRESSION)
+                                {
+                                    // add object element
+                                    ObjectTemplateElement itemTem = new ObjectTemplateElement();
+                                    itemTem.setGramCase(Word.GramCaseEnum.VP);
+                                    itemTem.setParameter("предмет");
+                                    template.getElements().add(itemTem);
+                                }
+
+                                // create action
+                                ifml2.om.Action action = new ifml2.om.Action();
+                                String actionName = messageType == ShowMessageInstr.MessageTypeEnum.TEXT ? verb : verb + " [что]";
+                                action.setName(actionName);
+                                action.setDescription(procedureName);
+                                action.getTemplates().add(template);
+                                action.getProcedureCall().setProcedure(procedure);
+                                library.actions.add(action);
+                                log("Добавлено действие \"{0}\" с шаблоном {1} и ссылкой на процу \"{2}\".", action.getName(), template,
+                                    action.getProcedureCall().getProcedure().getName());
+                            }
+                            log("\nФайл закончился.");
+
+                            //String libNewFile = "filled_" + selectedLib.getName();
+                            log("\nСохраняем библиотеку под именем {0}.", saveLibFile.getAbsolutePath());
+                            OMManager.saveLib(library, saveLibFile);
+                            log("Библиотека сохранёна.");
+
+                            log("Стоп.");
+
+                            return null;
                         }
-                        log("\nФайл закончился.");
-
-                        //String libNewFile = "filled_" + selectedLib.getName();
-                        log("\nСохраняем библиотеку под именем {0}.", saveLibFile.getAbsolutePath());
-                        OMManager.saveLib(library, saveLibFile);
-                        log("Библиотека сохранёна.");
-
-                        log("Стоп.");
-
-                        return null;
+                        catch (Throwable e)
+                        {
+                            log("ОШИБКА!!! {0}\n{1}", e.toString(), Arrays.toString(e.getStackTrace()));
+                            return null;
+                        }
                     }
 
                     private void log(String text, Object... args)
