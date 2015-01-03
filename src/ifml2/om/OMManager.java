@@ -6,6 +6,7 @@ import ifml2.CommonUtils;
 import ifml2.FormatLogger;
 import ifml2.IFML2Exception;
 import ifml2.engine.saved.SavedGame;
+import ifml2.om.xml.xmladapters.LocationAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.xml.sax.SAXException;
 
@@ -102,6 +103,7 @@ public class OMManager
                 JAXBContext context = JAXBContext.newInstance(Story.class);
                 Unmarshaller unmarshaller = context.createUnmarshaller();
                 unmarshaller.setProperty(IDResolver.class.getName(), new IFMLIDResolver());
+                unmarshaller.setAdapter(new LocationAdapter());
 
                 final HashMap<String, IFMLObject> ifmlObjectsHeap = new HashMap<String, IFMLObject>();
 
@@ -227,52 +229,65 @@ public class OMManager
 
     public static Library loadLibrary(String libPath) throws IFML2Exception
     {
-        LOG.debug(String.format("loadLibrary(libPath = \"%s\")", libPath));
+        LOG.debug("loadLibrary(String libPath = \"{0}\")", libPath);
+
+        //--Loading from JAR--Reader reader = new BufferedReader(new InputStreamReader(OMManager.class.getResourceAsStream(realRelativePath), "UTF-8"));
+
+        File file = new File(CommonConstants.LIBS_FOLDER, libPath);
+        LOG.debug("loadLibrary :: real relative path = \"{0}\"", file.getAbsolutePath());
+
+        Library library = loadLibrary(file);
+        LOG.debug(String.format("loadLibrary(String) :: End"));
+
+        return library;
+    }
+
+    public static Library loadLibrary(@NotNull final File libFile) throws IFML2Exception
+    {
+        LOG.debug("loadLibrary(File libFile = \"{0}\")", libFile.getAbsolutePath());
 
         Library library;
 
         try
         {
+            LOG.debug("loadLibrary :: File object for path \"{0}\" created", libFile.getAbsolutePath());
+
+            if (!libFile.exists())
+            {
+                LOG.error("loadLibrary :: Library file \"{0}\" isn't found!", libFile.getAbsolutePath());
+                throw new IFML2Exception("Файл \"{0}\" библиотеки не найдена", libFile.getAbsolutePath());
+            }
+
             JAXBContext context = JAXBContext.newInstance(Library.class);
             Unmarshaller unmarshaller = context.createUnmarshaller();
             //todo: modify IDResolver for library hierarchical loading --  unmarshaller.setProperty(IDResolver.class.getName(), new IFMLIDResolver());
-
-            final String realRelativePath = "libs/" + libPath; // for JAR should be from root: "/libs/:
-            LOG.debug("loadLibrary :: realRelativePath = \"{0}\"", realRelativePath);
-
-            //--Loading from JAR--Reader reader = new BufferedReader(new InputStreamReader(OMManager.class.getResourceAsStream(realRelativePath), "UTF-8"));
-
-            File file = new File(realRelativePath);
-            LOG.debug("loadLibrary :: File object for path \"{0}\" created", file.getAbsolutePath());
-
-            if (!file.exists())
-            {
-                LOG.error("loadLibrary :: Library file \"{0}\" isn't found!", file.getAbsolutePath());
-                throw new IFML2Exception("Файл \"{0}\" библиотеки не найдена", file.getAbsolutePath());
-            }
 
             ValidationEventCollector validationEventCollector = new ValidationEventCollector()
             {
                 @Override
                 public boolean handleEvent(ValidationEvent event)
                 {
-                    LOG.warn("There is ValidationEvent during unmarshalling of library {0}: {1}", realRelativePath, event);
+                    LOG.warn("There is ValidationEvent during unmarshalling of library {0}: {1}", libFile.getAbsolutePath(), event);
                     return super.handleEvent(event);
                 }
             };
             unmarshaller.setEventHandler(validationEventCollector);
 
-            LOG.debug(String.format("loadLibrary :: before unmarshal"));
-            library = (Library) unmarshaller.unmarshal(file);
-            LOG.debug(String.format("loadLibrary :: after unmarshal"));
+            LOG.debug("loadLibrary :: before unmarshal");
+            library = (Library) unmarshaller.unmarshal(libFile);
+            LOG.debug("loadLibrary :: after unmarshal");
+
+            File libFolder = new File(CommonUtils.getLibrariesDirectory());
+            String libPath = libFolder.toURI().relativize(libFile.toURI()).getPath();
+            LOG.debug("loadLibrary :: calculated libPath = {0}", libPath);
             library.setPath(libPath);
         }
         catch (JAXBException e)
         {
-            throw new IFML2Exception(e);
+            throw new IFML2Exception(e, "Ошибка загрузки библиотеки: {0}", e.getMessage());
         }
 
-        LOG.debug(String.format("loadLibrary :: End"));
+        LOG.debug(String.format("loadLibrary(File) :: End"));
 
         return library;
     }
@@ -283,6 +298,7 @@ public class OMManager
         {
             JAXBContext context = JAXBContext.newInstance(Story.class);
             Marshaller marshaller = context.createMarshaller();
+            marshaller.setAdapter(new LocationAdapter());
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
             File file = new File(xmlFile);
@@ -387,6 +403,14 @@ public class OMManager
         {
             throw new IFML2Exception(e);
         }
+    }
+
+    public static void saveLib(Library library, File libFile) throws JAXBException
+    {
+        JAXBContext context = JAXBContext.newInstance(Library.class);
+        Marshaller marshaller = context.createMarshaller();
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        marshaller.marshal(library, libFile);
     }
 
     public static class LoadStoryResult
@@ -570,14 +594,17 @@ public class OMManager
                 {
                     for (Object object : get(loweredName))
                     {
-                        if (object != null &&
-                            (object.getClass().equals(aClass) || aClass == Object.class)) //todo remove Object after JAXB fix of JAXB-546
+                        if (object != null)
                         {
-                            if (aClass == Object.class)
+                            Class objectClass = object.getClass();
+                            if (/*objectClass.equals(aClass) ||*/ aClass.isAssignableFrom(objectClass) /*|| aClass == Object.class*/) //todo remove Object after JAXB fix of JAXB-546
                             {
-                                LOG.warn("containsKeyOfClass() :: returns true for \"{0}\" when aClass is Object!", name);
+                                if (aClass == Object.class)
+                                {
+                                    LOG.warn("containsKeyOfClass() :: returns true for \"{0}\" when aClass is Object!", name);
+                                }
+                                return true;
                             }
-                            return true;
                         }
                     }
                 }
@@ -592,14 +619,17 @@ public class OMManager
                 {
                     for (Object object : get(loweredName))
                     {
-                        if (object != null &&
-                            (object.getClass().equals(aClass) || aClass == Object.class)) //todo remove Object after JAXB fix of JAXB-546
+                        if (object != null)
                         {
-                            if (aClass == Object.class)
+                            Class<?> objectClass = object.getClass();
+                            if (aClass.isAssignableFrom(objectClass) /*objectClass.equals(aClass) || aClass == Object.class*/) //todo remove Object after JAXB fix of JAXB-546
                             {
-                                LOG.warn("getObjectOfClass() :: returns object \"{0}\" for \"{0}\" when aClass is Object!", object, name);
+                                if (aClass == Object.class)
+                                {
+                                    LOG.warn("getObjectOfClass() :: returns object \"{0}\" for \"{0}\" when aClass is Object!", object, name);
+                                }
+                                return object;
                             }
-                            return object;
                         }
                     }
                 }

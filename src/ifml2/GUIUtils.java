@@ -1,12 +1,14 @@
 package ifml2;
 
 import ifml2.editor.gui.ShowMemoDialog;
+import ifml2.om.IFML2LoadXmlException;
 import ifml2.om.Word;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.xml.bind.ValidationEvent;
 import java.awt.*;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -29,8 +31,9 @@ public class GUIUtils
     public static final Icon DIRECTORY_ICON = getEditorIcon("Open24.gif");
     public static final Icon SAVE_FILE_ICON = getEditorIcon("Save24.gif");
     public static final Icon STORY_FILE_ICON = getEditorIcon("Edit24.gif");
-    public static final Icon CIPHERED_STORY_FILE_ICON = getEditorIcon("Edit24.gif");
+    public static final Icon CIPHERED_STORY_FILE_ICON = STORY_FILE_ICON;
     private static final String IFML2_EDITOR_GUI_IMAGES = "/ifml2/editor/gui/images/";
+    public static final Icon LIBRARY_FILE_ICON = STORY_FILE_ICON;
 
     public static void packAndCenterWindow(@NotNull Window window)
     {
@@ -116,5 +119,34 @@ public class GUIUtils
     public static void showMemoDialog(Window owner, String title, String message)
     {
         new ShowMemoDialog(owner, title, message);
+    }
+
+    public static void ReportError(@NotNull Window owner, @NotNull Throwable exception)
+    {
+        exception.printStackTrace();
+        FormatLogger LOG = new FormatLogger(owner.getClass());
+        LOG.error(exception.getMessage());
+        String errorMessage = "";
+        if (!(exception instanceof IFML2LoadXmlException) && exception.getCause() instanceof IFML2LoadXmlException)
+        {
+            exception = exception.getCause();
+        }
+        if (exception instanceof IFML2LoadXmlException)
+        {
+            errorMessage += "В файле истории есть ошибки:";
+            for (ValidationEvent validationEvent : ((IFML2LoadXmlException) exception).getEvents())
+            {
+                errorMessage += MessageFormat
+                        .format("\n\"{0}\" at {1},{2}", validationEvent.getMessage(), validationEvent.getLocator().getLineNumber(),
+                                validationEvent.getLocator().getColumnNumber());
+            }
+        }
+        else
+        {
+            StringWriter stringWriter = new StringWriter();
+            exception.printStackTrace(new PrintWriter(stringWriter));
+            errorMessage += stringWriter.toString();
+        }
+        showMemoDialog(owner, "Произошла ошибка", errorMessage);
     }
 }

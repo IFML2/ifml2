@@ -1,0 +1,2319 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<story xmlns="http://toysoft.narod.ru/IFML2Schema" id="Ruslan">
+    <storyOptions>
+        <startLocationOption showStartLocDesc="false" location="РаспутьеЛок"/>
+        <startProcedureOption procedure="Стартовая"/>
+        <storyDescription version="бета от 12.11.2013" name="Руслан и Людмила"
+                          description="&#xD;&#xA;Ремейк по произведениям Александра Сергеевича Пушкина.&#xD;&#xA;&#xD;&#xA;ЖАНР: Пародийный&#xD;&#xA;УРОВЕНЬ ПРОХОЖДЕНИЯ: Легкий&#xD;&#xA;ВОЗРАСТНОЙ ЦЕНЗ: 12+"
+                          author="А.С. Пушкин&#xD;&#xA;РЕЖИССЕР-ПОСТАНОВЩИК:  Андрей Репин&#xD;&#xA;"/>
+        <globalVars>
+            <var value="нет" name="ОсмотрЛокации"/>
+            <var value="нет" name="ГоловаРазбужена"/>
+            <var value="нет" name="КопьеГолова"/>
+            <var value="нет" name="Проход"/>
+            <var value="нет" name="Поле"/>
+            <var value="нет" name="Холм"/>
+            <var value="нет" name="Река"/>
+            <var value="нет" name="Долина"/>
+            <var value="нет" name="надпись"/>
+            <var value="нет" name="кот"/>
+        </globalVars>
+    </storyOptions>
+    <procedures>
+        <procedure name="ПоложитьБросить">
+            <procedureVariables/>
+            <procedureBody>
+                <showMessage type="text"
+                             message="&#xA;- Не нужно высматривать, куда пристроить эту вещь. Некуда ее положить, кроме как на землю. Поэтому, если не нужна, просто брось ее.&#xA;"
+                             carriageReturn="true" beginWithCap="false"/>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="ударить копьем">
+            <procedureVariables/>
+            <procedureBody>
+                <if condition="ТекущаяЛокация = ХолмПред">
+                    <else>
+                        <showMessage type="text" message="&#xA;Нет тут никакой головы, кроме тупой на плечах.&#xA;" carriageReturn="true"
+                                     beginWithCap="false"/>
+                    </else>
+                    <then>
+                        <showMessage type="text"
+                                     message="&#xD;&#xA;Это не по рыцарски. Не по кодексу богатырскому спящего холодным оружием тыкать.&#xD;&#xA;"
+                                     carriageReturn="true" beginWithCap="false"/>
+                    </then>
+                </if>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="двинуть">
+            <procedureVariables/>
+            <procedureBody>
+                <if condition="ТекущаяЛокация = РаспутьеЛок">
+                    <else>
+                        <showMessage type="text" message="&#xA;- Пьяный что-ли? Ну-ка дыхни.&#xA;- Нет здесь никакого камня.&#xA;"
+                                     carriageReturn="true" beginWithCap="false"/>
+                    </else>
+                    <then>
+                        <showMessage type="text"
+                                     message="&#xA;- Шваценегер, да? Силы девать некуда? Сила есть, ума не надо?&#xA;- Да не сдвинуть тебе этот камень. Хватит ерундой заниматься. За работу.&#xA;- Тяжести будешь в тренажерном зале ворочать.&#xA;"
+                                     carriageReturn="true" beginWithCap="false"/>
+                    </then>
+                </if>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="звать">
+            <procedureVariables/>
+            <procedureBody>
+                <showMessage type="text"
+                             message="&#xA;Стал он кликать золотую рыбку.&#xA;- Какую рыбку? Мы что снимаем? Сказку о золотой рыбке или Руслана и Людмилу?&#xA;- Так. Всё. Вижу, устал. Отдохни немножко, и снова начнем.&#xA;- Всем перерыв. Можно покурить и оправиться.&#xA;"
+                             carriageReturn="true" beginWithCap="false"/>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="осмотреть развилку">
+            <procedureVariables/>
+            <procedureBody>
+                <if condition="ТекущаяЛокация = РаспутьеЛок">
+                    <else>
+                        <showMessage type="text" message="&#xA;Здесь нет дорог. Одни направления.&#xA;" carriageReturn="true"
+                                     beginWithCap="false"/>
+                    </else>
+                    <then>
+                        <showMessage type="text"
+                                     message="&#xA;Руслан на развилке дорог.&#xA;Одна ведет прямо на север к лесу, другая ведет направо, огибает камень и поворачивает далее на юг, третья ведет налево на запад на берег моря.&#xA;"
+                                     carriageReturn="true" beginWithCap="false"/>
+                    </then>
+                </if>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="искать лук">
+            <procedureVariables/>
+            <procedureBody>
+                <showMessage type="text"
+                             message="&#xA;- Да, ищем уже. Весь творческий коллектив ищет. Знаю, что должен быть. Но нет. Знаю, что вчера был. А сегодня был, да сплыл.&#xA;"
+                             carriageReturn="true" beginWithCap="false"/>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="СделатьЛук">
+            <procedureVariables/>
+            <procedureBody>
+                <if condition="ТекущаяЛокация = ЛесЛок">
+                    <else>
+                        <showMessage type="text"
+                                     message="&#xA;- Так. Читаем книгу из серии &quot;Сделай сам или советы бойскауту&quot;. Ага, вот, как сделать лук.&#xA;Чтобы сделать лук, нужно взять подходящее для этой цели дерево ...&#xA;"
+                                     carriageReturn="true" beginWithCap="false"/>
+                    </else>
+                    <then>
+                        <if condition="не ДеревоПред в инвентарий">
+                            <else>
+                                <showMessage type="text"
+                                             message="&#xA;- А тебе ничего не мешает. Как ты будешь делать лук с таким бревном в руках?&#xA;"
+                                             carriageReturn="true" beginWithCap="false"/>
+                            </else>
+                            <then>
+                                <showMessage type="text"
+                                             message="&#xA;Ломит он у дуба сук&#xA;И в тугой сгибает лук,&#xA;Со креста шнурок шелковый&#xA;Натянул на лук дубовый.&#xA;"
+                                             carriageReturn="true" beginWithCap="false"/>
+                                <moveItem to="инвентарий" item="ЛукПред"/>
+                            </then>
+                        </if>
+                    </then>
+                </if>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="СтрелятьИзЛука">
+            <procedureVariables/>
+            <procedureBody>
+                <if condition="не ЛукПред в инвентарий">
+                    <else>
+                        <if condition="не СтрелаПред в инвентарий">
+                            <else>
+                                <showMessage type="text"
+                                             message="&#xD;&#xA;Руслан натянул дубовый лук.&#xD;&#xA;Дзинь. Тетива порвалася.&#xD;&#xA;&#xD;&#xA;- Почему порвалась тетива? Кто у нас отвечает за реквизит? Мне наплевать, что в Сказке о царе Салтане у князя Гвидона ничего не рвалось. Так. Кто там играет князя? А у нас кто? Почувствовали разницу?&#xD;&#xA;Так, всё, отбой. Где сценарист? Меняем сценарий. Сцена стрельба из лука снимается. Не снимается, в смысле, снимается, а отменяется, ваще убираем ее нахрен. Попробуем обойтись без лука.&#xD;&#xA;- Ну, чего ты вцепился в этот лук. Заберите у него лук. Да и колчан со стрелами заберите. К чему это ему теперь.&#xA;&#xD;&#xA;&#xD;&#xA;"
+                                             carriageReturn="true" beginWithCap="false"/>
+                                <moveItem to="АрхивЛок.Предметы" item="ЛукПред"/>
+                                <moveItem to="АрхивЛок.предметы" item="СтрелаПред"/>
+                                <moveItem to="АрхивЛок.предметы" item="КолчанПред"/>
+                            </else>
+                            <then>
+                                <showMessage type="text" message="&#xA;Эх, жаль стрелы нет.&#xA;" carriageReturn="true"
+                                             beginWithCap="false"/>
+                            </then>
+                        </if>
+                    </else>
+                    <then>
+                        <showMessage type="text" message="&#xD;&#xA;Эх, жаль, лука нет.&#xD;&#xA;" carriageReturn="true"
+                                     beginWithCap="false"/>
+                    </then>
+                </if>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="осмотреть дорогу">
+            <procedureVariables/>
+            <procedureBody>
+                <if condition="ТекущаяЛокация=РаспутьеЛок">
+                    <else>
+                        <showMessage type="text" message="&#xA;Здесь нет дорог. Одни направления.&#xA;" carriageReturn="true"
+                                     beginWithCap="false"/>
+                    </else>
+                    <then>
+                        <showMessage type="text" message="&#xA;Обычная просёлочная дорога.&#xA;" carriageReturn="true"
+                                     beginWithCap="false"/>
+                    </then>
+                </if>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="Трубить">
+            <procedureVariables/>
+            <procedureBody>
+                <showMessage type="text" message="Руслан трубит, но на его зов никто не откликается." carriageReturn="true"
+                             beginWithCap="false"/>
+            </procedureBody>
+            <parameters>
+                <parameter name="предмет"/>
+            </parameters>
+        </procedure>
+        <procedure name="очистить надпись">
+            <procedureVariables/>
+            <procedureBody>
+                <if condition="ТекущаяЛокация = РаспутьеЛок">
+                    <else>
+                        <showMessage type="text" message="&#xA;Здесь ничего не написано, чтобы очистить надпись.&#xA;" carriageReturn="true"
+                                     beginWithCap="false"/>
+                    </else>
+                    <then>
+                        <showMessage type="text" message="&#xA;Руслан очистил надпись на камне.&#xA;" carriageReturn="true"
+                                     beginWithCap="false"/>
+                        <var value="да" name="надпись"/>
+                    </then>
+                </if>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="осмотреть лишайник">
+            <procedureVariables/>
+            <procedureBody>
+                <if condition="ТекущаяЛокация=РаспутьеЛок">
+                    <else>
+                        <showMessage type="text" message="&#xA;- Ты не в тундре. Здесь нет лишайников.&#xA;" carriageReturn="true"
+                                     beginWithCap="false"/>
+                    </else>
+                    <then>
+                        <showMessage type="text"
+                                     message="&#xA;- Низшее растение. Симбиоз гриба и водоросли. Обычное дело на камнях.&#xA;- Определитель низших растений не принести? Ботаник, блин.&#xA;"
+                                     carriageReturn="true" beginWithCap="false"/>
+                    </then>
+                </if>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="осмотреть Руслана">
+            <procedureVariables/>
+            <procedureBody>
+                <showMessage type="text"
+                             message="&#xD;&#xA;- Ну, прямо всем хочется осмотреть Руслана.&#xD;&#xA;- Вот он, молодой, красивый, здоровый, как бык. Начинающий, но подающий, как говорят, большие надежды актер.&#xD;&#xA;- Узнали в гриме? На уши обратите внимание.&#xD;&#xA;"
+                             carriageReturn="true" beginWithCap="false"/>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="ждать">
+            <procedureVariables/>
+            <procedureBody>
+                <showMessage type="text"
+                             message="&#xA;&#x9;&#x9;Долго у моря он ждал ответа,&#xA;&#x9;&#x9;Не дождался, к старухе воротился.&#xA;"
+                             carriageReturn="true" beginWithCap="false"/>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="сломать ветку">
+            <procedureVariables/>
+            <procedureBody>
+                <if condition="ДеревоПред в ТекущаяЛокация.предметы">
+                    <else>
+                        <if condition="ДеревоПред в инвентарий">
+                            <else>
+                                <showMessage type="text" message="&#xA;- Здесь нет подходящего дерева.&#xA;" carriageReturn="true"
+                                             beginWithCap="false"/>
+                            </else>
+                            <then>
+                                <showMessage type="text"
+                                             message="&#xA;- А тебе ничего не мешает? Ты с эдаким бревном в руках еще что-то хочешь сделать?&#xA;"
+                                             carriageReturn="true" beginWithCap="false"/>
+                            </then>
+                        </if>
+                    </else>
+                    <then>
+                        <showMessage type="text"
+                                     message="&#xA;- Ты зачем ветку отламываешь? Зачем она тебе? Что ты хочешь с ней сделать?&#xA;"
+                                     carriageReturn="true" beginWithCap="false"/>
+                    </then>
+                </if>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="чистить">
+            <procedureVariables/>
+            <procedureBody>
+                <showMessage type="expression"
+                             message="'Санитарное состояние ' + предмет.рп + ' удовлетворительное, ' + предмет.ип + 'В чистке не нуждается.'&#xA;&#xA;"
+                             carriageReturn="true" beginWithCap="false"/>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="осмотреть себя">
+            <procedureVariables/>
+            <procedureBody>
+                <showMessage type="text" message="&#xA;Это, вообще-то, не ко мне. Это к зеркалу.&#xA;" carriageReturn="true"
+                             beginWithCap="false"/>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="смотреть">
+            <procedureVariables/>
+            <procedureBody>
+                <showMessage type="text"
+                             message="&#xA;Смотреть бывают разные. Если нужно осмотреть местность, то это нужно просто осмотреться или сокращенно осм. А если что-то осмотреть, то осмотреть предмет или осм предмет.&#xA;"
+                             carriageReturn="true" beginWithCap="false"/>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="рубить">
+            <procedureVariables/>
+            <procedureBody>
+                <showMessage type="text" message="&#xD;&#xA;Чем рубить-то? Чем,чем? Не годится. Топор, однако, нужен.&#xD;&#xA;"
+                             carriageReturn="true" beginWithCap="false"/>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="взять лишайник">
+            <procedureVariables/>
+            <procedureBody>
+                <if condition="ТекущаяЛокация = РаспутьеЛок">
+                    <else>
+                        <showMessage type="text" message="&#xA;- Ты не в тундре. Нет тут никакого лишайника.&#xA;" carriageReturn="true"
+                                     beginWithCap="false"/>
+                    </else>
+                    <then>
+                        <showMessage type="text"
+                                     message="&#xA;- Зачем тебе этот лишайник? Настойку сделать? Это не настоящий лишайник, а бутафорский, из туалетной бумаги сделан.&#xA;"
+                                     carriageReturn="true" beginWithCap="false"/>
+                    </then>
+                </if>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="очистить лишайник">
+            <procedureVariables/>
+            <procedureBody>
+                <if condition="ТекущаяЛокация = РаспутьеЛок">
+                    <else>
+                        <showMessage type="text" message="&#xA;- Ты не в тундре. Нет тут никакого лишайника.&#xA;" carriageReturn="true"
+                                     beginWithCap="false"/>
+                    </else>
+                    <then>
+                        <showMessage type="text" message="&#xA;Лишайник чистый, и в чистке не нуждается.&#xA;" carriageReturn="true"
+                                     beginWithCap="false"/>
+                    </then>
+                </if>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="БитьПредмет">
+            <procedureVariables/>
+            <procedureBody>
+                <showMessage type="expression" message="'Вы ударили ' + предмет.вп + '. Но ничего не произошло.'" carriageReturn="true"
+                             beginWithCap="false"/>
+            </procedureBody>
+            <parameters>
+                <parameter name="предмет"/>
+            </parameters>
+        </procedure>
+        <procedure name="читать">
+            <procedureVariables/>
+            <procedureBody>
+                <if condition="ТекущаяЛокация = РаспутьеЛок">
+                    <else>
+                        <showMessage type="text" message="&#xA;Нет тут никакого камня.&#xA;" carriageReturn="true" beginWithCap="false"/>
+                    </else>
+                    <then>
+                        <showMessage type="text" message="&#xA;Нужно просто осмотреть камень.&#xA;" carriageReturn="true"
+                                     beginWithCap="false"/>
+                    </then>
+                </if>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="Стартовая">
+            <procedureVariables/>
+            <procedureBody>
+                <showMessage type="text"
+                             message="&#x9;&#x9;&#x9;&#x9;     О сколько нам историй чудных &#xD;&#xA;&#x9;&#x9;&#x9;&#x9;     Готовят приключенья дух, &#xD;&#xA;&#x9;&#x9;&#x9;&#x9;     И опыт, сын ошибок трудных, &#xD;&#xA;&#x9;&#x9;&#x9;&#x9;     И гений, парадоксов друг, &#xD;&#xA;&#x9;&#x9;&#x9;&#x9;     И случай, бог изобретатель...&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;&#x9;&#x9;У лукоморья дуб зеленый;&#xD;&#xA;&#x9;&#x9;Златая цепь на дубе том:&#xD;&#xA;&#x9;&#x9;И днем и ночью кот ученый&#xD;&#xA;&#x9;&#x9;Всё ходит по цепи кругом;&#xD;&#xA;&#x9;&#x9;Идет направо — песнь заводит,&#xD;&#xA;&#x9;&#x9;Налево — сказку говорит.&#xD;&#xA;&#x9;&#x9;Там чудеса: там леший бродит,&#xD;&#xA;&#x9;&#x9;Русалка на ветвях сидит;&#xD;&#xA;&#x9;&#x9;Там на неведомых дорожках&#xD;&#xA;&#x9;&#x9;Следы невиданных зверей;&#xD;&#xA;&#x9;&#x9;Избушка там на курьих ножках&#xD;&#xA;&#x9;&#x9;Стоит без окон, без дверей;&#xD;&#xA;&#x9;&#x9;Там лес и дол видений полны;&#xD;&#xA;&#x9;&#x9;Там на заре прихлынут волны&#xD;&#xA;&#x9;&#x9;На брег песчаный и пустой,&#xD;&#xA;&#x9;&#x9;И тридцать витязей прекрасных&#xD;&#xA;&#x9;&#x9;Чредой из вод выходят ясных,&#xD;&#xA;&#x9;&#x9;И с ними дядька их морской;&#xD;&#xA;&#x9;&#x9;Там королевич мимоходом&#xD;&#xA;&#x9;&#x9;Пленяет грозного царя;&#xD;&#xA;&#x9;&#x9;Там в облаках перед народом&#xD;&#xA;&#x9;&#x9;Через леса, через моря&#xD;&#xA;&#x9;&#x9;Колдун несет богатыря;&#xD;&#xA;&#x9;&#x9;В темнице там царевна тужит,&#xD;&#xA;&#x9;&#x9;А бурый волк ей верно служит;&#xD;&#xA;&#x9;&#x9;Там ступа с Бабою Ягой&#xD;&#xA;&#x9;&#x9;Идет, бредет сама собой;&#xD;&#xA;&#x9;&#x9;Там царь Кащей над златом чахнет;&#xD;&#xA;&#x9;&#x9;Там русской дух... там Русью пахнет!&#xD;&#xA;&#x9;&#x9;И там я был, и мед я пил;&#xD;&#xA;&#x9;&#x9;У моря видел дуб зеленый;&#xD;&#xA;&#x9;&#x9;Под ним сидел, и кот ученый&#xD;&#xA;&#x9;&#x9;Свои мне сказки говорил.&#xD;&#xA;&#x9;&#x9;Одну я помню: сказку эту&#xD;&#xA;&#x9;&#x9;Поведаю теперь я свету...&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;&#xD;Сцена вторая.&#xA;&#xA;Руслан ищет свою жену, которую украл колдун Черномор. Но ему хочет помешать его соперник Рогдай.&#xD;&#xA;Игра начинается с того момента, когда он нападает на Руслана.&#xD;&#xA;&#xD;&#xA;Цель игры - победить Черномора, ну и традиционная - спасти принцессу.&#xD;&#xA; &#xD;&#xA; &#x9;&#x9;Однажды, темною порою,&#xD;&#xA; &#x9;&#x9;По камням берегом крутым&#xD;&#xA; &#x9;&#x9;Наш витязь ехал над рекою.&#xD;&#xA; &#x9;&#x9;Всё утихало. Вдруг за ним&#xD;&#xA; &#x9;&#x9;Стрелы мгновенное жужжанье,&#xD;&#xA; &#x9;&#x9;Кольчуги звон, и крик, и ржанье,&#xD;&#xA; &#x9;&#x9;И топот по полю глухой.&#xD;&#xA; &#x9;&#x9;«Стой!» — грянул голос громовой.&#xD;&#xA; &#x9;&#x9;Он оглянулся: в поле чистом,&#xD;&#xA; &#x9;&#x9;Подняв копье, летит со свистом&#xD;&#xA; &#x9;&#x9;Свирепый всадник, и грозой&#xD;&#xA;&#x9;&#x9; Помчался князь ему навстречу.&#xD;&#xA; &#x9;&#x9;«Aгa! догнал тебя! постой! —&#xD;&#xA; &#x9;&#x9;Кричит наездник удалой, — &#xD;&#xA;&#x9;&#x9;Готовься, друг, на смертну сечу;&#xD;&#xA;&#x9;&#x9;Теперь ложись средь здешних мест;&#xD;&#xA; &#x9;&#x9;А там ищи своих невест».&#xD;&#xA; &#xD;&#xA; &#x9;&#x9;При свете трепетном луны&#xD;&#xA; &#x9;&#x9;Сразились витязи жестоко;&#xD;&#xA; &#x9;&#x9;Сердца их гневом стеснены,&#xD;&#xA; &#x9;&#x9;Уж копья брошены далеко,&#xD;&#xA; &#x9;&#x9;Уже мечи раздроблены,&#xD;&#xA; &#x9;&#x9;Кольчуги кровию покрыты,&#xD;&#xA; &#x9;&#x9;Щиты трещат, в куски разбиты...&#xD;&#xA; &#xD;&#xA; &#x9;&#x9;Кому-то пасть... вдруг витязь мой,&#xD;&#xA; &#x9;&#x9;Вскипев, железною рукой&#xD;&#xA; &#x9;&#x9;С седла наездника срывает,&#xD;&#xA; &#x9;&#x9;Подъемлет, держит над собой&#xD;&#xA; &#x9;&#x9;И в волны с берега бросает.&#xD;&#xA; &#x9;&#x9;«Погибни! — грозно восклицает; —&#xD;&#xA; &#x9;&#x9;Умри, завистник злобный мой!»&#xD;&#xA;&#xD;&#xA;Сцена третья.&#xA;&#xA;После битвы наш герой продолжает свой путь. Он остановился на развилке дорог."
+                             carriageReturn="true" beginWithCap="false"/>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="идти к реке">
+            <procedureVariables/>
+            <procedureBody>
+                <if condition="ТекущаяЛокация = РекаЛок">
+                    <else>
+                        <showMessage type="text" message="&#xA;Далековато отсюда до реки.&#xA;" carriageReturn="true" beginWithCap="false"/>
+                    </else>
+                    <then>
+                        <showMessage type="text"
+                                     message="&#xA;&#xA;- Ты куда? Чего ты поперся к реке? Для купания не сезон, вода холодная. А хочешь попить, будет перерыв, выпьешь чаю или чего еще. &#xA;- Что? Не знаешь куда идти дальше? Сценарий нужно читать внимательно. Покажите ему сценарий.&#xA;- Теперь знаешь? Вперед. Сцена седьмая. Дубль второй. Мотор. Проехали.&#xA;"
+                                     carriageReturn="true" beginWithCap="false"/>
+                    </then>
+                </if>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="заглянуть под дерево">
+            <procedureVariables/>
+            <procedureBody>
+                <if condition="ДеревоПред в ТекущаяЛокация.предметы">
+                    <else>
+                        <showMessage type="text" message="&#xA;А где дерево?&#xA;" carriageReturn="true" beginWithCap="false"/>
+                    </else>
+                    <then>
+                        <showMessage type="text"
+                                     message="&#xA;&#xA;- Чего ты полез под это дерево? Посмотреть? Нет там ничего.&#xA;- Быстро на коня и за работу.&#xA;"
+                                     carriageReturn="true" beginWithCap="false"/>
+                    </then>
+                </if>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="БудитьПредмет">
+            <procedureVariables/>
+            <procedureBody>
+                <showMessage type="expression" message="'Вы пытаетесь разбудить ' + предмет.вп + '. Не просыпается. Спит мертвецким сном.'"
+                             carriageReturn="true" beginWithCap="false"/>
+            </procedureBody>
+            <parameters>
+                <parameter name="предмет"/>
+            </parameters>
+        </procedure>
+        <procedure name="что делать">
+            <procedureVariables/>
+            <procedureBody>
+                <showMessage type="text" message="&#xA;Сухари сушить. Э-хе-хе-хе.&#xA;" carriageReturn="true" beginWithCap="false"/>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="метнуть копье">
+            <procedureVariables/>
+            <procedureBody>
+                <if condition="КопьеПред в инвентарий">
+                    <else>
+                        <showMessage type="text" message="&#xA;А копья нет.&#xA;" carriageReturn="true" beginWithCap="false"/>
+                    </else>
+                    <then>
+                        <if condition="ТекущаяЛокация = ХолмЛок">
+                            <else>
+                                <showMessage type="text" message="&#xA;Вы метнули копье, и оно воткнулось в землю.&#xA;"
+                                             carriageReturn="true" beginWithCap="false"/>
+                                <moveItem to="ТекущаяЛокация.предметы" item="КопьеПред"/>
+                            </else>
+                            <then>
+                                <if condition="ГоловаРазбужена = да">
+                                    <else>
+                                        <showMessage type="text"
+                                                     message="&#xA;Не станет русский богатырь бросать копье в спящего.&#xA;Руслан бросил копье и оно воткнулось в землю.&#xA;"
+                                                     carriageReturn="true" beginWithCap="false"/>
+                                        <moveItem to="ТекущаяЛокация.предметы" item="КопьеПред"/>
+                                    </else>
+                                    <then>
+                                        <showMessage type="text"
+                                                     message="&#xA;Метнул копье рукой свободной,&#xA; И, задрожав, булат холодный&#xA; Вонзился в дерзостный язык.&#xA; И кровь из бешеного зева&#xA; Рекою побежала вмиг.&#xA; От удивленья, боли, гнева,&#xA; В минуту дерзости лишась,&#xA; На князя голова глядела,&#xA; Железо грызла и бледнела&#xA; В спокойном духе горячась.&#xA;&#xA;Руслан не расчитал свои силы. Копье воткнулось в язык головы и сломалось.&#xA;&#xA;- Ну, что ты наделал? Сила есть, ума не надо? Сломал реквизит. Теперь как хочешь, так и выкручивайся.&#xA;&#xA;"
+                                                     carriageReturn="true" beginWithCap="false"/>
+                                        <var value="да" name="КопьеГолова"/>
+                                        <moveItem to="ТекущаяЛокация.предметы" item="КопьеПред"/>
+                                    </then>
+                                </if>
+                            </then>
+                        </if>
+                    </then>
+                </if>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="использовать">
+            <procedureVariables/>
+            <procedureBody>
+                <showMessage type="text" message="&#xA;Каким образом?&#xA;" carriageReturn="true" beginWithCap="false"/>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="направо налево">
+            <procedureVariables/>
+            <procedureBody>
+                <showMessage type="text"
+                             message="&#xA;Передвигаться следует только по сторонам света (с, север; ю, юг; в, восток;з, запад), а также вверх и вниз.&#xA;"
+                             carriageReturn="true" beginWithCap="false"/>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="говорить">
+            <procedureVariables/>
+            <procedureBody>
+                <if condition="ТекущаяЛокация = ХолмЛок">
+                    <else>
+                        <showMessage type="text"
+                                     message="&#xA;- Эх, и поговорить-то тут не с кем.&#xA;- Потом поговоришь. Хочешь, я с тобой поговорю?&#xA;"
+                                     carriageReturn="true" beginWithCap="false"/>
+                    </else>
+                    <then>
+                        <if condition="ГоловаРазбужена = да">
+                            <else>
+                                <showMessage type="text"
+                                             message="&#xA;Голова не слышит ничего и продолжает спать.&#xA;Говорить с ней бесполезно.&#xA;"
+                                             carriageReturn="true" beginWithCap="false"/>
+                            </else>
+                            <then>
+                                <if condition="Проход = нет">
+                                    <else>
+                                        <showMessage type="text" message="&#xA;Голова не отвечает. Обиделась, скорее всего.&#xA;"
+                                                     carriageReturn="true" beginWithCap="false"/>
+                                    </else>
+                                    <then>
+                                        <showMessage type="text"
+                                                     message="&#xA;- Поговорили? Всё. Перерыв окончен. За работу.&#xA;- Потом анекдот расскажешь.&#xA;- Всё. Голова, ну-ка, сделай сердитый вид. Ты спал, тебя разбудили. Представь, что ты с бодуна, а какой-то хрен, извиняюсь за выражение, тебя будит.&#xA;- Во, это другое дело.&#xA;"
+                                                     carriageReturn="true" beginWithCap="false"/>
+                                    </then>
+                                </if>
+                            </then>
+                        </if>
+                    </then>
+                </if>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="взять всё">
+            <procedureVariables/>
+            <procedureBody>
+                <showMessage type="text"
+                             message="&#xA;- Ну, и чего ты пытаешься всё заграбастать? А, вот, микрофон, вообще, к реквизиту не относится. Не трогай микрофон. И, как ты на коне поедешь со всем этим хламом?&#xA;Нет, так дело не пойдет.&#xA;Читаем сценарий.&#xA;Герой выбирает на поле битвы нужные ему оружие и снаряжение.&#xA;Нужные, значит необходимые для битвы с Черномором вещи.&#xA;Что значит, в хозяйстве пригодится?&#xA;Так. Сказано в сценарии нужное.&#xA;Вот и бери нужное.&#xA;Где сценарист? Срочно переделываем сценарий.&#xA;Пиши, нужные заменить на необходимые для битвы с Черномором.&#xA;&#xA;- Мотор. Поехали.&#xA;"
+                             carriageReturn="true" beginWithCap="false"/>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+    </procedures>
+    <libraries>
+        <library>standard/verbs.xml</library>
+    </libraries>
+    <dictionary>
+        <word>
+            <ip>шлем</ip>
+            <rp>шлема</rp>
+            <dp>шлему</dp>
+            <vp>шлем</vp>
+            <tp>шлемом</tp>
+            <pp>шлеме</pp>
+        </word>
+        <word>
+            <ip>лук</ip>
+            <rp>лука</rp>
+            <dp>луку</dp>
+            <vp>лук</vp>
+            <tp>луком</tp>
+            <pp>луке</pp>
+        </word>
+        <word>
+            <ip>скелет</ip>
+            <rp>скелета</rp>
+            <dp>скелету</dp>
+            <vp>скелет</vp>
+            <tp>скелетом</tp>
+            <pp>скелете</pp>
+        </word>
+        <word>
+            <ip>пещера</ip>
+            <rp>пещеры</rp>
+            <dp>пещере</dp>
+            <vp>пещеру</vp>
+            <tp>пещерой</tp>
+            <pp>пещере</pp>
+        </word>
+        <word>
+            <ip>стрела</ip>
+            <rp>стрелы</rp>
+            <dp>стреле</dp>
+            <vp>стрелу</vp>
+            <tp>стрелой</tp>
+            <pp>стреле</pp>
+        </word>
+        <word>
+            <ip>голова</ip>
+            <rp>головы</rp>
+            <dp>голове</dp>
+            <vp>голову</vp>
+            <tp>головой</tp>
+            <pp>голове</pp>
+        </word>
+        <word>
+            <ip>меч</ip>
+            <rp>меча</rp>
+            <dp>мечу</dp>
+            <vp>меч</vp>
+            <tp>мечом</tp>
+            <pp>мече</pp>
+        </word>
+        <word>
+            <ip>кольчуга</ip>
+            <rp>кольчуги</rp>
+            <dp>кольчуге</dp>
+            <vp>кольчугу</vp>
+            <tp>кольчугой</tp>
+            <pp>кольчуге</pp>
+        </word>
+        <word>
+            <ip>кости</ip>
+            <rp>костей</rp>
+            <dp>костям</dp>
+            <vp>кости</vp>
+            <tp>костями</tp>
+            <pp>костях</pp>
+        </word>
+        <word>
+            <ip>колчан</ip>
+            <rp>колчана</rp>
+            <dp>колчану</dp>
+            <vp>колчан</vp>
+            <tp>колчаном</tp>
+            <pp>колчане</pp>
+        </word>
+        <word>
+            <ip>копье</ip>
+            <rp>копья</rp>
+            <dp>копью</dp>
+            <vp>копье</vp>
+            <tp>копьем</tp>
+            <pp>копье</pp>
+        </word>
+        <word>
+            <ip>сосна</ip>
+            <rp>сосны</rp>
+            <dp>сосне</dp>
+        </word>
+        <word>
+            <ip>живая</ip>
+            <rp>живой</rp>
+            <dp>живой</dp>
+            <vp>живая</vp>
+            <tp>живой</tp>
+            <pp>живой</pp>
+        </word>
+        <word>
+            <ip>череп</ip>
+            <rp>черепа</rp>
+            <dp>черепу</dp>
+            <vp>череп</vp>
+            <tp>черепом</tp>
+            <pp>черепе</pp>
+        </word>
+        <word>
+            <ip>щит</ip>
+            <rp>щита</rp>
+            <dp>щиту</dp>
+            <vp>щит</vp>
+            <tp>щитом</tp>
+            <pp>щите</pp>
+        </word>
+        <word>
+            <ip>дорога</ip>
+            <rp>дороги</rp>
+            <dp>дороге</dp>
+            <vp>дорогу</vp>
+            <tp>дорогой</tp>
+            <pp>дороге</pp>
+        </word>
+        <word>
+            <ip>камень</ip>
+            <rp>камня</rp>
+            <dp>камню</dp>
+            <vp>камень</vp>
+            <tp>камнем</tp>
+            <pp>камне</pp>
+        </word>
+        <word>
+            <ip>легкий</ip>
+            <rp>легкого</rp>
+            <dp>легкому</dp>
+            <vp>легкий</vp>
+            <tp>легким</tp>
+            <pp>легком</pp>
+        </word>
+        <word>
+            <ip>стрелы</ip>
+            <rp>стрел</rp>
+            <dp>стрелам</dp>
+            <vp>стрелы</vp>
+            <tp>стрелами</tp>
+            <pp>стрелах</pp>
+        </word>
+        <word>
+            <ip>дерево</ip>
+            <rp>дерева</rp>
+            <dp>дереву</dp>
+            <vp>дерево</vp>
+            <tp>деревом</tp>
+            <pp>дереве</pp>
+        </word>
+        <word>
+            <ip>рог</ip>
+            <rp>рога</rp>
+            <dp>рогу</dp>
+            <vp>рог</vp>
+            <tp>рогом</tp>
+            <pp>роге</pp>
+        </word>
+        <word>
+            <ip>дороги</ip>
+            <rp>дорог</rp>
+            <dp>дорогам</dp>
+            <vp>дороги</vp>
+            <tp>дорогами</tp>
+            <pp>дорогах</pp>
+        </word>
+        <word>
+            <ip>кость</ip>
+            <rp>кости</rp>
+            <dp>кости</dp>
+            <vp>кость</vp>
+            <tp>костью</tp>
+            <pp>кости</pp>
+        </word>
+        <word>
+            <ip>поваленное</ip>
+            <rp>поваленного</rp>
+            <dp>поваленному</dp>
+            <vp>поваленное</vp>
+            <tp>поваленным</tp>
+            <pp>поваленном</pp>
+        </word>
+        <word>
+            <ip>говорящая</ip>
+            <rp>говорящей</rp>
+            <dp>говорящей</dp>
+            <vp>говорящую</vp>
+            <tp>говорящей</tp>
+            <pp>говорящей</pp>
+        </word>
+        <word>
+            <ip>богатырский</ip>
+            <rp>богатырского</rp>
+            <dp>богатырскому</dp>
+            <vp>богатырский</vp>
+            <tp>богатырским</tp>
+            <pp>богатырском</pp>
+        </word>
+        <word>
+            <ip>лишайник</ip>
+            <rp>лишайника</rp>
+            <dp>лишайнику</dp>
+            <vp>лишайник</vp>
+            <tp>лишайником</tp>
+            <pp>лишайнике</pp>
+        </word>
+    </dictionary>
+    <locations>
+        <location name="Распутье" id="РаспутьеЛок">
+            <hooks>
+                <hook type="instead" objectElement="" action="идти на юг">
+                    <instructions>
+                        <if condition="Река=нет">
+                            <else>
+                                <goToLoc location="РекаЛок"/>
+                            </else>
+                            <then>
+                                <showMessage type="text"
+                                             message="&#xD;&#xA; &#x9;&#x9;И вот уже, направя к югу&#xD;&#xA; &#x9;&#x9;Нетерпеливый бег коня,&#xD;&#xA; &#x9;&#x9;Он думал пред закатом дня&#xD;&#xA; &#x9;&#x9;Нагнать любимую подругу.&#xD;&#xA; &#x9;&#x9;Но день багряный вечерел;&#xD;&#xA; &#x9;&#x9;Напрасно витязь пред собою&#xD;&#xA; &#x9;&#x9;В туманы дальние смотрел:&#xD;&#xA; &#x9;&#x9;Всё было пусто над рекою.&#xD;&#xA; &#x9;&#x9;Зари последний луч горел&#xD;&#xA; &#x9;&#x9;Над ярко позлащенным бором.&#xD;&#xA; &#x9;&#x9;Наш витязь мимо черных скал&#xD;&#xA; &#x9;&#x9;Тихонько проезжал и взором&#xD;&#xA; &#x9;&#x9;Ночлега меж дерев искал.&#xD;&#xA;"
+                                             carriageReturn="true" beginWithCap="false"/>
+                                <goToLoc location="РекаЛок"/>
+                                <var value="да" name="Река"/>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+                <hook type="instead" objectElement="" action="идти на север">
+                    <instructions>
+                        <showMessage type="text"
+                                     message="&#xD;&#xA; &#x9;&#x9;Но вскоре вспомнил витязь мой,&#xD;&#xA; &#x9;&#x9;Что добрый меч герою нужен&#xD;&#xA; &#x9;&#x9;И даже панцирь; а герой&#xD;&#xA; &#x9;&#x9;С последней битвы безоружен.&#xD;&#xA;"
+                                     carriageReturn="true" beginWithCap="false"/>
+                        <goToLoc location="ЛесЛок"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>
+                Руслан на развилке дорог.
+                Одна ведет прямо на север к лесу, другая ведет направо, огибает камень и поворачивает далее на юг, третья ведет налево на
+                запад на берег моря.
+            </description>
+            <words/>
+            <north>ЛесЛок</north>
+            <south>РекаЛок</south>
+            <west>БерегМоряЛок</west>
+        </location>
+        <location name="Лес" id="ЛесЛок">
+            <hooks>
+                <hook type="instead" objectElement="" action="идти на север">
+                    <instructions>
+                        <if condition="ДеревоПред в инвентарий">
+                            <else>
+                                <if condition="Поле=нет">
+                                    <else>
+                                        <goToLoc location="ПолеЛок"/>
+                                    </else>
+                                    <then>
+                                        <showMessage type="text"
+                                                     message="&#xD;&#xA;&#x9;&#x9;Проехал он дремучий лес;&#xD;&#xA;&#x9;&#x9;Пред ним открылся дол широкий&#xD;&#xA;&#x9;&#x9;При блеске утренних небес.&#xD;&#xA;&#x9;&#x9;Трепещет витязь поневоле:&#xD;&#xA;&#x9;&#x9;Он видит старой битвы поле.&#xD;&#xA;&#x9;&#x9;Вдали всё пусто; здесь и там&#xD;&#xA;&#x9;&#x9;Желтеют кости; по холмам&#xD;&#xA;&#x9;&#x9;Разбросаны колчаны, латы;&#xD;&#xA;&#x9;&#x9;Где сбруя, где заржавый щит;&#xD;&#xA;&#x9;&#x9;В костях руки здесь меч лежит;&#xD;&#xA;&#x9;&#x9;Травой оброс там шлем косматый&#xD;&#xA;&#x9;&#x9;И старый череп тлеет в нем;&#xD;&#xA;&#x9;&#x9;Богатыря там остов целый&#xD;&#xA;&#x9;&#x9;С его поверженным конем&#xD;&#xA;&#x9;&#x9;Лежит недвижный; копья, стрелы&#xD;&#xA;&#x9;&#x9;В сырую землю вонзены,&#xD;&#xA;&#x9;&#x9;И мирный плющ их обвивает...&#xD;&#xA;&#x9;&#x9;Ничто безмолвной тишины&#xD;&#xA;&#x9;&#x9;Пустыни сей не возмущает,&#xD;&#xA;&#x9;&#x9;И солнце с ясной вышины&#xD;&#xA;&#x9;&#x9;Долину смерти озаряет.&#xD;&#xA;&#xD;&#xA;&#x9;&#x9;Со вздохом витязь вкруг себя&#xD;&#xA;&#x9;&#x9;Взирает грустными очами.&#xD;&#xA;&#x9;&#x9;«О поле, поле, кто тебя&#xD;&#xA;&#x9;&#x9;Усеял мертвыми костями?&#xD;&#xA;&#x9;&#x9;Чей борзый конь тебя топтал&#xD;&#xA;&#x9;&#x9;В последний час кровавой битвы?&#xD;&#xA;&#x9;&#x9;Кто на тебе со славой пал?&#xD;&#xA;&#x9;&#x9;Чьи небо слышало молитвы?&#xD;&#xA;&#x9;&#x9;Зачем же, поле, смолкло ты&#xD;&#xA;&#x9;&#x9;И поросло травой забвенья?..&#xD;&#xA;&#x9;&#x9;Времен от вечной темноты,&#xD;&#xA;&#x9;&#x9;Быть может, нет и мне спасенья!&#xD;&#xA;&#x9;&#x9;Быть может, на холме немом&#xD;&#xA;&#x9;&#x9;Поставят тихий гроб Русланов,&#xD;&#xA;&#x9;&#x9;И струны громкие Баянов&#xD;&#xA;&#x9;&#x9;Не будут говорить о нем!»&#xD;&#xA;"
+                                                     carriageReturn="true" beginWithCap="false"/>
+                                        <goToLoc location="ПолеЛок"/>
+                                        <var value="да" name="Поле"/>
+                                    </then>
+                                </if>
+                            </else>
+                            <then>
+                                <showMessage type="text"
+                                             message="&#xA;- Ну, куда ты поперся с этим деревом, как Ленин на субботнике? Ты нам сейчас не только весь наш бутафорский лес завалишь, но и павильон разнесешь. Положи его. Кому говорят, брось!&#xA;"
+                                             carriageReturn="true" beginWithCap="false"/>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+            </hooks>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>
+                Руслан находится в темном и дремучем лесу. Бурелом.
+                Чуть заметная тропа ведет на север.
+                В обратном направлении тропа ведет к развилке дорог.
+            </description>
+            <words/>
+            <north>ПолеЛок</north>
+            <south>РаспутьеЛок</south>
+        </location>
+        <location name="Поле" id="ПолеЛок">
+            <hooks>
+                <hook type="instead" objectElement="" action="идти на север">
+                    <instructions>
+                        <if condition="Холм=нет">
+                            <else>
+                                <goToLoc location="ХолмЛок"/>
+                            </else>
+                            <then>
+                                <showMessage type="text"
+                                             message="&#xD;&#xA;&#x9;&#x9;Задумчив едет наш Руслан&#xD;&#xA;&#x9;&#x9;И видит: сквозь ночной туман&#xD;&#xA;&#x9;&#x9;Вдали чернеет холм огромный,&#xD;&#xA;&#x9;&#x9;И что-то страшное храпит.&#xD;&#xA;&#x9;&#x9;Он ближе к холму, ближе — слышит:&#xD;&#xA;&#x9;&#x9;Чудесный холм как будто дышит.&#xD;&#xA;&#x9;&#x9;Руслан внимает и глядит&#xD;&#xA;&#x9;&#x9;Бестрепетно, с покойным духом;&#xD;&#xA;&#x9;&#x9;Но, шевеля пугливым ухом,&#xD;&#xA;&#x9;&#x9;Конь упирается, дрожит,&#xD;&#xA;&#x9;&#x9;Трясет упрямой головою,&#xD;&#xA;&#x9;&#x9;И грива дыбом поднялась.&#xD;&#xA;&#x9;&#x9;Вдруг холм, безоблачной луною&#xD;&#xA;&#x9;&#x9;В тумане бледно озарясь,&#xD;&#xA;&#x9;&#x9;Яснеет; смотрит храбрый князь —&#xD;&#xA;&#x9;&#x9;И чудо видит пред собою.&#xD;&#xA;&#x9;&#x9;Найду ли краски и слова?&#xD;&#xA;&#x9;&#x9;Пред ним живая голова.&#xD;&#xA;"
+                                             carriageReturn="true" beginWithCap="false"/>
+                                <goToLoc location="ХолмЛок"/>
+                                <var value="да" name="Холм"/>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+            </hooks>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>
+                Руслан находится на поле.
+                Здесь когда-то произошло сражение, следы которого видны повсюду.
+                На севере расположено какое-то возвышение.
+                На юге дремучий лес.
+            </description>
+            <words/>
+            <north>ХолмЛок</north>
+            <south>ЛесЛок</south>
+        </location>
+        <location name="Холм" id="ХолмЛок">
+            <hooks>
+                <hook type="instead" objectElement="" action="идти на север">
+                    <instructions>
+                        <if condition="Проход=да">
+                            <else>
+                                <showMessage type="text" message="&#xA;Голова загораживает проход на север в ущелье.&#xA;"
+                                             carriageReturn="true" beginWithCap="false"/>
+                            </else>
+                            <then>
+                                <showMessage type="text" message="&#xA;Проход на север в ущелье свободен.&#xA;&#xA;" carriageReturn="true"
+                                             beginWithCap="false"/>
+                                <goToLoc location="УщельеЛок"/>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+                <hook type="instead" objectElement="" action="идти на восток">
+                    <instructions>
+                        <showMessage type="text"
+                                     message="&#xD;&#xA;Не пройти. Крутые горные склоны. Не только конному, но и пешему нет прохода.&#xD;&#xA;"
+                                     carriageReturn="true" beginWithCap="false"/>
+                    </instructions>
+                </hook>
+                <hook type="instead" objectElement="" action="идти на запад">
+                    <instructions>
+                        <showMessage type="text"
+                                     message="&#xA;Не пройти. Крутые горные склоны. Не только конному, но и пешему нет прохода.&#xA;"
+                                     carriageReturn="true" beginWithCap="false"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>
+                Руслан находится на краю поля.
+                На севере проход в скалах.
+                На юге место сражения.
+            </description>
+            <words/>
+            <north>УщельеЛок</north>
+            <south>ПолеЛок</south>
+        </location>
+        <location name="У реки" id="РекаЛок">
+            <hooks>
+                <hook type="instead" objectElement="" action="идти на юг">
+                    <instructions>
+                        <if condition="Долина=нет">
+                            <else>
+                                <goToLoc location="ДолинаЛок"/>
+                            </else>
+                            <then>
+                                <showMessage type="text"
+                                             message="&#xD;&#xA; &#x9;&#x9;Он на долину выезжает&#xD;&#xA; &#x9;&#x9;И видит: замок на скалах&#xD;&#xA; &#x9;&#x9;Зубчаты стены возвышает;&#xD;&#xA; &#x9;&#x9;Чернеют башни на углах;&#xD;&#xA; &#x9;&#x9;И дева по стене высокой,&#xD;&#xA; &#x9;&#x9;Как в море лебедь одинокий,&#xD;&#xA; &#x9;&#x9;Идет, зарей освещена;&#xD;&#xA; &#x9;&#x9;И девы песнь едва слышна&#xD;&#xA; &#x9;&#x9;Долины в тишине глубокой.&#xD;&#xA;"
+                                             carriageReturn="true" beginWithCap="false"/>
+                                <goToLoc location="ДолинаЛок"/>
+                                <var value="да" name="Долина"/>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+            </hooks>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>
+                Руслан находится на дороге ведущей вдоль реки.
+                Дорога ведет на юг. В обратном направлении развилка дорог.
+            </description>
+            <words/>
+            <north>РаспутьеЛок</north>
+            <south>ДолинаЛок</south>
+        </location>
+        <location name="Долина" id="ДолинаЛок">
+            <hooks/>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>
+                Руслан находится в долине у реки.
+                В конце долины далеко на юге какое-то строение.
+                На севере - берег реки.
+            </description>
+            <words/>
+            <north>РекаЛок</north>
+            <south>ЗамокЛок</south>
+        </location>
+        <location name="Замок" id="ЗамокЛок">
+            <hooks>
+                <hook type="instead" objectElement="" action="осмотреться">
+                    <instructions>
+                        <showMessage type="text"
+                                     message="И вот уже Руслан в бане.&#xA;&#xA;Потупя неги полный взор,&#xA; Прелестные, полунагие,&#xA; В заботе нежной и немой,&#xA;Вокруг уж девы молодые&#xA; Теснятся резвою толпой.&#xA; Над рыцарем иная машет&#xA; Ветвями молодых берез,&#xA; И жар от них душистый пашет;&#xA; Другая соком вешних роз &#xA;Усталы члены прохлаждает&#xA; И в ароматах потопляет&#xA; Темнокудрявые власы.&#xA; Восторгом витязь упоенный&#xA; Уже забыл Людмилы пленной&#xA; Недавно милые красы...&#xA;&#xA;Итог -  в пустыне безмятежной&#xA; Людмилу, славу позабыл&#xA; И им навеки изменил&#xA; В объятиях подруги нежной.&#xA;&#xA;Это ваш выбор. Игра закончена, но цель не достигнута.&#xA;&#xA;Попытайтесь снова.&#xA;&#xA;- Никому не расходиться.&#xA;- Сцена Витязь на Распутье, дубль два, камера, мотор, съемка.&#xA;&#xA;&#xA;"
+                                     carriageReturn="true" beginWithCap="false"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>
+                Она манит, она поет;
+                И юный витязь под стеною;
+                Его встречают у ворот
+                Девицы красные толпою;
+                При шуме ласковых речей
+                Он окружен; с него не сводят
+                Они пленительных очей;
+                Две девицы коня уводят...
+            </description>
+            <words/>
+        </location>
+        <location name="Берег моря" id="БерегМоряЛок">
+            <hooks/>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>
+                Возглавив смелых рыбаков
+                Искать опасностей и злата.
+                (Впервые тихий край отцов
+                Услышал бранный звук булата
+                И шум немирных челноков.)
+                Он вдаль уплыл, надежды полный,
+                С толпой бесстрашных земляков;
+                И десять лет снега и волны
+                Багрили кровию врагов.
+
+                Сбылись давнишние мечты,
+                Сбылися пылкие желанья!
+                Минута сладкого свиданья,
+                И гений чистой красоты!
+
+                К ногам красавицы надменной
+                Сложить бы меч окровавленный,
+                Кораллы, злато и жемчуг;
+                Пред нею, страстью б упоенный,
+                Безмолвным роем окруженный
+                Ее завистливых подруг.
+                Стоял б я пленником послушным;
+                Но дева скрылась от меня,
+                Примолвя с видом равнодушным:
+                «Богач, я не люблю тебя!»
+
+                Нельзя любовь купить за злато
+                Ее лишь можно заслужить
+                И как-бы не был ты богатым
+                Одним богатством не прожить.
+
+                Герой выбрал богатство.
+                Людмила не дождалась своего освободителя, полюбила Черномора и вышла за него замуж.
+
+                Это ваш выбор. Игра закончена, но цель не достигнута. Попытайтесь снова.
+
+                - Никому не расходиться.
+                - Сцена витязь на распутье, дубль два, камера, мотор, съемка.
+            </description>
+            <words/>
+        </location>
+        <location name="Архив" id="АрхивЛок">
+            <hooks/>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>Место временного хранения неиспользованных предметов и прочее. Скрытая локация.</description>
+            <words/>
+        </location>
+        <location name="Ущелье" id="УщельеЛок">
+            <hooks/>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>
+                Дорога идет на север между отвесных скал.
+                На юге живая голова.
+            </description>
+            <words/>
+            <north>ПещераЛок</north>
+            <south>ХолмЛок</south>
+        </location>
+        <location name="Пещера Черномора" id="ПещераЛок">
+            <hooks>
+                <hook type="instead" action="трубить">
+                    <instructions>
+                        <showMessage type="text"
+                                     message="&#xD;&#xA;&#x9;&#x9;Уж витязь под горой стоит,&#xD;&#xA;&#x9;&#x9;Призывный рог, как буря, воет,&#xD;&#xA;&#x9;&#x9;Нетерпеливый конь кипит&#xD;&#xA;&#x9;&#x9;И снег копытом мощным роет.&#xD;&#xA;"
+                                     carriageReturn="true" beginWithCap="false"/>
+                        <if condition="ШлемПред.надет">
+                            <else>
+                                <showMessage type="text"
+                                             message="&#x9;&#x9;Князь карлу ждет. Внезапно он&#xD;&#xA;&#x9;&#x9;По темечку, по молодому&#xD;&#xA;&#x9;&#x9;Рукой незримой поражен;&#xD;&#xA;&#x9;&#x9;Удар упал подобно грому.&#xD;&#xA;&#xD;&#xA;&#x9;&#x9;Наш князь убит. Таков финал&#xD;&#xA;&#x9;&#x9;Сраженный тяжкой булавою&#xD;&#xA;&#x9;&#x9;Он пошатнулся и упал&#xD;&#xA;&#x9;&#x9;С пробитой буйной головою.&#xD;&#xA;"
+                                             carriageReturn="true" beginWithCap="false"/>
+                                <goToLoc location="ПоражениеЛок"/>
+                            </else>
+                            <then>
+                                <showMessage type="text"
+                                             message="&#x9;&#x9;Князь карлу ждет. Внезапно он&#xD;&#xA;&#x9;&#x9;По шлему крепкому стальному&#xD;&#xA;&#x9;&#x9;Рукой незримой поражен;&#xD;&#xA;&#x9;&#x9;Удар упал подобно грому.&#xD;&#xA;&#xD;&#xA;&#x9;&#x9;Руслан подъемлет смутный взор&#xD;&#xA;&#x9;&#x9;И видит — прямо над главою —&#xD;&#xA;&#x9;&#x9;С подъятой, страшной булавою&#xD;&#xA;&#x9;&#x9;Летает карла Черномор.&#xD;&#xA;"
+                                             carriageReturn="true" beginWithCap="false"/>
+                                <if condition="ЩитПред в инвентарий">
+                                    <else>
+                                        <showMessage type="text"
+                                                     message="&#x9;&#x9;&#xD;&#xA;&#x9;&#x9;Второй удар не вынес шлем&#xD;&#xA;&#x9;&#x9;Он треснул под таким ударом&#xD;&#xA;&#x9;&#x9;Наш князь убит. Известно всем,&#xD;&#xA;&#x9;&#x9;Кто без щита, убит недаром.&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;"
+                                                     carriageReturn="true" beginWithCap="false"/>
+                                        <goToLoc location="ПоражениеЛок"/>
+                                    </else>
+                                    <then>
+                                        <showMessage type="text" message="&#x9;&#x9;Щитом покрывшись, он нагнулся.&#xD;&#xA;&#xD;&#xA;"
+                                                     carriageReturn="true" beginWithCap="false"/>
+                                        <if condition="БогатырскийМечПред в инвентарий">
+                                            <else>
+                                                <showMessage type="text"
+                                                             message="&#x9;&#x9;Еще удар, еще удар.&#xD;&#xA;&#x9;&#x9;И щит не выдержал. Коснулся&#xD;&#xA;&#x9;&#x9;Вдруг горла кованый кинжал.&#xD;&#xA;&#xD;&#xA;&#x9;&#x9;Вот был бы меч -  другое дело.&#xD;&#xA;&#x9;&#x9;А так конец всему один.&#xD;&#xA;&#x9;&#x9;Каков бы витязь не был смелым,&#xD;&#xA;&#x9;&#x9;Не он был схватки господин.&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;"
+                                                             carriageReturn="true" beginWithCap="false"/>
+                                                <goToLoc location="ПоражениеЛок"/>
+                                            </else>
+                                            <then>
+                                                <showMessage type="text"
+                                                             message="&#x9;&#x9;Мечом потряс и замахнулся.&#xD;&#xA;&#xD;&#xA;&#x9;&#x9;Руслан не знает договора!&#xD;&#xA;&#x9;&#x9;Сей грозный меч накажет вора.&#xD;&#xA;&#x9;&#x9;&quot;Лети хоть до ночной звезды,&#xD;&#xA;&#x9;&#x9;А быть тебе без бороды!&quot;&#xD;&#xA;&#xD;&#xA;&#x9;&#x9;И вот Руслан одной рукою&#xD;&#xA;&#x9;&#x9;Взял меч сраженной головы&#xD;&#xA;&#x9;&#x9;И, бороду схватив другою,&#xD;&#xA;&#x9;&#x9;Отсек ее, как горсть травы.&#xD;&#xA;&#x9;&#x9;«Знай наших! — молвил он жестоко, —&#xD;&#xA;&#x9;&#x9;Что, хищник, где твоя краса?&#xD;&#xA;&#x9;&#x9;Где сила?» — и на шлем высокий&#xD;&#xA;&#x9;&#x9;Седые вяжет волоса.&#xD;&#xA;&#xD;&#xA;&#x9;&#x9;И вот пустился в путь далекий&#xD;&#xA;&#x9;&#x9;Руслан с Людмилою своей.&#xD;&#xA;&#xD;&#xA;&#x9;&#x9;Дела давно минувших дней,&#xD;&#xA;&#x9;&#x9;Преданья старины глубокой.&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;"
+                                                             carriageReturn="true" beginWithCap="false"/>
+                                                <goToLoc location="ПобедаЛок"/>
+                                            </then>
+                                        </if>
+                                    </then>
+                                </if>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+                <hook type="instead" objectElement="" action="идти на юг">
+                    <instructions>
+                        <showMessage type="text" message="&#xA;Передумал драться с Черномором?&#xA; " carriageReturn="true"
+                                     beginWithCap="false"/>
+                        <goToLoc location="УщельеЛок"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>
+                Руслан у пещеры Черномора. Пещера расположена высоко на горе. Туда прохода нет. Отсюда виден только вход в саму пещеру.
+                Кругом высокие и отвесные склоны гор. Забраться на них невозможно. Проход открыт только назад на юг через ущелье.
+            </description>
+            <words/>
+            <south>УщельеЛок</south>
+        </location>
+        <location name="Победа" id="ПобедаЛок">
+            <hooks/>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>
+                Всё. Съемка закончена. Всем спасибо.
+
+                Поздравляю.
+                Вы прошли игру и победили.
+            </description>
+            <words/>
+        </location>
+        <location name="Поражение" id="ПоражениеЛок">
+            <hooks/>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>
+                К сожалению Вам не удалось одержать победу в бою.
+                Попытайтесь снова.
+
+                - Никому не расходиться.
+                - Сцена Битва с Черномором, дубль два, камера, мотор, съемка.
+            </description>
+            <words/>
+        </location>
+    </locations>
+    <items>
+        <item name="щит" id="ЩитПред">
+            <hooks/>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>
+                Тяжелый и прочный щит.
+            </description>
+            <words mainWord="щит">
+                <word>щит</word>
+            </words>
+            <startingPosition>
+                <locations>
+                    <location>ПолеЛок</location>
+                </locations>
+                <inventory>false</inventory>
+            </startingPosition>
+        </item>
+        <item name="шлем" id="ШлемПред">
+            <hooks>
+                <hook type="instead" objectElement="предмет" action="надеть">
+                    <instructions>
+                        <if condition="не предмет.надет">
+                            <else>
+                                <showMessage type="text" message="А шлем-то уже надет!" carriageReturn="true" beginWithCap="false"/>
+                            </else>
+                            <then>
+                                <if condition="предмет в инвентарий">
+                                    <else>
+                                        <showMessage type="text" message="&#xA;Чтобы надеть шлем его нужно где-то взять.&#xA;"
+                                                     carriageReturn="true" beginWithCap="false"/>
+                                    </else>
+                                    <then>
+                                        <showMessage type="text"
+                                                     message="&#xD;&#xA;- Что значит, не лезет? Где этот, как его, помощник режиссера?&#xD;&#xA;За реквизит отвечаешь? Вот, и отвечай.&#xD;&#xA;Так, срочно ищи большего размера. Где? Да где хочешь.&#xD;&#xA;Так. У кого мыло есть?&#xD;&#xA;Вот. Намыливай и надевай. Влезло?&#xD;&#xA;- Шлем надет.&#xD;&#xA;- Камера. Мотор. Поехали.&#xD;&#xA; "
+                                                     carriageReturn="true" beginWithCap="false"/>
+                                        <setProperty value="да" name="надет" object="предмет"/>
+                                    </then>
+                                </if>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+                <hook type="instead" objectElement="предмет" action="снять">
+                    <instructions>
+                        <if condition="предмет.надет">
+                            <else>
+                                <showMessage type="text" message="&#xA;А шлем не надет. Чё снимать-то?&#xA;" carriageReturn="true"
+                                             beginWithCap="false"/>
+                            </else>
+                            <then>
+                                <showMessage type="text"
+                                             message="&#xA;- Издеваетесь, да? С таким трудом одели, а теперь снимать? Только после съемок. Что? Да. Именно так. Пусть в доспехах и спит.&#xA;"
+                                             carriageReturn="true" beginWithCap="false"/>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+            </hooks>
+            <properties/>
+            <roles>
+                <role name="надеваемый">
+                    <properties>
+                        <property value="нет" name="надет"/>
+                    </properties>
+                </role>
+            </roles>
+            <attributes/>
+            <description>
+                Стальной шлем.
+            </description>
+            <words mainWord="шлем">
+                <word>шлем</word>
+            </words>
+            <startingPosition>
+                <locations>
+                    <location>ПолеЛок</location>
+                </locations>
+                <inventory>false</inventory>
+            </startingPosition>
+        </item>
+        <item name="рог" id="РогПред">
+            <hooks/>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>
+                Охотничий рог.
+            </description>
+            <words mainWord="рог">
+                <word>рог</word>
+            </words>
+            <startingPosition>
+                <locations>
+                    <location>ПолеЛок</location>
+                </locations>
+                <inventory>false</inventory>
+            </startingPosition>
+        </item>
+        <item name="копье" id="КопьеПред">
+            <hooks>
+                <hook type="instead" objectElement="предмет" action="выбросить">
+                    <instructions>
+                        <if condition="ТекущаяЛокация=ХолмЛок">
+                            <else/>
+                            <then>
+                                <if condition="ГоловаРазбужена=да">
+                                    <else>
+                                        <showMessage type="text"
+                                                     message="&#xA;Не станет русский витязь бросать копье в спящего.&#xA;&#xA;Руслан бросил копье, и оно воткнулось в землю.&#xA;"
+                                                     carriageReturn="true" beginWithCap="false"/>
+                                        <moveItem to="ХолмЛок.предметы" item="КопьеПред"/>
+                                    </else>
+                                    <then>
+                                        <showMessage type="text"
+                                                     message="&#xA;Метнул копье рукой свободной,&#xA; И, задрожав, булат холодный&#xA; Вонзился в дерзостный язык.&#xA; И кровь из бешеного зева&#xA; Рекою побежала вмиг.&#xA; От удивленья, боли, гнева,&#xA; В минуту дерзости лишась,&#xA; На князя голова глядела,&#xA; Железо грызла и бледнела&#xA; В спокойном духе горячась.&#xA;&#xA;&#xA;"
+                                                     carriageReturn="true" beginWithCap="false"/>
+                                        <var value="да" name="КопьеГолова"/>
+                                        <moveItem to="ХолмЛок.предметы" item="КопьеПред"/>
+                                    </then>
+                                </if>
+                            </then>
+                        </if>
+                        <if condition="КопьеПред в инвентарий">
+                            <else>
+                                <if condition="КопьеГолова=да">
+                                    <else>
+                                        <showMessage type="text" message="&#xA;У вас нет копья." carriageReturn="true"
+                                                     beginWithCap="false"/>
+                                    </else>
+                                    <then>
+                                        <showMessage type="text"
+                                                     message="&#xD;&#xA;Руслан не расчитал свои силы. Копье воткнулось в язык головы и сломалось.&#xD;&#xA;&#xD;&#xA;- Ну, что ты наделал? Сила есть, ума не надо? Сломал реквизит. Теперь как хочешь, так и выкручивайся.&#xD;&#xA;"
+                                                     carriageReturn="true" beginWithCap="false"/>
+                                    </then>
+                                </if>
+                            </else>
+                            <then>
+                                <showMessage type="text" message="&#xA;Вы бросили копье, и оно воткнулось в землю." carriageReturn="true"
+                                             beginWithCap="false"/>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+                <hook type="instead" objectElement="предмет" action="взять">
+                    <instructions>
+                        <if condition="КопьеГолова=да">
+                            <else>
+                                <showMessage type="text" message="&#xA;Вы взяли копье.&#xA;" carriageReturn="true" beginWithCap="false"/>
+                                <moveItem to="инвентарий" item="КопьеПред"/>
+                            </else>
+                            <then>
+                                <showMessage type="text"
+                                             message="&#xA;Если то, что осталось можно назвать копьем. В таком виде оно уже ни на что не годится. &#xA;&#xA;Руслан не стал брать копье.&#xA;"
+                                             carriageReturn="true" beginWithCap="false"/>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+            </hooks>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>
+                Метательное копье.
+            </description>
+            <words mainWord="копье">
+                <word>копье</word>
+            </words>
+            <startingPosition>
+                <locations>
+                    <location>ПолеЛок</location>
+                </locations>
+                <inventory>false</inventory>
+            </startingPosition>
+        </item>
+        <item name="кольчуга" id="КольчугаПред">
+            <hooks>
+                <hook type="instead" objectElement="предмет" action="надеть">
+                    <instructions>
+                        <if condition="не предмет.надет">
+                            <else>
+                                <showMessage type="text" message="&#xA;Кольчуга уже надета.&#xA;" carriageReturn="true"
+                                             beginWithCap="false"/>
+                            </else>
+                            <then>
+                                <if condition="предмет в инвентарий">
+                                    <else>
+                                        <showMessage type="text" message="&#xA;Чтобы надеть кольчугу ее нужно где-то взять.&#xA;"
+                                                     carriageReturn="true" beginWithCap="false"/>
+                                    </else>
+                                    <then>
+                                        <showMessage type="text"
+                                                     message="&#xA;- Что значит, не лезет? Где этот, как его, помощник режиссера?&#xA;За реквизит отвечаешь? Вот, и отвечай.&#xA;Так, срочно ищи большего размера. Где? Да где хочешь.&#xA;Так. У кого мыло есть?&#xA;Вот. Намыливай и надевай. Влезло?&#xA;- Кольчуга надета.&#xA;- Камера. Мотор. Поехали.&#xA; "
+                                                     carriageReturn="true" beginWithCap="false"/>
+                                        <setProperty value="да" name="надет" object="предмет"/>
+                                    </then>
+                                </if>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+                <hook type="instead" objectElement="предмет" action="снять">
+                    <instructions>
+                        <if condition="предмет.надет">
+                            <else>
+                                <showMessage type="text" message="&#xA;Кольчуга не надета. Чё снимать-то?&#xA;" carriageReturn="true"
+                                             beginWithCap="false"/>
+                            </else>
+                            <then>
+                                <showMessage type="text"
+                                             message="&#xA;- Издеваетесь, да? С таким трудом одели, а теперь снимать? Только после съемок. Что? Да. Именно так. Пусть в доспехах и спит.&#xA;"
+                                             carriageReturn="true" beginWithCap="false"/>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+            </hooks>
+            <properties/>
+            <roles>
+                <role name="надеваемый">
+                    <properties>
+                        <property value="нет" name="надет"/>
+                    </properties>
+                </role>
+            </roles>
+            <attributes/>
+            <description>
+                Прочная кольчуга.
+            </description>
+            <words mainWord="кольчуга">
+                <word>кольчуга</word>
+            </words>
+            <startingPosition>
+                <locations>
+                    <location>ПолеЛок</location>
+                </locations>
+                <inventory>false</inventory>
+            </startingPosition>
+        </item>
+        <item name="меч" id="МечПред">
+            <hooks>
+                <hook type="instead" objectElement="предмет" action="взять">
+                    <instructions>
+                        <showMessage type="text"
+                                     message="&#xD;&#xA;&#x9;&#x9;Долину брани объезжая,&#xD;&#xA;&#x9;&#x9;Он видит множество мечей,&#xD;&#xA;&#x9;&#x9;Но все легки, да слишком малы,&#xD;&#xA;&#x9;&#x9;А князь красавец был не вялый,&#xD;&#xA;&#x9;&#x9;Не то, что витязь наших дней."
+                                     carriageReturn="true" beginWithCap="false"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description/>
+            <words mainWord="меч">
+                <word>меч</word>
+                <word>легкий</word>
+            </words>
+            <startingPosition>
+                <locations>
+                    <location>ПолеЛок</location>
+                </locations>
+                <inventory>false</inventory>
+            </startingPosition>
+        </item>
+        <item name="придорожный камень" id="КаменьПред">
+            <hooks>
+                <hook type="instead" objectElement="предмет" action="взять">
+                    <instructions>
+                        <showMessage type="text"
+                                     message="&#xA;- Эй, ухнем. Эй, ухнем. Еще разик, да еще раз.&#xA;- Что слабо? Так и не занимайся ерундой.&#xA;"
+                                     carriageReturn="true" beginWithCap="false"/>
+                    </instructions>
+                </hook>
+                <hook type="instead" objectElement="предмет" action="осмотреть">
+                    <instructions>
+                        <if condition="надпись=нет">
+                            <else>
+                                <if condition="кот = нет">
+                                    <else>
+                                        <showMessage type="text"
+                                                     message="На камне написано:&#xA;&#xA;Как пряму ехати— живу не бывати — нет пути ни прохожему, ни проезжему, ни пролетному;&#xA;направу ехати — женату быти; налеву ехати — богату быти.&#xA;"
+                                                     carriageReturn="true" beginWithCap="false"/>
+                                    </else>
+                                    <then>
+                                        <showMessage type="text"
+                                                     message="&#xA;На камне написано:&#xA;&#xA;Как пряму ехати— живу не бывати — нет пути ни прохожему, ни проезжему, ни пролетному;&#xA;&#xA;И вдруг сзади раздается голос Табакова,&#xA;&#xA;- Идет направо — песнь заводит, налево — сказку говорит.&#xA;&#xA;- Барсик, или как там тебя, Матроскин, не подсказывай. И вообще, что ты тут делаешь?&#xA;Брысь. Твоё место на дубе том. На том, а не на этом. Ну-ка, живо, дуй во Вступление.&#xA;Здесь не твоя сцена.&#xA;&#xA;- Что ты там промяукал? За ночную смену не заплатили?&#xA;- Помощник, идите купите ему банку Вискас. Нет, лучше две. Если не за нарушение КЗОТа, так за жестокое обращение с животными по судам затаскает.&#xA;&#xA;Кот ушел травить свои байки (и эту тоже), а Руслан спокойно дочитал надпись на камне &#xA;&#xA;- направу ехати — женату быти; налеву ехати — богату быти.&#xA;&#xA;-Так. Продолжаем съемку. Что у нас по сценарию? Руслан выбирает по какой дороге поедет дальше. Руслан? Что стоишь? Выбирай дорогу.&#xA;&#xA;- Сцена третья. Дубль два. Мотор. Съемка.&#xA;"
+                                                     carriageReturn="true" beginWithCap="false"/>
+                                        <var value="да" name="кот"/>
+                                    </then>
+                                </if>
+                            </else>
+                            <then>
+                                <showMessage type="text"
+                                             message="На камне написано:&#xA;&#xA;Как пряму ехати - живу не бывати - нет пути ни прохожему, ни проезжему, ни пролетному;&#xA;&#xA;Часть надписи скрыта наросшем на камне лишайником."
+                                             carriageReturn="true" beginWithCap="false"/>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+            </hooks>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description/>
+            <words mainWord="камень">
+                <word>камень</word>
+            </words>
+            <startingPosition>
+                <locations>
+                    <location>РаспутьеЛок</location>
+                </locations>
+                <inventory>false</inventory>
+            </startingPosition>
+        </item>
+        <item name="живая голова" id="ГоловаПред">
+            <hooks>
+                <hook type="instead" objectElement="предмет" action="будить">
+                    <instructions>
+                        <if condition="ГоловаРазбужена=нет">
+                            <else/>
+                            <then>
+                                <showMessage type="text"
+                                             message="&#xA;В недоуменье хочет он&#xA; Таинственный разрушить сон.&#xA; Вблизи осматривая диво,&#xA; Объехал голову кругом&#xA; И стал пред носом молчаливо;&#xA; Щекотит ноздри копием,&#xA; И, сморщась, голова зевнула,&#xA; Глаза открыла и чихнула...&#xA; Поднялся вихорь, степь дрогнула,&#xA; Взвилася пыль; с ресниц, с усов,&#xA; С бровей слетела стая сов;&#xA; Проснулись рощи молчаливы,&#xA; Чихнуло эхо — конь ретивый&#xA; Заржал, запрыгал, отлетел,&#xA; Едва сам витязь усидел,&#xA; И вслед раздался голос шумный:&#xA; «Куда ты, витязь неразумный?&#xA; Ступай назад, я не шучу!&#xA; Как раз нахала проглочу!» &#xA;&#xA;Руслан с презреньем оглянулся,&#xA; Браздами удержал коня&#xA; И с гордым видом усмехнулся.&#xA; «Чего ты хочешь от меня? —&#xA; Нахмурясь, голова вскричала. —&#xA; Вот гостя мне судьба послала!&#xA; Послушай, убирайся прочь!&#xA; Я спать хочу, теперь уж ночь,&#xA; Прощай!» Но витязь знаменитый,&#xA; Услыша грубые слова,&#xA; Воскликнул с важностью сердитой:&#xA; «Молчи, пустая голова!&#xA; Слыхал я истину, бывало:&#xA; Хоть лоб широк, да мозгу мало!&#xA; Я еду, еду, не свищу,&#xA; А как наеду, не спущу!»&#xA; &#xA;Тогда, от ярости немея,&#xA; Стесненной злобой пламенея,&#xA; Надулась голова; как жар,&#xA; Кровавы очи засверкали;&#xA; Напенясь, губы задрожали,&#xA; Из уст, ушей поднялся пар —&#xA; И вдруг она, что было мочи,&#xA; Навстречу князю стала дуть;&#xA; Напрасно конь, зажмуря очи,&#xA; Склонив главу, натужа грудь,&#xA; Сквозь вихорь, дождь и сумрак ночи&#xA; Неверный продолжает путь;&#xA; Объятый страхом, ослепленный,&#xA; Он мчится вновь, изнеможенный,&#xA; Далече в поле отдохнуть.&#xA; Вновь обратиться витязь хочет —&#xA; Вновь отражен, надежды нет!&#xA; А голова ему вослед,&#xA; Как сумасшедшая, хохочет,&#xA; Гремит: «Ай, витязь! ай, герой!&#xA; Куда ты? тише, тише, стой!&#xA; Эй, витязь, шею сломишь даром;&#xA; Не трусь, наездник, и меня &#xA;Порадуй хоть одним ударом,&#xA; Пока не заморил коня».&#xA;"
+                                             carriageReturn="true" beginWithCap="false"/>
+                                <moveItem to="ХолмЛок.предметы" item="ГоворящаяГоловаПред"/>
+                                <moveItem to="АрхивЛок.предметы" item="ГоловаПред"/>
+                                <var value="да" name="ГоловаРазбужена"/>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+                <hook type="instead" objectElement="предмет" action="бить">
+                    <instructions>
+                        <showMessage type="text" message="&#xA;Ударить спящего? Это противоречит моральным принципам витязей.&#xA;"
+                                     carriageReturn="true" beginWithCap="false"/>
+                    </instructions>
+                </hook>
+                <hook type="instead" objectElement="предмет" action="взять">
+                    <instructions>
+                        <showMessage type="text"
+                                     message="&#xA;- И как ты себе это предсталяешь? Это же комбинированные съемки. Говоря современным языком, компьютерная графика. Типа того.&#xA;"
+                                     carriageReturn="true" beginWithCap="false"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>
+                Огромны очи сном объяты;
+                Храпит, качая шлем пернатый,
+                И перья в темной высоте,
+                Как тени, ходят, развеваясь.
+                В своей ужасной красоте
+                Над мрачной степью возвышаясь,
+                Безмолвием окружена,
+                Пустыни сторож безымянной,
+                Руслану предстоит она
+                Громадой грозной и туманной.
+            </description>
+            <words mainWord="голова">
+                <word>голова</word>
+                <word>живая</word>
+            </words>
+            <startingPosition>
+                <locations>
+                    <location>ХолмЛок</location>
+                </locations>
+                <inventory>false</inventory>
+            </startingPosition>
+        </item>
+        <item name="богатырский меч" id="БогатырскийМечПред">
+            <hooks/>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>
+                Тяжелый, длинный и прочный меч из булатной стали. Возможно, волшебный. Меч-кладенец.
+            </description>
+            <words mainWord="меч">
+                <word>меч</word>
+                <word>богатырский</word>
+            </words>
+            <startingPosition>
+                <locations>
+                    <location>АрхивЛок</location>
+                </locations>
+                <inventory>false</inventory>
+            </startingPosition>
+        </item>
+        <item name="говорящая голова" id="ГоворящаяГоловаПред">
+            <hooks>
+                <hook type="instead" objectElement="предмет" action="бить">
+                    <instructions>
+                        <if condition="КопьеГолова=да">
+                            <else>
+                                <showMessage type="text"
+                                             message="&#xA;Руслан предпринимает попытку ударить голову. И вот:&#xA;&#xA;Вновь обратиться витязь хочет —&#xA;Вновь отражен, надежды нет!&#xA;А голова ему вослед,&#xA;Как сумасшедшая, хохочет,&#xA;Гремит: «Ай, витязь! ай, герой!&#xA;Куда ты? тише, тише, стой!&#xA;Эй, витязь, шею сломишь даром;&#xA;Не трусь, наездник, и меня&#xA;Порадуй хоть одним ударом,&#xA;Пока не заморил коня».&#xA;&#xA;"
+                                             carriageReturn="true" beginWithCap="false"/>
+                            </else>
+                            <then>
+                                <showMessage type="text"
+                                             message="&#xA;Счастливым пользуясь мгновеньем,&#xA; К объятой голове смущеньем,&#xA; Как ястреб, богатырь летит&#xA; С подъятой, грозною десницей&#xA; И в щеку тяжкой рукавицей&#xA; С размаха голову разит;&#xA; И степь ударом огласилась;&#xA; Кругом росистая трава&#xA; Кровавой пеной обагрилась,&#xA; И, зашатавшись, голова&#xA; Перевернулась, покатилась.&#xA;&#xA;Проход в ущелье открыт.&#xA;"
+                                             carriageReturn="true" beginWithCap="false"/>
+                                <moveItem to="ХолмЛок.предметы" item="БогатырскийМечПред"/>
+                                <var value="да" name="Проход"/>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+                <hook type="instead" objectElement="предмет" action="будить">
+                    <instructions>
+                        <showMessage type="text" message="Голова не спит, уже разбужена." carriageReturn="true" beginWithCap="false"/>
+                    </instructions>
+                </hook>
+                <hook type="instead" objectElement="предмет" action="взять">
+                    <instructions>
+                        <showMessage type="text"
+                                     message="&#xA;- И как ты себе это предсталяешь? Это же комбинированные съемки. Говоря современным языком, компьютерная графика. Типа того.&#xA;"
+                                     carriageReturn="true" beginWithCap="false"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>
+                Она глядит недвижным оком;
+                Власы ее как черный лес,
+                Поросший на челе высоком;
+                Ланиты жизни лишены,
+                Свинцовой бледностью покрыты;
+                Уста огромные открыты,
+                Огромны зубы стеснены …
+
+                Надулись ноздри; на щеках
+                Багровый огнь еще родился,
+                И в умирающих глазах
+                Последний гнев изобразился.
+
+            </description>
+            <words mainWord="голова">
+                <word>голова</word>
+                <word>говорящая</word>
+            </words>
+            <startingPosition>
+                <locations>
+                    <location>АрхивЛок</location>
+                </locations>
+                <inventory>false</inventory>
+            </startingPosition>
+        </item>
+        <item name="поваленное дерево" id="ДеревоПред">
+            <hooks>
+                <hook type="instead" objectElement="предмет" action="зажечь [что]">
+                    <instructions>
+                        <showMessage type="text"
+                                     message="&#xA;- Зачем тебе спички? Здесь не курят. Будет перекур, иди кури.&#xA;Дерево зажечь? Зачем? Ты, вообще роль учил? Вижу, как учил.&#xA;"
+                                     carriageReturn="true" beginWithCap="false"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>
+                Поваленное ветром дерево.
+            </description>
+            <words mainWord="дерево">
+                <word>дерево</word>
+                <word>поваленное</word>
+            </words>
+            <startingPosition>
+                <locations>
+                    <location>ЛесЛок</location>
+                </locations>
+                <inventory>false</inventory>
+            </startingPosition>
+        </item>
+        <item name="кости" id="КостиПред">
+            <hooks>
+                <hook type="instead" objectElement="предмет" action="взять">
+                    <instructions>
+                        <showMessage type="text"
+                                     message="&#xA;- Что там по поводу использования костей говорит священное писание?&#xA;&quot;И сказал Самсон: челюстью ослиною толпу, две толпы, челюстью ослиною убил я тысячу человек.&quot;&#xA;- Что ж, неплохое оружие для богатыря. :)&#xA;- Ты кто? Самсон? Ну, надо, так бери.&#xA;"
+                                     carriageReturn="true" beginWithCap="false"/>
+                        <moveItem to="инвентарий" item="КостиПред"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>
+                Человеческие и лошадиные кости.
+            </description>
+            <words mainWord="кости">
+                <word>кости</word>
+                <word>кость</word>
+            </words>
+            <startingPosition>
+                <locations>
+                    <location>ПолеЛок</location>
+                </locations>
+                <inventory>false</inventory>
+            </startingPosition>
+        </item>
+        <item name="череп" id="ЧерепПред">
+            <hooks>
+                <hook type="instead" objectElement="предмет" action="взять">
+                    <instructions>
+                        <showMessage type="text"
+                                     message="&#xD;&#xA;- Увы, бедный Йорик! — Я знал его, Горацио. Это был человек бесконечного остроумия, неистощимый на выдумки. Он тысячу раз таскал меня на спине. А теперь это само отвращение и тошнотой подступает к горлу. Здесь должны были двигаться губы, которые я целовал не знаю сколько раз. Где теперь твои каламбуры, твои смешные выходки, твои куплеты? Где взрывы твоего заразительного веселья, когда со смеху покатывался весь стол? Ничего в запасе, чтоб позубоскалить над собственной беззубостью?&#xD;&#xA;&#xD;&#xA;- Кеша! А ты что здесь делаешь? Положи череп на место. Это не твой череп, и это не Йорик. И, вообще, это не твоё кино. Твоё в соседнем павильоне. Иди туда, не мешай. Не студия, а проходной двор, невозможно работать. Всё поехали.&#xD;&#xA;- Сцена шестая, дубль второй. Мотор!&#xD;&#xA;&#xD;&#xA;Руслан взял череп.&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;"
+                                     carriageReturn="true" beginWithCap="false"/>
+                        <moveItem to="инвентарий" item="ЧерепПред"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>
+                Обыкновенный человеческий череп.
+            </description>
+            <words mainWord="череп">
+                <word>череп</word>
+            </words>
+            <startingPosition>
+                <locations>
+                    <location>ПолеЛок</location>
+                </locations>
+                <inventory>false</inventory>
+            </startingPosition>
+        </item>
+        <item name="скелет" id="СкелетПред">
+            <hooks>
+                <hook type="instead" objectElement="предмет" action="взять">
+                    <instructions>
+                        <showMessage type="text"
+                                     message="&#xA;- Куда ты скелет потащил? Для того, чтобы поставить его в шкафу? Или Черномора решил напугать? Что? Сынишка в школу просил? Для музея? Динозавра?&#xA;- Это не динозавр. Хотя, похоже.&#xA;- Ну и реквизит у нас в студии. Лишь бы что подсунуть. Написано же в сценарии, скелет человека на скелете коня.&#xA;- Где реквизитор? В чем дело? Почему, я тебя спрашиваю?&#xA;- Что значит, дешевле? Осталось после Парка юрского периода невостребованным? Не вписываемся в смету?&#xA;&#xA;- Сцена еще не снята. Хорошо. Можешь после съемок забрать. С возвратом.&#xA;&#xA;- Сцена шесть. Дубль два. Камера. Мотор. Съемка.&#xA;"
+                                     carriageReturn="true" beginWithCap="false"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>
+                Скелет человека на скелете коня.
+            </description>
+            <words mainWord="скелет">
+                <word>скелет</word>
+            </words>
+            <startingPosition>
+                <locations>
+                    <location>ПолеЛок</location>
+                </locations>
+                <inventory>false</inventory>
+            </startingPosition>
+        </item>
+        <item name="колчан" id="КолчанПред">
+            <hooks>
+                <hook type="instead" objectElement="предмет" action="взять">
+                    <instructions>
+                        <if condition="не ЛукПред в инвентарий">
+                            <else>
+                                <showMessage type="text" message="&#xA;Руслан взял колчан.&#xA;" carriageReturn="true"
+                                             beginWithCap="false"/>
+                                <moveItem to="инвентарий" item="КолчанПред"/>
+                            </else>
+                            <then>
+                                <showMessage type="text"
+                                             message="&#xD;&#xA;- Зачем тебе колчан, говоришь? Стрелы куда будешь складывать? А где у нас лук? Почему нет лука в кадре? Найдите лук. Не найдёте, тогда придумайте что-нибудь. Наконец, пусть Руслан сделает сам.&#xD;&#xA;"
+                                             carriageReturn="true" beginWithCap="false"/>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+            </hooks>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>
+                Колчан для стрел.
+            </description>
+            <words mainWord="колчан">
+                <word>колчан</word>
+            </words>
+            <startingPosition>
+                <locations>
+                    <location>ПолеЛок</location>
+                </locations>
+                <inventory>false</inventory>
+            </startingPosition>
+        </item>
+        <item name="стрела" id="СтрелаПред">
+            <hooks>
+                <hook type="instead" objectElement="предмет" action="взять">
+                    <instructions>
+                        <if condition="Не ЛукПред в инвентарий">
+                            <else>
+                                <showMessage type="text" message="&#xA;Руслан взял стрелу.&#xA;" carriageReturn="true"
+                                             beginWithCap="false"/>
+                                <moveItem to="инвентарий" item="СтрелаПред"/>
+                            </else>
+                            <then>
+                                <showMessage type="text"
+                                             message="&#xD;&#xA;- Зачем тебе стрела, спрашиваешь? Из лука стрелять, дорогой? А где у нас лук? Почему нет лука в кадре? Найдите лук. Не найдёте, тогда придумайте что-нибудь. Наконец, пусть Руслан сделает сам.&#xD;&#xA;"
+                                             carriageReturn="true" beginWithCap="false"/>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+            </hooks>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>
+                Обыкновенная стрела для стрельбы из лука.
+            </description>
+            <words mainWord="стрела">
+                <word>стрела</word>
+                <word>стрелы</word>
+            </words>
+            <startingPosition>
+                <locations>
+                    <location>ПолеЛок</location>
+                </locations>
+                <inventory>false</inventory>
+            </startingPosition>
+        </item>
+        <item name="лук" id="ЛукПред">
+            <hooks/>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>
+                Крепкий дубовый лук.
+            </description>
+            <words mainWord="лук">
+                <word>лук</word>
+            </words>
+            <startingPosition>
+                <locations>
+                    <location>АрхивЛок</location>
+                </locations>
+                <inventory>false</inventory>
+            </startingPosition>
+        </item>
+        <item name="пещера" id="ПещераПред">
+            <hooks/>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>
+                Пещера очень высоко, не разглядеть ничего без бинокля. Но во времена Киевской Руси такого чуда не было.
+            </description>
+            <words mainWord="пещера">
+                <word>пещера</word>
+            </words>
+            <startingPosition>
+                <locations>
+                    <location>ПещераЛок</location>
+                </locations>
+                <inventory>false</inventory>
+            </startingPosition>
+        </item>
+    </items>
+    <actions>
+        <action name="будить" description="Будить предмет">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>будить</synonym>
+                        <synonym>разбудить</synonym>
+                    </literalElement>
+                    <objectElement case="vp" parameter="предмет"/>
+                </template>
+                <template>
+                    <literalElement>
+                        <synonym>щекотать голову</synonym>
+                        <synonym>пощекотать голову</synonym>
+                        <synonym>пощекотать копьем</synonym>
+                        <synonym>пощекотать голову копьем</synonym>
+                        <synonym>пощекотать копьем голову</synonym>
+                        <synonym>щекотать голову копьем</synonym>
+                        <synonym>щекотать копьем голову</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="БудитьПредмет"/>
+            <restrictions/>
+        </action>
+        <action name="бить" description="Бить предмет">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>бить</synonym>
+                        <synonym>ударить</synonym>
+                    </literalElement>
+                    <objectElement case="vp" parameter="предмет"/>
+                </template>
+            </templates>
+            <procedureCall procedure="БитьПредмет"/>
+            <restrictions/>
+        </action>
+        <action name="трубить" description="Трубить">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>трубить в рог</synonym>
+                        <synonym>дуть в дудку</synonym>
+                        <synonym>дуть в рог</synonym>
+                        <synonym>подуть в рог</synonym>
+                        <synonym>дудеть в рог</synonym>
+                        <synonym>дудеть в дудку</synonym>
+                        <synonym>дунуть в рог</synonym>
+                        <synonym>подудеть в рог</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="Трубить"/>
+            <restrictions>
+                <restriction condition="не РогПред в инвентарий">
+                    <reaction>
+                        <showMessage type="text" message="&#xA;У Вас нет рога, чтобы трубить." carriageReturn="true" beginWithCap="false"/>
+                    </reaction>
+                </restriction>
+            </restrictions>
+        </action>
+        <action name="взять всё" description="взять все предметы в локации">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>взять всё</synonym>
+                        <synonym>взять все</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="взять всё"/>
+            <restrictions/>
+        </action>
+        <action name="очистить надпись" description="">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>очистить</synonym>
+                        <synonym>почистить</synonym>
+                        <synonym>зачистить</synonym>
+                        <synonym>счистить</synonym>
+                        <synonym>чистить</synonym>
+                        <synonym>отчистить</synonym>
+                    </literalElement>
+                    <literalElement>
+                        <synonym>камень</synonym>
+                        <synonym>надпись</synonym>
+                    </literalElement>
+                </template>
+                <template>
+                    <literalElement>
+                        <synonym>убрать лишайник</synonym>
+                        <synonym>удалить лишайник</synonym>
+                        <synonym>содрать лишайник</synonym>
+                        <synonym>снять лишайник</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="очистить надпись"/>
+            <restrictions/>
+        </action>
+        <action name="очистить лишайник" description="">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>очистить</synonym>
+                        <synonym>почистить</synonym>
+                        <synonym>зачистить</synonym>
+                        <synonym>счистить</synonym>
+                    </literalElement>
+                    <literalElement>
+                        <synonym>лишайник</synonym>
+                        <synonym>гриб</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="очистить лишайник"/>
+            <restrictions/>
+        </action>
+        <action name="СделатьЛук" description="тщетная попытка сделать лук">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>сделать лук</synonym>
+                        <synonym>сделать лук из дерева</synonym>
+                        <synonym>сделать лук из ветки</synonym>
+                        <synonym>сделать лук из ветви</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="СделатьЛук"/>
+            <restrictions/>
+        </action>
+        <action name="СтрелятьИзЛука" description="тщетная попытка выстрелить из лука">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>стрелять из лука</synonym>
+                        <synonym>выстрелить из лука</synonym>
+                        <synonym>натянуть лук</synonym>
+                        <synonym>стрелять</synonym>
+                        <synonym>выстрелить</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="СтрелятьИзЛука"/>
+            <restrictions/>
+        </action>
+        <action name="искать лук" description="тщетные поиски реквизита">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>искать лук</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="искать лук"/>
+            <restrictions/>
+        </action>
+        <action name="осмотреть дорогу" description="осмотреть дорогу">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>осмотреть дорогу</synonym>
+                        <synonym>осм дорогу</synonym>
+                        <synonym>осмотреть дороги</synonym>
+                        <synonym>осм дороги</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="осмотреть дорогу"/>
+            <restrictions/>
+        </action>
+        <action name="осмотреть лишайник" description="осмотреть лишайник">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>осмотреть лишайник</synonym>
+                        <synonym>осм лишайник</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="осмотреть лишайник"/>
+            <restrictions/>
+        </action>
+        <action name="чистить" description="очистить предмет">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>*чистить</synonym>
+                        <synonym>*очистить</synonym>
+                        <synonym>*почистить</synonym>
+                    </literalElement>
+                    <objectElement case="vp" parameter="предмет"/>
+                </template>
+            </templates>
+            <procedureCall procedure="чистить"/>
+            <restrictions/>
+        </action>
+        <action name="метнуть копье" description="метнуть копье">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>метнуть копье</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="метнуть копье"/>
+            <restrictions/>
+        </action>
+        <action name="что делать" description="что делать?">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>что делать?</synonym>
+                        <synonym>что делать</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="что делать"/>
+            <restrictions/>
+        </action>
+        <action name="ждать" description="ждать">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>ждать</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="ждать"/>
+            <restrictions/>
+        </action>
+        <action name="читать" description="читать надпись, камень">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>читать надпись</synonym>
+                        <synonym>читать камень</synonym>
+                        <synonym>осмотреть надпись</synonym>
+                        <synonym>осм надпись</synonym>
+                        <synonym>открыть надпись</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="читать"/>
+            <restrictions/>
+        </action>
+        <action name="звать" description="звать Черномора">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>звать Черномора</synonym>
+                        <synonym>кликать Черномора</synonym>
+                        <synonym>позвать Черномора</synonym>
+                    </literalElement>
+                </template>
+                <template>
+                    <literalElement>
+                        <synonym>звать</synonym>
+                        <synonym>кликать</synonym>
+                        <synonym>позвать</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="звать"/>
+            <restrictions/>
+        </action>
+        <action name="двинуть" description="двинуть камень">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>двинуть камень</synonym>
+                        <synonym>подвинуть камень</synonym>
+                        <synonym>сдвинуть камень</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="двинуть"/>
+            <restrictions/>
+        </action>
+        <action name="передвижения" description="по сторонам света">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>идти налево</synonym>
+                        <synonym>идти направо</synonym>
+                        <synonym>идти прямо</synonym>
+                        <synonym>идти наверх</synonym>
+                        <synonym>идти вниз</synonym>
+                    </literalElement>
+                </template>
+                <template>
+                    <literalElement>
+                        <synonym>ехать вперед</synonym>
+                        <synonym>ехать назад</synonym>
+                        <synonym>ехать налево</synonym>
+                        <synonym>ехать направо</synonym>
+                    </literalElement>
+                </template>
+                <template>
+                    <literalElement>
+                        <synonym>налево</synonym>
+                        <synonym>направо</synonym>
+                        <synonym>вперед</synonym>
+                        <synonym>назад</synonym>
+                        <synonym>идти</synonym>
+                        <synonym>ехать</synonym>
+                        <synonym>обойти</synonym>
+                        <synonym>прямо</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="направо налево"/>
+            <restrictions/>
+        </action>
+        <action name="говорить" description="общаться с головой">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>говорить с головой</synonym>
+                        <synonym>поговорить с головой</synonym>
+                        <synonym>спросить голову</synonym>
+                        <synonym>разговаривать с головой</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="говорить"/>
+            <restrictions/>
+        </action>
+        <action name="идти к реке" description="идти к реке">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>идти к реке</synonym>
+                        <synonym>подойти к реке</synonym>
+                        <synonym>подъехать к реке</synonym>
+                        <synonym>ехать к реке</synonym>
+                        <synonym>спуститься к реке</synonym>
+                        <synonym>осм реку</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="идти к реке"/>
+            <restrictions/>
+        </action>
+        <action name="ударить копьем" description="ударить копьем голову">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>ударить копьем</synonym>
+                        <synonym>ударить копьем голову</synonym>
+                        <synonym>ударить голову копьем</synonym>
+                        <synonym>проткнуть голову</synonym>
+                        <synonym>проткнуть голову копьем</synonym>
+                        <synonym>проткнуть копьем голову</synonym>
+                        <synonym>пронзить голову</synonym>
+                        <synonym>пронзить голову копьем</synonym>
+                        <synonym>пронзить копьем голову</synonym>
+                        <synonym>потыкать копьем</synonym>
+                        <synonym>потыкать голову копьем</synonym>
+                        <synonym>потыкать копьем голову</synonym>
+                        <synonym>убить голову</synonym>
+                        <synonym>убить голову копьем</synonym>
+                        <synonym>ткнуть копьем</synonym>
+                        <synonym>ткнуть копьем голову</synonym>
+                        <synonym>ткнуть голову копьем</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="ударить копьем"/>
+            <restrictions/>
+        </action>
+        <action name="ломать сук" description="отломать ветку от дерева">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>ломать ветку</synonym>
+                        <synonym>ломать ветку от дерева</synonym>
+                        <synonym>ломать от дерева ветку</synonym>
+                        <synonym>отломать ветку</synonym>
+                        <synonym>отломать ветку от дерева</synonym>
+                        <synonym>отломать от дерева ветку</synonym>
+                        <synonym>ломать сук</synonym>
+                        <synonym>отломать сук от дерева</synonym>
+                        <synonym>отломать от дерева сук</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="сломать ветку"/>
+            <restrictions/>
+        </action>
+        <action name="посмотреть под дерево" description="заглянуть под дерево">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>заглянуть под дерево</synonym>
+                        <synonym>смотреть под дерево</synonym>
+                        <synonym>посмотреть под дерево</synonym>
+                        <synonym>посмотреть под деревом</synonym>
+                        <synonym>смотреть под деревом</synonym>
+                        <synonym>идти к дереву</synonym>
+                        <synonym>подойти к дереву</synonym>
+                        <synonym>лезть под дерево</synonym>
+                        <synonym>залезть под дерево</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="заглянуть под дерево"/>
+            <restrictions/>
+        </action>
+        <action name="взять лишайник" description="взять лишайник">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>взять лишайник</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="взять лишайник"/>
+            <restrictions/>
+        </action>
+        <action name="рубить" description="рубить дерево">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>рубить дерево</synonym>
+                        <synonym>срубить дерево</synonym>
+                        <synonym>рубить ветку</synonym>
+                        <synonym>срубить ветку</synonym>
+                        <synonym>рубить сук</synonym>
+                        <synonym>срубить сук</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="рубить"/>
+            <restrictions/>
+        </action>
+        <action name="осмотреть развилку" description="перекресток">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>осмотреть развилку</synonym>
+                        <synonym>осм развилку</synonym>
+                        <synonym>осмотреть развилку дорог</synonym>
+                        <synonym>осм развилку дорог</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="осмотреть развилку"/>
+            <restrictions/>
+        </action>
+        <action name="смотреть" description="смотреть">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>смотреть</synonym>
+                        <synonym>осмотреть</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="смотреть"/>
+            <restrictions/>
+        </action>
+        <action name="осмотреть себя" description="осмотреть себя">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>осмотреть себя</synonym>
+                        <synonym>осм себя</synonym>
+                    </literalElement>
+                </template>
+                <template>
+                    <literalElement>
+                        <synonym>осммотреть меня</synonym>
+                        <synonym>осм меня</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="осмотреть себя"/>
+            <restrictions/>
+        </action>
+        <action name="осмотреть Руслана" description="осмотреть Руслана">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>осмотреть Руслана</synonym>
+                    </literalElement>
+                </template>
+                <template>
+                    <literalElement>
+                        <synonym>осм Руслана</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="осмотреть Руслана"/>
+            <restrictions/>
+        </action>
+        <action name="использовать" description="использовать">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>использовать</synonym>
+                    </literalElement>
+                </template>
+                <template>
+                    <literalElement>
+                        <synonym>использовать</synonym>
+                    </literalElement>
+                    <objectElement case="vp"/>
+                </template>
+            </templates>
+            <procedureCall procedure="использовать"/>
+            <restrictions/>
+        </action>
+        <action name="положить" description="положить">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>положить</synonym>
+                    </literalElement>
+                    <objectElement case="vp"/>
+                </template>
+                <template>
+                    <literalElement>
+                        <synonym>положить</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="ПоложитьБросить"/>
+            <restrictions/>
+        </action>
+    </actions>
+</story>

@@ -5,20 +5,16 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/unittests" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/IFML2LibLoadUtility/.idea" type="java-resource" />
-      <excludeFolder url="file://$MODULE_DIR$/IFML2LibLoadUtility/.idea" />
-      <excludeFolder url="file://$MODULE_DIR$/IFML2LibLoadUtility/libs" />
-      <excludeFolder url="file://$MODULE_DIR$/IFML2LibLoadUtility/out" />
+      <sourceFolder url="file://$MODULE_DIR$/src/ifml2/editor/gui/images" type="java-resource" />
       <excludeFolder url="file://$MODULE_DIR$/JSmooth" />
       <excludeFolder url="file://$MODULE_DIR$/launch4j" />
-      <excludeFolder url="file://$MODULE_DIR$/lib" />
     </content>
-    <orderEntry type="jdk" jdkName="1.6" jdkType="JavaSDK" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="GlazedLists" level="project" />
     <orderEntry type="library" name="annotations" level="application" />
     <orderEntry type="library" name="junit" level="application" />
     <orderEntry type="library" exported="" name="log4j-1.2.17" level="project" />
+    <orderEntry type="library" name="forms_rt" level="project" />
   </component>
 </module>
-

@@ -4,7 +4,7 @@ import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ifml2.GUIUtils;
 import ifml2.editor.IFML2EditorException;
 import ifml2.editor.gui.EditorUtils;
-import ifml2.editor.gui.InstructionsEditor;
+import ifml2.editor.gui.editors.InstructionsEditor;
 import ifml2.om.InstructionList;
 import ifml2.om.Story;
 import ifml2.vm.instructions.IfInstruction;
@@ -19,7 +19,7 @@ import java.awt.event.MouseEvent;
 
 public class IfInstrEditor extends AbstractInstrEditor
 {
-    private static final String IF_INSTR_EDITOR_TITLE = IfInstruction.getTitle();
+    private static final String IF_INSTR_EDITOR_TITLE = Instruction.getTitleFor(IfInstruction.class);
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;

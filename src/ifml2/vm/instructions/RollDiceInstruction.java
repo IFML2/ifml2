@@ -9,16 +9,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Random;
 
 @XmlRootElement(name = "rollDice")
+@IFML2Instruction(title = "Бросить кость")
 public class RollDiceInstruction extends Instruction
 {
     private int fromNumber;
     private int toNumber;
     private String varName;
-
-    public static String getTitle()
-    {
-        return "Бросить кость";
-    }
 
     @Override
     public void run(RunningContext runningContext) throws IFML2Exception

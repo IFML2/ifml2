@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.text.MessageFormat;
 
 @XmlRootElement(name = "return")
+@IFML2Instruction(title = "Вернуть значение")
 public class ReturnInstruction extends Instruction
 {
     @XmlAttribute(name = "value")
@@ -26,10 +27,5 @@ public class ReturnInstruction extends Instruction
     public String toString()
     {
         return MessageFormat.format("Вернуть значение выражения \"{0}\"", value);
-    }
-
-    public static String getTitle()
-    {
-        return "Вернуть значение";
     }
 }

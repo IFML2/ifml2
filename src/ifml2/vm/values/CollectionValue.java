@@ -1,39 +1,15 @@
 package ifml2.vm.values;
 
+import ifml2.IFMLEntity;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.List;
 
-public class CollectionValue extends Value
+public class CollectionValue extends Value<List<? extends IFMLEntity>>
 {
-    public final List<?> value;
-
-    public CollectionValue(List<?> value)
+    public CollectionValue(List<? extends IFMLEntity> value)
     {
-        this.value = value;
-    }
-
-    @Override
-    public boolean equals(Object o)
-    {
-        if (this == o)
-        {
-            return true;
-        }
-        if (!(o instanceof CollectionValue))
-        {
-            return false;
-        }
-
-        CollectionValue that = (CollectionValue) o;
-
-        return !(value != null ? !value.equals(that.value) : that.value != null);
-    }
-
-    @Override
-    public String toString()
-    {
-        return value.toString();
+        super(value);
     }
 
     @Override
@@ -45,11 +21,6 @@ public class CollectionValue extends Value
     @Override
     public String toLiteral()
     {
-        throw new NotImplementedException(); //todo
-    }
-
-    public List<?> getValue()
-    {
-        return value;
+        throw new NotImplementedException(); //todo toLiteral
     }
 }

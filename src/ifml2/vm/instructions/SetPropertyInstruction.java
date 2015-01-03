@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.text.MessageFormat;
 
 @XmlRootElement(name = "setProperty")
+@IFML2Instruction(title = "Установить свойство объекта")
 public class SetPropertyInstruction extends Instruction
 {
     @XmlAttribute(name = "object")
@@ -57,10 +58,5 @@ public class SetPropertyInstruction extends Instruction
     public String toString()
     {
         return MessageFormat.format("Установить свойству {0} значение {1}", name, value);
-    }
-
-    public static String getTitle()
-    {
-        return "Установить свойство объекта";
     }
 }
