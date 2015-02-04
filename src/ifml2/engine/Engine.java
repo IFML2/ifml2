@@ -668,18 +668,18 @@ public class Engine
         }
 
         @Override
-        public void setName(String name)
-        {
-            throw new RuntimeException("Внутренняя ошибка: Запрещено менять имена переменных");
-        }
-
-        @Override
         public void setValue(Value value)
         {
             if (globalVariables.containsKey(name))
             {
                 globalVariables.put(name, value);
             }
+        }
+
+        @Override
+        public void setName(String name)
+        {
+            throw new RuntimeException("Внутренняя ошибка: Запрещено менять имена переменных");
         }
     }
 }

@@ -35,10 +35,20 @@ public class RollDiceInstruction extends Instruction
                " и сохранить выпавшую грань в " + varName;
     }
 
+    public int getFromNumber()
+    {
+        return fromNumber;
+    }
+
     @XmlAttribute(name = "from")
     public void setFromNumber(int fromNumber)
     {
         this.fromNumber = fromNumber;
+    }
+
+    public int getToNumber()
+    {
+        return toNumber;
     }
 
     @XmlAttribute(name = "to")
@@ -47,24 +57,14 @@ public class RollDiceInstruction extends Instruction
         this.toNumber = toNumber;
     }
 
+    public String getVarName()
+    {
+        return varName;
+    }
+
     @XmlAttribute(name = "var")
     public void setVarName(String varName)
     {
         this.varName = varName;
-    }
-
-    public int getFromNumber()
-    {
-        return fromNumber;
-    }
-
-    public int getToNumber()
-    {
-        return toNumber;
-    }
-
-    public String getVarName()
-    {
-        return varName;
     }
 }

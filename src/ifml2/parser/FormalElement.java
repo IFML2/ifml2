@@ -4,6 +4,25 @@ import ifml2.om.IFMLObject;
 
 public class FormalElement
 {
+    public final FormalElementTypeEnum type;
+    public IFMLObject object = null;
+    private String literal = "";
+    private String parameterName = "";
+
+    public FormalElement(String formalElement, String parameter)
+    {
+        this.type = FormalElementTypeEnum.LITERAL;
+        this.literal = formalElement;
+        this.parameterName = parameter;
+    }
+
+    public FormalElement(IFMLObject object, String parameter)
+    {
+        this.type = FormalElementTypeEnum.OBJECT;
+        this.object = object;
+        this.parameterName = parameter;
+    }
+
     public String getParameterName()
     {
         return parameterName;
@@ -14,41 +33,15 @@ public class FormalElement
         return literal;
     }
 
-    public enum FormalElementTypeEnum
-	{
-		LITERAL,
-		OBJECT
-    }
-
-    public final FormalElementTypeEnum type;
     public FormalElementTypeEnum getType()
     {
         return type;
     }
 
-    private String literal = "";
-
-    public IFMLObject object = null;
     public IFMLObject getObject()
     {
         return object;
     }
-
-    private String parameterName = "";
-
-	public FormalElement(String formalElement, String parameter)
-	{
-		this.type = FormalElementTypeEnum.LITERAL;
-		this.literal = formalElement;
-        this.parameterName = parameter;
-	}
-
-	public FormalElement(IFMLObject object, String parameter)
-	{
-		this.type = FormalElementTypeEnum.OBJECT;
-		this.object = object;
-        this.parameterName = parameter;
-	}
 
 	@Override
 	public String toString()
@@ -65,4 +58,10 @@ public class FormalElement
 				throw new RuntimeException("Неверное значение типа формального элемента в FormalElement.toString()!");
 		}
 	}
+
+    public enum FormalElementTypeEnum
+    {
+        LITERAL,
+        OBJECT
+    }
 }

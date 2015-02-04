@@ -13,24 +13,32 @@ public class ProcedureVariable extends IFMLEntity implements Cloneable
 {
     @XmlAttribute(name = "name")
     private String name;
+    @SuppressWarnings("UnusedDeclaration")
+    @XmlAttribute(name = "initialValue")
+    private String initialValue;
+    @XmlTransient
+    private Value value;
+
     public String getName()
     {
         return name;
     }
 
-    @XmlAttribute(name = "initialValue")
-    private String initialValue;
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
     public String getInitialValue()
     {
         return initialValue;
     }
 
-    @XmlTransient
-    private Value value;
     public Value getValue()
     {
         return value;
     }
+
     public void setValue(Value value)
     {
         this.value = value;
@@ -45,10 +53,5 @@ public class ProcedureVariable extends IFMLEntity implements Cloneable
         clone.value = value.clone();
 
         return clone;
-    }
-
-    public void setName(String name)
-    {
-        this.name = name;
     }
 }

@@ -58,6 +58,11 @@ public class Procedure extends IFMLEntity implements Cloneable
         return name;
     }
 
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
     public SystemProcedureEnum getInheritsSystemProcedure()
     {
         return inheritsSystemProcedure;
@@ -111,11 +116,6 @@ public class Procedure extends IFMLEntity implements Cloneable
         return name;
     }
 
-    public void setName(String name)
-    {
-        this.name = name;
-    }
-
     public Variable searchProcedureVariable(String name, RunningContext runningContext) throws IFML2Exception
     {
         if(name == null)
@@ -153,14 +153,16 @@ public class Procedure extends IFMLEntity implements Cloneable
     @XmlAccessorType(XmlAccessType.NONE)
     public static class FilledParameter
     {
+        @XmlAttribute(name = "name")
+        private String name;
+        @XmlAttribute(name = "value")
+        private String valueExpression;
+
         @SuppressWarnings("UnusedDeclaration")
         public FilledParameter()
         {
             // used for JAXB
         }
-
-        @XmlAttribute(name = "name")
-        private String name;
 
         public FilledParameter(String name, String valueExpression)
         {
@@ -173,9 +175,6 @@ public class Procedure extends IFMLEntity implements Cloneable
         {
             return name;
         }
-
-        @XmlAttribute(name = "value")
-        private String valueExpression;
 
         public String getName()
         {
@@ -204,15 +203,15 @@ public class Procedure extends IFMLEntity implements Cloneable
         }
 
         @Override
-        public void setName(String name)
-        {
-            throw new RuntimeException("Внутренняя ошибка: Запрещено менять имена переменных");
-        }
-
-        @Override
         public Value getValue()
         {
             return procedureVariable.getValue();
+        }
+
+        @Override
+        public void setValue(Value value)
+        {
+            procedureVariable.setValue(value);
         }
 
         @Override
@@ -222,9 +221,9 @@ public class Procedure extends IFMLEntity implements Cloneable
         }
 
         @Override
-        public void setValue(Value value)
+        public void setName(String name)
         {
-            procedureVariable.setValue(value);
+            throw new RuntimeException("Внутренняя ошибка: Запрещено менять имена переменных");
         }
     }
 }

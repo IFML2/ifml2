@@ -4,7 +4,6 @@ import ifml2.IFML2Exception;
 import ifml2.om.IFMLObject;
 import ifml2.om.InstructionList;
 import ifml2.vm.RunningContext;
-import ifml2.vm.Variable;
 import ifml2.vm.values.ObjectValue;
 
 import javax.xml.bind.annotation.XmlAttribute;

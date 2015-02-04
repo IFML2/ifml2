@@ -81,7 +81,7 @@ public class RunningContext
         String loweredSymbol = symbol.toLowerCase();
 
         // check context variables
-        Variable variable = null;
+        Variable variable;
 
         try
         {

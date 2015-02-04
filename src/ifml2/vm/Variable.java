@@ -29,6 +29,11 @@ public class Variable implements Cloneable
         return value;
     }
 
+    public void setValue(Value value)
+    {
+        this.value = value;
+    }
+
     public String getName()
     {
         return name;
@@ -37,10 +42,5 @@ public class Variable implements Cloneable
     public void setName(String name)
     {
         this.name = name;
-    }
-
-    public void setValue(Value value)
-    {
-        this.value = value;
     }
 }
