@@ -2,21 +2,45 @@ package ifml2.vm;
 
 import ifml2.vm.values.Value;
 
-public class Variable
+public class Variable implements Cloneable
 {
-    public final String name;
-    public final Value value;
-
+    protected String name;
+    private Value value;
     public Variable(String name, Value value)
     {
         this.name = name;
         this.value = value;
     }
 
-    public enum VariableScope
+    @Override
+    public String toString()
     {
-        LOCAL,
-        PROCEDURE,
-        GLOBAL
+        return name + " = " + value;
+    }
+
+    @Override
+    protected Variable clone() throws CloneNotSupportedException
+    {
+        return (Variable) super.clone();
+    }
+
+    public Value getValue()
+    {
+        return value;
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
+    public void setValue(Value value)
+    {
+        this.value = value;
     }
 }

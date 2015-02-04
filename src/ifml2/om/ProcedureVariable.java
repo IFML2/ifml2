@@ -46,4 +46,9 @@ public class ProcedureVariable extends IFMLEntity implements Cloneable
 
         return clone;
     }
+
+    public void setName(String name)
+    {
+        this.name = name;
+    }
 }

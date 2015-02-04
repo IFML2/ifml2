@@ -23,7 +23,7 @@ public class RollDiceInstruction extends Instruction
         int diff = toNumber - fromNumber;
         int dice = rnd.nextInt(diff + 1) + fromNumber;
 
-        runningContext.setContextVariable(varName, new NumberValue(dice));
+        runningContext.writeVariable(varName, new NumberValue(dice));
     }
 
     @Override

@@ -9,6 +9,11 @@ public class FormalElement
         return parameterName;
     }
 
+    public String getLiteral()
+    {
+        return literal;
+    }
+
     public enum FormalElementTypeEnum
 	{
 		LITERAL,
@@ -21,7 +26,7 @@ public class FormalElement
         return type;
     }
 
-    public String literal = "";
+    private String literal = "";
 
     public IFMLObject object = null;
     public IFMLObject getObject()
@@ -29,7 +34,7 @@ public class FormalElement
         return object;
     }
 
-    public String parameterName = "";
+    private String parameterName = "";
 
 	public FormalElement(String formalElement, String parameter)
 	{

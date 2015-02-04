@@ -7,12 +7,14 @@
         <globalVars>
             <var value="0" name="среднее"/>
             <var value="0" name="броски"/>
+            <var value="0" name="глоб1"/>
         </globalVars>
     </storyOptions>
     <procedures>
         <procedure name="БроситьКубик">
             <procedureVariables/>
             <procedureBody>
+                <showMessage type="text" message="Вызвана процедура БроситьКубик" carriageReturn="true" beginWithCap="false"/>
                 <rollDice var="кубик" to="6" from="1"/>
                 <showMessage type="expression" message="'На кубике выпало ' + кубик + '.'" carriageReturn="true" beginWithCap="false"/>
                 <if condition="броски = 0">
@@ -26,6 +28,60 @@
                     </then>
                 </if>
                 <showMessage type="expression" message="'Итого бросков ' + броски + ', общая сумма ' + среднее + '.'" carriageReturn="true" beginWithCap="false"/>
+                <showMessage type="text" message="Выход из процедуры БроситьКубик" carriageReturn="true" beginWithCap="false"/>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="ВызватьПроцедуру">
+            <procedureVariables/>
+            <procedureBody>
+                <showMessage type="text" message="Вызвана процедура ВызватьПроцедуру" carriageReturn="true" beginWithCap="false"/>
+                <var value="1" name="лок1"/>
+                <showMessage type="expression" message="'лок1 перем = ' + лок1" carriageReturn="true" beginWithCap="false"/>
+                <var value="1" name="лок2"/>
+                <showMessage type="expression" message="'лок2 перем = ' + лок2" carriageReturn="true" beginWithCap="false"/>
+                <runProcedure procedure="БроситьКубик"/>
+                <runProcedure returnToVar="верн" procedure="ПроцПар">
+                    <parameter value="'значение1'" name="пар1"/>
+                    <parameter value="365.56" name="пар2"/>
+                </runProcedure>
+                <showMessage type="expression" message="'лок1 перем = ' + лок1" carriageReturn="true" beginWithCap="false"/>
+                <showMessage type="expression" message="'лок2 перем = ' + лок2" carriageReturn="true" beginWithCap="false"/>
+                <showMessage type="expression" message="'Процедура вернула значение: ' + верн" carriageReturn="true" beginWithCap="false"/>
+                <showMessage type="text" message="Выход из процедуры ВызватьПроцедуру" carriageReturn="true" beginWithCap="false"/>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="ПроцПар">
+            <procedureVariables/>
+            <procedureBody>
+                <showMessage type="text" message="Вызвана процедура ПроцПар" carriageReturn="true" beginWithCap="false"/>
+                <showMessage type="expression" message="'пар1 = ' + пар1" carriageReturn="true" beginWithCap="false"/>
+                <showMessage type="expression" message="'пар2 = ' + пар2" carriageReturn="true" beginWithCap="false"/>
+                <showMessage type="expression" message="'глоб броски = ' + броски" carriageReturn="true" beginWithCap="false"/>
+                <var value="2" name="лок1"/>
+                <showMessage type="expression" message="'лок1 перем = ' + лок1" carriageReturn="true" beginWithCap="false"/>
+                <return value="'привет'"/>
+                <showMessage type="text" message="Выход из процедуры ПроцПар" carriageReturn="true" beginWithCap="false"/>
+            </procedureBody>
+            <parameters>
+                <parameter name="пар1"/>
+                <parameter name="пар2"/>
+            </parameters>
+        </procedure>
+        <procedure name="ВызвГлоб">
+            <procedureVariables/>
+            <procedureBody>
+                <var value="Глоб1+1" name="Глоб1"/>
+                <showMessage type="expression" message="'Глоб1 = ' + Глоб1" carriageReturn="true" beginWithCap="false"/>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="ВызвГлоб2">
+            <procedureVariables/>
+            <procedureBody>
+                <runProcedure procedure="ВызвГлоб"/>
+                <runProcedure returnToVar="" procedure="ВызвГлоб"/>
             </procedureBody>
             <parameters/>
         </procedure>
@@ -51,20 +107,20 @@
             <pp>с молоком</pp>
         </word>
         <word>
-            <ip>глиняный</ip>
-            <rp>глиняного</rp>
-            <dp>глиняному</dp>
-            <vp>глиняный</vp>
-            <tp>глиняным</tp>
-            <pp>глиняном</pp>
-        </word>
-        <word>
             <ip>со сметаной</ip>
             <rp>со сметаной</rp>
             <dp>со сметаной</dp>
             <vp>со сметаной</vp>
             <tp>со сметаной</tp>
             <pp>со сметаной</pp>
+        </word>
+        <word>
+            <ip>глиняный</ip>
+            <rp>глиняного</rp>
+            <dp>глиняному</dp>
+            <vp>глиняный</vp>
+            <tp>глиняным</tp>
+            <pp>глиняном</pp>
         </word>
         <word>
             <ip>голем</ip>
@@ -78,80 +134,102 @@
     <locations>
         <location name="Зал в замке" id="Комната">
             <hooks/>
-            <properties/>
             <roles/>
-            <attributes/>
-            <description>Большой просторный зал с кучей всякого замкового хлама.</description>
+            <properties/>
             <words/>
+            <description>Большой просторный зал с кучей всякого замкового хлама.</description>
+            <attributes/>
         </location>
     </locations>
     <items>
         <item name="глиняный кувшин со сметаной" id="ГлиняныйКувшинСоСметаной">
             <hooks/>
-            <properties/>
             <roles/>
-            <attributes/>
-            <description>Простой кувшин из глины со свежей сметаной.</description>
+            <properties/>
             <words mainWord="кувшин">
                 <word>глиняный</word>
                 <word>кувшин</word>
                 <word>со сметаной</word>
             </words>
+            <description>Простой кувшин из глины со свежей сметаной.</description>
+            <attributes/>
             <startingPosition>
+                <inventory>false</inventory>
                 <locations>
                     <location>Комната</location>
                 </locations>
-                <inventory>false</inventory>
             </startingPosition>
         </item>
         <item name="глиняный кувшин с молоком" id="ГлиняныйКувшинСМолоком">
             <hooks/>
-            <properties/>
             <roles/>
-            <attributes/>
-            <description>Простой глиняный кувшин, полный молока.</description>
+            <properties/>
             <words mainWord="кувшин">
                 <word>глиняный</word>
                 <word>кувшин</word>
                 <word>с молоком</word>
             </words>
+            <description>Простой глиняный кувшин, полный молока.</description>
+            <attributes/>
             <startingPosition>
+                <inventory>false</inventory>
                 <locations>
                     <location>Комната</location>
                 </locations>
-                <inventory>false</inventory>
             </startingPosition>
         </item>
         <item name="глиняный голем" id="ГлиняныйГолем">
             <hooks/>
-            <properties/>
             <roles/>
-            <attributes>
-                <attribute>недоступен</attribute>
-            </attributes>
-            <description>Большой и тяжёлый глиняный голем, его ну никак не сдвинуть Вам с места.</description>
+            <properties/>
             <words mainWord="голем">
                 <word>глиняный</word>
                 <word>голем</word>
             </words>
+            <description>Большой и тяжёлый глиняный голем, его ну никак не сдвинуть Вам с места.</description>
+            <attributes>
+                <attribute>недоступен</attribute>
+            </attributes>
             <startingPosition>
+                <inventory>false</inventory>
                 <locations>
                     <location>Комната</location>
                 </locations>
-                <inventory>false</inventory>
             </startingPosition>
         </item>
     </items>
     <actions>
-        <action name="бросить кубик" description="">
+        <action description="" name="бросить кубик">
             <templates>
                 <template>
-                    <literalElement position="0">
+                    <literalElement>
                         <synonym>бросить кубик</synonym>
                     </literalElement>
                 </template>
             </templates>
             <procedureCall procedure="БроситьКубик"/>
+            <restrictions/>
+        </action>
+        <action description="" name="Вызвать процу">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>вызвать</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="ВызватьПроцедуру"/>
+            <restrictions/>
+        </action>
+        <action description="" name="глоб">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>глоб</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="ВызвГлоб2"/>
             <restrictions/>
         </action>
     </actions>
