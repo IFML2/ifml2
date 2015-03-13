@@ -93,6 +93,6 @@ public abstract class Value<T> extends IFMLEntity implements Cloneable
         UNEQUAL,
         LEFT_BIGGER,
         RIGHT_BIGGER,
-        NOT_APPLICABLE;
+        NOT_APPLICABLE
     }
 }
