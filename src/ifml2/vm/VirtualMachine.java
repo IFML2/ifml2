@@ -6,6 +6,7 @@ import ifml2.engine.Engine;
 import ifml2.om.*;
 import ifml2.vm.instructions.Instruction;
 import ifml2.vm.values.BooleanValue;
+import ifml2.vm.values.EmptyValue;
 import ifml2.vm.values.Value;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,6 +23,7 @@ public class VirtualMachine
         {
             put(SystemIdentifiers.TRUE_BOOL_LITERAL, new BooleanValue(true));
             put(SystemIdentifiers.FALSE_BOOL_LITERAL, new BooleanValue(false));
+            put(SystemIdentifiers.EMPTY_VALUE, new EmptyValue());
         }
     };
     private Engine engine;
@@ -59,7 +61,7 @@ public class VirtualMachine
         runProcedure(action.getProcedureCall().getProcedure(), parameters);
     }
 
-    public void runProcedure(@NotNull Procedure procedure) throws IFML2Exception
+    public void runProcedureWithoutParameters(@NotNull Procedure procedure) throws IFML2Exception
     {
         try
         {
@@ -86,7 +88,7 @@ public class VirtualMachine
         }
     }
 
-    public void runProcedure(@NotNull Procedure procedure, List<Variable> parameters) throws IFML2Exception
+    void runProcedure(@NotNull Procedure procedure, List<Variable> parameters) throws IFML2Exception
     {
         try
         {
@@ -131,7 +133,7 @@ public class VirtualMachine
         if (inheritor != null)
         {
             // inherited! run inheritor
-            runProcedure(inheritor);
+            runProcedureWithoutParameters(inheritor);
         }
         else
         {
@@ -145,19 +147,6 @@ public class VirtualMachine
             }
         }
     }
-
-    /*public void showInventory()
-    {
-        if (engine.getInventory().size() > 0)
-        {
-            String objectsList = convertObjectsToString(engine.getInventory());
-            engine.outTextLn("У Вас при себе " + objectsList);
-        }
-        else
-        {
-            engine.outTextLn("А у Вас ничего нет.");
-        }
-    }*/
 
     private String convertObjectsToString(List<Item> inventory)
     {

@@ -12,7 +12,7 @@ import java.util.Stack;
 public class ExpressionCalculator
 {
     private static final char GET_PROPERTY_OPERATOR = '.';
-    private static final char COMPARE_OPERATOR = '=';
+    private static final char EQUALITY_OPERATOR = '=';
     private static final char ADD_OPERATOR = '+';
     private static final String NOT_OPERATOR = "не";
     private static final String AND_OPERATOR = "и";
@@ -24,10 +24,10 @@ public class ExpressionCalculator
 
     private RunningContext runningContext = null;
 
-	private ExpressionCalculator(RunningContext runningContext)
-	{
+    private ExpressionCalculator(RunningContext runningContext)
+    {
         this.runningContext = runningContext;
-	}
+    }
 
     public static Value calculate(RunningContext runningContext, String expression) throws IFML2Exception
     {
@@ -35,18 +35,8 @@ public class ExpressionCalculator
         return expressionCalculator.calculate(expression);
     }
 
-    /**
-     * What is just happened
-     */
-    enum ExprContextEnum
-    {
-        START,
-        OPERATOR,
-        OPERAND
-    }
-
     Value calculate(String expression) throws IFML2Exception
-	{
+    {
         String exp = expression.trim();
 
         StreamTokenizer tokenizer = new StreamTokenizer(new StringReader(exp));
@@ -54,9 +44,9 @@ public class ExpressionCalculator
         tokenizer.commentChar(0);
         tokenizer.quoteChar(QUOTE_CHAR);
         tokenizer.quoteChar(SINGLE_QUOTE_CHAR);
-        for(ExpressionOperatorEnum expressionOperator : ExpressionOperatorEnum.values())
+        for (ExpressionOperatorEnum expressionOperator : ExpressionOperatorEnum.values())
         {
-            if(expressionOperator.operatorCharacter != 0)
+            if (expressionOperator.operatorCharacter != 0)
             {
                 tokenizer.ordinaryChar(expressionOperator.operatorCharacter);
             }
@@ -68,14 +58,14 @@ public class ExpressionCalculator
         ExprContextEnum context = ExprContextEnum.START;
         try
         {
-            while((token = tokenizer.nextToken()) != StreamTokenizer.TT_EOF)
+            while ((token = tokenizer.nextToken()) != StreamTokenizer.TT_EOF)
             {
                 switch (token)
                 {
                     case StreamTokenizer.TT_WORD:
-                        if(NOT_OPERATOR.equalsIgnoreCase(tokenizer.sval))
+                        if (NOT_OPERATOR.equalsIgnoreCase(tokenizer.sval))
                         {
-                            if(ExprContextEnum.OPERAND.equals(context))
+                            if (ExprContextEnum.OPERAND.equals(context))
                             {
                                 // NOT can't follow operand!
                                 throw new IFML2ExpressionException("Ошибка в выражении: НЕ не может следовать за операндом");
@@ -83,7 +73,7 @@ public class ExpressionCalculator
                             calculationStack.pushOperator(ExpressionOperatorEnum.NOT);
                             context = ExprContextEnum.OPERATOR;
                         }
-                        else if(AND_OPERATOR.equalsIgnoreCase(tokenizer.sval))
+                        else if (AND_OPERATOR.equalsIgnoreCase(tokenizer.sval))
                         {
                             switch (context)
                             {
@@ -96,7 +86,7 @@ public class ExpressionCalculator
                                     context = ExprContextEnum.OPERAND;
                             }
                         }
-                        else if(OR_OPERATOR.equalsIgnoreCase(tokenizer.sval))
+                        else if (OR_OPERATOR.equalsIgnoreCase(tokenizer.sval))
                         {
                             switch (context)
                             {
@@ -109,7 +99,7 @@ public class ExpressionCalculator
                                     context = ExprContextEnum.OPERAND;
                             }
                         }
-                        else if(IN_OPERATOR.equalsIgnoreCase(tokenizer.sval))
+                        else if (IN_OPERATOR.equalsIgnoreCase(tokenizer.sval))
                         {
                             switch (context)
                             {
@@ -124,19 +114,21 @@ public class ExpressionCalculator
                         }
                         else
                         {
-                            if(ExprContextEnum.OPERAND.equals(context))
+                            if (ExprContextEnum.OPERAND.equals(context))
                             {
-                                throw new IFML2ExpressionException("Ошибка в выражении: идентификатор ({0}) не может следовать за другим операндом", tokenizer.sval);
+                                throw new IFML2ExpressionException(
+                                        "Ошибка в выражении: идентификатор ({0}) не может следовать за другим операндом", tokenizer.sval);
                             }
                             calculationStack.pushSymbol(tokenizer.sval);
                             context = ExprContextEnum.OPERAND;
                         }
                         break;
-                    
+
                     case StreamTokenizer.TT_NUMBER:
-                        if(ExprContextEnum.OPERAND.equals(context))
+                        if (ExprContextEnum.OPERAND.equals(context))
                         {
-                            throw new IFML2ExpressionException("Ошибка в выражении: число ({0}) не может следовать за другим операндом", tokenizer.nval);
+                            throw new IFML2ExpressionException("Ошибка в выражении: число ({0}) не может следовать за другим операндом",
+                                    tokenizer.nval);
                         }
                         calculationStack.pushNumericLiteral(tokenizer.nval);
                         context = ExprContextEnum.OPERAND;
@@ -144,9 +136,10 @@ public class ExpressionCalculator
 
                     case QUOTE_CHAR:
                     case SINGLE_QUOTE_CHAR:
-                        if(ExprContextEnum.OPERAND.equals(context))
+                        if (ExprContextEnum.OPERAND.equals(context))
                         {
-                            throw new IFML2ExpressionException("Ошибка в выражении: текст ({0}) не может следовать за другим операндом", tokenizer.sval);
+                            throw new IFML2ExpressionException("Ошибка в выражении: текст ({0}) не может следовать за другим операндом",
+                                    tokenizer.sval);
                         }
                         calculationStack.pushTextLiteral(tokenizer.sval);
                         context = ExprContextEnum.OPERAND;
@@ -157,8 +150,8 @@ public class ExpressionCalculator
                         context = ExprContextEnum.OPERATOR;
                         break;
 
-                    case COMPARE_OPERATOR:
-                        calculationStack.pushOperator(ExpressionOperatorEnum.COMPARE);
+                    case EQUALITY_OPERATOR:
+                        calculationStack.pushOperator(ExpressionOperatorEnum.COMPARE_EQUALITY);
                         context = ExprContextEnum.OPERATOR;
                         break;
 
@@ -179,17 +172,33 @@ public class ExpressionCalculator
 
         calculationStack.solve();
 
-        if(calculationStack.valueStack.size() == 0)
+        if (calculationStack.valueStack.size() == 0)
         {
             throw new IFML2VMException("Стек вычислений пуст!");
         }
 
-        if(calculationStack.valueStack.size() > 1)
+        if (calculationStack.valueStack.size() > 1)
         {
             throw new IFML2VMException("В стеке вычислений больше одного значения ({0})!", calculationStack.valueStack);
         }
 
         return calculationStack.valueStack.pop();
+    }
+
+    private Value resolveSymbol(UnresolvedSymbolValue unresolvedSymbolValue) throws IFML2VMException
+    {
+        String symbol = unresolvedSymbolValue.getValue().trim();
+        return runningContext.resolveSymbol(symbol);
+    }
+
+    /**
+     * What is just happened
+     */
+    enum ExprContextEnum
+    {
+        START,
+        OPERATOR,
+        OPERAND
     }
 
     private enum OperatorTypeEnum
@@ -204,13 +213,13 @@ public class ExpressionCalculator
         IN(IN_OPERATOR, OperatorTypeEnum.BINARY, 50),
         NOT(NOT_OPERATOR, OperatorTypeEnum.UNARY_RIGHT, 40),
         ADD(ADD_OPERATOR, 30),
-        COMPARE(COMPARE_OPERATOR, 20),
+        COMPARE_EQUALITY(EQUALITY_OPERATOR, 20),
         AND(AND_OPERATOR, OperatorTypeEnum.BINARY, 10),
         OR(OR_OPERATOR, OperatorTypeEnum.BINARY, 5);
 
         public final char operatorCharacter;
-        public String operatorString;
         public final int priority;
+        public String operatorString;
         private OperatorTypeEnum operatorType = OperatorTypeEnum.BINARY;
 
         ExpressionOperatorEnum(char operatorCharacter, int priority)
@@ -221,7 +230,7 @@ public class ExpressionCalculator
 
         ExpressionOperatorEnum(String operatorString, OperatorTypeEnum operatorType, int priority)
         {
-            this((char) 0,  priority);
+            this((char) 0, priority);
             this.operatorString = operatorString;
             this.operatorType = operatorType;
         }
@@ -255,12 +264,12 @@ public class ExpressionCalculator
 
         private void shrink() throws IFML2Exception
         {
-            while(operatorStack.size() >= 2)
+            while (operatorStack.size() >= 2)
             {
                 ExpressionOperatorEnum lastOperator = operatorStack.pop();
                 ExpressionOperatorEnum prevOperator = operatorStack.pop();
 
-                if(firstHasLessOrEqPriority(lastOperator, prevOperator))
+                if (firstHasLessOrEqPriority(lastOperator, prevOperator))
                 {
                     Value operationResult = doOperation(prevOperator);
 
@@ -305,17 +314,17 @@ public class ExpressionCalculator
                 {
                     ObjectValue objectValue;
 
-                    if(leftValue instanceof ObjectValue)
+                    if (leftValue instanceof ObjectValue)
                     {
                         objectValue = (ObjectValue) leftValue;
                     }
                     else
                     {
-                        if(leftValue instanceof UnresolvedSymbolValue)
+                        if (leftValue instanceof UnresolvedSymbolValue)
                         {
-                            Value resolvedValue = resolveSymbol((UnresolvedSymbolValue)leftValue);
+                            Value resolvedValue = resolveSymbol((UnresolvedSymbolValue) leftValue);
 
-                            if(resolvedValue instanceof ObjectValue)
+                            if (resolvedValue instanceof ObjectValue)
                             {
                                 objectValue = (ObjectValue) resolvedValue;
                             }
@@ -330,23 +339,23 @@ public class ExpressionCalculator
                         }
                     }
 
-                    if(!(rightValue instanceof UnresolvedSymbolValue))
+                    if (!(rightValue instanceof UnresolvedSymbolValue))
                     {
                         throw new IFML2ExpressionException("Величина не является именем свойства ({0})", rightValue);
                     }
 
                     IFMLObject object = objectValue.getValue();
 
-                    if(object == null)
+                    if (object == null)
                     {
                         throw new IFML2ExpressionException("Объект {0} не задан (пуст)", leftValue);
                     }
 
-                    String propertyName = ((UnresolvedSymbolValue)rightValue).getValue();
+                    String propertyName = ((UnresolvedSymbolValue) rightValue).getValue();
 
                     Value propertyValue = object.getMemberValue(propertyName, runningContext);
 
-                    if(propertyValue == null)
+                    if (propertyValue == null)
                     {
                         throw new IFML2ExpressionException("Свойство {0} не задано у объекта {1}", rightValue, leftValue);
                     }
@@ -356,30 +365,39 @@ public class ExpressionCalculator
                     break;
                 }
 
-                case COMPARE:
+                case COMPARE_EQUALITY:
                 {
                     Value preparedLeftValue = leftValue;
                     Value preparedRightValue = rightValue;
 
-                    if(preparedLeftValue instanceof UnresolvedSymbolValue)
+                    if (preparedLeftValue instanceof UnresolvedSymbolValue)
                     {
                         preparedLeftValue = resolveSymbol((UnresolvedSymbolValue) preparedLeftValue);
                     }
 
-                    if(preparedRightValue instanceof UnresolvedSymbolValue)
+                    if (preparedRightValue instanceof UnresolvedSymbolValue)
                     {
                         preparedRightValue = resolveSymbol((UnresolvedSymbolValue) preparedRightValue);
                     }
 
                     assert preparedLeftValue != null;
-                    if(!preparedLeftValue.getClass().equals(preparedRightValue.getClass()))
+
+                    Value.ValueCompareResultEnum compareResult = preparedLeftValue.compareTo(preparedRightValue);
+                    switch (compareResult)
                     {
-                        throw new IFML2ExpressionException("Сравниваемые величины разного типа ({0} и {1})", leftValue, rightValue);
+                        case EQUAL:
+                            result = new BooleanValue(true);
+                            break;
+                        case UNEQUAL:
+                        case LEFT_BIGGER:
+                        case RIGHT_BIGGER:
+                            result = new BooleanValue(false);
+                            break;
+                        case NOT_APPLICABLE:
+                            throw new IFML2ExpressionException("Сравниваемые величины разного типа ({0} и {1})", leftValue, rightValue);
+                            default:
+                                throw new IFML2VMException("Неизвестный результат сравнения величин ({0})", compareResult);
                     }
-
-                    boolean boolResult = preparedLeftValue.equals(preparedRightValue);
-
-                    result = new BooleanValue(boolResult);
 
                     break;
                 }
@@ -389,24 +407,27 @@ public class ExpressionCalculator
                     Value preparedLeftValue = leftValue;
                     Value preparedRightValue = rightValue;
 
-                    if(preparedLeftValue instanceof UnresolvedSymbolValue)
+                    if (preparedLeftValue instanceof UnresolvedSymbolValue)
                     {
                         preparedLeftValue = resolveSymbol((UnresolvedSymbolValue) preparedLeftValue);
                     }
 
-                    if(preparedRightValue instanceof UnresolvedSymbolValue)
+                    if (preparedRightValue instanceof UnresolvedSymbolValue)
                     {
                         preparedRightValue = resolveSymbol((UnresolvedSymbolValue) preparedRightValue);
                     }
 
                     assert preparedLeftValue != null;
 
-                    if(preparedLeftValue instanceof IAddableValue)
+                    if (preparedLeftValue instanceof IAddableValue)
                     {
                         result = ((IAddableValue) preparedLeftValue).add(preparedRightValue);
                     }
-                    else if(preparedRightValue instanceof TextValue)
+                    else if (preparedRightValue instanceof TextValue)
                     {
+                        /*
+                        если левый операнд не поддерживает сложение, но правый - текст, то всё превращаем в строку и клеим
+                         */
                         result = new TextValue(preparedLeftValue.toString() + ((TextValue) preparedRightValue).getValue());
                     }
                     else
@@ -420,11 +441,11 @@ public class ExpressionCalculator
 
                 case AND:
                 {
-                    if(!(leftValue instanceof BooleanValue))
+                    if (!(leftValue instanceof BooleanValue))
                     {
                         throw new IFML2ExpressionException("Величина не является логической ({0})", leftValue);
                     }
-                    if(!(rightValue instanceof BooleanValue))
+                    if (!(rightValue instanceof BooleanValue))
                     {
                         throw new IFML2ExpressionException("Величина не является логической ({0})", rightValue);
                     }
@@ -439,11 +460,11 @@ public class ExpressionCalculator
 
                 case OR:
                 {
-                    if(!(leftValue instanceof BooleanValue))
+                    if (!(leftValue instanceof BooleanValue))
                     {
                         throw new IFML2ExpressionException("Величина не является логической ({0})", leftValue);
                     }
-                    if(!(rightValue instanceof BooleanValue))
+                    if (!(rightValue instanceof BooleanValue))
                     {
                         throw new IFML2ExpressionException("Величина не является логической ({0})", rightValue);
                     }
@@ -458,7 +479,7 @@ public class ExpressionCalculator
 
                 case NOT:
                 {
-                    if(!(rightValue instanceof BooleanValue))
+                    if (!(rightValue instanceof BooleanValue))
                     {
                         throw new IFML2ExpressionException("Величина не является логической ({0})", rightValue);
                     }
@@ -475,22 +496,22 @@ public class ExpressionCalculator
                     Value preparedLeftValue = leftValue;
                     Value preparedRightValue = rightValue;
 
-                    if(preparedLeftValue instanceof UnresolvedSymbolValue)
+                    if (preparedLeftValue instanceof UnresolvedSymbolValue)
                     {
                         preparedLeftValue = resolveSymbol((UnresolvedSymbolValue) preparedLeftValue);
                     }
 
-                    if(preparedRightValue instanceof UnresolvedSymbolValue)
+                    if (preparedRightValue instanceof UnresolvedSymbolValue)
                     {
                         preparedRightValue = resolveSymbol((UnresolvedSymbolValue) preparedRightValue);
                     }
 
-                    if(!(preparedLeftValue instanceof ObjectValue))
+                    if (!(preparedLeftValue instanceof ObjectValue))
                     {
                         throw new IFML2ExpressionException("Величина не является объектом ({0})", leftValue);
                     }
 
-                    if(!(preparedRightValue instanceof CollectionValue))
+                    if (!(preparedRightValue instanceof CollectionValue))
                     {
                         throw new IFML2ExpressionException("Величина не является коллекцией ({0})", rightValue);
                     }
@@ -520,13 +541,13 @@ public class ExpressionCalculator
         {
             shrink();
 
-            if(!operatorStack.isEmpty() && valueStack.size() < 1)
+            if (!operatorStack.isEmpty() && valueStack.size() < 1)
             {
                 throw new IFML2ExpressionException("Системный сбой: стек операторов не пуст или недостаточно значений в стеке значений!" +
-                        "\nСтек операторов: {0}\nСтек значений: {1}", operatorStack, valueStack);
+                                                   "\nСтек операторов: {0}\nСтек значений: {1}", operatorStack, valueStack);
             }
 
-            while(!operatorStack.isEmpty())
+            while (!operatorStack.isEmpty())
             {
                 ExpressionOperatorEnum operator = operatorStack.pop();
 
@@ -535,11 +556,11 @@ public class ExpressionCalculator
                 valueStack.push(operationResult);
             }
 
-            if(valueStack.size() == 1)
+            if (valueStack.size() == 1)
             {
                 Value lastValue = valueStack.pop();
 
-                if(lastValue instanceof UnresolvedSymbolValue)
+                if (lastValue instanceof UnresolvedSymbolValue)
                 {
                     lastValue = resolveSymbol((UnresolvedSymbolValue) lastValue);
                 }
@@ -548,7 +569,8 @@ public class ExpressionCalculator
             else
             {
                 throw new IFML2ExpressionException("Системный сбой: в стеке значений осталось не одно (а {2}) значение!" +
-                        "\nСтек операторов: {0}\nСтек значений: {1}", operatorStack, valueStack, valueStack.size());
+                                                   "\nСтек операторов: {0}\nСтек значений: {1}", operatorStack, valueStack,
+                        valueStack.size());
             }
         }
 
@@ -557,11 +579,5 @@ public class ExpressionCalculator
         {
             return "OperatorStack: " + operatorStack.toString() + " ; ValueStack: " + valueStack;
         }
-    }
-
-    private Value resolveSymbol(UnresolvedSymbolValue unresolvedSymbolValue) throws IFML2VMException
-    {
-        String symbol = unresolvedSymbolValue.getValue().trim();
-        return runningContext.resolveSymbol(symbol);
     }
 }

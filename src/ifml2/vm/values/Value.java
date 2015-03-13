@@ -1,6 +1,7 @@
 package ifml2.vm.values;
 
 import ifml2.IFMLEntity;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class Value<T> extends IFMLEntity implements Cloneable
 {
@@ -24,6 +25,21 @@ public abstract class Value<T> extends IFMLEntity implements Cloneable
         return value;
     }
 
+    public ValueCompareResultEnum compareTo(@NotNull Value rightValue)
+    {
+        if(getClass().equals(rightValue.getClass()))
+        {
+            // одинаковые классы сравниваем напрямую через equals
+            return equals(rightValue) ? ValueCompareResultEnum.EQUAL : ValueCompareResultEnum.UNEQUAL;
+        }
+        else if(rightValue instanceof EmptyValue)
+        {
+            // если правое значение - пустота, то возвращаем равенство, если this тоже пустота
+            return this instanceof EmptyValue ? ValueCompareResultEnum.EQUAL : ValueCompareResultEnum.UNEQUAL;
+        }
+        return ValueCompareResultEnum.NOT_APPLICABLE;
+    }
+
     @Override
     public boolean equals(Object o)
     {
@@ -38,13 +54,13 @@ public abstract class Value<T> extends IFMLEntity implements Cloneable
 
         Value that = (Value) o;
 
-        return !(value != null ? !value.equals(that.value) : that.value != null);
+        return value != null ? value.equals(that.value) : that.value == null;
     }
 
     @Override
     public String toString()
     {
-        return value.toString();
+        return value != null ? value.toString() : "";
     }
 
     @Override
@@ -69,5 +85,14 @@ public abstract class Value<T> extends IFMLEntity implements Cloneable
         {
             return caption;
         }
+    }
+
+    public enum ValueCompareResultEnum
+    {
+        EQUAL,
+        UNEQUAL,
+        LEFT_BIGGER,
+        RIGHT_BIGGER,
+        NOT_APPLICABLE;
     }
 }

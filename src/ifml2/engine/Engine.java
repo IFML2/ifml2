@@ -184,7 +184,7 @@ public class Engine
         {
             try
             {
-                virtualMachine.runProcedure(getStory().getStartProcedure());
+                virtualMachine.runProcedureWithoutParameters(getStory().getStartProcedure());
             }
             catch (IFML2Exception e)  // should we catch it?
             {

@@ -2,8 +2,10 @@ package ifml2.vm;
 
 import ifml2.IFML2Exception;
 import ifml2.om.IFMLObject;
+import ifml2.om.Parameter;
 import ifml2.om.Procedure;
 import ifml2.om.Story;
+import ifml2.vm.values.EmptyValue;
 import ifml2.vm.values.Value;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -43,6 +45,7 @@ public class RunningContext
         RunningContext runningContext = new RunningContext(virtualMachine);
         runningContext.contextProcedure = contextProcedure;
 
+        // fill parameters
         if (parameters != null)
         {
             for (Variable parameter : parameters)
@@ -53,6 +56,15 @@ public class RunningContext
                     String loweredName = name.toLowerCase();
                     runningContext.loweredLocalVariablesMap.put(loweredName, parameter);
                 }
+            }
+        }
+
+        // fill not set parameters as EmptyValue
+        for (Parameter parameter : contextProcedure.getParameters())
+        {
+            if (runningContext.searchLocalVariable(parameter.getName()) == null)
+            {
+                runningContext.writeLocalVariable(new Variable(parameter.getName(), new EmptyValue()));
             }
         }
 

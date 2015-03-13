@@ -85,6 +85,33 @@
             </procedureBody>
             <parameters/>
         </procedure>
+        <procedure name="Проц">
+            <procedureVariables/>
+            <procedureBody>
+                <showMessage type="expression" message="'Пар1 = ' + Пар1" carriageReturn="true" beginWithCap="false"/>
+                <if condition="Пар1 = пусто">
+                    <else>
+                        <showMessage type="text" message="Пар1 не пустой" carriageReturn="true" beginWithCap="false"/>
+                    </else>
+                    <then>
+                        <showMessage type="text" message="Пар1 пустой" carriageReturn="true" beginWithCap="false"/>
+                    </then>
+                </if>
+                <showMessage type="expression" message="'Пар2 = ' + Пар2" carriageReturn="true" beginWithCap="false"/>
+                <if condition="Пар2 = пусто">
+                    <else>
+                        <showMessage type="text" message="Пар2 не пустой" carriageReturn="true" beginWithCap="false"/>
+                    </else>
+                    <then>
+                        <showMessage type="text" message="Пар2 пустой" carriageReturn="true" beginWithCap="false"/>
+                    </then>
+                </if>
+            </procedureBody>
+            <parameters>
+                <parameter name="Пар1"/>
+                <parameter name="Пар2"/>
+            </parameters>
+        </procedure>
     </procedures>
     <libraries>
         <library>standard/verbs.xml</library>
@@ -230,6 +257,32 @@
                 </template>
             </templates>
             <procedureCall procedure="ВызвГлоб2"/>
+            <restrictions/>
+        </action>
+        <action description="" name="ПроцПар">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>ПроцПар</synonym>
+                    </literalElement>
+                </template>
+                <template>
+                    <literalElement>
+                        <synonym>ПроцПар</synonym>
+                    </literalElement>
+                    <literalElement parameter="Пар1">
+                        <synonym>Пар1</synonym>
+                    </literalElement>
+                </template>
+                <template>
+                    <literalElement>
+                        <synonym>ПроцПар</synonym>
+                    </literalElement>
+                    <objectElement case="vp" parameter="Пар1"/>
+                    <objectElement case="vp" parameter="Пар2"/>
+                </template>
+            </templates>
+            <procedureCall procedure="Проц"/>
             <restrictions/>
         </action>
     </actions>
