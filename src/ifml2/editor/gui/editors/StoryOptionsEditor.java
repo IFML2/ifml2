@@ -59,29 +59,16 @@ public class StoryOptionsEditor extends AbstractEditor<StoryOptions>
         });
         editVarButton.setAction(new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON)
         {
-            {
-                setEnabled(false); // disabled at start
-                varsList.addListSelectionListener(new ListSelectionListener()
-                {
-                    @Override
-                    public void valueChanged(ListSelectionEvent e)
-                    {
-                        setEnabled(!varsList.isSelectionEmpty()); // depends on selection
-                    }
-                });
-            }
             @Override
             public void actionPerformed(ActionEvent e)
             {
                 SetVarInstruction setVarInstruction = (SetVarInstruction) varsList.getSelectedValue();
-                if(setVarInstruction != null)
+                if (setVarInstruction != null)
                 {
                     EditorUtils.showAssociatedEditor(StoryOptionsEditor.this, setVarInstruction, storyDataHelper);
                 }
             }
-        });
-        delVarButton.setAction(new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
-        {
+
             {
                 setEnabled(false); // disabled at start
                 varsList.addListSelectionListener(new ListSelectionListener()
@@ -94,17 +81,34 @@ public class StoryOptionsEditor extends AbstractEditor<StoryOptions>
                 });
             }
 
+        });
+        delVarButton.setAction(new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
+        {
             @Override
             public void actionPerformed(ActionEvent e)
             {
                 SetVarInstruction setVarInstruction = (SetVarInstruction) varsList.getSelectedValue();
                 if (setVarInstruction != null &&
-                    GUIUtils.showDeleteConfirmDialog(StoryOptionsEditor.this, "глобальную переменную",
-                                                     "глобальной переменной", Word.GenderEnum.FEMININE))
+                    GUIUtils.showDeleteConfirmDialog(StoryOptionsEditor.this, "глобальную переменную", "глобальной переменной",
+                            Word.GenderEnum.FEMININE))
                 {
                     varsClone.remove(setVarInstruction);
                 }
             }
+
+            {
+                setEnabled(false); // disabled at start
+                varsList.addListSelectionListener(new ListSelectionListener()
+                {
+                    @Override
+                    public void valueChanged(ListSelectionEvent e)
+                    {
+                        setEnabled(!varsList.isSelectionEmpty()); // depends on selection
+                    }
+                });
+            }
+
+
         });
 
         // -- init form --
