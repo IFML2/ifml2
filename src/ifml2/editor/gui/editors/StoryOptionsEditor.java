@@ -114,6 +114,7 @@ public class StoryOptionsEditor extends AbstractEditor<StoryOptions>
         startProcedureCombo.setSelectedItem(storyOptions.getStartProcedureOption().getProcedure());
 
         startLocCombo.setModel(new DefaultComboBoxModel(storyDataHelper.getLocations().toArray()));
+        startLocCombo.insertItemAt(null, 0);
         startLocCombo.setSelectedItem(storyOptions.getStartLocationOption().getLocation());
 
         showStartLocDescCheck.setSelected(storyOptions.getStartLocationOption().getShowStartLocDesc());

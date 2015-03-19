@@ -172,7 +172,7 @@ public class Engine
         }
 
         // show initial info
-        StoryOptions.StoryDescription storyDescription = getStory().getStoryOptions().getStoryDescription();
+        StoryOptions.StoryDescription storyDescription = story.getStoryOptions().getStoryDescription();
         outTextLn(storyDescription.getName() != null ? storyDescription.getName() : "<Без имени>");
         outTextLn("**********");
         outTextLn(storyDescription.getDescription() != null ? storyDescription.getDescription() : "<Без описания>");
@@ -180,11 +180,12 @@ public class Engine
         outTextLn(String.format("АВТОР: %s", storyDescription.getAuthor() != null ? storyDescription.getAuthor() : "<Без автора>"));
         outTextLn("**********\n");
 
-        if (story.getStartProcedure() != null)
+        Procedure startProcedure = story.getStartProcedure();
+        if (startProcedure != null)
         {
             try
             {
-                virtualMachine.runProcedureWithoutParameters(getStory().getStartProcedure());
+                virtualMachine.runProcedureWithoutParameters(startProcedure);
             }
             catch (IFML2Exception e)  // should we catch it?
             {
@@ -192,19 +193,21 @@ public class Engine
             }
         }
 
-        if (story.getStartLocation() != null)
+        Location startLocation = story.getStartLocation();
+        if (startLocation != null)
         {
-            setCurrentLocation(story.getStartLocation());
-        }
-        else
-        {
-            setCurrentLocation(story.getAnyLocation());
+            setCurrentLocation(startLocation);
+            if (story.IsShowStartLocDesc())
+            {
+                // show first location description
+                virtualMachine.showLocation(getCurrentLocation());
+            }
         }
 
-        if (story.IsShowStartLocDesc())
+        if(getCurrentLocation() == null)
         {
-            // show first location description
-            virtualMachine.showLocName(getCurrentLocation());
+            // if current location isn't set then take any
+            setCurrentLocation(story.getAnyLocation());
         }
 
         LOG.info("Game initialized.");
@@ -350,7 +353,7 @@ public class Engine
         }
     }
 
-    private HashMap<Hook.HookTypeEnum, List<Hook>> collectLocationHooks(Action action)
+    private HashMap<Hook.HookTypeEnum, List<Hook>> collectLocationHooks(Action action) throws IFML2Exception
     {
         // create HashMap with all location hooks
         HashMap<Hook.HookTypeEnum, List<Hook>> locationHooks = new HashMap<Hook.HookTypeEnum, List<Hook>>()
@@ -362,8 +365,14 @@ public class Engine
             }
         };
 
+        Location currentLocation = getCurrentLocation();
+        if (currentLocation == null)
+        {
+            throw new IFML2Exception("Системная ошибка: Текущая локация не задана!");
+        }
+
         // collect current location hooks
-        for (Hook hook : getCurrentLocation().getHooks())
+        for (Hook hook : currentLocation.getHooks())
         {
             if (action.equals(hook.getAction()))
             {
@@ -437,9 +446,11 @@ public class Engine
         return story;
     }
 
+    @Nullable
     public Location getCurrentLocation()
     {
-        return (Location) ((ObjectValue) systemVariables.get(SystemIdentifiers.CURRENT_LOCATION_SYSTEM_VARIABLE.toLowerCase())).getValue();
+        ObjectValue object = (ObjectValue) systemVariables.get(SystemIdentifiers.CURRENT_LOCATION_SYSTEM_VARIABLE.toLowerCase());
+        return object != null ? (Location) object.getValue() : null;
     }
 
     public void setCurrentLocation(Location currentLocation)
@@ -564,6 +575,11 @@ public class Engine
     public boolean isObjectAccessible(IFMLObject object) throws IFML2Exception
     {
         Location currentLocation = getCurrentLocation();
+
+        if(currentLocation == null)
+        {
+            throw new IFML2Exception("Системная ошибка: Текущая локация не задана!");
+        }
 
         // test locations
         if (object instanceof Location)

@@ -9,6 +9,7 @@ import ifml2.vm.values.BooleanValue;
 import ifml2.vm.values.EmptyValue;
 import ifml2.vm.values.Value;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -125,10 +126,15 @@ public class VirtualMachine
         }
     }
 
-    public void showLocName(Location location) throws IFML2Exception
+    public void showLocation(@Nullable Location location) throws IFML2Exception
     {
+        if(location == null)
+        {
+            return;
+        }
+
         // check if inherited
-        Procedure inheritor = inheritedSystemProcedures.get(SystemProcedureEnum.SHOW_LOC_NAME);
+        Procedure inheritor = inheritedSystemProcedures.get(SystemProcedureEnum.SHOW_LOCATION);
 
         if (inheritor != null)
         {

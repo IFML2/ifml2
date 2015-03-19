@@ -26,7 +26,7 @@ public class GoToLocInstruction extends Instruction
         virtualMachine.setCurrentLocation(location);
 
         // run show loc name instruction
-        virtualMachine.showLocName(location);
+        virtualMachine.showLocation(location);
     }
 
     public String getLocationExpr()
