@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * JInternalFrame with JList and buttons <b>Add</b>, <b>Edit</b>, <b>Delete</b> and optional <b>Up</b> and <b>Down</b> arrows.<br/>
  * Usage: add to form, tick "Custom create" property, create and override abstract methods <i>createElement()</i>,
- * <i>editElement(T selectedElement)</i> and, if needed, <i>beforeDelete(T selectedElement)</i>. Call setExpression(EventList<T> clonedList)
+ * <i>editElement(T selectedElement)</i> and, if needed, <i>beforeDelete(T selectedElement)</i>. Call bindData(EventList<T> clonedList)
  * when you need update data in list.
  *
  * @param <T> Edited type.
