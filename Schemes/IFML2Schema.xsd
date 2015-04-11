@@ -585,7 +585,7 @@
 
     <simpleType name="systemProcedureEnumType">
         <restriction base="string">
-            <enumeration value="showLocName">
+            <enumeration value="showLocation">
                 <annotation>
                     <documentation>Системная процедур, выводящая описание текущей локации: её имя, описание и список предметов в ней.
                         Параметров не принимает.

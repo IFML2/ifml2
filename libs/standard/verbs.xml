@@ -861,7 +861,7 @@
 
     <!-- Процедуры обработки действий -->
     <procedures>
-        <procedure name="ОписатьТекущуюЛокацию" inheritsSystemProcedure="showLocName">
+        <procedure name="ОписатьТекущуюЛокацию" inheritsSystemProcedure="showLocation">
             <procedureBody>
                 <showMessage position="1" type="expression" message="ТекущаяЛокация.Имя"/>
                 <showMessage position="2" type="expression" message="ТекущаяЛокация.Описание"/>
