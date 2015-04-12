@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<install4j version="6.0.1" transformSequenceNumber="5">
+<install4j version="6.0" transformSequenceNumber="5">
   <directoryPresets config="../Games/Гардероб.ifml" />
-  <application name="ЯРИЛ 2.0" distributionSourceDir="" applicationId="3169-8645-0418-5303" mediaDir="./" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="9" lzmaCompression="true" pack200Compression="true" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="true" shortName="${compiler:sys.fullName}" publisher="TOY Soft" publisherWeb="http://toysoft.narod.ru" version="2015/1" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" macVolumeId="2bfa8d73a3fad6ee" javaMinVersion="1.6" javaMaxVersion="1.6" allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
+  <application name="ЯРИЛ 2.0" distributionSourceDir="" applicationId="3169-8645-0418-5303" mediaDir="./" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="9" lzmaCompression="true" pack200Compression="true" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="true" shortName="${compiler:sys.fullName}" publisher="TOY Soft" publisherWeb="http://toysoft.narod.ru" version="2015/1.1" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" macVolumeId="2bfa8d73a3fad6ee" javaMinVersion="1.6" javaMaxVersion="1.6" allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="true" languageSelectionInPrincipalLanguage="false">
       <principalLanguage id="ru" customLocalizationFile="" />
       <additionalLanguages>
@@ -54,7 +54,7 @@
       <fileEntry mountPoint="194" file="../Games/Руслан и Людмила.ifml" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
       <dirEntry mountPoint="88" file="../tests" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="Tests" excludeSuffixes="" dirMode="755" overrideDirMode="false">
         <exclude>
-          <entry location=".svn" fileType="regular" />
+          <entry location="Тайна.Тест01.xml" fileType="regular" />
         </exclude>
       </dirEntry>
     </entries>
