@@ -17,6 +17,8 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.*;
 import javax.xml.bind.util.ValidationEventCollector;
 import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -237,7 +239,7 @@ public class OMManager
         LOG.debug("loadLibrary :: real relative path = \"{0}\"", file.getAbsolutePath());
 
         Library library = loadLibrary(file);
-        LOG.debug(String.format("loadLibrary(String) :: End"));
+        LOG.debug("loadLibrary(String) :: End");
 
         return library;
     }
@@ -250,7 +252,7 @@ public class OMManager
 
         try
         {
-            LOG.debug("loadLibrary :: File object for path \"{0}\" created", libFile.getAbsolutePath());
+            //todo remove LOG.debug("loadLibrary :: File object for path \"{0}\" created", libFile.getAbsolutePath());
 
             if (!libFile.exists())
             {
@@ -277,8 +279,18 @@ public class OMManager
             library = (Library) unmarshaller.unmarshal(libFile);
             LOG.debug("loadLibrary :: after unmarshal");
 
-            File libFolder = new File(CommonUtils.getLibrariesDirectory());
-            String libPath = libFolder.toURI().relativize(libFile.toURI()).getPath();
+            String librariesDirectory = CommonUtils.getLibrariesDirectory();
+            LOG.debug("librariesDirectory = {0}", librariesDirectory);
+
+            //todo rewrite using Path in Java >= 7
+            File libFolder = new File(librariesDirectory);
+            URI libFileUri = new URI(libFile.toURI().toString().toLowerCase());
+            LOG.debug("libFile.URI = {0}", libFileUri);
+            URI libFolderUri = new URI(libFolder.toURI().toString().toLowerCase());
+            LOG.debug("libFolderUri.URI = {0}", libFolderUri);
+            URI relativeUri = libFolderUri.relativize(libFileUri);
+            LOG.debug("relativeUri = {0}", relativeUri);
+            String libPath = relativeUri.getPath();
             LOG.debug("loadLibrary :: calculated libPath = {0}", libPath);
             library.setPath(libPath);
         }
@@ -286,8 +298,12 @@ public class OMManager
         {
             throw new IFML2Exception(e, "Ошибка загрузки библиотеки: {0}", e.getMessage());
         }
+        catch (URISyntaxException e)
+        {
+            throw new IFML2Exception(e, "Ошибка вычисления относительного пути.");
+        }
 
-        LOG.debug(String.format("loadLibrary(File) :: End"));
+        LOG.debug("loadLibrary(File) :: End");
 
         return library;
     }
@@ -509,7 +525,7 @@ public class OMManager
                                 }
 
                                 // attributes
-                                if (aClass == Attribute.class || aClass == Object.class) //todo: remove Object after JAXB fix
+                                if (aClass == Attribute.class || aClass == Object.class) //todo: remove Object after JAXB fix of JAXB-546
                                 {
                                     LOG.debug("call() ::   => searching Attribute \"{0}\"", s);
                                     Attribute attribute = library.getAttributeByName(s);
@@ -520,7 +536,7 @@ public class OMManager
                                     }
                                 }
                                 // actions
-                                else if (aClass == Action.class || aClass == Object.class) //todo: remove Object after JAXB fix
+                                else if (aClass == Action.class || aClass == Object.class) //todo: remove Object after JAXB fix of JAXB-546
                                 {
                                     LOG.debug("call() ::   => searching Action \"{0}\"", s);
                                     Action action = library.getActionByName(s);
