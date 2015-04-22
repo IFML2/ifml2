@@ -197,23 +197,6 @@
             </procedureBody>
             <parameters/>
         </procedure>
-        <procedure name="осмотреть лишайник">
-            <procedureVariables/>
-            <procedureBody>
-                <if condition="ТекущаяЛокация=РаспутьеЛок">
-                    <else>
-                        <showMessage type="text" message="&#xA;- Ты не в тундре. Здесь нет лишайников.&#xA;" carriageReturn="true"
-                                     beginWithCap="false"/>
-                    </else>
-                    <then>
-                        <showMessage type="text"
-                                     message="&#xA;- Низшее растение. Симбиоз гриба и водоросли. Обычное дело на камнях.&#xA;- Определитель низших растений не принести? Ботаник, блин.&#xA;"
-                                     carriageReturn="true" beginWithCap="false"/>
-                    </then>
-                </if>
-            </procedureBody>
-            <parameters/>
-        </procedure>
         <procedure name="осмотреть Руслана">
             <procedureVariables/>
             <procedureBody>
@@ -289,23 +272,6 @@
             <procedureBody>
                 <showMessage type="text" message="&#xD;&#xA;Чем рубить-то? Чем,чем? Не годится. Топор, однако, нужен.&#xD;&#xA;"
                              carriageReturn="true" beginWithCap="false"/>
-            </procedureBody>
-            <parameters/>
-        </procedure>
-        <procedure name="взять лишайник">
-            <procedureVariables/>
-            <procedureBody>
-                <if condition="ТекущаяЛокация = РаспутьеЛок">
-                    <else>
-                        <showMessage type="text" message="&#xA;- Ты не в тундре. Нет тут никакого лишайника.&#xA;" carriageReturn="true"
-                                     beginWithCap="false"/>
-                    </else>
-                    <then>
-                        <showMessage type="text"
-                                     message="&#xA;- Зачем тебе этот лишайник? Настойку сделать? Это не настоящий лишайник, а бутафорский, из туалетной бумаги сделан.&#xA;"
-                                     carriageReturn="true" beginWithCap="false"/>
-                    </then>
-                </if>
             </procedureBody>
             <parameters/>
         </procedure>
@@ -752,15 +718,15 @@
                     </instructions>
                 </hook>
             </hooks>
-            <properties/>
             <roles/>
-            <attributes/>
+            <properties/>
+            <words/>
             <description>
                 Руслан на развилке дорог.
                 Одна ведет прямо на север к лесу, другая ведет направо, огибает камень и поворачивает далее на юг, третья ведет налево на
                 запад на берег моря.
             </description>
-            <words/>
+            <attributes/>
             <north>ЛесЛок</north>
             <south>РекаЛок</south>
             <west>БерегМоряЛок</west>
@@ -793,15 +759,15 @@
                     </instructions>
                 </hook>
             </hooks>
-            <properties/>
             <roles/>
-            <attributes/>
+            <properties/>
+            <words/>
             <description>
                 Руслан находится в темном и дремучем лесу. Бурелом.
                 Чуть заметная тропа ведет на север.
                 В обратном направлении тропа ведет к развилке дорог.
             </description>
-            <words/>
+            <attributes/>
             <north>ПолеЛок</north>
             <south>РаспутьеЛок</south>
         </location>
@@ -824,16 +790,16 @@
                     </instructions>
                 </hook>
             </hooks>
-            <properties/>
             <roles/>
-            <attributes/>
+            <properties/>
+            <words/>
             <description>
                 Руслан находится на поле.
                 Здесь когда-то произошло сражение, следы которого видны повсюду.
                 На севере расположено какое-то возвышение.
                 На юге дремучий лес.
             </description>
-            <words/>
+            <attributes/>
             <north>ХолмЛок</north>
             <south>ЛесЛок</south>
         </location>
@@ -869,15 +835,15 @@
                     </instructions>
                 </hook>
             </hooks>
-            <properties/>
             <roles/>
-            <attributes/>
+            <properties/>
+            <words/>
             <description>
                 Руслан находится на краю поля.
                 На севере проход в скалах.
                 На юге место сражения.
             </description>
-            <words/>
+            <attributes/>
             <north>УщельеЛок</north>
             <south>ПолеЛок</south>
         </location>
@@ -900,28 +866,28 @@
                     </instructions>
                 </hook>
             </hooks>
-            <properties/>
             <roles/>
-            <attributes/>
+            <properties/>
+            <words/>
             <description>
                 Руслан находится на дороге ведущей вдоль реки.
                 Дорога ведет на юг. В обратном направлении развилка дорог.
             </description>
-            <words/>
+            <attributes/>
             <north>РаспутьеЛок</north>
             <south>ДолинаЛок</south>
         </location>
         <location name="Долина" id="ДолинаЛок">
             <hooks/>
-            <properties/>
             <roles/>
-            <attributes/>
+            <properties/>
+            <words/>
             <description>
                 Руслан находится в долине у реки.
                 В конце долины далеко на юге какое-то строение.
                 На севере - берег реки.
             </description>
-            <words/>
+            <attributes/>
             <north>РекаЛок</north>
             <south>ЗамокЛок</south>
         </location>
@@ -935,9 +901,9 @@
                     </instructions>
                 </hook>
             </hooks>
-            <properties/>
             <roles/>
-            <attributes/>
+            <properties/>
+            <words/>
             <description>
                 Она манит, она поет;
                 И юный витязь под стеною;
@@ -948,13 +914,13 @@
                 Они пленительных очей;
                 Две девицы коня уводят...
             </description>
-            <words/>
+            <attributes/>
         </location>
         <location name="Берег моря" id="БерегМоряЛок">
             <hooks/>
-            <properties/>
             <roles/>
-            <attributes/>
+            <properties/>
+            <words/>
             <description>
                 Возглавив смелых рыбаков
                 Искать опасностей и злата.
@@ -995,32 +961,32 @@
                 - Никому не расходиться.
                 - Сцена витязь на распутье, дубль два, камера, мотор, съемка.
             </description>
-            <words/>
+            <attributes/>
         </location>
         <location name="Архив" id="АрхивЛок">
             <hooks/>
-            <properties/>
             <roles/>
-            <attributes/>
-            <description>Место временного хранения неиспользованных предметов и прочее. Скрытая локация.</description>
+            <properties/>
             <words/>
+            <description>Место временного хранения неиспользованных предметов и прочее. Скрытая локация.</description>
+            <attributes/>
         </location>
         <location name="Ущелье" id="УщельеЛок">
             <hooks/>
-            <properties/>
             <roles/>
-            <attributes/>
+            <properties/>
+            <words/>
             <description>
                 Дорога идет на север между отвесных скал.
                 На юге живая голова.
             </description>
-            <words/>
+            <attributes/>
             <north>ПещераЛок</north>
             <south>ХолмЛок</south>
         </location>
         <location name="Пещера Черномора" id="ПещераЛок">
             <hooks>
-                <hook type="instead" action="трубить">
+                <hook type="instead" objectElement="" action="трубить">
                     <instructions>
                         <showMessage type="text"
                                      message="&#xD;&#xA;&#x9;&#x9;Уж витязь под горой стоит,&#xD;&#xA;&#x9;&#x9;Призывный рог, как буря, воет,&#xD;&#xA;&#x9;&#x9;Нетерпеливый конь кипит&#xD;&#xA;&#x9;&#x9;И снег копытом мощным роет.&#xD;&#xA;"
@@ -1074,34 +1040,34 @@
                     </instructions>
                 </hook>
             </hooks>
-            <properties/>
             <roles/>
-            <attributes/>
+            <properties/>
+            <words/>
             <description>
                 Руслан у пещеры Черномора. Пещера расположена высоко на горе. Туда прохода нет. Отсюда виден только вход в саму пещеру.
                 Кругом высокие и отвесные склоны гор. Забраться на них невозможно. Проход открыт только назад на юг через ущелье.
             </description>
-            <words/>
+            <attributes/>
             <south>УщельеЛок</south>
         </location>
         <location name="Победа" id="ПобедаЛок">
             <hooks/>
-            <properties/>
             <roles/>
-            <attributes/>
+            <properties/>
+            <words/>
             <description>
                 Всё. Съемка закончена. Всем спасибо.
 
                 Поздравляю.
                 Вы прошли игру и победили.
             </description>
-            <words/>
+            <attributes/>
         </location>
         <location name="Поражение" id="ПоражениеЛок">
             <hooks/>
-            <properties/>
             <roles/>
-            <attributes/>
+            <properties/>
+            <words/>
             <description>
                 К сожалению Вам не удалось одержать победу в бою.
                 Попытайтесь снова.
@@ -1109,26 +1075,26 @@
                 - Никому не расходиться.
                 - Сцена Битва с Черномором, дубль два, камера, мотор, съемка.
             </description>
-            <words/>
+            <attributes/>
         </location>
     </locations>
     <items>
         <item name="щит" id="ЩитПред">
             <hooks/>
-            <properties/>
             <roles/>
-            <attributes/>
-            <description>
-                Тяжелый и прочный щит.
-            </description>
+            <properties/>
             <words mainWord="щит">
                 <word>щит</word>
             </words>
+            <description>
+                Тяжелый и прочный щит.
+            </description>
+            <attributes/>
             <startingPosition>
+                <inventory>false</inventory>
                 <locations>
                     <location>ПолеЛок</location>
                 </locations>
-                <inventory>false</inventory>
             </startingPosition>
         </item>
         <item name="шлем" id="ШлемПред">
@@ -1172,7 +1138,6 @@
                     </instructions>
                 </hook>
             </hooks>
-            <properties/>
             <roles>
                 <role name="надеваемый">
                     <properties>
@@ -1180,36 +1145,37 @@
                     </properties>
                 </role>
             </roles>
-            <attributes/>
-            <description>
-                Стальной шлем.
-            </description>
+            <properties/>
             <words mainWord="шлем">
                 <word>шлем</word>
             </words>
+            <description>
+                Стальной шлем.
+            </description>
+            <attributes/>
             <startingPosition>
+                <inventory>false</inventory>
                 <locations>
                     <location>ПолеЛок</location>
                 </locations>
-                <inventory>false</inventory>
             </startingPosition>
         </item>
         <item name="рог" id="РогПред">
             <hooks/>
-            <properties/>
             <roles/>
-            <attributes/>
-            <description>
-                Охотничий рог.
-            </description>
+            <properties/>
             <words mainWord="рог">
                 <word>рог</word>
             </words>
+            <description>
+                Охотничий рог.
+            </description>
+            <attributes/>
             <startingPosition>
+                <inventory>false</inventory>
                 <locations>
                     <location>ПолеЛок</location>
                 </locations>
-                <inventory>false</inventory>
             </startingPosition>
         </item>
         <item name="копье" id="КопьеПред">
@@ -1273,20 +1239,20 @@
                     </instructions>
                 </hook>
             </hooks>
-            <properties/>
             <roles/>
-            <attributes/>
-            <description>
-                Метательное копье.
-            </description>
+            <properties/>
             <words mainWord="копье">
                 <word>копье</word>
             </words>
+            <description>
+                Метательное копье.
+            </description>
+            <attributes/>
             <startingPosition>
+                <inventory>false</inventory>
                 <locations>
                     <location>ПолеЛок</location>
                 </locations>
-                <inventory>false</inventory>
             </startingPosition>
         </item>
         <item name="кольчуга" id="КольчугаПред">
@@ -1331,7 +1297,6 @@
                     </instructions>
                 </hook>
             </hooks>
-            <properties/>
             <roles>
                 <role name="надеваемый">
                     <properties>
@@ -1339,18 +1304,19 @@
                     </properties>
                 </role>
             </roles>
-            <attributes/>
-            <description>
-                Прочная кольчуга.
-            </description>
+            <properties/>
             <words mainWord="кольчуга">
                 <word>кольчуга</word>
             </words>
+            <description>
+                Прочная кольчуга.
+            </description>
+            <attributes/>
             <startingPosition>
+                <inventory>false</inventory>
                 <locations>
                     <location>ПолеЛок</location>
                 </locations>
-                <inventory>false</inventory>
             </startingPosition>
         </item>
         <item name="меч" id="МечПред">
@@ -1363,19 +1329,19 @@
                     </instructions>
                 </hook>
             </hooks>
-            <properties/>
             <roles/>
-            <attributes/>
-            <description/>
+            <properties/>
             <words mainWord="меч">
                 <word>меч</word>
                 <word>легкий</word>
             </words>
+            <description/>
+            <attributes/>
             <startingPosition>
+                <inventory>false</inventory>
                 <locations>
                     <location>ПолеЛок</location>
                 </locations>
-                <inventory>false</inventory>
             </startingPosition>
         </item>
         <item name="придорожный камень" id="КаменьПред">
@@ -1414,18 +1380,18 @@
                     </instructions>
                 </hook>
             </hooks>
-            <properties/>
             <roles/>
-            <attributes/>
-            <description/>
+            <properties/>
             <words mainWord="камень">
                 <word>камень</word>
             </words>
+            <description/>
+            <attributes/>
             <startingPosition>
+                <inventory>false</inventory>
                 <locations>
                     <location>РаспутьеЛок</location>
                 </locations>
-                <inventory>false</inventory>
             </startingPosition>
         </item>
         <item name="живая голова" id="ГоловаПред">
@@ -1459,9 +1425,12 @@
                     </instructions>
                 </hook>
             </hooks>
-            <properties/>
             <roles/>
-            <attributes/>
+            <properties/>
+            <words mainWord="голова">
+                <word>голова</word>
+                <word>живая</word>
+            </words>
             <description>
                 Огромны очи сном объяты;
                 Храпит, качая шлем пернатый,
@@ -1474,34 +1443,31 @@
                 Руслану предстоит она
                 Громадой грозной и туманной.
             </description>
-            <words mainWord="голова">
-                <word>голова</word>
-                <word>живая</word>
-            </words>
+            <attributes/>
             <startingPosition>
+                <inventory>false</inventory>
                 <locations>
                     <location>ХолмЛок</location>
                 </locations>
-                <inventory>false</inventory>
             </startingPosition>
         </item>
         <item name="богатырский меч" id="БогатырскийМечПред">
             <hooks/>
-            <properties/>
             <roles/>
-            <attributes/>
-            <description>
-                Тяжелый, длинный и прочный меч из булатной стали. Возможно, волшебный. Меч-кладенец.
-            </description>
+            <properties/>
             <words mainWord="меч">
                 <word>меч</word>
                 <word>богатырский</word>
             </words>
+            <description>
+                Тяжелый, длинный и прочный меч из булатной стали. Возможно, волшебный. Меч-кладенец.
+            </description>
+            <attributes/>
             <startingPosition>
+                <inventory>false</inventory>
                 <locations>
                     <location>АрхивЛок</location>
                 </locations>
-                <inventory>false</inventory>
             </startingPosition>
         </item>
         <item name="говорящая голова" id="ГоворящаяГоловаПред">
@@ -1537,9 +1503,12 @@
                     </instructions>
                 </hook>
             </hooks>
-            <properties/>
             <roles/>
-            <attributes/>
+            <properties/>
+            <words mainWord="голова">
+                <word>голова</word>
+                <word>говорящая</word>
+            </words>
             <description>
                 Она глядит недвижным оком;
                 Власы ее как черный лес,
@@ -1555,15 +1524,12 @@
                 Последний гнев изобразился.
 
             </description>
-            <words mainWord="голова">
-                <word>голова</word>
-                <word>говорящая</word>
-            </words>
+            <attributes/>
             <startingPosition>
+                <inventory>false</inventory>
                 <locations>
                     <location>АрхивЛок</location>
                 </locations>
-                <inventory>false</inventory>
             </startingPosition>
         </item>
         <item name="поваленное дерево" id="ДеревоПред">
@@ -1576,21 +1542,21 @@
                     </instructions>
                 </hook>
             </hooks>
-            <properties/>
             <roles/>
-            <attributes/>
-            <description>
-                Поваленное ветром дерево.
-            </description>
+            <properties/>
             <words mainWord="дерево">
                 <word>дерево</word>
                 <word>поваленное</word>
             </words>
+            <description>
+                Поваленное ветром дерево.
+            </description>
+            <attributes/>
             <startingPosition>
+                <inventory>false</inventory>
                 <locations>
                     <location>ЛесЛок</location>
                 </locations>
-                <inventory>false</inventory>
             </startingPosition>
         </item>
         <item name="кости" id="КостиПред">
@@ -1604,21 +1570,21 @@
                     </instructions>
                 </hook>
             </hooks>
-            <properties/>
             <roles/>
-            <attributes/>
-            <description>
-                Человеческие и лошадиные кости.
-            </description>
+            <properties/>
             <words mainWord="кости">
                 <word>кости</word>
                 <word>кость</word>
             </words>
+            <description>
+                Человеческие и лошадиные кости.
+            </description>
+            <attributes/>
             <startingPosition>
+                <inventory>false</inventory>
                 <locations>
                     <location>ПолеЛок</location>
                 </locations>
-                <inventory>false</inventory>
             </startingPosition>
         </item>
         <item name="череп" id="ЧерепПред">
@@ -1632,20 +1598,20 @@
                     </instructions>
                 </hook>
             </hooks>
-            <properties/>
             <roles/>
-            <attributes/>
-            <description>
-                Обыкновенный человеческий череп.
-            </description>
+            <properties/>
             <words mainWord="череп">
                 <word>череп</word>
             </words>
+            <description>
+                Обыкновенный человеческий череп.
+            </description>
+            <attributes/>
             <startingPosition>
+                <inventory>false</inventory>
                 <locations>
                     <location>ПолеЛок</location>
                 </locations>
-                <inventory>false</inventory>
             </startingPosition>
         </item>
         <item name="скелет" id="СкелетПред">
@@ -1658,20 +1624,20 @@
                     </instructions>
                 </hook>
             </hooks>
-            <properties/>
             <roles/>
-            <attributes/>
-            <description>
-                Скелет человека на скелете коня.
-            </description>
+            <properties/>
             <words mainWord="скелет">
                 <word>скелет</word>
             </words>
+            <description>
+                Скелет человека на скелете коня.
+            </description>
+            <attributes/>
             <startingPosition>
+                <inventory>false</inventory>
                 <locations>
                     <location>ПолеЛок</location>
                 </locations>
-                <inventory>false</inventory>
             </startingPosition>
         </item>
         <item name="колчан" id="КолчанПред">
@@ -1693,20 +1659,20 @@
                     </instructions>
                 </hook>
             </hooks>
-            <properties/>
             <roles/>
-            <attributes/>
-            <description>
-                Колчан для стрел.
-            </description>
+            <properties/>
             <words mainWord="колчан">
                 <word>колчан</word>
             </words>
+            <description>
+                Колчан для стрел.
+            </description>
+            <attributes/>
             <startingPosition>
+                <inventory>false</inventory>
                 <locations>
                     <location>ПолеЛок</location>
                 </locations>
-                <inventory>false</inventory>
             </startingPosition>
         </item>
         <item name="стрела" id="СтрелаПред">
@@ -1728,62 +1694,89 @@
                     </instructions>
                 </hook>
             </hooks>
-            <properties/>
             <roles/>
-            <attributes/>
-            <description>
-                Обыкновенная стрела для стрельбы из лука.
-            </description>
+            <properties/>
             <words mainWord="стрела">
                 <word>стрела</word>
                 <word>стрелы</word>
             </words>
+            <description>
+                Обыкновенная стрела для стрельбы из лука.
+            </description>
+            <attributes/>
             <startingPosition>
+                <inventory>false</inventory>
                 <locations>
                     <location>ПолеЛок</location>
                 </locations>
-                <inventory>false</inventory>
             </startingPosition>
         </item>
         <item name="лук" id="ЛукПред">
             <hooks/>
-            <properties/>
             <roles/>
-            <attributes/>
-            <description>
-                Крепкий дубовый лук.
-            </description>
+            <properties/>
             <words mainWord="лук">
                 <word>лук</word>
             </words>
+            <description>
+                Крепкий дубовый лук.
+            </description>
+            <attributes/>
             <startingPosition>
+                <inventory>false</inventory>
                 <locations>
                     <location>АрхивЛок</location>
                 </locations>
-                <inventory>false</inventory>
             </startingPosition>
         </item>
         <item name="пещера" id="ПещераПред">
             <hooks/>
-            <properties/>
             <roles/>
-            <attributes/>
-            <description>
-                Пещера очень высоко, не разглядеть ничего без бинокля. Но во времена Киевской Руси такого чуда не было.
-            </description>
+            <properties/>
             <words mainWord="пещера">
                 <word>пещера</word>
             </words>
+            <description>
+                Пещера очень высоко, не разглядеть ничего без бинокля. Но во времена Киевской Руси такого чуда не было.
+            </description>
+            <attributes/>
             <startingPosition>
+                <inventory>false</inventory>
                 <locations>
                     <location>ПещераЛок</location>
                 </locations>
+            </startingPosition>
+        </item>
+        <item name="лишайник" id="ЛишайникПред">
+            <hooks>
+                <hook type="instead" objectElement="предмет" action="взять">
+                    <instructions>
+                        <showMessage type="text"
+                                     message="&#xA;- Зачем тебе этот лишайник? Настойку сделать? Это не настоящий лишайник, а бутафорский, из туалетной бумаги сделан.&#xA;"
+                                     carriageReturn="true" beginWithCap="false"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words mainWord="лишайник">
+                <word>лишайник</word>
+            </words>
+            <description>
+                - Низшее растение. Симбиоз гриба и водоросли. Обычное дело на камнях.
+                - Определитель низших растений не принести? Ботаник, блин.
+            </description>
+            <attributes/>
+            <startingPosition>
                 <inventory>false</inventory>
+                <locations>
+                    <location>РаспутьеЛок</location>
+                </locations>
             </startingPosition>
         </item>
     </items>
     <actions>
-        <action name="будить" description="Будить предмет">
+        <action description="Будить предмет" name="будить">
             <templates>
                 <template>
                     <literalElement>
@@ -1807,7 +1800,7 @@
             <procedureCall procedure="БудитьПредмет"/>
             <restrictions/>
         </action>
-        <action name="бить" description="Бить предмет">
+        <action description="Бить предмет" name="бить">
             <templates>
                 <template>
                     <literalElement>
@@ -1820,7 +1813,7 @@
             <procedureCall procedure="БитьПредмет"/>
             <restrictions/>
         </action>
-        <action name="трубить" description="Трубить">
+        <action description="Трубить" name="трубить">
             <templates>
                 <template>
                     <literalElement>
@@ -1844,7 +1837,7 @@
                 </restriction>
             </restrictions>
         </action>
-        <action name="взять всё" description="взять все предметы в локации">
+        <action description="взять все предметы в локации" name="взять всё">
             <templates>
                 <template>
                     <literalElement>
@@ -1856,7 +1849,7 @@
             <procedureCall procedure="взять всё"/>
             <restrictions/>
         </action>
-        <action name="очистить надпись" description="">
+        <action description="" name="очистить надпись">
             <templates>
                 <template>
                     <literalElement>
@@ -1884,7 +1877,7 @@
             <procedureCall procedure="очистить надпись"/>
             <restrictions/>
         </action>
-        <action name="очистить лишайник" description="">
+        <action description="" name="очистить лишайник">
             <templates>
                 <template>
                     <literalElement>
@@ -1892,6 +1885,7 @@
                         <synonym>почистить</synonym>
                         <synonym>зачистить</synonym>
                         <synonym>счистить</synonym>
+                        <synonym>чистить</synonym>
                     </literalElement>
                     <literalElement>
                         <synonym>лишайник</synonym>
@@ -1902,7 +1896,7 @@
             <procedureCall procedure="очистить лишайник"/>
             <restrictions/>
         </action>
-        <action name="СделатьЛук" description="тщетная попытка сделать лук">
+        <action description="тщетная попытка сделать лук" name="СделатьЛук">
             <templates>
                 <template>
                     <literalElement>
@@ -1916,7 +1910,7 @@
             <procedureCall procedure="СделатьЛук"/>
             <restrictions/>
         </action>
-        <action name="СтрелятьИзЛука" description="тщетная попытка выстрелить из лука">
+        <action description="тщетная попытка выстрелить из лука" name="СтрелятьИзЛука">
             <templates>
                 <template>
                     <literalElement>
@@ -1931,7 +1925,7 @@
             <procedureCall procedure="СтрелятьИзЛука"/>
             <restrictions/>
         </action>
-        <action name="искать лук" description="тщетные поиски реквизита">
+        <action description="тщетные поиски реквизита" name="искать лук">
             <templates>
                 <template>
                     <literalElement>
@@ -1942,7 +1936,7 @@
             <procedureCall procedure="искать лук"/>
             <restrictions/>
         </action>
-        <action name="осмотреть дорогу" description="осмотреть дорогу">
+        <action description="осмотреть дорогу" name="осмотреть дорогу">
             <templates>
                 <template>
                     <literalElement>
@@ -1956,19 +1950,7 @@
             <procedureCall procedure="осмотреть дорогу"/>
             <restrictions/>
         </action>
-        <action name="осмотреть лишайник" description="осмотреть лишайник">
-            <templates>
-                <template>
-                    <literalElement>
-                        <synonym>осмотреть лишайник</synonym>
-                        <synonym>осм лишайник</synonym>
-                    </literalElement>
-                </template>
-            </templates>
-            <procedureCall procedure="осмотреть лишайник"/>
-            <restrictions/>
-        </action>
-        <action name="чистить" description="очистить предмет">
+        <action description="очистить предмет" name="чистить">
             <templates>
                 <template>
                     <literalElement>
@@ -1982,7 +1964,7 @@
             <procedureCall procedure="чистить"/>
             <restrictions/>
         </action>
-        <action name="метнуть копье" description="метнуть копье">
+        <action description="метнуть копье" name="метнуть копье">
             <templates>
                 <template>
                     <literalElement>
@@ -1993,7 +1975,7 @@
             <procedureCall procedure="метнуть копье"/>
             <restrictions/>
         </action>
-        <action name="что делать" description="что делать?">
+        <action description="что делать?" name="что делать">
             <templates>
                 <template>
                     <literalElement>
@@ -2005,7 +1987,7 @@
             <procedureCall procedure="что делать"/>
             <restrictions/>
         </action>
-        <action name="ждать" description="ждать">
+        <action description="ждать" name="ждать">
             <templates>
                 <template>
                     <literalElement>
@@ -2016,7 +1998,7 @@
             <procedureCall procedure="ждать"/>
             <restrictions/>
         </action>
-        <action name="читать" description="читать надпись, камень">
+        <action description="читать надпись, камень" name="читать">
             <templates>
                 <template>
                     <literalElement>
@@ -2031,7 +2013,7 @@
             <procedureCall procedure="читать"/>
             <restrictions/>
         </action>
-        <action name="звать" description="звать Черномора">
+        <action description="звать Черномора" name="звать">
             <templates>
                 <template>
                     <literalElement>
@@ -2051,7 +2033,7 @@
             <procedureCall procedure="звать"/>
             <restrictions/>
         </action>
-        <action name="двинуть" description="двинуть камень">
+        <action description="двинуть камень" name="двинуть">
             <templates>
                 <template>
                     <literalElement>
@@ -2064,7 +2046,7 @@
             <procedureCall procedure="двинуть"/>
             <restrictions/>
         </action>
-        <action name="передвижения" description="по сторонам света">
+        <action description="по сторонам света" name="передвижения">
             <templates>
                 <template>
                     <literalElement>
@@ -2099,7 +2081,7 @@
             <procedureCall procedure="направо налево"/>
             <restrictions/>
         </action>
-        <action name="говорить" description="общаться с головой">
+        <action description="общаться с головой" name="говорить">
             <templates>
                 <template>
                     <literalElement>
@@ -2113,7 +2095,7 @@
             <procedureCall procedure="говорить"/>
             <restrictions/>
         </action>
-        <action name="идти к реке" description="идти к реке">
+        <action description="идти к реке" name="идти к реке">
             <templates>
                 <template>
                     <literalElement>
@@ -2129,7 +2111,7 @@
             <procedureCall procedure="идти к реке"/>
             <restrictions/>
         </action>
-        <action name="ударить копьем" description="ударить копьем голову">
+        <action description="ударить копьем голову" name="ударить копьем">
             <templates>
                 <template>
                     <literalElement>
@@ -2156,7 +2138,7 @@
             <procedureCall procedure="ударить копьем"/>
             <restrictions/>
         </action>
-        <action name="ломать сук" description="отломать ветку от дерева">
+        <action description="отломать ветку от дерева" name="ломать сук">
             <templates>
                 <template>
                     <literalElement>
@@ -2175,7 +2157,7 @@
             <procedureCall procedure="сломать ветку"/>
             <restrictions/>
         </action>
-        <action name="посмотреть под дерево" description="заглянуть под дерево">
+        <action description="заглянуть под дерево" name="посмотреть под дерево">
             <templates>
                 <template>
                     <literalElement>
@@ -2194,18 +2176,7 @@
             <procedureCall procedure="заглянуть под дерево"/>
             <restrictions/>
         </action>
-        <action name="взять лишайник" description="взять лишайник">
-            <templates>
-                <template>
-                    <literalElement>
-                        <synonym>взять лишайник</synonym>
-                    </literalElement>
-                </template>
-            </templates>
-            <procedureCall procedure="взять лишайник"/>
-            <restrictions/>
-        </action>
-        <action name="рубить" description="рубить дерево">
+        <action description="рубить дерево" name="рубить">
             <templates>
                 <template>
                     <literalElement>
@@ -2221,7 +2192,7 @@
             <procedureCall procedure="рубить"/>
             <restrictions/>
         </action>
-        <action name="осмотреть развилку" description="перекресток">
+        <action description="перекресток" name="осмотреть развилку">
             <templates>
                 <template>
                     <literalElement>
@@ -2235,7 +2206,7 @@
             <procedureCall procedure="осмотреть развилку"/>
             <restrictions/>
         </action>
-        <action name="смотреть" description="смотреть">
+        <action description="смотреть" name="смотреть">
             <templates>
                 <template>
                     <literalElement>
@@ -2247,7 +2218,7 @@
             <procedureCall procedure="смотреть"/>
             <restrictions/>
         </action>
-        <action name="осмотреть себя" description="осмотреть себя">
+        <action description="осмотреть себя" name="осмотреть себя">
             <templates>
                 <template>
                     <literalElement>
@@ -2265,7 +2236,7 @@
             <procedureCall procedure="осмотреть себя"/>
             <restrictions/>
         </action>
-        <action name="осмотреть Руслана" description="осмотреть Руслана">
+        <action description="осмотреть Руслана" name="осмотреть Руслана">
             <templates>
                 <template>
                     <literalElement>
@@ -2281,7 +2252,7 @@
             <procedureCall procedure="осмотреть Руслана"/>
             <restrictions/>
         </action>
-        <action name="использовать" description="использовать">
+        <action description="использовать" name="использовать">
             <templates>
                 <template>
                     <literalElement>
@@ -2298,7 +2269,7 @@
             <procedureCall procedure="использовать"/>
             <restrictions/>
         </action>
-        <action name="положить" description="положить">
+        <action description="положить" name="положить">
             <templates>
                 <template>
                     <literalElement>
