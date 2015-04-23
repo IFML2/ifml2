@@ -65,7 +65,7 @@ public class SavedProperty
                         Item propItem = dataHelper.findItemById(itemId);
                         if (propItem != null)
                         {
-                            propItems.add(propItem);
+                            propItem.moveTo(propItems);
                         }
                         else
                         {

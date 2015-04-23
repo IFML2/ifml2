@@ -3,6 +3,7 @@ package ifml2.om;
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
+import ifml2.FormatLogger;
 import ifml2.IFML2Exception;
 import ifml2.IFMLEntity;
 import ifml2.om.xml.XmlSchemaConstants;
@@ -19,6 +20,7 @@ import static ifml2.om.xml.XmlSchemaConstants.STARTING_POSITION_INVENTORY_ELEMEN
 @XmlAccessorType(XmlAccessType.NONE)
 public class Item extends IFMLObject implements Cloneable
 {
+    private static final FormatLogger LOG = FormatLogger.getLogger(Item.class);
     @XmlElement(name = ITEM_STARTING_POSITION_ELEMENT)
     private ItemStartingPosition startingPosition = new ItemStartingPosition();
 
@@ -96,6 +98,11 @@ public class Item extends IFMLObject implements Cloneable
         // contract
         assert container != null;
         //
+
+        if (!container.contains(this))
+        {
+            LOG.error("moveTo(): Item's container hasn't the item!");
+        }
 
         container.remove(this);
         collection.add(this);
