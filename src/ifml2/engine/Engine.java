@@ -26,7 +26,7 @@ public class Engine
 {
     public static final FormatLogger LOG = FormatLogger.getLogger(Engine.class);
     private final HashMap<String, Value> globalVariables = new HashMap<String, Value>();
-    private final Parser parser = new Parser(this);
+    private final Parser parser = new Parser();
     private final VirtualMachine virtualMachine = new VirtualMachine();
     private final HashMap<String, Value> systemVariables = new HashMap<String, Value>();
     private GameInterface gameInterface = null;
@@ -105,7 +105,6 @@ public class Engine
         OMManager.LoadStoryResult loadStoryResult = OMManager.loadStoryFromFile(storyFileName, true, isAllowedOpenCipherFiles);
         story = loadStoryResult.getStory();
         this.storyFileName = storyFileName;
-        parser.setStory(story);
         inventory = loadStoryResult.getInventory();
 
         LOG.info("Story \"{0}\" loaded", story);
@@ -134,6 +133,11 @@ public class Engine
         {
             throw new IFML2Exception("Локаций нет.");
         }
+
+        // init and reset objects
+        virtualMachine.init();
+        systemVariables.clear();
+        abyss.clear();
 
         // load global vars
         globalVariables.clear();
@@ -246,7 +250,7 @@ public class Engine
         Parser.ParseResult parseResult;
         try
         {
-            parseResult = parser.parse(trimmedCommand);
+            parseResult = parser.parse(trimmedCommand, story.getDataHelper(), dataHelper);
             Action action = parseResult.getAction();
             List<FormalElement> formalElements = parseResult.getFormalElements();
 
@@ -659,6 +663,11 @@ public class Engine
         String getStoryFileName()
         {
             return new File(storyFileName).getName();
+        }
+
+        public boolean isObjectAccessible(IFMLObject ifmlObject) throws IFML2Exception
+        {
+            return Engine.this.isObjectAccessible(ifmlObject);
         }
     }
 

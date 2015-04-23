@@ -10,27 +10,9 @@ import java.util.*;
 
 public class Parser
 {
-    private Story story = null;
-    private Engine engine = null;
-
-    public Parser(Engine engine)
+    public ParseResult parse(String phrase, Story.DataHelper storyDataHelper, Engine.DataHelper engineDataHelper) throws IFML2Exception
     {
-        this.engine = engine;
-    }
-
-    public void setStory(Story story)
-    {
-        this.story = story;
-    }
-
-    public ParseResult parse(String phrase) throws IFML2Exception
-    {
-        if (story == null)
-        {
-            throw new IFML2Exception("Системная ошибка: Ссылка на объектную модель (story) не задана!");
-        }
-
-        if (story.getAllActions() == null || story.getAllActions().size() == 0)
+        if (storyDataHelper.getAllActions() == null || storyDataHelper.getAllActions().size() == 0)
         {
             throw new IFML2Exception("Системная ошибка: В системе нет ни одного действия.");
         }
@@ -43,14 +25,15 @@ public class Parser
 
         IFML2Exception lastException = null;
 
-        for (Action action : story.getAllActions())
+        for (Action action : storyDataHelper.getAllActions())
         {
             for (Template template : action.getTemplates())
             {
                 int templateSize = template.getSize();
                 try
                 {
-                    ArrayList<FittedFormalElement> fittedFormalElements = fitPhraseWithTemplate(phraseAsList, template.getElements());
+                    ArrayList<FittedFormalElement> fittedFormalElements = fitPhraseWithTemplate(phraseAsList, template.getElements(),
+                            storyDataHelper);
 
                     FittedTemplate fittedTemplate = new FittedTemplate(action, fittedFormalElements);
                     fittedTemplates.add(fittedTemplate);
@@ -103,7 +86,7 @@ public class Parser
         ArrayList<FittedTemplate> accessibleTemplates = null;
         try
         {
-            accessibleTemplates = removeInaccessibleObjects(fittedTemplates);
+            accessibleTemplates = removeInaccessibleObjects(fittedTemplates, engineDataHelper);
         }
         catch (IFML2Exception e)
         {
@@ -205,7 +188,8 @@ public class Parser
         return result.trim();
     }
 
-    private ArrayList<FittedTemplate> removeInaccessibleObjects(ArrayList<FittedTemplate> fittedTemplates) throws IFML2Exception
+    private ArrayList<FittedTemplate> removeInaccessibleObjects(ArrayList<FittedTemplate> fittedTemplates,
+            Engine.DataHelper engineDataHelper) throws IFML2Exception
     {
         ArrayList<FittedTemplate> result = new ArrayList<FittedTemplate>();
         IFMLObject inaccessibleObject = null;
@@ -224,7 +208,7 @@ public class Parser
 
                     for (IFMLObject object : fittedObjects)
                     {
-                        if (!engine.isObjectAccessible(object))
+                        if (!engineDataHelper.isObjectAccessible(object))
                         {
                             objectsToRemove.add(object);
 
@@ -269,7 +253,8 @@ public class Parser
         }
     }
 
-    private ArrayList<FittedFormalElement> fitPhraseWithTemplate(ArrayList<String> phraseAsList, List<TemplateElement> template) throws IFML2Exception
+    private ArrayList<FittedFormalElement> fitPhraseWithTemplate(ArrayList<String> phraseAsList, List<TemplateElement> template,
+            Story.DataHelper storyDataHelper) throws IFML2Exception
     {
         // get vars into local copy
         ArrayList<String> phraseRest = new ArrayList<String>(phraseAsList);
@@ -279,7 +264,7 @@ public class Parser
         TemplateElement firstTemplateElement = templateRest.get(0);
 
         // try to fit template element with beginning of phrase
-        TemplateElementFitResult result = fitTemplateElementWithPhrase(firstTemplateElement, phraseRest);
+        TemplateElementFitResult result = fitTemplateElementWithPhrase(firstTemplateElement, phraseRest, storyDataHelper);
 
         ArrayList<FittedFormalElement> fittedFormalElements = new ArrayList<FittedFormalElement>();
 
@@ -308,7 +293,7 @@ public class Parser
         {
             try
             {
-                ArrayList<FittedFormalElement> nextElements = fitPhraseWithTemplate(phraseRest, templateRest);
+                ArrayList<FittedFormalElement> nextElements = fitPhraseWithTemplate(phraseRest, templateRest, storyDataHelper);
                 fittedFormalElements.addAll(nextElements);
                 return fittedFormalElements;
             }
@@ -326,7 +311,8 @@ public class Parser
         }
     }
 
-    private TemplateElementFitResult fitTemplateElementWithPhrase(TemplateElement templateElement, ArrayList<String> phrase) throws IFML2Exception
+    private TemplateElementFitResult fitTemplateElementWithPhrase(TemplateElement templateElement, ArrayList<String> phrase,
+            Story.DataHelper storyDataHelper) throws IFML2Exception
     {
         IFML2Exception lastException = null;
 
@@ -394,7 +380,7 @@ public class Parser
         {
             Word.GramCaseEnum gramCase = ((ObjectTemplateElement) templateElement).getGramCase();
 
-            FitObjectWithPhraseResult fitObjectWithPhraseResult = fitObjectWithPhrase(gramCase, phrase);
+            FitObjectWithPhraseResult fitObjectWithPhraseResult = fitObjectWithPhrase(gramCase, phrase, storyDataHelper);
             ArrayList<IFMLObject> objects = fitObjectWithPhraseResult.getObjects();
             int usedWordsQty = fitObjectWithPhraseResult.getUsedWordsQty();
 
@@ -406,7 +392,8 @@ public class Parser
         }
     }
 
-    private FitObjectWithPhraseResult fitObjectWithPhrase(Word.GramCaseEnum gramCase, ArrayList<String> phrase) throws IFML2Exception
+    private FitObjectWithPhraseResult fitObjectWithPhrase(Word.GramCaseEnum gramCase, ArrayList<String> phrase,
+            Story.DataHelper storyDataHelper) throws IFML2Exception
     {
         List<String> restPhrase = new ArrayList<String>(phrase);
         ArrayList<Word> fittedWords = new ArrayList<Word>();
@@ -423,7 +410,7 @@ public class Parser
 
             boolean wordIsFound = false;
 
-            for (Word dictWord : story.getDictionary().values())
+            for (Word dictWord : storyDataHelper.getDictionary().values())
             {
                 int usedWords = fitWordWithPhrase(dictWord, gramCase, restPhrase);
 
