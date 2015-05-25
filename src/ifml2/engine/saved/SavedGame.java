@@ -103,7 +103,8 @@ public class SavedGame
         return savedLocations;
     }
 
-    private static void restoreSystemVariables(@NotNull List<SavedVariable> systemVariables, @NotNull Engine.DataHelper dataHelper) throws IFML2Exception
+    private static void restoreSystemVariables(@NotNull List<SavedVariable> systemVariables,
+            @NotNull Engine.DataHelper dataHelper) throws IFML2Exception
     {
         for (SavedVariable var : systemVariables)
         {
@@ -111,7 +112,8 @@ public class SavedGame
         }
     }
 
-    private static void restoreGlobalVariables(@NotNull List<SavedVariable> globalVariables, @NotNull Engine.DataHelper dataHelper) throws IFML2Exception
+    private static void restoreGlobalVariables(@NotNull List<SavedVariable> globalVariables,
+            @NotNull Engine.DataHelper dataHelper) throws IFML2Exception
     {
         for (SavedVariable var : globalVariables)
         {
@@ -135,7 +137,8 @@ public class SavedGame
         }
     }
 
-    private static void restoreInventory(@NotNull List<String> itemIds, @NotNull Engine.DataHelper dataHelper, @NotNull Story.DataHelper storyDataHelper)
+    private static void restoreInventory(@NotNull List<String> itemIds, @NotNull Engine.DataHelper dataHelper,
+            @NotNull Story.DataHelper storyDataHelper)
     {
         ArrayList<Item> inventory = dataHelper.getInventory();
         inventory.clear();
@@ -158,7 +161,7 @@ public class SavedGame
     {
         // check story file name
         String engineStoryFileName = engineDataHelper.getStoryFileName();
-        if(!engineStoryFileName.equalsIgnoreCase(storyFileName))
+        if (!engineStoryFileName.equalsIgnoreCase(storyFileName))
         {
             throw new IFML2Exception("Файл сохранения не соответсвует текущей истории. Он был сделан для файла \"{0}\".", storyFileName);
         }
