@@ -373,7 +373,7 @@ public class Parser
                 try
                 {
                     // add fitted synonym or ...
-                    fittedSynonyms.put(synonym, fitSynonymWithPhrase(synonym, phrase));
+                    fittedSynonyms.put(synonym, fitSynonymWithPhrase(synonym, phrase, debugLevel));
                 }
                 catch (IFML2ParseException e)
                 {
