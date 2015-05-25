@@ -2,6 +2,7 @@ package ifml2.vm.instructions;
 
 import ifml2.CommonUtils;
 import ifml2.IFML2Exception;
+import ifml2.IFMLEntity;
 import ifml2.om.Item;
 import ifml2.vm.RunningContext;
 
@@ -11,15 +12,11 @@ import java.text.MessageFormat;
 import java.util.List;
 
 @XmlRootElement(name = "moveItem")
+@IFML2Instruction(title = "Переместить предмет")
 public class MoveItemInstruction extends Instruction
 {
     private String itemExpr = "";
     private String toCollectionExpr = "";
-
-    public static String getTitle()
-    {
-        return "Переместить предмет";
-    }
 
     @Override
     public void run(RunningContext runningContext) throws IFML2Exception
@@ -27,7 +24,7 @@ public class MoveItemInstruction extends Instruction
         Item item = getItemFromExpression(itemExpr, runningContext, getTitle(), "предмет", false);
         assert item.getContainer() != null;
 
-        List<?> collection = getCollectionFromExpression(toCollectionExpr, runningContext, getTitle(), "куда");
+        List<? extends IFMLEntity> collection = getCollectionFromExpression(toCollectionExpr, runningContext, getTitle(), "куда");
 
         if (collection.contains(item))
         {

@@ -2,36 +2,11 @@ package ifml2.vm.values;
 
 import ifml2.vm.IFML2ExpressionException;
 
-public class TextValue extends Value implements IAddableValue
+public class TextValue extends Value<String> implements IAddableValue
 {
-    private final String value;
-
     public TextValue(String value)
     {
-        this.value = value;
-    }
-
-    @Override
-    public boolean equals(Object o)
-    {
-        if (this == o)
-        {
-            return true;
-        }
-        if (!(o instanceof TextValue))
-        {
-            return false;
-        }
-
-        TextValue that = (TextValue) o;
-
-        return !(value != null ? !value.equals(that.value) : that.value != null);
-    }
-
-    @Override
-    public String toString()
-    {
-        return value;
+        super(value);
     }
 
     @Override
@@ -49,11 +24,6 @@ public class TextValue extends Value implements IAddableValue
     @Override
     public String toLiteral()
     {
-        return '\'' +  value + '\'';
-    }
-
-    public String getValue()
-    {
-        return value;
+        return '\'' + value + '\'';
     }
 }

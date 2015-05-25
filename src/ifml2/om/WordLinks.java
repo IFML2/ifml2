@@ -8,16 +8,14 @@ import ca.odell.glazedlists.event.ListEventListener;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlIDREF;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
 import static ifml2.om.xml.XmlSchemaConstants.WORDS_MAIN_WORD_ATTRIBUTE;
 import static ifml2.om.xml.XmlSchemaConstants.WORDS_WORD_TAG;
 
+@XmlAccessorType(XmlAccessType.NONE)
 public class WordLinks implements Cloneable
 {
     private final ListEventListener<Word> listEventListener = new ListEventListener<Word>()
@@ -28,9 +26,16 @@ public class WordLinks implements Cloneable
             fireChangeEvent();
         }
     };
+
     @XmlTransient
     private final List<ChangeListener> changeListeners = new ArrayList<ChangeListener>();
+
+    @XmlAttribute(name = WORDS_MAIN_WORD_ATTRIBUTE)
+    @XmlIDREF
     private Word mainWord;
+
+    @XmlElement(name = WORDS_WORD_TAG)
+    @XmlIDREF
     private EventList<Word> words = new BasicEventList<Word>();
 
     {
@@ -41,7 +46,7 @@ public class WordLinks implements Cloneable
     public WordLinks clone() throws CloneNotSupportedException
     {
         WordLinks clone = (WordLinks) super.clone();
-        clone.words = GlazedLists.eventList(words);
+        clone.words = GlazedLists.eventList(words); // copy links
         return clone;
     }
 
@@ -50,8 +55,6 @@ public class WordLinks implements Cloneable
         return mainWord;
     }
 
-    @XmlAttribute(name = WORDS_MAIN_WORD_ATTRIBUTE)
-    @XmlIDREF
     public void setMainWord(Word mainWord)
     {
         this.mainWord = mainWord;
@@ -63,8 +66,6 @@ public class WordLinks implements Cloneable
         return words;
     }
 
-    @XmlElement(name = WORDS_WORD_TAG)
-    @XmlIDREF
     public void setWords(EventList<Word> words)
     {
         this.words = words;

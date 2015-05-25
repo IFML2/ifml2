@@ -29,7 +29,7 @@ public class GoToLocInstrEditor extends AbstractInstrEditor
     public GoToLocInstrEditor(Window owner, GoToLocInstruction instruction, Story.DataHelper storyDataHelper)
     {
         super(owner);
-        initializeEditor(GoToLocInstruction.getTitle(), contentPane, buttonOK, buttonCancel);
+        initializeEditor(Instruction.getTitleFor(GoToLocInstruction.class), contentPane, buttonOK, buttonCancel);
 
         // set listeners
         ChangeListener radioChangeListener = new ChangeListener()
@@ -49,7 +49,7 @@ public class GoToLocInstrEditor extends AbstractInstrEditor
             public void actionPerformed(ActionEvent e)
             {
                 Location location = (Location) locationsCombo.getSelectedItem();
-                if(location != null)
+                if (location != null)
                 {
                     locExprText.setText(location.getId());
                 }
@@ -60,11 +60,10 @@ public class GoToLocInstrEditor extends AbstractInstrEditor
 
         String locationExpr = instruction.getLocationExpr();
         locationsCombo.setModel(new DefaultEventComboBoxModel<Location>(storyDataHelper.getLocations()));
-        locExprText.setText(locationExpr);
 
         // detect if location expression is location id
         Location location = storyDataHelper.findLocationById(locationExpr);
-        if(location != null || "".equals(locationExpr)) // location by id is found or expression is empty
+        if (location != null || "".equals(locationExpr)) // location by id is found or expression is empty
         {
             locRadio.setSelected(true);
             locationsCombo.setSelectedItem(location);
@@ -102,11 +101,11 @@ public class GoToLocInstrEditor extends AbstractInstrEditor
     @Override
     protected void validateData() throws DataNotValidException
     {
-        if(locRadio.isSelected() && locationsCombo.getSelectedItem() == null)
+        if (locRadio.isSelected() && locationsCombo.getSelectedItem() == null)
         {
             throw new DataNotValidException("Не выбрана локация.", locationsCombo);
         }
-        if(exprRadio.isSelected() && "".equals(locExprText.getText().trim()))
+        if (exprRadio.isSelected() && "".equals(locExprText.getText().trim()))
         {
             throw new DataNotValidException("Не введено выражение.", locExprText);
         }

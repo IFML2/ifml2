@@ -3,7 +3,7 @@ package ifml2.tests.gui;
 import ifml2.CommonConstants;
 import ifml2.CommonUtils;
 import ifml2.GUIUtils;
-import ifml2.engine.Engine;
+import ifml2.engine.EngineVersion;
 import ifml2.players.GameInterface;
 import ifml2.tests.IFMLTestPlan;
 import ifml2.tests.TestManager;
@@ -22,6 +22,8 @@ import java.util.ArrayList;
 
 public class TestRunner extends JFrame
 {
+    private final TestManager testManager = new TestManager();
+    private final ArrayList<ListDataListener> commandsListDataListeners = new ArrayList<ListDataListener>();
     private JList testsList;
     private JList commandsList;
     private JTextArea logText;
@@ -29,12 +31,9 @@ public class TestRunner extends JFrame
     private JButton startButton;
     private JPanel mainPanel;
 
-    private final TestManager testManager = new TestManager();
-    private final ArrayList<ListDataListener> commandsListDataListeners = new ArrayList<ListDataListener>();
-
     public TestRunner()
     {
-        super("ЯРИЛ 2.0 Тестер " + Engine.ENGINE_VERSION);
+        super("ЯРИЛ 2.0 Тестер " + EngineVersion.VERSION);
         setContentPane(mainPanel);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         GUIUtils.packAndCenterWindow(this);
@@ -183,16 +182,6 @@ public class TestRunner extends JFrame
         });
     }
 
-    private int getSelectedTestSize()
-    {
-        return testsList.getSelectedValue() != null ? ((IFMLTestPlan) testsList.getSelectedValue()).getSize() : 0;
-    }
-
-    private void showError(Throwable exception)
-    {
-        JOptionPane.showMessageDialog(this, "Произошла ошибка:\n" + exception.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
-    }
-
     public static void main(String[] args)
     {
         TestRunner testRunner = new TestRunner();
@@ -201,6 +190,16 @@ public class TestRunner extends JFrame
         {
             testRunner.loadTestsFromPaths(args);
         }
+    }
+
+    private int getSelectedTestSize()
+    {
+        return testsList.getSelectedValue() != null ? ((IFMLTestPlan) testsList.getSelectedValue()).getSize() : 0;
+    }
+
+    private void showError(Throwable exception)
+    {
+        JOptionPane.showMessageDialog(this, "Произошла ошибка:\n" + exception.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
     }
 
     private void loadTestsFromPaths(String[] testsToLoad)

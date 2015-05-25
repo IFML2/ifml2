@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<schema xmlns:ifml2="http://toysoft.narod.ru/IFML2Schema" elementFormDefault="qualified"
-        targetNamespace="http://toysoft.narod.ru/IFML2Schema" xmlns="http://www.w3.org/2001/XMLSchema"
-        xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<schema xmlns:ifml2="http://toysoft.narod.ru/IFML2Schema" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="qualified" targetNamespace="http://toysoft.narod.ru/IFML2Schema"
+        xmlns="http://www.w3.org/2001/XMLSchema">
 
     <complexType name="storyType">
         <annotation>
@@ -101,9 +101,13 @@
             <extension base="ifml2:objectType">
                 <all minOccurs="1" maxOccurs="1">
                     <element name="north" type="ifml2:idType" minOccurs="0" maxOccurs="1"/>
+                    <element name="north-east" type="ifml2:idType" minOccurs="0" maxOccurs="1"/>
                     <element name="east" type="ifml2:idType" minOccurs="0" maxOccurs="1"/>
+                    <element name="south-east" type="ifml2:idType" minOccurs="0" maxOccurs="1"/>
                     <element name="south" type="ifml2:idType" minOccurs="0" maxOccurs="1"/>
+                    <element name="south-west" type="ifml2:idType" minOccurs="0" maxOccurs="1"/>
                     <element name="west" type="ifml2:idType" minOccurs="0" maxOccurs="1"/>
+                    <element name="north-west" type="ifml2:idType" minOccurs="0" maxOccurs="1"/>
                     <element name="up" type="ifml2:idType" minOccurs="0" maxOccurs="1"/>
                     <element name="down" type="ifml2:idType" minOccurs="0" maxOccurs="1"/>
                 </all>
@@ -207,11 +211,11 @@
     </complexType>
 
     <complexType name="templateElementType">
-        <attribute name="position" use="required">
+        <attribute name="position" use="optional">
             <simpleType>
-                <!--<restriction base="positiveInteger">
-                    <minInclusive value="1"/>
-                </restriction>-->
+                <restriction base="positiveInteger">
+                    <minInclusive value="0"/>
+                </restriction>
             </simpleType>
         </attribute>
         <attribute name="parameter" use="optional" type="string"/>
@@ -247,7 +251,7 @@
     </simpleType>
 
     <complexType name="procedureCallType">
-        <attribute name="procedure" type="IDREF" use="required"/>
+        <attribute name="procedure" type="string" use="required"/>
     </complexType>
 
     <complexType name="proceduresType">
@@ -276,7 +280,7 @@
             <element name="procedureVariables" minOccurs="0" maxOccurs="1" type="ifml2:procedureVariablesType"/>
             <element name="procedureBody" minOccurs="1" maxOccurs="1" type="ifml2:instructionsType"/>
         </all>
-        <attribute name="name" type="ID" use="required"/>
+        <attribute name="name" type="string" use="required"/>
         <attribute name="inheritsSystemProcedure" type="ifml2:systemProcedureEnumType" use="optional"/>
     </complexType>
 
@@ -490,11 +494,11 @@
     </complexType>
 
     <complexType name="role-definitionType">
-        <sequence>
+        <all>
             <element name="attributes" type="ifml2:attributesType" minOccurs="0" maxOccurs="1"/>
             <element name="properties" type="ifml2:properties-definitionsType" minOccurs="0" maxOccurs="1"/>
             <element name="triggers" type="ifml2:triggersType" minOccurs="0" maxOccurs="1"/>
-        </sequence>
+        </all>
         <attribute name="name" type="string" use="required"/>
         <attribute name="description" type="string" use="optional"/>
     </complexType>
@@ -561,7 +565,7 @@
     </complexType>
 
     <complexType name="startProcedureOptionType">
-        <attribute name="procedure" type="IDREF"/>
+        <attribute name="procedure" type="string"/>
     </complexType>
 
     <complexType name="storyDescriptionType">

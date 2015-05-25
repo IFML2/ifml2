@@ -14,7 +14,8 @@ public enum InstructionTypeEnum
     LOOP(LoopInstruction.class, null), //todo LoopInstruction Editor
     SET_VAR(SetVarInstruction.class, SetVarInstrEditor.class),
     MOVE_ITEM(MoveItemInstruction.class, MoveItemInstrEditor.class),
-    ROLL_DICE(RollDiceInstruction.class, RollDiceInstrEditor.class);
+    ROLL_DICE(RollDiceInstruction.class, RollDiceInstrEditor.class),
+    SET_PROPERTY(SetPropertyInstruction.class, null); // todo SetPropertyInstruction Editor
     private Class<? extends Instruction> instrClass;
     private String title;
     private Class<? extends AbstractInstrEditor> editorClass;
@@ -26,11 +27,8 @@ public enum InstructionTypeEnum
 
         try
         {
-            this.title = (String) instrClass.getMethod("getTitle").invoke(instrClass);
-        }
-        catch (NoSuchMethodException e)
-        {
-            throw new RuntimeException(MessageFormat.format("{0} class hasn't getTitle() method!", instrClass.getSimpleName()));
+            IFML2Instruction annotation = instrClass.getAnnotation(IFML2Instruction.class);
+            this.title = annotation != null ? annotation.title() : instrClass.getSimpleName();
         }
         catch (Throwable e)
         {

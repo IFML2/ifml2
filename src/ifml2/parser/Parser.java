@@ -7,10 +7,7 @@ import ifml2.engine.Engine;
 import ifml2.om.*;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class Parser
 {
@@ -368,34 +365,55 @@ public class Parser
 
         if (templateElement instanceof LiteralTemplateElement)
         {
+            HashMap<String, Integer> fittedSynonyms = new HashMap<String, Integer>();
             EventList<String> synonyms = ((LiteralTemplateElement) templateElement).getSynonyms();
             outParsDebug(debugLevel, "Элемент - литерал, сравниваем все его синонимы {0}...", synonyms);
             for (String synonym : synonyms)
             {
-                FittedFormalElement fittedFormalElement = new FittedSynonym(synonym, templateElement.getParameter());
                 try
                 {
-                    int usedWordsQty = fitSynonymWithPhrase(synonym, phrase, debugLevel);
-                    return new TemplateElementFitResult(fittedFormalElement, usedWordsQty);
+                    // add fitted synonym or ...
+                    fittedSynonyms.put(synonym, fitSynonymWithPhrase(synonym, phrase));
                 }
                 catch (IFML2ParseException e)
                 {
+                    // ... catch exception
                     if (lastException == null)
                     {
                         lastException = e;
                     }
-                    else if (e.getUsedWords() > ((IFML2ParseException) lastException).getUsedWords())
+                    else
                     {
-                        lastException = e;
-                    }
-                    else if (e.getUsedWords() == ((IFML2ParseException) lastException).getUsedWords())
-                    {
-                        // take random of these exceptions :)
-                        lastException = Math.round(Math.random()) == 0 ? lastException : e;
+                        int usedWords = ((IFML2ParseException) lastException).getUsedWords();
+                        if (e.getUsedWords() > usedWords)
+                        {
+                            lastException = e;
+                        }
+                        else if (e.getUsedWords() == usedWords)
+                        {
+                            // take random of these exceptions :)
+                            lastException = Math.round(Math.random()) == 0 ? lastException : e;
+                        }
                     }
                 }
             }
 
+            // if there are fitted synonyms
+            if(fittedSynonyms.size() > 0)
+            {
+                Map.Entry<String, Integer> maxEntry = Collections.max(fittedSynonyms.entrySet(), new Comparator<Map.Entry<String, Integer>>()
+                {
+                    @Override
+                    public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2)
+                    {
+                        return o1.getValue() - o2.getValue();
+                    }
+                });
+                return new TemplateElementFitResult(new FittedSynonym(maxEntry.getKey(), templateElement.getParameter()),
+                        maxEntry.getValue());
+            }
+
+            // if there are no fitted synonyms
             if (lastException != null)
             {
                 throw lastException;
@@ -560,7 +578,7 @@ public class Parser
                 String phraseWord = restPhrase.get(currentWord);
                 if (!dictWordPart.equalsIgnoreCase(phraseWord))
                 {
-                    break;
+                    return 0; // if at least one word isn't fit then don't accept it
                 }
                 currentWord++;
             }
