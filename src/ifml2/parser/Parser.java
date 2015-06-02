@@ -13,7 +13,7 @@ public class Parser
 {
     public ParseResult parse(String phrase, Story.DataHelper storyDataHelper, Engine.DataHelper engineDataHelper) throws IFML2Exception
     {
-        outParsDebug("Начало анализа команды \"{0}\"...", phrase);
+        outParsDebug(engineDataHelper, "Начало анализа команды \"{0}\"...", phrase);
 
         if (storyDataHelper.getAllActions() == null || storyDataHelper.getAllActions().size() == 0)
         {
@@ -22,25 +22,25 @@ public class Parser
 
         // split phrase to array
         ArrayList<String> phraseAsList = new ArrayList<String>(Arrays.asList(phrase.split("\\s+")));
-        outParsDebug("Разбили фразу на слова: {0}.", phraseAsList);
+        outParsDebug(engineDataHelper, "Разбили фразу на слова: {0}.", phraseAsList);
 
         // prepare list of all fitted templates
         ArrayList<FittedTemplate> fittedTemplates = new ArrayList<FittedTemplate>();
 
         IFML2Exception lastException = null;
 
-        outParsDebug("Старт перебора всех действий в игре...");
+        outParsDebug(engineDataHelper, "Старт перебора всех действий в игре...");
         for (Action action : storyDataHelper.getAllActions())
         {
-            outParsDebug(1, "Анализируем действие \"{0}\"...", action);
+            outParsDebug(1, engineDataHelper, "Анализируем действие \"{0}\"...", action);
             for (Template template : action.getTemplates())
             {
-                outParsDebug(2, "Анализируем шаблон \"{0}\"...", template);
+                outParsDebug(2, engineDataHelper, "Анализируем шаблон \"{0}\"...", template);
                 int templateSize = template.getSize();
                 try
                 {
                     ArrayList<FittedFormalElement> fittedFormalElements = fitPhraseWithTemplate(phraseAsList, template.getElements(),
-                            storyDataHelper, 3);
+                            storyDataHelper, engineDataHelper, 3);
 
                     FittedTemplate fittedTemplate = new FittedTemplate(action, fittedFormalElements);
                     fittedTemplates.add(fittedTemplate);
@@ -149,14 +149,14 @@ public class Parser
         return new ParseResult(firstFittedTemplate.action, formalElements);
     }
 
-    private void outParsDebug(int level, String message, Object... args)
+    private void outParsDebug(int level, Engine.DataHelper engineDataHelper, String message, Object... args)
     {
-        engine.outDebug(this.getClass(), level, message, args);
+        engineDataHelper.outDebug(this.getClass(), level, message, args);
     }
 
-    private void outParsDebug(String message, Object... args)
+    private void outParsDebug(Engine.DataHelper engineDataHelper, String message, Object... args)
     {
-        outParsDebug(0, message, args);
+        outParsDebug(0, engineDataHelper, message, args);
     }
 
     private String convertArrayToString(ArrayList<String> stringArrayList)
@@ -271,9 +271,9 @@ public class Parser
     }
 
     private ArrayList<FittedFormalElement> fitPhraseWithTemplate(ArrayList<String> phraseAsList, List<TemplateElement> template,
-            Story.DataHelper storyDataHelper, int debugLevel) throws IFML2Exception
+            Story.DataHelper storyDataHelper, Engine.DataHelper engineDataHelper, int debugLevel) throws IFML2Exception
     {
-        outParsDebug(debugLevel, "Сравниваем фразу {0} с шаблоном {1}...", phraseAsList, template);
+        outParsDebug(debugLevel, engineDataHelper, "Сравниваем фразу {0} с шаблоном {1}...", phraseAsList, template);
 
         // get vars into local copy
         ArrayList<String> phraseRest = new ArrayList<String>(phraseAsList);
@@ -281,12 +281,13 @@ public class Parser
 
         // take the first element of template
         TemplateElement firstTemplateElement = templateRest.get(0);
-        outParsDebug(debugLevel, "Взяли первый элемент шаблона - {0} - и пытаемся его сопоставить с началом фразы...",
+        outParsDebug(debugLevel, engineDataHelper, "Взяли первый элемент шаблона - {0} - и пытаемся его сопоставить с началом фразы...",
                      firstTemplateElement);
 
         // try to fit template element with beginning of phrase
-        TemplateElementFitResult result = fitTemplateElementWithPhrase(firstTemplateElement, phraseRest, storyDataHelper, debugLevel + 1);
-        outParsDebug(debugLevel, "Результат: {0}", result);
+        TemplateElementFitResult result = fitTemplateElementWithPhrase(firstTemplateElement, phraseRest, engineDataHelper, storyDataHelper,
+                debugLevel + 1);
+        outParsDebug(debugLevel, engineDataHelper, "Результат: {0}", result);
 
         ArrayList<FittedFormalElement> fittedFormalElements = new ArrayList<FittedFormalElement>();
 
@@ -299,33 +300,35 @@ public class Parser
         {
             phraseRest.remove(0);
         }
-        outParsDebug(debugLevel, "Остаток фразы: \"{0}\", шаблона: \"{1}\" для продолжения сопоставления.", phraseRest, templateRest);
+        outParsDebug(debugLevel, engineDataHelper, "Остаток фразы: \"{0}\", шаблона: \"{1}\" для продолжения сопоставления.", phraseRest,
+                templateRest);
 
         if (templateRest.size() == 0 && phraseRest.size() == 0)
         {
-            outParsDebug(debugLevel, "И остаток фразы и остаток шаблона пустые - шаблон подошёл успешно!");
+            outParsDebug(debugLevel, engineDataHelper, "И остаток фразы и остаток шаблона пустые - шаблон подошёл успешно!");
             return fittedFormalElements;
         }
         else if (templateRest.size() > 0 && phraseRest.size() == 0)
         {
-            outParsDebug(debugLevel,
-                         "Шаблон ещё не закончился, а фраза уже закончилась -> фраза не полная. Создаём ошибку распознавания с кол-вом слов {0}.",
+            outParsDebug(debugLevel, engineDataHelper,
+                    "Шаблон ещё не закончился, а фраза уже закончилась -> фраза не полная. Создаём ошибку распознавания с кол-вом слов {0}.",
                          usedWordsQty);
             throw new IFML2ParseException(makeQuestionsForTemplate(templateRest) + " (пишите ответ полностью)", usedWordsQty);
         }
         else if (templateRest.size() == 0 && phraseRest.size() > 0)
         {
-            outParsDebug(debugLevel,
-                         "Шаблон уже закончился, а фраза ещё нет - слишком длинная фраза. Создаём ошибку распознавания с кол-вом слов {0}.",
+            outParsDebug(debugLevel, engineDataHelper,
+                    "Шаблон уже закончился, а фраза ещё нет - слишком длинная фраза. Создаём ошибку распознавания с кол-вом слов {0}.",
                          usedWordsQty);
             throw new IFML2ParsePhraseTooLong(fittedFormalElements, phraseRest, usedWordsQty);
         }
         else
         {
-            outParsDebug(debugLevel, "И шаблон, и фраза ещё не закончились -> продолжаем сопоставление.");
+            outParsDebug(debugLevel, engineDataHelper, "И шаблон, и фраза ещё не закончились -> продолжаем сопоставление.");
             try
             {
-                ArrayList<FittedFormalElement> nextElements = fitPhraseWithTemplate(phraseRest, templateRest, storyDataHelper, debugLevel + 1);
+                ArrayList<FittedFormalElement> nextElements = fitPhraseWithTemplate(phraseRest, templateRest, storyDataHelper,
+                        engineDataHelper, debugLevel + 1);
                 fittedFormalElements.addAll(nextElements);
                 return fittedFormalElements;
             }
@@ -344,51 +347,53 @@ public class Parser
     }
 
     private TemplateElementFitResult fitTemplateElementWithPhrase(TemplateElement templateElement, ArrayList<String> phrase,
-            Story.DataHelper storyDataHelper, int debugLevel) throws IFML2Exception
+            Engine.DataHelper engineDataHelper, Story.DataHelper storyDataHelper, int debugLevel) throws IFML2Exception
     {
-        outParsDebug(debugLevel, "Сопоставляем элемент шаблона {0} с фразой {1}...", templateElement, phrase);
+        outParsDebug(debugLevel, engineDataHelper, "Сопоставляем элемент шаблона {0} с фразой {1}...", templateElement, phrase);
         IFML2Exception lastException = null;
 
         if (templateElement instanceof LiteralTemplateElement)
         {
             HashMap<String, Integer> fittedSynonyms = new HashMap<String, Integer>();
             EventList<String> synonyms = ((LiteralTemplateElement) templateElement).getSynonyms();
-            outParsDebug(debugLevel, "Элемент - литерал, сравниваем все его синонимы {0}...", synonyms);
+            outParsDebug(debugLevel, engineDataHelper, "Элемент - литерал, сравниваем все его синонимы {0}...", synonyms);
             for (String synonym : synonyms)
             {
                 try
                 {
                     // add fitted synonym or ...
-                    fittedSynonyms.put(synonym, fitSynonymWithPhrase(synonym, phrase, debugLevel + 1));
+                    fittedSynonyms.put(synonym, fitSynonymWithPhrase(synonym, phrase, engineDataHelper, debugLevel + 1));
                 }
                 catch (IFML2ParseException e)
                 {
-                    outParsDebug(debugLevel, "Поймали ошибку (\"{0}\")...", e.getMessage());
+                    outParsDebug(debugLevel, engineDataHelper, "Поймали ошибку (\"{0}\")...", e.getMessage());
 
                     // ... catch exception
                     if (lastException == null)
                     {
-                        outParsDebug(debugLevel, "... до этого не было ошибок -> сохраняем её.");
+                        outParsDebug(debugLevel, engineDataHelper, "... до этого не было ошибок -> сохраняем её.");
                         lastException = e;
                     }
                     else
                     {
-                        outParsDebug(debugLevel, "... до этого была ошибка -> сравниваем её с сохрённой (\"{0}\"):",
+                        outParsDebug(debugLevel, engineDataHelper, "... до этого была ошибка -> сравниваем её с сохрённой (\"{0}\"):",
                                 lastException.getMessage());
                         int lastUsedWords = ((IFML2ParseException) lastException).getUsedWords();
                         int currUsedWords = e.getUsedWords();
-                        outParsDebug(debugLevel + 1, "Сохранённая ошибка произошла после {0} пройденных слов, текущая - после {1} слов",
+                        outParsDebug(debugLevel + 1, engineDataHelper,
+                                "Сохранённая ошибка произошла после {0} пройденных слов, текущая - после {1} слов",
                                 lastUsedWords, currUsedWords);
                         if (currUsedWords > lastUsedWords)
                         {
-                            outParsDebug(debugLevel + 1, "Текущая произошла дальше (по словам) -> сохраняем её как самую адекватную");
+                            outParsDebug(debugLevel + 1, engineDataHelper,
+                                    "Текущая произошла дальше (по словам) -> сохраняем её как самую адекватную");
                             lastException = e;
                         }
                         else if (currUsedWords == lastUsedWords)
                         {
                             // take random of these exceptions :)
                             lastException = Math.round(Math.random()) == 0 ? lastException : e;
-                            outParsDebug(debugLevel + 1,
+                            outParsDebug(debugLevel + 1, engineDataHelper,
                                     "Текущая произошла так же далеко (по словам), как и сохранённая -> выбираем из двух случайным образом и сохраняем ;) Выбрали: {0}",
                                     lastException.getMessage());
                         }
@@ -414,7 +419,8 @@ public class Parser
             // if there are no fitted synonyms
             if (lastException != null)
             {
-                outParsDebug(debugLevel, "Нет подошедших синонимов - выкидываем сохранённую ошибку (\"{0}\")", lastException.getMessage());
+                outParsDebug(debugLevel, engineDataHelper, "Нет подошедших синонимов - выкидываем сохранённую ошибку (\"{0}\")",
+                        lastException.getMessage());
                 throw lastException;
             }
             else
@@ -427,9 +433,11 @@ public class Parser
         else if (templateElement instanceof ObjectTemplateElement)
         {
             Word.GramCaseEnum gramCase = ((ObjectTemplateElement) templateElement).getGramCase();
-            outParsDebug(debugLevel, "Элемент - объект, ищем подходящий объект для падежа {0}...", gramCase.getAbbreviation());
+            outParsDebug(debugLevel, engineDataHelper, "Элемент - объект, ищем подходящий объект для падежа {0}...",
+                    gramCase.getAbbreviation());
 
-            FitObjectWithPhraseResult fitObjectWithPhraseResult = fitObjectWithPhrase(gramCase, phrase, storyDataHelper, debugLevel + 1);
+            FitObjectWithPhraseResult fitObjectWithPhraseResult = fitObjectWithPhrase(gramCase, phrase, engineDataHelper, storyDataHelper,
+                    debugLevel + 1);
             ArrayList<IFMLObject> objects = fitObjectWithPhraseResult.getObjects();
             int usedWordsQty = fitObjectWithPhraseResult.getUsedWordsQty();
 
@@ -442,28 +450,30 @@ public class Parser
     }
 
     private FitObjectWithPhraseResult fitObjectWithPhrase(Word.GramCaseEnum gramCase, ArrayList<String> phrase,
+            Engine.DataHelper engineDataHelper,
             Story.DataHelper storyDataHelper, int debugLevel) throws IFML2Exception
     {
-        outParsDebug(debugLevel, "Сопоставление фразы {0} с объектом по падежу {1}...", phrase, gramCase.getAbbreviation());
+        outParsDebug(debugLevel, engineDataHelper, "Сопоставление фразы {0} с объектом по падежу {1}...", phrase,
+                gramCase.getAbbreviation());
         List<String> restPhrase = new ArrayList<String>(phrase);
         ArrayList<Word> fittedWords = new ArrayList<Word>();
         int allUsedWords = 0;
 
         // Stage I
-        outParsDebug(debugLevel, "Фаза I: поиск слов по падежу...");
+        outParsDebug(debugLevel, engineDataHelper, "Фаза I: поиск слов по падежу...");
         int st1DebugLvl = debugLevel + 1;
 
         while (true)
         {
             if (restPhrase.size() == 0)
             {
-                outParsDebug(st1DebugLvl, "Фраза кончилась -> завершение фазы I.");
+                outParsDebug(st1DebugLvl, engineDataHelper, "Фраза кончилась -> завершение фазы I.");
                 break;
             }
 
             boolean wordIsFound = false;
 
-            outParsDebug(st1DebugLvl, "Ищем слово в словаре...");
+            outParsDebug(st1DebugLvl, engineDataHelper, "Ищем слово в словаре...");
             for (Word dictWord : storyDataHelper.getDictionary().values())
             {
                 int usedWords = fitWordWithPhrase(dictWord, gramCase, restPhrase);
@@ -472,15 +482,15 @@ public class Parser
 
                 if (usedWords > 0)
                 {
-                    outParsDebug(st1DebugLvl,
-                                 "Слово нашлось - это \"{0}\", использовано слов из фразы для данного слова {1}, всего для данного объекта - [2}.",
+                    outParsDebug(st1DebugLvl, engineDataHelper,
+                            "Слово нашлось - это \"{0}\", использовано слов из фразы для данного слова {1}, всего для данного объекта - [2}.",
                                  dictWord, usedWords, allUsedWords);
 
                     // case when dict word has no links to objects
                     if (dictWord.getLinkerObjects().size() == 0)
                     {
-                        outParsDebug(st1DebugLvl,
-                                     "Но у слова нет ссылок на объекты в истории -> ошибка \"Нигде не вижу\" с кол-вом слов {0}.",
+                        outParsDebug(st1DebugLvl, engineDataHelper,
+                                "Но у слова нет ссылок на объекты в истории -> ошибка \"Нигде не вижу\" с кол-вом слов {0}.",
                                      allUsedWords);
                         throw new IFML2ParseException(
                                 MessageFormat.format("Нигде не вижу {0}.", dictWord.getFormByGramCase(Word.GramCaseEnum.RP)), allUsedWords);
@@ -488,7 +498,7 @@ public class Parser
 
                     if (fittedWords.contains(dictWord))
                     {
-                        outParsDebug(st1DebugLvl, "Но это слово уже было ранее найдено для данного объекта -> ошибка.");
+                        outParsDebug(st1DebugLvl, engineDataHelper, "Но это слово уже было ранее найдено для данного объекта -> ошибка.");
                         String usedPhrase = "";
                         for (String word : phrase.subList(0, allUsedWords - 1))
                         {
@@ -500,10 +510,11 @@ public class Parser
                     }
 
                     fittedWords.add(dictWord);
-                    outParsDebug(st1DebugLvl, "Добавлем слово в список найденных, итого список: {0}.", fittedWords);
+                    outParsDebug(st1DebugLvl, engineDataHelper, "Добавлем слово в список найденных, итого список: {0}.", fittedWords);
 
                     restPhrase = restPhrase.subList(usedWords, restPhrase.size());
-                    outParsDebug(st1DebugLvl, "Отрезаем от фразы часть, которая подошла по словам в кол-ве {0}, остаётся фраза: {1}.",
+                    outParsDebug(st1DebugLvl, engineDataHelper,
+                            "Отрезаем от фразы часть, которая подошла по словам в кол-ве {0}, остаётся фраза: {1}.",
                                  usedWords, restPhrase);
 
                     wordIsFound = true;
@@ -513,16 +524,17 @@ public class Parser
 
             if (!wordIsFound)
             {
-                outParsDebug(st1DebugLvl, "Слово из фразы {0} не найдено во всём словаре.", restPhrase);
+                outParsDebug(st1DebugLvl, engineDataHelper, "Слово из фразы {0} не найдено во всём словаре.", restPhrase);
                 if (fittedWords.size() > 0)
                 {
-                    outParsDebug(st1DebugLvl, "Но ранее найленные слова есть - {0} - завершение фазы I.", fittedWords);
+                    outParsDebug(st1DebugLvl, engineDataHelper, "Но ранее найленные слова есть - {0} - завершение фазы I.", fittedWords);
                     break;
                 }
                 else
                 {
                     String firstPhraseWord = restPhrase.get(0);
-                    outParsDebug(st1DebugLvl, "И нет найдыенных слов вообще -> ошибка - не знаем первое слово фразы \"{0}\" с кол-вом слов {1}.",
+                    outParsDebug(st1DebugLvl, engineDataHelper,
+                            "И нет найдыенных слов вообще -> ошибка - не знаем первое слово фразы \"{0}\" с кол-вом слов {1}.",
                                  firstPhraseWord, 1);
                     throw new IFML2ParseException(MessageFormat.format("Не знаю слово \"{0}\".", firstPhraseWord), 1);
                 }
@@ -530,12 +542,12 @@ public class Parser
         }
 
         // Stage II
-        outParsDebug(debugLevel, "Фаза II: отсев слов, принадлежащих разным объектам...");
+        outParsDebug(debugLevel, engineDataHelper, "Фаза II: отсев слов, принадлежащих разным объектам...");
         int st2DebugLvl = debugLevel + 1;
 
         ArrayList<IFMLObject> objects = new ArrayList<IFMLObject>();
         objects.addAll(fittedWords.get(0).getLinkerObjects());
-        outParsDebug(st2DebugLvl, "Добавляем в список объектов все объекты первого слова");
+        outParsDebug(st2DebugLvl, engineDataHelper, "Добавляем в список объектов все объекты первого слова");
 
         if (fittedWords.size() == 1)
         {
@@ -589,16 +601,17 @@ public class Parser
         return 0;
     }
 
-    private int fitSynonymWithPhrase(String synonym, ArrayList<String> phrase, int debugLevel) throws IFML2ParseException
+    private int fitSynonymWithPhrase(String synonym, ArrayList<String> phrase, Engine.DataHelper engineDataHelper,
+            int debugLevel) throws IFML2ParseException
     {
-        outParsDebug(debugLevel, "Сравниваем синоним \"{0}\" с фразой {1}...", synonym, phrase);
+        outParsDebug(debugLevel, engineDataHelper, "Сравниваем синоним \"{0}\" с фразой {1}...", synonym, phrase);
         ArrayList<String> synonymWords = new ArrayList<String>(Arrays.asList(synonym.split("\\s+")));
 
         int synonymSize = synonymWords.size();
 
         // take length of shortest (synonym of phrase)
         int minLength = Math.min(synonymSize, phrase.size());
-        outParsDebug(debugLevel, "Кол-во слов для проверки - {0}.", minLength);
+        outParsDebug(debugLevel, engineDataHelper, "Кол-во слов для проверки - {0}.", minLength);
 
         int usedWordsQty = 0; // fitted words for generating the most suitable exception
 
@@ -607,22 +620,24 @@ public class Parser
             int synWordDebugLvl = debugLevel + 1;
             String phraseWord = phrase.get(wordIdx);
             String synonymWord = synonymWords.get(wordIdx);
-            outParsDebug(synWordDebugLvl, "Сравниваем слово фразы \"{0}\" со словом синонима \"{1}\"...", phraseWord, synonymWord);
+            outParsDebug(synWordDebugLvl, engineDataHelper, "Сравниваем слово фразы \"{0}\" со словом синонима \"{1}\"...", phraseWord,
+                    synonymWord);
             if (!synonymWord.equalsIgnoreCase(phraseWord))
             {
-                outParsDebug(synWordDebugLvl, "Слова не равны -> ошибка сопоставления слова фразы \"{0}\" c кол-вом слов {1}.", phraseWord,
+                outParsDebug(synWordDebugLvl, engineDataHelper,
+                        "Слова не равны -> ошибка сопоставления слова фразы \"{0}\" c кол-вом слов {1}.", phraseWord,
                              usedWordsQty);
                 throw new IFML2ParseException("Не знаю, что такое \"" + phraseWord + "\".", usedWordsQty);
             }
             usedWordsQty++;
-            outParsDebug(synWordDebugLvl, "Слово подошло, увеличиваем кол-во слов до {0} и идём дальше.", usedWordsQty);
+            outParsDebug(synWordDebugLvl, engineDataHelper, "Слово подошло, увеличиваем кол-во слов до {0} и идём дальше.", usedWordsQty);
         }
-        outParsDebug(debugLevel, "Слова для сравнения кончились.");
+        outParsDebug(debugLevel, engineDataHelper, "Слова для сравнения кончились.");
 
         // check if synonym is not fully used
         if (usedWordsQty < synonymSize)
         {
-            outParsDebug(debugLevel, "А синоним использован не весь -> ошибка с кол-вом слов {0}.", usedWordsQty);
+            outParsDebug(debugLevel, engineDataHelper, "А синоним использован не весь -> ошибка с кол-вом слов {0}.", usedWordsQty);
             throw new IFML2ParseException("Команду не совсем понял, прошу уточнить.", usedWordsQty);
         }
 

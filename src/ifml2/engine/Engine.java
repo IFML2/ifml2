@@ -777,6 +777,11 @@ public class Engine
         {
             return Engine.this.isObjectAccessible(ifmlObject);
         }
+
+        public void outDebug(Class reporter, int level, String message, Object... args)
+        {
+            Engine.this.outDebug(level, genReporterName(reporter) + message, args);
+        }
     }
 
     private class GlobalVariableProxy extends Variable
