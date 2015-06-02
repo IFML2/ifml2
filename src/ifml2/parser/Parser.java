@@ -11,29 +11,11 @@ import java.util.*;
 
 public class Parser
 {
-    private Story story = null;
-    private Engine engine = null;
-
-    public Parser(Engine engine)
-    {
-        this.engine = engine;
-    }
-
-    public void setStory(Story story)
-    {
-        this.story = story;
-    }
-
-    public ParseResult parse(String phrase) throws IFML2Exception
+    public ParseResult parse(String phrase, Story.DataHelper storyDataHelper, Engine.DataHelper engineDataHelper) throws IFML2Exception
     {
         outParsDebug("Начало анализа команды \"{0}\"...", phrase);
 
-        if (story == null)
-        {
-            throw new IFML2Exception("Системная ошибка: Ссылка на объектную модель (story) не задана!");
-        }
-
-        if (story.getAllActions() == null || story.getAllActions().size() == 0)
+        if (storyDataHelper.getAllActions() == null || storyDataHelper.getAllActions().size() == 0)
         {
             throw new IFML2Exception("Системная ошибка: В системе нет ни одного действия.");
         }
@@ -48,7 +30,7 @@ public class Parser
         IFML2Exception lastException = null;
 
         outParsDebug("Старт перебора всех действий в игре...");
-        for (Action action : story.getAllActions())
+        for (Action action : storyDataHelper.getAllActions())
         {
             outParsDebug(1, "Анализируем действие \"{0}\"...", action);
             for (Template template : action.getTemplates())
@@ -57,7 +39,8 @@ public class Parser
                 int templateSize = template.getSize();
                 try
                 {
-                    ArrayList<FittedFormalElement> fittedFormalElements = fitPhraseWithTemplate(phraseAsList, template.getElements(), 3);
+                    ArrayList<FittedFormalElement> fittedFormalElements = fitPhraseWithTemplate(phraseAsList, template.getElements(),
+                            storyDataHelper, 3);
 
                     FittedTemplate fittedTemplate = new FittedTemplate(action, fittedFormalElements);
                     fittedTemplates.add(fittedTemplate);
@@ -110,7 +93,7 @@ public class Parser
         ArrayList<FittedTemplate> accessibleTemplates = null;
         try
         {
-            accessibleTemplates = removeInaccessibleObjects(fittedTemplates);
+            accessibleTemplates = removeInaccessibleObjects(fittedTemplates, engineDataHelper);
         }
         catch (IFML2Exception e)
         {
@@ -222,7 +205,8 @@ public class Parser
         return result.trim();
     }
 
-    private ArrayList<FittedTemplate> removeInaccessibleObjects(ArrayList<FittedTemplate> fittedTemplates) throws IFML2Exception
+    private ArrayList<FittedTemplate> removeInaccessibleObjects(ArrayList<FittedTemplate> fittedTemplates,
+            Engine.DataHelper engineDataHelper) throws IFML2Exception
     {
         ArrayList<FittedTemplate> result = new ArrayList<FittedTemplate>();
         IFMLObject inaccessibleObject = null;
@@ -241,7 +225,7 @@ public class Parser
 
                     for (IFMLObject object : fittedObjects)
                     {
-                        if (!engine.isObjectAccessible(object))
+                        if (!engineDataHelper.isObjectAccessible(object))
                         {
                             objectsToRemove.add(object);
 
@@ -286,7 +270,8 @@ public class Parser
         }
     }
 
-    private ArrayList<FittedFormalElement> fitPhraseWithTemplate(ArrayList<String> phraseAsList, List<TemplateElement> template, int debugLevel) throws IFML2Exception
+    private ArrayList<FittedFormalElement> fitPhraseWithTemplate(ArrayList<String> phraseAsList, List<TemplateElement> template,
+            Story.DataHelper storyDataHelper, int debugLevel) throws IFML2Exception
     {
         outParsDebug(debugLevel, "Сравниваем фразу {0} с шаблоном {1}...", phraseAsList, template);
 
@@ -300,7 +285,7 @@ public class Parser
                      firstTemplateElement);
 
         // try to fit template element with beginning of phrase
-        TemplateElementFitResult result = fitTemplateElementWithPhrase(firstTemplateElement, phraseRest, debugLevel + 1);
+        TemplateElementFitResult result = fitTemplateElementWithPhrase(firstTemplateElement, phraseRest, storyDataHelper, debugLevel + 1);
         outParsDebug(debugLevel, "Результат: {0}", result);
 
         ArrayList<FittedFormalElement> fittedFormalElements = new ArrayList<FittedFormalElement>();
@@ -340,7 +325,7 @@ public class Parser
             outParsDebug(debugLevel, "И шаблон, и фраза ещё не закончились -> продолжаем сопоставление.");
             try
             {
-                ArrayList<FittedFormalElement> nextElements = fitPhraseWithTemplate(phraseRest, templateRest, debugLevel + 1);
+                ArrayList<FittedFormalElement> nextElements = fitPhraseWithTemplate(phraseRest, templateRest, storyDataHelper, debugLevel + 1);
                 fittedFormalElements.addAll(nextElements);
                 return fittedFormalElements;
             }
@@ -358,7 +343,8 @@ public class Parser
         }
     }
 
-    private TemplateElementFitResult fitTemplateElementWithPhrase(TemplateElement templateElement, ArrayList<String> phrase, int debugLevel) throws IFML2Exception
+    private TemplateElementFitResult fitTemplateElementWithPhrase(TemplateElement templateElement, ArrayList<String> phrase,
+            Story.DataHelper storyDataHelper, int debugLevel) throws IFML2Exception
     {
         outParsDebug(debugLevel, "Сопоставляем элемент шаблона {0} с фразой {1}...", templateElement, phrase);
         IFML2Exception lastException = null;
@@ -443,7 +429,7 @@ public class Parser
             Word.GramCaseEnum gramCase = ((ObjectTemplateElement) templateElement).getGramCase();
             outParsDebug(debugLevel, "Элемент - объект, ищем подходящий объект для падежа {0}...", gramCase.getAbbreviation());
 
-            FitObjectWithPhraseResult fitObjectWithPhraseResult = fitObjectWithPhrase(gramCase, phrase, debugLevel + 1);
+            FitObjectWithPhraseResult fitObjectWithPhraseResult = fitObjectWithPhrase(gramCase, phrase, storyDataHelper, debugLevel + 1);
             ArrayList<IFMLObject> objects = fitObjectWithPhraseResult.getObjects();
             int usedWordsQty = fitObjectWithPhraseResult.getUsedWordsQty();
 
@@ -455,7 +441,8 @@ public class Parser
         }
     }
 
-    private FitObjectWithPhraseResult fitObjectWithPhrase(Word.GramCaseEnum gramCase, ArrayList<String> phrase, int debugLevel) throws IFML2Exception
+    private FitObjectWithPhraseResult fitObjectWithPhrase(Word.GramCaseEnum gramCase, ArrayList<String> phrase,
+            Story.DataHelper storyDataHelper, int debugLevel) throws IFML2Exception
     {
         outParsDebug(debugLevel, "Сопоставление фразы {0} с объектом по падежу {1}...", phrase, gramCase.getAbbreviation());
         List<String> restPhrase = new ArrayList<String>(phrase);
@@ -477,7 +464,7 @@ public class Parser
             boolean wordIsFound = false;
 
             outParsDebug(st1DebugLvl, "Ищем слово в словаре...");
-            for (Word dictWord : story.getDictionary().values())
+            for (Word dictWord : storyDataHelper.getDictionary().values())
             {
                 int usedWords = fitWordWithPhrase(dictWord, gramCase, restPhrase);
 

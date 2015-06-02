@@ -229,4 +229,12 @@ public class VirtualMachine
     {
         return engine.searchGlobalVariable(name);
     }
+
+    /**
+     * Initializes (resets) virtual machine.
+     */
+    public void init()
+    {
+        inheritedSystemProcedures.clear();
+    }
 }
