@@ -373,26 +373,38 @@ public class Parser
                 try
                 {
                     // add fitted synonym or ...
-                    fittedSynonyms.put(synonym, fitSynonymWithPhrase(synonym, phrase, debugLevel));
+                    fittedSynonyms.put(synonym, fitSynonymWithPhrase(synonym, phrase, debugLevel + 1));
                 }
                 catch (IFML2ParseException e)
                 {
+                    outParsDebug(debugLevel, "Поймали ошибку (\"{0}\")...", e.getMessage());
+
                     // ... catch exception
                     if (lastException == null)
                     {
+                        outParsDebug(debugLevel, "... до этого не было ошибок -> сохраняем её.");
                         lastException = e;
                     }
                     else
                     {
-                        int usedWords = ((IFML2ParseException) lastException).getUsedWords();
-                        if (e.getUsedWords() > usedWords)
+                        outParsDebug(debugLevel, "... до этого была ошибка -> сравниваем её с сохрённой (\"{0}\"):",
+                                lastException.getMessage());
+                        int lastUsedWords = ((IFML2ParseException) lastException).getUsedWords();
+                        int currUsedWords = e.getUsedWords();
+                        outParsDebug(debugLevel + 1, "Сохранённая ошибка произошла после {0} пройденных слов, текущая - после {1} слов",
+                                lastUsedWords, currUsedWords);
+                        if (currUsedWords > lastUsedWords)
                         {
+                            outParsDebug(debugLevel + 1, "Текущая произошла дальше (по словам) -> сохраняем её как самую адекватную");
                             lastException = e;
                         }
-                        else if (e.getUsedWords() == usedWords)
+                        else if (currUsedWords == lastUsedWords)
                         {
                             // take random of these exceptions :)
                             lastException = Math.round(Math.random()) == 0 ? lastException : e;
+                            outParsDebug(debugLevel + 1,
+                                    "Текущая произошла так же далеко (по словам), как и сохранённая -> выбираем из двух случайным образом и сохраняем ;) Выбрали: {0}",
+                                    lastException.getMessage());
                         }
                     }
                 }
@@ -416,12 +428,13 @@ public class Parser
             // if there are no fitted synonyms
             if (lastException != null)
             {
+                outParsDebug(debugLevel, "Нет подошедших синонимов - выкидываем сохранённую ошибку (\"{0}\")", lastException.getMessage());
                 throw lastException;
             }
             else
             {
                 throw new IFML2Exception(
-                        "Системная ошибка: при сопоставлении ЭлементаШаблона с началом фразы проверка синонимов ни к чему не привел.");
+                        "Системная ошибка: при сопоставлении ЭлементаШаблона с началом фразы проверка синонимов ни к чему не привела.");
             }
         }
 
@@ -614,7 +627,6 @@ public class Parser
                              usedWordsQty);
                 throw new IFML2ParseException("Не знаю, что такое \"" + phraseWord + "\".", usedWordsQty);
             }
-            outParsDebug(synWordDebugLvl, "Слово подошло, увеличиваем кол-во слов до {0} и идём дальше.", usedWordsQty);
             usedWordsQty++;
             outParsDebug(synWordDebugLvl, "Слово подошло, увеличиваем кол-во слов до {0} и идём дальше.", usedWordsQty);
         }
