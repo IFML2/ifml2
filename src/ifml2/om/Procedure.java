@@ -2,8 +2,14 @@ package ifml2.om;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
+import ifml2.IFML2Exception;
 import ifml2.IFMLEntity;
+import ifml2.vm.ExpressionCalculator;
+import ifml2.vm.RunningContext;
+import ifml2.vm.Variable;
 import ifml2.vm.instructions.Instruction;
+import ifml2.vm.values.Value;
+import org.jetbrains.annotations.NotNull;
 
 import javax.xml.bind.annotation.*;
 
@@ -50,6 +56,11 @@ public class Procedure extends IFMLEntity implements Cloneable
     public String getName()
     {
         return name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
     }
 
     public SystemProcedureEnum getInheritsSystemProcedure()
@@ -105,15 +116,114 @@ public class Procedure extends IFMLEntity implements Cloneable
         return name;
     }
 
-    public void setName(String name)
+    public Variable searchProcedureVariable(String name, RunningContext runningContext) throws IFML2Exception
     {
-        this.name = name;
+        if(name == null)
+        {
+            return null;
+        }
+
+        String loweredName = name.toLowerCase();
+
+        for (ProcedureVariable procedureVariable : variables)
+        {
+            if (loweredName.equalsIgnoreCase(procedureVariable.getName()))
+            {
+                if(procedureVariable.getValue() == null)
+                {
+                    // init value
+                    Value value = ExpressionCalculator.calculate(runningContext, procedureVariable.getInitialValue());
+                    procedureVariable.setValue(value);
+                }
+
+                return new ProcedureVariableProxy(procedureVariable);
+            }
+        }
+
+        return null;
     }
 
     @XmlEnum
     public enum SystemProcedureEnum
     {
-        @XmlEnumValue(value = "showLocName")
-        SHOW_LOC_NAME
+        @XmlEnumValue(value = "showLocation")
+        SHOW_LOCATION
+    }
+
+    @XmlAccessorType(XmlAccessType.NONE)
+    public static class FilledParameter
+    {
+        @XmlAttribute(name = "name")
+        private String name;
+        @XmlAttribute(name = "value")
+        private String valueExpression;
+
+        @SuppressWarnings("UnusedDeclaration")
+        public FilledParameter()
+        {
+            // used for JAXB
+        }
+
+        public FilledParameter(String name, String valueExpression)
+        {
+            this.name = name;
+            this.valueExpression = valueExpression;
+        }
+
+        @Override
+        public String toString()
+        {
+            return name;
+        }
+
+        public String getName()
+        {
+            return name;
+        }
+
+        public String getValueExpression()
+        {
+            return valueExpression;
+        }
+
+        public void setValueExpression(String valueExpression)
+        {
+            this.valueExpression = valueExpression;
+        }
+    }
+
+    private class ProcedureVariableProxy extends Variable
+    {
+        private ProcedureVariable procedureVariable;
+
+        public ProcedureVariableProxy(@NotNull ProcedureVariable procedureVariable)
+        {
+            super(procedureVariable.getName(), procedureVariable.getValue());
+            this.procedureVariable = procedureVariable;
+        }
+
+        @Override
+        public Value getValue()
+        {
+            return procedureVariable.getValue();
+        }
+
+        @Override
+        public void setValue(Value value)
+        {
+            procedureVariable.setValue(value);
+        }
+
+        @Override
+        public String getName()
+        {
+            return procedureVariable.getName();
+        }
+
+        @Override
+        public void setName(String name)
+        {
+            throw new RuntimeException("Внутренняя ошибка: Запрещено менять имена переменных");
+        }
     }
 }

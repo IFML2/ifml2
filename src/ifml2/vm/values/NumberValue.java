@@ -20,12 +20,12 @@ public class NumberValue extends Value<Double> implements IAddableValue
     {
         if (rightValue instanceof NumberValue)
         {
-            return new NumberValue(value + ((NumberValue) rightValue).value);
+            return new NumberValue(value + ((NumberValue) rightValue).getValue());
         }
 
         if (rightValue instanceof TextValue)
         {
-            return new TextValue(toString() + ((TextValue) rightValue).getValue());
+            return new TextValue(toLiteral() + ((TextValue) rightValue).getValue());
         }
 
         throw new IFML2ExpressionException("Не поддерживается операция \"{0}\" между типом \"{1}\" и \"{2}\"", OperationEnum.ADD,

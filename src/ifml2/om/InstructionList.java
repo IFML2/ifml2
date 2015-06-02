@@ -21,7 +21,8 @@ public class InstructionList implements Cloneable
         @XmlElement(name = "return", type = ReturnInstruction.class),
         @XmlElement(name = "setProperty", type = SetPropertyInstruction.class),
         @XmlElement(name = "moveItem", type = MoveItemInstruction.class),
-        @XmlElement(name = "rollDice", type = RollDiceInstruction.class)
+        @XmlElement(name = "rollDice", type = RollDiceInstruction.class),
+        @XmlElement(name = "runProcedure", type = RunProcedureInstruction.class)
     })
     private EventList<Instruction> instructions = new BasicEventList<Instruction>(); // InstructionList controls its instructions
     public EventList<Instruction> getInstructions() { return instructions; }

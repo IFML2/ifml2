@@ -18,7 +18,7 @@ public class SetVarInstruction extends Instruction
     @Override
     public void run(RunningContext runningContext) throws IFML2Exception
     {
-        runningContext.setContextVariable(name, ExpressionCalculator.calculate(runningContext, value));
+        runningContext.writeVariable(name, ExpressionCalculator.calculate(runningContext, value));
     }
 
     @Override

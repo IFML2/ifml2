@@ -54,14 +54,7 @@ public class IfInstruction extends Instruction
     {
         boolean conditionValue = getBooleanFromExpression(condition, runningContext, getTitle(), "Условие");
 
-        if (conditionValue)
-        {
-            virtualMachine.runInstructionList(thenInstructions, runningContext, true, conditionValue);
-        }
-        else
-        {
-            virtualMachine.runInstructionList(elseInstructions, runningContext, true, conditionValue);
-        }
+        virtualMachine.runInstructionList(conditionValue ? thenInstructions : elseInstructions, runningContext);
     }
 
     @Override

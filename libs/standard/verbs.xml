@@ -1365,18 +1365,35 @@
                 <parameter name="кудаПоложить"/>
             </parameters>
             <procedureBody>
-                <if position="1" condition="предлог = 'на'">
+                <if condition="предлог = 'на'">
                     <then>
-                        <moveItem position="1" item="чтоПоложить" to="кудаПоложить.предметыСверху"/>
-                        <showMessage position="2" type="expression"
+                        <moveItem item="чтоПоложить" to="кудаПоложить.предметыСверху"/>
+                        <showMessage type="expression"
                                      message="'Вы положили ' + чтоПоложить.вп + ' ' + предлог + ' ' + кудаПоложить.вп + '.'"/>
                     </then>
                 </if>
-                <if position="2" condition="предлог = 'в' или предлог = 'во'">
+                <if condition="предлог = 'в' или предлог = 'во'">
                     <then>
-                        <moveItem position="1" item="чтоПоложить" to="кудаПоложить.предметыВнутри"/>
-                        <showMessage position="2" type="expression"
-                                     message="'Вы положили ' + чтоПоложить.вп + ' ' + предлог + ' ' + кудаПоложить.вп + '.'"/>
+                        <var name="можноЛиКласть" value="да"/>
+
+                        <if condition="кудаПоложить.открываемый">
+                            <then>
+                                <if condition="не кудаПоложить.открыт">
+                                    <then>
+                                        <showMessage type="expression" beginWithCap="true" message="кудаПоложить + ' закрыт.'"/>
+                                        <var name="можноЛиКласть" value="нет"/>
+                                    </then>
+                                </if>
+                            </then>
+                        </if>
+
+                        <if condition="можноЛиКласть">
+                            <then>
+                                <moveItem item="чтоПоложить" to="кудаПоложить.предметыВнутри"/>
+                                <showMessage type="expression"
+                                             message="'Вы положили ' + чтоПоложить.вп + ' ' + предлог + ' ' + кудаПоложить.вп + '.'"/>
+                            </then>
+                        </if>
                     </then>
                 </if>
             </procedureBody>

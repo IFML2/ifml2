@@ -62,7 +62,7 @@
         </sequence>
         <attribute name="mainWord" type="string" use="optional"/>
     </complexType>
-    
+
     <complexType name="rolesLinksType">
         <sequence minOccurs="0" maxOccurs="unbounded">
             <element name="role" type="ifml2:roleLinkType"/>
@@ -271,6 +271,7 @@
             <element name="setProperty" type="ifml2:instructionSetPropertyType"/>
             <element name="moveItem" type="ifml2:instructionMoveItemType"/>
             <element name="rollDice" type="ifml2:instructionRollDiceType"/>
+            <element name="runProcedure" type="ifml2:instructionRunProcedureType"/>
         </choice>
     </complexType>
 
@@ -358,7 +359,8 @@
         </sequence>
         <attribute name="type" type="ifml2:hookEnumType" use="required"/>
         <attribute name="action" type="string" use="required"/>
-        <attribute name="objectElement" type="string" use="optional"/> <!-- action template parameter name for item hooks -->
+        <attribute name="objectElement" type="string" use="optional"/>
+        <!-- action template parameter name for item hooks -->
     </complexType>
 
     <simpleType name="hookEnumType">
@@ -444,7 +446,7 @@
             </extension>
         </complexContent>
     </complexType>
-    
+
     <complexType name="instructionSetPropertyType">
         <complexContent>
             <extension base="ifml2:instructionType">
@@ -585,7 +587,9 @@
         <restriction base="string">
             <enumeration value="showLocName">
                 <annotation>
-                    <documentation>Системная процедур, выводящая описание текущей локации: её имя, описание и список предметов в ней. Параметров не принимает.</documentation>
+                    <documentation>Системная процедур, выводящая описание текущей локации: её имя, описание и список предметов в ней.
+                        Параметров не принимает.
+                    </documentation>
                 </annotation>
             </enumeration>
         </restriction>
@@ -600,4 +604,20 @@
             </extension>
         </complexContent>
     </complexType>
+
+    <xs:complexType name="instructionRunProcedureType">
+        <xs:complexContent>
+            <extension base="ifml2:instructionType">
+                <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                    <xs:element name="parameter" type="ifml2:procedureRunParameter"/>
+                </xs:sequence>
+                <xs:attribute name="procedure" type="xs:string" use="required"/>
+                <xs:attribute name="returnToVar" type="xs:string" use="optional"/>
+            </extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="procedureRunParameter">
+        <xs:attribute name="name" type="xs:string"/>
+        <xs:attribute name="value" type="xs:string"/>
+    </xs:complexType>
 </schema>

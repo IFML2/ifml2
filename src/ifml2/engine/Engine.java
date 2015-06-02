@@ -9,16 +9,11 @@ import ifml2.om.*;
 import ifml2.parser.FormalElement;
 import ifml2.parser.Parser;
 import ifml2.players.GameInterface;
-import ifml2.vm.ExpressionCalculator;
-import ifml2.vm.IFML2VMException;
-import ifml2.vm.RunningContext;
-import ifml2.vm.VirtualMachine;
+import ifml2.vm.*;
 import ifml2.vm.instructions.SetVarInstruction;
-import ifml2.vm.values.BooleanValue;
-import ifml2.vm.values.CollectionValue;
-import ifml2.vm.values.ObjectValue;
-import ifml2.vm.values.Value;
+import ifml2.vm.values.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.text.MessageFormat;
@@ -75,6 +70,14 @@ public class Engine
                 public Value call() throws Exception
                 {
                     return new CollectionValue(abyss);
+                }
+            });
+            put("глобальные", new Callable<Value>()
+            {
+                @Override
+                public Value call() throws Exception
+                {
+                    return new TextValue(globalVariables.entrySet().toString());
                 }
             });
         }
@@ -147,8 +150,12 @@ public class Engine
         globalVariables.clear();
         for (SetVarInstruction varInstruction : story.getStoryOptions().getVars())
         {
-            Value value = ExpressionCalculator.calculate(virtualMachine.createGlobalRunningContext(), varInstruction.getValue());
-            globalVariables.put(varInstruction.getName(), value);
+            Value value = ExpressionCalculator.calculate(RunningContext.CreateNewContext(virtualMachine), varInstruction.getValue());
+            String name = varInstruction.getName();
+            if (name != null)
+            {
+                globalVariables.put(name.toLowerCase(), value);
+            }
         }
 
         // find properties and evaluates its expression into value
@@ -170,13 +177,13 @@ public class Engine
                     }
 
                     // calculate property
-                    property.evaluateFromPrimaryExpression(virtualMachine.createGlobalRunningContext());
+                    property.evaluateFromPrimaryExpression(RunningContext.CreateNewContext(virtualMachine));
                 }
             }
         }
 
         // show initial info
-        StoryOptions.StoryDescription storyDescription = getStory().getStoryOptions().getStoryDescription();
+        StoryOptions.StoryDescription storyDescription = story.getStoryOptions().getStoryDescription();
         outTextLn(storyDescription.getName() != null ? storyDescription.getName() : "<Без имени>");
         outTextLn("**********");
         outTextLn(storyDescription.getDescription() != null ? storyDescription.getDescription() : "<Без описания>");
@@ -184,11 +191,12 @@ public class Engine
         outTextLn(String.format("АВТОР: %s", storyDescription.getAuthor() != null ? storyDescription.getAuthor() : "<Без автора>"));
         outTextLn("**********\n");
 
-        if (story.getStartProcedure() != null)
+        Procedure startProcedure = story.getStartProcedure();
+        if (startProcedure != null)
         {
             try
             {
-                virtualMachine.runProcedure(getStory().getStartProcedure());
+                virtualMachine.runProcedureWithoutParameters(startProcedure);
             }
             catch (IFML2Exception e)  // should we catch it?
             {
@@ -196,19 +204,21 @@ public class Engine
             }
         }
 
-        if (story.getStartLocation() != null)
+        Location startLocation = story.getStartLocation();
+        if (startLocation != null)
         {
-            setCurrentLocation(story.getStartLocation());
-        }
-        else
-        {
-            setCurrentLocation(story.getAnyLocation());
+            setCurrentLocation(startLocation);
+            if (story.IsShowStartLocDesc())
+            {
+                // show first location description
+                virtualMachine.showLocation(getCurrentLocation());
+            }
         }
 
-        if (story.IsShowStartLocDesc())
+        if(getCurrentLocation() == null)
         {
-            // show first location description
-            virtualMachine.showLocName(getCurrentLocation());
+            // if current location isn't set then take any
+            setCurrentLocation(story.getAnyLocation());
         }
 
         LOG.info("Game initialized.");
@@ -234,7 +244,7 @@ public class Engine
             String expression = trimmedCommand.substring(1);
             try
             {
-                Value value = ExpressionCalculator.calculate(virtualMachine.createGlobalRunningContext(), expression);
+                Value value = ExpressionCalculator.calculate(RunningContext.CreateNewContext(virtualMachine), expression);
                 outDebug("({0}) {1}", value.getTypeName(), value);
             }
             catch (IFML2Exception e)
@@ -273,6 +283,8 @@ public class Engine
             //outEngDebug("Кол-во найденных перехватов в локации - {0}.", locationHooks.size()); // нужно выводить не кол-во списков перехватов,
             // а само кол-во перехватов
 
+            List<Variable> parameters = convertFormalElementsToParameters(formalElements);
+
             // if there are INSTEAD hooks then fire them and finish
             int itemInsteadHooksQty = objectHooks.get(Hook.HookTypeEnum.INSTEAD).size();
             int locInsteadHooksQty = locationHooks.get(Hook.HookTypeEnum.INSTEAD).size();
@@ -284,14 +296,14 @@ public class Engine
                 for (Hook hook : objectHooks.get(Hook.HookTypeEnum.INSTEAD))
                 {
                     outEngDebug("Запуск перехвата \"{0}\" на предмете...", hook);
-                    virtualMachine.runHook(hook, formalElements);
+                    virtualMachine.runHook(hook, parameters);
                     outEngDebug("Перехват выполнен.");
                 }
                 // fire location hooks
                 for (Hook hook : locationHooks.get(Hook.HookTypeEnum.INSTEAD))
                 {
                     outEngDebug("Запуск перехвата \"{0}\" в локации...", hook);
-                    virtualMachine.runHook(hook, formalElements);
+                    virtualMachine.runHook(hook, parameters);
                     outEngDebug("Перехват выполнен.");
                 }
 
@@ -302,7 +314,7 @@ public class Engine
 
             // check restrictions
             outEngDebug("Проверка ограничений действия...");
-            if (checkActionRestrictions(action, formalElements))
+            if (checkActionRestrictions(action, parameters))
             {
                 outEngDebug("Сработало ограничение, команда завершается.");
                 return true;
@@ -310,15 +322,16 @@ public class Engine
 
             // fire BEFORE hooks
             outEngDebug("Выполнение перехватов \"ДО\"...");
-            fireBeforeHooks(formalElements, objectHooks, locationHooks);
+            fireBeforeHooks(parameters, objectHooks, locationHooks);
+
 
             // fire action
             outEngDebug("Выполнение самого действия \"{0}\"...", action);
-            virtualMachine.runAction(action, formalElements);
+            virtualMachine.runAction(action, parameters);
 
             // fire AFTER hooks
             outEngDebug("Выполнение перехватов \"ПОСЛЕ\"...");
-            fireAfterHooks(formalElements, objectHooks, locationHooks);
+            fireAfterHooks(parameters, objectHooks, locationHooks);
         }
         catch (IFML2VMException e)
         {
@@ -331,6 +344,30 @@ public class Engine
         }
 
         return true;
+    }
+
+    private List<Variable> convertFormalElementsToParameters(@NotNull List<FormalElement> formalElements) throws IFML2Exception
+    {
+        List<Variable> parameters = new ArrayList<Variable>(formalElements.size());
+        for (FormalElement formalElement : formalElements)
+        {
+            Value value;
+            FormalElement.FormalElementTypeEnum formalElementType = formalElement.getType();
+            switch (formalElementType)
+            {
+                case LITERAL:
+                    value = new TextValue(formalElement.getLiteral());
+                    break;
+                case OBJECT:
+                    value = new ObjectValue(formalElement.getObject());
+                    break;
+                default:
+                    throw new IFML2Exception("Внутренняя ошибка: Неизвестный тип формального элемента: {0}", formalElementType);
+            }
+            parameters.add(new Variable(formalElement.getParameterName(), value));
+        }
+
+        return parameters;
     }
 
     private void outEngDebug(String message, Object... args)
@@ -379,36 +416,37 @@ public class Engine
         }
     }
 
-    private void fireAfterHooks(List<FormalElement> formalElements, HashMap<Hook.HookTypeEnum, List<Hook>> objectHooks, HashMap<Hook.HookTypeEnum, List<Hook>> locationHooks) throws IFML2Exception
+    private void fireAfterHooks(List<Variable> parameters, HashMap<Hook.HookTypeEnum, List<Hook>> objectHooks,
+            HashMap<Hook.HookTypeEnum, List<Hook>> locationHooks) throws IFML2Exception
     {
         // ... object hooks
         for (Hook hook : objectHooks.get(Hook.HookTypeEnum.AFTER))
         {
-            virtualMachine.runHook(hook, formalElements);
+            virtualMachine.runHook(hook, parameters);
         }
         // ... and location hooks
         for (Hook hook : locationHooks.get(Hook.HookTypeEnum.AFTER))
         {
-            virtualMachine.runHook(hook, formalElements);
+            virtualMachine.runHook(hook, parameters);
         }
     }
 
-    private void fireBeforeHooks(List<FormalElement> formalElements, HashMap<Hook.HookTypeEnum, List<Hook>> objectHooks,
+    private void fireBeforeHooks(List<Variable> parameters, HashMap<Hook.HookTypeEnum, List<Hook>> objectHooks,
             HashMap<Hook.HookTypeEnum, List<Hook>> locationHooks) throws IFML2Exception
     {
         // ... object hooks
         for (Hook hook : objectHooks.get(Hook.HookTypeEnum.BEFORE))
         {
-            virtualMachine.runHook(hook, formalElements);
+            virtualMachine.runHook(hook, parameters);
         }
         // ... and location hooks
         for (Hook hook : locationHooks.get(Hook.HookTypeEnum.BEFORE))
         {
-            virtualMachine.runHook(hook, formalElements);
+            virtualMachine.runHook(hook, parameters);
         }
     }
 
-    private HashMap<Hook.HookTypeEnum, List<Hook>> collectLocationHooks(Action action)
+    private HashMap<Hook.HookTypeEnum, List<Hook>> collectLocationHooks(Action action) throws IFML2Exception
     {
         // create HashMap with all location hooks
         HashMap<Hook.HookTypeEnum, List<Hook>> locationHooks = new HashMap<Hook.HookTypeEnum, List<Hook>>()
@@ -420,8 +458,14 @@ public class Engine
             }
         };
 
+        Location currentLocation = getCurrentLocation();
+        if (currentLocation == null)
+        {
+            throw new IFML2Exception("Системная ошибка: Текущая локация не задана!");
+        }
+
         // collect current location hooks
-        for (Hook hook : getCurrentLocation().getHooks())
+        for (Hook hook : currentLocation.getHooks())
         {
             if (action.equals(hook.getAction()))
             {
@@ -461,13 +505,14 @@ public class Engine
         return objectHooks;
     }
 
-    private boolean checkActionRestrictions(Action action, List<FormalElement> formalElements) throws IFML2Exception
+    private boolean checkActionRestrictions(Action action, List<Variable> parameters) throws IFML2Exception
     {
         for (Restriction restriction : action.getRestrictions())
         {
             try
             {
-                RunningContext runningContext = new RunningContext(formalElements, virtualMachine);
+                RunningContext runningContext = RunningContext.CreateNewContext(virtualMachine);
+                runningContext.populateParameters(parameters);
                 Value isRestricted = ExpressionCalculator.calculate(runningContext, restriction.getCondition());
                 if (!(isRestricted instanceof BooleanValue))
                 {
@@ -476,7 +521,7 @@ public class Engine
                 }
                 if (((BooleanValue) isRestricted).getValue()) // if condition is true, run reaction
                 {
-                    virtualMachine.runInstructionList(restriction.getReaction(), runningContext, false, false);
+                    virtualMachine.runInstructionList(restriction.getReaction(), runningContext);
                     return true;
                 }
             }
@@ -494,9 +539,11 @@ public class Engine
         return story;
     }
 
+    @Nullable
     public Location getCurrentLocation()
     {
-        return (Location) ((ObjectValue) systemVariables.get(SystemIdentifiers.CURRENT_LOCATION_SYSTEM_VARIABLE.toLowerCase())).getValue();
+        ObjectValue object = (ObjectValue) systemVariables.get(SystemIdentifiers.CURRENT_LOCATION_SYSTEM_VARIABLE.toLowerCase());
+        return object != null ? (Location) object.getValue() : null;
     }
 
     public void setCurrentLocation(Location currentLocation)
@@ -536,11 +583,6 @@ public class Engine
         }
 
         throw new IFML2VMException("Неизвестный идентификатор \"{0}\"", symbol);
-    }
-
-    public HashMap<String, Value> getGlobalVariables()
-    {
-        return globalVariables;
     }
 
     public VirtualMachine getVirtualMachine()
@@ -627,6 +669,11 @@ public class Engine
     {
         Location currentLocation = getCurrentLocation();
 
+        if(currentLocation == null)
+        {
+            throw new IFML2Exception("Системная ошибка: Текущая локация не задана!");
+        }
+
         // test locations
         if (object instanceof Location)
         {
@@ -661,6 +708,23 @@ public class Engine
         outDebug(tab + message, args);
     }
 
+    public Variable searchGlobalVariable(@Nullable String name)
+    {
+        if(name == null)
+        {
+            return null;
+        }
+
+        String loweredName = name.toLowerCase();
+
+        if(globalVariables.containsKey(loweredName))
+        {
+            return new GlobalVariableProxy(globalVariables, name, globalVariables.get(loweredName));
+        }
+
+        return null;
+    }
+
     /**
      * Helper for saved games data.
      */
@@ -686,15 +750,15 @@ public class Engine
             return story.getLocations();
         }
 
-        public void setGlobalVariable(String name, String expression) throws IFML2Exception
+        public void setGlobalVariable(@NotNull String name, String expression) throws IFML2Exception
         {
-            Value value = ExpressionCalculator.calculate(virtualMachine.createGlobalRunningContext(), expression);
-            globalVariables.put(name, value);
+            Value value = ExpressionCalculator.calculate(RunningContext.CreateNewContext(virtualMachine), expression);
+            globalVariables.put(name.toLowerCase(), value);
         }
 
         public void setSystemVariable(String name, String expression) throws IFML2Exception
         {
-            Value value = ExpressionCalculator.calculate(virtualMachine.createGlobalRunningContext(), expression);
+            Value value = ExpressionCalculator.calculate(RunningContext.CreateNewContext(virtualMachine), expression);
             systemVariables.put(name, value);
         }
 
@@ -703,6 +767,43 @@ public class Engine
         String getStoryFileName()
         {
             return new File(storyFileName).getName();
+        }
+    }
+
+    private class GlobalVariableProxy extends Variable
+    {
+        private final HashMap<String, Value> globalVariables;
+
+        public GlobalVariableProxy(@NotNull HashMap<String, Value> globalVariables, @NotNull String name, Value value)
+        {
+            super(name.toLowerCase(), value);
+            this.globalVariables = globalVariables;
+        }
+
+        @Override
+        public Value getValue()
+        {
+            if (globalVariables.containsKey(name))
+            {
+                return globalVariables.get(name);
+            }
+
+            return null;
+        }
+
+        @Override
+        public void setValue(Value value)
+        {
+            if (globalVariables.containsKey(name))
+            {
+                globalVariables.put(name, value);
+            }
+        }
+
+        @Override
+        public void setName(String name)
+        {
+            throw new RuntimeException("Внутренняя ошибка: Запрещено менять имена переменных");
         }
     }
 }
