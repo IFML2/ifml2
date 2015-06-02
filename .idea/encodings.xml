@@ -2,6 +2,6 @@
 <project version="4">
   <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false">
     <file url="file://$PROJECT_DIR$/docs/new dict log.txt" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/ifml2/engine/EngineVersion.java" charset="UTF-8" />
   </component>
 </project>
-
