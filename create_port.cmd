@@ -1,8 +1,9 @@
-@echo off
+rem @echo off
 rmdir portable
 mkdir portable
 mkdir "portable\Saved Games"
-xcopy /y out\artifacts\ifml2\*.* "potable\*.*"
-xcopy /e /y libs "potable\libs\"
-xcopy /e /y Games "potable\Games\"
-xcopy /e /y Tests "potable\Tests\"
+xcopy /y out\artifacts\ifml2\*.* "portable\*.*"
+xcopy /e /y libs "portable\libs\"
+xcopy /e /y Games "portable\Games\"
+xcopy /e /y Tests "portable\Tests\"
+pause
