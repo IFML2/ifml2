@@ -4,6 +4,7 @@ import ifml2.CommonUtils;
 import ifml2.IFML2Exception;
 import ifml2.engine.Engine;
 import ifml2.om.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.text.MessageFormat;
 import java.util.*;
@@ -142,7 +143,7 @@ public class Parser
         return new ParseResult(firstFittedTemplate.action, formalElements);
     }
 
-    private String convertArrayToString(ArrayList<String> stringArrayList)
+    private String convertArrayToString(List<String> stringArrayList)
     {
         String result = "";
         for (String element : stringArrayList)
@@ -156,7 +157,7 @@ public class Parser
         return result;
     }
 
-    private String convertFittedToString(ArrayList<FittedFormalElement> fittedFormalElements) throws IFML2Exception
+    private String convertFittedToString(List<FittedFormalElement> fittedFormalElements) throws IFML2Exception
     {
         String result = "";
 
@@ -169,7 +170,7 @@ public class Parser
             }
             else if (fittedFormalElement instanceof FittedObjects)
             {
-                ArrayList<IFMLObject> fittedObjects = ((FittedObjects) fittedFormalElement).objects;
+                List<IFMLObject> fittedObjects = ((FittedObjects) fittedFormalElement).objects;
 
                 if (fittedObjects.size() > 0)
                 {
@@ -204,7 +205,7 @@ public class Parser
                 {
                     ArrayList<IFMLObject> objectsToRemove = new ArrayList<IFMLObject>();
 
-                    ArrayList<IFMLObject> fittedObjects = ((FittedObjects) fittedFormalElement).getObjects();
+                    List<IFMLObject> fittedObjects = ((FittedObjects) fittedFormalElement).getObjects();
 
                     for (IFMLObject object : fittedObjects)
                     {
@@ -381,7 +382,7 @@ public class Parser
             Word.GramCaseEnum gramCase = ((ObjectTemplateElement) templateElement).getGramCase();
 
             FitObjectWithPhraseResult fitObjectWithPhraseResult = fitObjectWithPhrase(gramCase, phrase, storyDataHelper);
-            ArrayList<IFMLObject> objects = fitObjectWithPhraseResult.getObjects();
+            List<IFMLObject> objects = fitObjectWithPhraseResult.getObjects();
             int usedWordsQty = fitObjectWithPhraseResult.getUsedWordsQty();
 
             return new TemplateElementFitResult(new FittedObjects(objects, gramCase, templateElement.getParameter()), usedWordsQty);
@@ -392,121 +393,89 @@ public class Parser
         }
     }
 
-    private FitObjectWithPhraseResult fitObjectWithPhrase(Word.GramCaseEnum gramCase, ArrayList<String> phrase,
-            Story.DataHelper storyDataHelper) throws IFML2Exception
+    private
+    @NotNull
+    FitObjectWithPhraseResult fitObjectWithPhrase(@NotNull Word.GramCaseEnum gramCase, @NotNull List<String> phrase,
+            @NotNull Story.DataHelper storyDataHelper) throws IFML2Exception
     {
-        List<String> restPhrase = new ArrayList<String>(phrase);
-        List<Word> fittedWords = new ArrayList<Word>();
-        int allUsedWords = 0;
+        if (phrase.size() == 0)
+        {
+            throw new IFML2Exception("Внутрення ошибка: в метод подбора объекта (fitObjectWithPhrase) попала пустая фраза!");
+        }
+
+        /* алгоритм:
+        +1) получить первое слово (самое длинное из возможных; если таких больше 1 - это ошибка словаря (дубли))
+        +2) взять объекты этого слова
+        +3) рекурсивно подбирать следующее слово
+        +4) если оно имеет пересечения в объектах с первым словом, то:
+            +4.1) возвращать пересечение и счётчик слов (String, не Word)
+            todo -4.1.1) но если это слово совпадает с уже попавшимся, не брать его (в конце ругаться, если ничего не подобрано)
+        иначе:
+            +4.2) если ни один из вариантов слова не имеет пересечений с первым словом, завершить анализ, вернув первое слово
+        */
 
         // find the first word (the longest from available)
         Word firstWord = null;
-        int firstWordCount = 0;
-        /* todo алгоритм:
-        1) получить первое слово (само длинное из возможных; если таких больше 1 - это ошибка словаря (дубли))
-        2) взять объекты этого слова
-        3) итеративно брать следующее слово (в всех вариантах, не только самое длинное)
-        4) если оно имеет пересечения в объектах с первым словом, то:
-            4.1) сохранить в объектах только пересечение, увеличить счётчик слов (String, не Word), пойти дальше по циклу
-            4.1.1) но если это слово совпадает с уже попавшимся, не брать его (в конце ругаться, если ничего не подобрано)
-        иначе:
-            4.2) если ни один из вариантов слова не имеет пересечений с первым словом, завершить анализ, вернув первое слово
+        int firstWordChunksCount = 0;
+        for (Word word : storyDataHelper.getDictionary().values())
+        {
+            int wordCount = fitWordWithPhrase(word, gramCase, phrase);
+            if (wordCount > firstWordChunksCount)
+            {
+                firstWord = word;
+                firstWordChunksCount = wordCount;
+            }
+            else if (wordCount > 0 && wordCount == firstWordChunksCount)
+            {
+                throw new IFML2Exception("Внутренняя ошибка словаря: найдено две одинаковых записи словаря: \"{0}\" и \"{1}\"!", firstWord,
+                        word);
+            }
+        }
 
-        */
+        if (firstWord == null)
+        {
+            String firstPhraseWord = phrase.size() > 0 ? phrase.get(0) : "";
+            int usedPhraseWords = phrase.size() > 0 ? 1 : 0;
+            throw new IFML2ParseException(MessageFormat
+                    .format("У меня в словаре нет слов, которые в падеже {0} пишутся как \"{1}\".", gramCase.getAbbreviation(),
+                            firstPhraseWord), usedPhraseWords);
+        }
 
+        //fittedWords.add(firstWord);
 
         // get the first word objects
         List<IFMLObject> firstWordObjects = new ArrayList<IFMLObject>(firstWord.getLinkerObjects());
-
-
-        /*// Stage I
-
-        while (true)
+        // case when dict word has no links to objects
+        if (firstWordObjects.size() == 0)
         {
-            if (restPhrase.size() == 0)
+            throw new IFML2ParseException(
+                    MessageFormat.format("Вообще нигде не вижу {0}.", firstWord.getFormByGramCase(Word.GramCaseEnum.RP)),
+                    firstWordChunksCount);
+        }
+
+        // if phrase is unfinished
+        if (firstWordChunksCount < phrase.size())
+        {
+            // iterate all other words to check
+            List<String> phraseRest = phrase.subList(firstWordChunksCount, phrase.size());
+            // try to get next chunks as the same objects parts
+            try
             {
-                break;
-            }
-
-            boolean wordIsFound = false;
-
-            for (Word dictWord : storyDataHelper.getDictionary().values())
-            {
-                int usedWords = fitWordWithPhrase(dictWord, gramCase, restPhrase);
-
-                allUsedWords += usedWords;
-
-                if (usedWords > 0)
+                FitObjectWithPhraseResult result = fitObjectWithPhrase(gramCase, phraseRest, storyDataHelper);
+                List<IFMLObject> commonObjects = new ArrayList<IFMLObject>(firstWordObjects);
+                commonObjects.retainAll(result.getObjects()); // retains only intersection of objects
+                if (commonObjects.size() > 0)
                 {
-                    // case when dict word has no links to objects
-                    if (dictWord.getLinkerObjects().size() == 0)
-                    {
-                        throw new IFML2ParseException(
-                                MessageFormat.format("Нигде не вижу {0}.", dictWord.getFormByGramCase(Word.GramCaseEnum.RP)), allUsedWords);
-                    }
-
-                    if (fittedWords.contains(dictWord))
-                    {
-                        String usedPhrase = "";
-                        for (String word : phrase.subList(0, allUsedWords - 1))
-                        {
-                            usedPhrase += " " + word;
-                        }
-
-                        throw new IFML2ParseException(
-                                MessageFormat.format("Я бы понял фразу, если бы вы сказали \"{0}\"", usedPhrase.trim()), allUsedWords);
-                    }
-
-                    fittedWords.add(dictWord);
-                    restPhrase = restPhrase.subList(usedWords, restPhrase.size());
-                    wordIsFound = true;
-                    break;
+                    return new FitObjectWithPhraseResult(commonObjects, firstWordChunksCount + result.getUsedWordsQty());
                 }
             }
-
-            if (!wordIsFound)
+            catch (IFML2ParseException e)
             {
-                if (fittedWords.size() > 0)
-                {
-                    break;
-                }
-                else
-                {
-                    throw new IFML2ParseException(MessageFormat.format("Не знаю слово \"{0}\".", restPhrase.get(0)), 1);
-                }
+                return new FitObjectWithPhraseResult(firstWordObjects, firstWordChunksCount);
             }
         }
 
-        // Stage II
-
-        ArrayList<IFMLObject> objects = new ArrayList<IFMLObject>();
-        objects.addAll(fittedWords.get(0).getLinkerObjects());
-
-        if (fittedWords.size() == 1)
-        {
-            return new FitObjectWithPhraseResult(objects, allUsedWords);
-        }
-
-        for (Word word : fittedWords.subList(1, fittedWords.size()))
-        {
-            for (Iterator<IFMLObject> iterator = objects.iterator(); iterator.hasNext(); )
-            {
-                IFMLObject object = iterator.next();
-                if (!word.getLinkerObjects().contains(object))
-                {
-                    if (objects.size() > 1)
-                    {
-                        iterator.remove();
-                    }
-                    else
-                    {
-                        throw new IFML2ParseException(MessageFormat.format("Не знаю такого предмета – \"{0}\"", fittedWords));
-                    }
-                }
-            }
-        }
-
-        return new FitObjectWithPhraseResult(objects, allUsedWords);*/
+        return new FitObjectWithPhraseResult(firstWordObjects, firstWordChunksCount);
     }
 
     private int fitWordWithPhrase(Word word, Word.GramCaseEnum gramCase, List<String> restPhrase)
@@ -664,16 +633,16 @@ public class Parser
     private class FittedObjects extends FittedFormalElement
     {
         final Word.GramCaseEnum gramCase;
-        ArrayList<IFMLObject> objects = new ArrayList<IFMLObject>();
+        List<IFMLObject> objects = new ArrayList<IFMLObject>();
 
-        public FittedObjects(ArrayList<IFMLObject> objects, Word.GramCaseEnum gramCase, String parameter)
+        public FittedObjects(List<IFMLObject> objects, Word.GramCaseEnum gramCase, String parameter)
         {
             this.objects = objects;
             this.gramCase = gramCase;
             this.parameter = parameter;
         }
 
-        public ArrayList<IFMLObject> getObjects()
+        public List<IFMLObject> getObjects()
         {
             return objects;
         }
@@ -687,10 +656,10 @@ public class Parser
 
     public class FitObjectWithPhraseResult
     {
-        private final ArrayList<IFMLObject> objects;
+        private final List<IFMLObject> objects;
         private final int usedWordsQty;
 
-        public FitObjectWithPhraseResult(ArrayList<IFMLObject> objects, int usedWordsQty)
+        public FitObjectWithPhraseResult(List<IFMLObject> objects, int usedWordsQty)
         {
             this.objects = objects;
             this.usedWordsQty = usedWordsQty;
@@ -701,7 +670,7 @@ public class Parser
             return usedWordsQty;
         }
 
-        public ArrayList<IFMLObject> getObjects()
+        public List<IFMLObject> getObjects()
         {
             return objects;
         }
