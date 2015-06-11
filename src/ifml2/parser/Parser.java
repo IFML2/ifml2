@@ -396,10 +396,30 @@ public class Parser
             Story.DataHelper storyDataHelper) throws IFML2Exception
     {
         List<String> restPhrase = new ArrayList<String>(phrase);
-        ArrayList<Word> fittedWords = new ArrayList<Word>();
+        List<Word> fittedWords = new ArrayList<Word>();
         int allUsedWords = 0;
 
-        // Stage I
+        // find the first word (the longest from available)
+        Word firstWord = null;
+        int firstWordCount = 0;
+        /* todo алгоритм:
+        1) получить первое слово (само длинное из возможных; если таких больше 1 - это ошибка словаря (дубли))
+        2) взять объекты этого слова
+        3) итеративно брать следующее слово (в всех вариантах, не только самое длинное)
+        4) если оно имеет пересечения в объектах с первым словом, то:
+            4.1) сохранить в объектах только пересечение, увеличить счётчик слов (String, не Word), пойти дальше по циклу
+            4.1.1) но если это слово совпадает с уже попавшимся, не брать его (в конце ругаться, если ничего не подобрано)
+        иначе:
+            4.2) если ни один из вариантов слова не имеет пересечений с первым словом, завершить анализ, вернув первое слово
+
+        */
+
+
+        // get the first word objects
+        List<IFMLObject> firstWordObjects = new ArrayList<IFMLObject>(firstWord.getLinkerObjects());
+
+
+        /*// Stage I
 
         while (true)
         {
@@ -486,7 +506,7 @@ public class Parser
             }
         }
 
-        return new FitObjectWithPhraseResult(objects, allUsedWords);
+        return new FitObjectWithPhraseResult(objects, allUsedWords);*/
     }
 
     private int fitWordWithPhrase(Word word, Word.GramCaseEnum gramCase, List<String> restPhrase)
