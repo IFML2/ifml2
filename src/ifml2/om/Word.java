@@ -164,7 +164,7 @@ public class Word extends IFMLEntity
         }
     }
 
-    public static enum GenderEnum
+    public enum GenderEnum
     {
         MASCULINE,
         FEMININE,
