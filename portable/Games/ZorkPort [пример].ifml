@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<story xmlns="http://toysoft.narod.ru/IFML2Schema" id="Zork">
+    <storyOptions>
+        <startLocationOption showStartLocDesc="true" location="КЗападуОтДома"/>
+        <startProcedureOption/>
+        <storyDescription version="0.0.2 (в разработке)" name="Zork порт" description="Портированный Zork под ЯРИЛ 2.0" author="realsonic"/>
+        <globalVars/>
+    </storyOptions>
+    <procedures/>
+    <libraries>
+        <library>standard/verbs.xml</library>
+    </libraries>
+    <dictionary>
+        <word>
+            <ip>ящик</ip>
+            <rp>ящика</rp>
+            <dp>ящику</dp>
+            <vp>ящик</vp>
+            <tp>ящиком</tp>
+            <pp>ящике</pp>
+        </word>
+        <word>
+            <ip>письмо</ip>
+            <rp>письма</rp>
+            <dp>письму</dp>
+            <vp>письмо</vp>
+            <tp>письмом</tp>
+            <pp>письме</pp>
+        </word>
+    </dictionary>
+    <locations>
+        <location name="К западу от дома" id="КЗападуОтДома">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words/>
+            <description>Вы стоите на площадке к западу от белого дома с белой заколоченной парадной дверью.</description>
+            <attributes/>
+        </location>
+    </locations>
+    <items>
+        <item name="небольшой почтовый ящик" id="ПочтовыйЯщик">
+            <hooks/>
+            <roles>
+                <role name="контейнер">
+                    <properties>
+                        <property name="предметыВнутри">
+                            <collectionItem>ПисьмоКИгроку</collectionItem>
+                        </property>
+                    </properties>
+                </role>
+                <role name="открываемый">
+                    <properties>
+                        <property value="нет" name="открыт"/>
+                    </properties>
+                </role>
+            </roles>
+            <properties/>
+            <words mainWord="ящик">
+                <word>ящик</word>
+            </words>
+            <description/>
+            <attributes>
+                <attribute>недоступен</attribute>
+            </attributes>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>КЗападуОтДома</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item name="письмо" id="ПисьмоКИгроку">
+            <hooks/>
+            <roles>
+                <role name="читаемый">
+                    <properties>
+                        <property value="'Приветствую тебя, путешественник! Ты на пороге огромной империи Zork!'" name="текст"/>
+                    </properties>
+                </role>
+            </roles>
+            <properties/>
+            <words mainWord="письмо">
+                <word>письмо</word>
+            </words>
+            <description>Небольшой прямоугольный листок.</description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations/>
+            </startingPosition>
+        </item>
+    </items>
+    <actions/>
+</story>
