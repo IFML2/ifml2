@@ -521,7 +521,7 @@ public class Parser
             // try to get next chunks as the same objects parts
             try
             {
-                FitObjectWithPhraseResult result = fitObjectWithPhrase(gramCase, phraseRest, storyDataHelper);
+                FitObjectWithPhraseResult result = fitObjectWithPhrase(gramCase, phraseRest, engineDataHelper, storyDataHelper, debugLevel);
 
                 // check word duplicates to separate next template element
                 List<Word> nextWords = result.getFoundWords();

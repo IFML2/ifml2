@@ -2,9 +2,9 @@
 <story xmlns="http://toysoft.narod.ru/IFML2Schema" id="story">
     <storyOptions>
         <startLocationOption showStartLocDesc="false" location="ЦентрЛок"/>
-        <startProcedureOption procedure="Стартовая"/>
+        <startProcedureOption procedure="стартовая"/>
         <storyDescription version="8" name="ЛАБИРИНТ ФАВНА" description="Игра по мотивам одноименного фильма."
-                          author="Репин Андрей ( Russian Bear) и Елизаров Илья (Saint)"/>
+                          author="Репин Андрей (Russian Bear) и Елизаров Илья (Saint)"/>
         <globalVars>
             <var value="нет" name="КнигаОткрыта"/>
             <var value="1" name="ЗаписьВкниге"/>
@@ -30,18 +30,17 @@
             </procedureBody>
             <parameters/>
         </procedure>
-        <procedure name="каменьЖабе">
+        <procedure name="дать камень жабе">
             <procedureVariables/>
             <procedureBody>
                 <if condition="ТекущаяЛокация = ЯмаЛок">
                     <else>
-                        <showMessage type="text" message="&#xA;Здесь жабы замечены не были.&#xA;" carriageReturn="true"
-                                     beginWithCap="false"/>
+                        <showMessage type="text" message="&#xA;Не вижу здесь жабы.&#xA;" carriageReturn="true" beginWithCap="false"/>
                     </else>
                     <then>
                         <if condition="ЖабаПред в ЯмаЛок.предметы">
                             <else>
-                                <showMessage type="text" message="&#xA;Не вижу здесь никакой жабы.&#xA;" carriageReturn="true"
+                                <showMessage type="text" message="&#xA;Здесь нет никакой жабы.&#xA;" carriageReturn="true"
                                              beginWithCap="false"/>
                             </else>
                             <then>
@@ -61,20 +60,10 @@
                                                 <showMessage type="text"
                                                              message="&#xA;Жаба схватила букашку своим липким языком, а заодно с ней и камень, и проглотила наживку. Наверное, минуту, или больше, ничего не происходило. А потом жаба начала вести себя как-то странно. Она начала вращать и выпучивать глаза, дергать лапами, пытаться прыгать, ее язык то выскакивал наружу, дико извиваясь, то опять прятался в пасти. И вдруг жаба изрыгнула из себя огромный комок слизи. Выглядело это так, как будто она вывернула себя наизнанку в виде комка ядовито-желтой слизи, с прожилками черного и буро-зеленого цвета. &#xA;"
                                                              carriageReturn="true" beginWithCap="false"/>
-                                                <if condition="не КаменьПред в СкрытаяЛок.предметы">
-                                                    <else/>
-                                                    <then>
-                                                        <moveItem to="СкрытаяЛок.предметы" item="КаменьПред"/>
-                                                    </then>
-                                                </if>
                                                 <var value="1" name="ключ"/>
-                                                <if condition="не ЖабаПред в скрытаяЛок.предметы">
-                                                    <else/>
-                                                    <then>
-                                                        <moveItem to="скрытаяЛок.предметы" item="ЖабаПред"/>
-                                                    </then>
-                                                </if>
                                                 <moveItem to="СкрытаяЛок.предметы" item="ЖабаПред"/>
+                                                <moveItem to="СкрытаяЛок.предметы" item="КаменьПред"/>
+                                                <moveItem to="ямаЛок.предметы" item="ЖукПред"/>
                                             </then>
                                         </if>
                                     </then>
@@ -94,7 +83,7 @@
             </procedureBody>
             <parameters/>
         </procedure>
-        <procedure name="спуститьсяВЯму">
+        <procedure name="осмотреть яму">
             <procedureVariables/>
             <procedureBody>
                 <if condition="ТекущаяЛокация = ЯмаЛок">
@@ -102,13 +91,15 @@
                         <showMessage type="text" message="&#xA;Нет здесь никакой ямы.&#xA;" carriageReturn="true" beginWithCap="false"/>
                     </else>
                     <then>
-                        <showMessage type="text"
-                                     message="&#xD;&#xA;     Чтобы узнать источник происхождения странных звуков, вы спустились в яму и увидели там огромную жабу.  Жуки и мокрицы падают к ней в яму и  копошатся вокруг нее, а она лениво выхватывает их своим длинным, липким языком одного за другим, и съедает. &#xD;&#xA;     Эта процедура и является причиной раздающихся чавкающих и  хлюпающих  звуков.&#xD;&#xA;"
-                                     carriageReturn="true" beginWithCap="false"/>
-                        <if condition="не ЖабаПред в ЯмаЛок.предметы">
-                            <else/>
+                        <if condition="жабаПред в ямаЛок.предметы">
+                            <else>
+                                <showMessage type="text" message="&#xA;Ничего особенного, яма как яма.&#xA;" carriageReturn="true"
+                                             beginWithCap="false"/>
+                            </else>
                             <then>
-                                <moveItem to="ЯмаЛок.предметы" item="ЖабаПред"/>
+                                <showMessage type="text"
+                                             message="&#xA;    Вы заглянули в яму и увидели там огромную жабу.  Жуки и мокрицы падают к ней в яму и  копошатся вокруг нее, а она лениво выхватывает их своим длинным, липким языком одного за другим, и съедает. &#xA;&#xA;"
+                                             carriageReturn="true" beginWithCap="false"/>
                             </then>
                         </if>
                     </then>
@@ -116,21 +107,21 @@
             </procedureBody>
             <parameters/>
         </procedure>
-        <procedure name="искатьКлюч">
+        <procedure name="искать ключ">
             <procedureVariables/>
             <procedureBody>
                 <if condition="ТекущаяЛокация = ЯмаЛок">
                     <else>
-                        <showMessage type="text" message="&#xA;Здесь нет ключа.&#xA;" carriageReturn="true" beginWithCap="false"/>
+                        <showMessage type="text" message="&#xA;Здесь нет ничего.&#xA;" carriageReturn="true" beginWithCap="false"/>
                     </else>
                     <then>
                         <if condition="ключ = 1">
                             <else>
-                                <showMessage type="text" message="&#xA;Здесь нет ключа.&#xA;" carriageReturn="true" beginWithCap="false"/>
+                                <showMessage type="text" message="&#xA;Здесь ничего нет.&#xA;" carriageReturn="true" beginWithCap="false"/>
                             </else>
                             <then>
                                 <showMessage type="text"
-                                             message="&#xA;     Офелия сунула руку в комок  желтой слизи и достала оттуда причудливой формы ключ.&#xA;"
+                                             message="&#xA;     Офелия сунула руку в комок  желтой слизи и достала оттуда причудливой формы ключ. А слизь попузырилась еще какое-то время и, впитавшись в землю, пропала на дне ямы."
                                              carriageReturn="true" beginWithCap="false"/>
                                 <var value="2" name="ключ"/>
                                 <if condition="не КлючПред в инвентарий">
@@ -147,16 +138,16 @@
             </procedureBody>
             <parameters/>
         </procedure>
-        <procedure name="Стартовая">
+        <procedure name="стартовая">
             <procedureVariables/>
             <procedureBody>
                 <showMessage type="text"
-                             message="&#xA;     Давным-давно, когда эльфы жили среди людей, произошел раскол между людьми и расами другого мира. Эльфы, как и все существа тонкого мира, ушли с Земли.&#xA;Но у короля эльфов была дочь. Маленькая, любопытная девочка, желающая увидеть мир людей своими глазами. Она убежала из дворца, и проникла в другой мир – мир людей. Солнечный свет ослепил ее, и она забыла кто она, а ее бессмертная душа продолжила свой путь в мире людей, переходя из одного тела в другое.&#xA;     Но король эльфов не отчаялся. Он верил, что его дочь когда-нибудь вернется.&#xA;Поэтому он приказал открыть по всему человеческому миру проходы в тонкий мир и дал задание всем своим подданным, чтобы они искали его дочь.&#xA;     Девочка по имени Офелия играла в лесу. Ее родители недавно переехали в это место, и она, как и всякий ребенок в обход всех запретов, исследовала окрестную местность.&#xA;Блуждая по лесу, Офелия то там, то тут, натыкалась на остатки каких-то сооружений,  древних и странных. На вросших в землю камнях она видела странные знаки, лики и изображения, частично стертые временем, но от этого казавшиеся еще более загадочными и таинственными.&#xA;     Заигравшись, девочка углубилась так далеко в лес, что солнца стало не видно, и ветви деревьев закрыли свет солнца, и не стало видно неба. Офелия испугалась, стала кричать и метаться по лесу, ища выход. Вдруг она увидела арку – вход. На вершине арки было изображение существа с огромными рогами и странной, непонятной надписью: «IN CONSILIIS NOSTRIS FATUM NOSTRUM EST». Девочка решила зайти внутрь и попала в лабиринт.&#xA;     Забыв о том, что она потерялась, Офелия начала кружить по древнему лабиринту и в конце концов попала в самый его центр. А там была огромная дыра со ступенями, ведущими вниз.&#xA;&#xA;     Девочка спустилась вниз. И эта девочка - Вы.&#xA;"
+                             message="&#xA;     Давным-давно, когда эльфы жили среди людей, произошел раскол между людьми и расами другого мира. Эльфы, как и все существа тонкого мира, ушли с Земли.&#xA;У короля эльфов была дочь. Маленькая, любопытная девочка, желающая увидеть мир людей своими глазами. Она убежала из дворца, и проникла в другой мир – мир людей. Солнечный свет ослепил ее, и она забыла кто она есть, а ее бессмертная душа продолжила свой путь в мире людей, переходя из одного тела в другое.&#xA;     Но король эльфов не отчаялся. Он верил, что его дочь когда-нибудь вернется.&#xA;Поэтому он приказал открыть по всему человеческому миру проходы в тонкий мир и дал задание всем своим подданным, чтобы они искали его дочь.&#xA;     Девочка по имени Офелия играла в лесу. Ее родители недавно переехали в это место, и она, как и всякий ребенок в обход всех запретов, исследовала окрестную местность.&#xA;Блуждая по лесу, Офелия то там, то тут, натыкалась на остатки каких-то сооружений,  древних и странных. На вросших в землю камнях она видела странные знаки, лики и изображения, частично стертые временем, но от этого казавшиеся еще более загадочными и таинственными.&#xA;     Заигравшись, девочка углубилась так далеко в лес, что ветви деревьев закрыли свет солнца. Офелия испугалась и стала бродить по лесу, ища выход. Вдруг она увидела арку – вход. На вершине арки было изображение существа с огромными рогами и странной, непонятной надписью: «IN CONSILIIS NOSTRIS FATUM NOSTRUM EST». Девочка решила зайти внутрь и попала в лабиринт.&#xA;     Забыв о том, что она потерялась, Офелия начала кружить по древнему лабиринту и в конце концов попала в самый его центр. А там была огромная дыра со ступенями, ведущими вниз.&#xA;&#xA;     Девочка спустилась вниз. И эта девочка - Вы.&#xA;"
                              carriageReturn="true" beginWithCap="false"/>
             </procedureBody>
             <parameters/>
         </procedure>
-        <procedure name="нарисоватьДверь">
+        <procedure name="нарисовать дверь">
             <procedureVariables/>
             <procedureBody>
                 <if condition="дверь = нет">
@@ -254,7 +245,7 @@
             </procedureBody>
             <parameters/>
         </procedure>
-        <procedure name="глаза">
+        <procedure name="осмотреть глаза">
             <procedureVariables/>
             <procedureBody>
                 <if condition="ТекущаяЛокация=ЕвгЛок">
@@ -325,18 +316,20 @@
             </procedureBody>
             <parameters/>
         </procedure>
-        <procedure name="датьЖука">
+        <procedure name="дать жука">
             <procedureVariables/>
             <procedureBody>
                 <if condition="ЖукПред в инвентарий">
                     <else>
-                        <showMessage type="text" message="&#xA;Здесь нет жука.&#xA;" carriageReturn="true" beginWithCap="false"/>
+                        <showMessage type="text" message="&#xA;У вас нет букашки.&#xA;" carriageReturn="true" beginWithCap="false"/>
                     </else>
                     <then>
                         <if condition="ТекущаяЛокация = ЯмаЛок">
                             <else>
-                                <showMessage type="text" message="&#xA;Здесь нет ни жука, ни жабы.&#xA;" carriageReturn="true"
-                                             beginWithCap="false"/>
+                                <showMessage type="text"
+                                             message="&#xA;Здесь нет никакой жабы. Зачем тогда мне жук. Лучше выкинуть его подальше.&#xA;&#xA;"
+                                             carriageReturn="true" beginWithCap="false"/>
+                                <moveItem to="ямаЛок.предметы" item="ЖукПред"/>
                             </else>
                             <then>
                                 <if condition="ключ = 0">
@@ -346,14 +339,9 @@
                                     </else>
                                     <then>
                                         <showMessage type="text"
-                                                     message="&#xA;     Жаба схватила букашку с протянутой руки и проглотила ее.&#xA;"
+                                                     message="&#xA;     Жаба схватила букашку с протянутой руки и проглотила ее. Совершив эту процедуру, она продолжает набивать своё брюхо без вашей помощи.&#xA;"
                                                      carriageReturn="true" beginWithCap="false"/>
-                                        <if condition="не ЖукПред в ЯмаЛок.предметы">
-                                            <else/>
-                                            <then>
-                                                <moveItem to="ЯмаЛок.предметы" item="ЖукПред"/>
-                                            </then>
-                                        </if>
+                                        <moveItem to="ямаЛок.предметы" item="ЖукПред"/>
                                     </then>
                                 </if>
                             </then>
@@ -363,7 +351,7 @@
             </procedureBody>
             <parameters/>
         </procedure>
-        <procedure name="Осмотреть себя">
+        <procedure name="осмотреть себя">
             <procedureVariables/>
             <procedureBody>
                 <showMessage type="text" message="     &#xA;Обыкновенная маленькая девочка.&#xA;" carriageReturn="true"
@@ -376,6 +364,38 @@
             <procedureBody>
                 <showMessage type="text" message="&#xA;Предмет очень нужен. Не стоит этого делать." carriageReturn="true"
                              beginWithCap="false"/>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="осмотр неинтересного">
+            <procedureVariables/>
+            <procedureBody>
+                <showMessage type="text" message="&#xA;Ничего особенного.&#xA;" carriageReturn="true" beginWithCap="false"/>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="счет">
+            <procedureVariables/>
+            <procedureBody>
+                <showMessage type="text"
+                             message="&#xA;Раз-два -три-четыре-пять, вышел зайчик погулять. А если серьезно, то счет в этой игре не ведется. Важен лишь результат.&#xA;"
+                             carriageReturn="true" beginWithCap="false"/>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="убить жука">
+            <procedureVariables/>
+            <procedureBody>
+                <if condition="ТекущаяЛокация = ЯмаЛок.предметы">
+                    <else>
+                        <showMessage type="text" message="&#xA;Нет здесь никаких букашек.&#xA;" carriageReturn="true" beginWithCap="false"/>
+                    </else>
+                    <then>
+                        <showMessage type="text"
+                                     message="&#xA;Вы раздавили букашку, но эт этого их количество не убавилось. Они постоянно откуда-то вылезают.&#xA;"
+                                     carriageReturn="true" beginWithCap="false"/>
+                    </then>
+                </if>
             </procedureBody>
             <parameters/>
         </procedure>
@@ -457,6 +477,14 @@
             <pp>левой</pp>
         </word>
         <word>
+            <ip>острый</ip>
+            <rp>острого</rp>
+            <dp>острому</dp>
+            <vp>острый</vp>
+            <tp>острым</tp>
+            <pp>остром</pp>
+        </word>
+        <word>
             <ip>куча</ip>
             <rp>кучи</rp>
             <dp>куче</dp>
@@ -497,12 +525,12 @@
             <pp>конфетах</pp>
         </word>
         <word>
-            <ip>мокрица</ip>
-            <rp>мокрицы</rp>
-            <dp>мокрице</dp>
-            <vp>мокрицу</vp>
-            <tp>мокрицей</tp>
-            <pp>мокрице</pp>
+            <ip>мел</ip>
+            <rp>мела</rp>
+            <dp>мелу</dp>
+            <vp>мел</vp>
+            <tp>мелом</tp>
+            <pp>меле</pp>
         </word>
         <word>
             <ip>компас</ip>
@@ -513,12 +541,12 @@
             <pp>компасе</pp>
         </word>
         <word>
-            <ip>мел</ip>
-            <rp>мела</rp>
-            <dp>мелу</dp>
-            <vp>мел</vp>
-            <tp>мелом</tp>
-            <pp>меле</pp>
+            <ip>мокрица</ip>
+            <rp>мокрицы</rp>
+            <dp>мокрице</dp>
+            <vp>мокрицу</vp>
+            <tp>мокрицей</tp>
+            <pp>мокрице</pp>
         </word>
         <word>
             <ip>фавн</ip>
@@ -545,20 +573,20 @@
             <pp>средней</pp>
         </word>
         <word>
-            <ip>дверка</ip>
-            <rp>дверки</rp>
-            <dp>дверке</dp>
-            <vp>дверку</vp>
-            <tp>дверкой</tp>
-            <pp>дверке</pp>
-        </word>
-        <word>
             <ip>кинжал</ip>
             <rp>кинжала</rp>
             <dp>кинжалу</dp>
             <vp>кинжал</vp>
             <tp>кинжалом</tp>
             <pp>кинжале</pp>
+        </word>
+        <word>
+            <ip>дверка</ip>
+            <rp>дверки</rp>
+            <dp>дверке</dp>
+            <vp>дверку</vp>
+            <tp>дверкой</tp>
+            <pp>дверке</pp>
         </word>
         <word>
             <ip>пикси</ip>
@@ -764,20 +792,20 @@
             <pp>факеле</pp>
         </word>
         <word>
-            <ip>стены</ip>
-            <rp>стен</rp>
-            <dp>стенам</dp>
-            <vp>стены</vp>
-            <tp>стенами</tp>
-            <pp>стенах</pp>
-        </word>
-        <word>
             <ip>букашка</ip>
             <rp>букашки</rp>
             <dp>букашке</dp>
             <vp>букашку</vp>
             <tp>букашкой</tp>
             <pp>букашке</pp>
+        </word>
+        <word>
+            <ip>стены</ip>
+            <rp>стен</rp>
+            <dp>стенам</dp>
+            <vp>стены</vp>
+            <tp>стенами</tp>
+            <pp>стенах</pp>
         </word>
         <word>
             <ip>зефир</ip>
@@ -813,7 +841,7 @@
         </word>
     </dictionary>
     <locations>
-        <location name="пещера в центре лабиринта" id="ЦентрЛок">
+        <location name="Пещера в центре лабиринта" id="ЦентрЛок">
             <hooks>
                 <hook type="instead" objectElement="" action="осмотреться">
                     <instructions>
@@ -970,7 +998,7 @@
             <description/>
             <attributes/>
         </location>
-        <location name="тронная зала" id="ССВЛок">
+        <location name="Тронная зала" id="ССВЛок">
             <hooks/>
             <roles/>
             <properties/>
@@ -992,7 +1020,7 @@
             </description>
             <attributes/>
         </location>
-        <location name="яма жабы" id="ЯмаЛок">
+        <location name="Пещера с ямой" id="ЯмаЛок">
             <hooks>
                 <hook type="instead" objectElement="" action="идти на юг">
                     <instructions>
@@ -1029,13 +1057,13 @@
             <words/>
             <description>
                 Та же пещера, те же каменные стены, тот же пол, но здесь сыро. По стенам этой пещеры стекает вода, которая собирается в
-                центре, где находится яма, из которой раздаются какие-то странные звуки.
+                центре, где находится яма.
                 На южной стене открытая дверь.
             </description>
             <attributes/>
             <south>ЦентрЛок</south>
         </location>
-        <location name="комната евга" id="ЕвгЛок">
+        <location name="Комната евга" id="ЕвгЛок">
             <hooks>
                 <hook type="instead" objectElement="" action="взять всё">
                     <instructions>
@@ -1080,7 +1108,7 @@
             <attributes/>
             <west>ЦентрЛок</west>
         </location>
-        <location name="алтарная комната" id="АлтарьЛок">
+        <location name="Алтарная комната" id="АлтарьЛок">
             <hooks>
                 <hook type="instead" objectElement="" action="взять всё">
                     <instructions>
@@ -1100,7 +1128,7 @@
             <attributes/>
             <north>ЦентрЛок</north>
         </location>
-        <location name="скрытая" id="СкрытаяЛок">
+        <location name="Скрытая" id="СкрытаяЛок">
             <hooks/>
             <roles/>
             <properties/>
@@ -1108,7 +1136,7 @@
             <description>Это просто скрытая локация. Кладовка. Нехрен тут шариться.</description>
             <attributes/>
         </location>
-        <location name="финал" id="ПлохойФиналЛок">
+        <location name="Финал" id="ПлохойФиналЛок">
             <hooks/>
             <roles/>
             <properties/>
@@ -1407,7 +1435,7 @@
                 <word>книга</word>
             </words>
             <description>
-                Большая, старинная книга в черном кожаном переплете с золотым тиснением, металлическими уголками, и металлическим замком.
+                Большая старинная книга в черном кожаном переплете с золотым тиснением, металлическими уголками и металлическим замком.
             </description>
             <attributes/>
             <startingPosition>
@@ -1507,10 +1535,10 @@
             <words mainWord="дверка">
                 <word>дверка</word>
                 <word>дверца</word>
-                <word>правая</word>
                 <word>дверцы</word>
                 <word>дверки</word>
                 <word>дверь</word>
+                <word>левая</word>
             </words>
             <description>
                 На дверце начертано:
@@ -1624,11 +1652,11 @@
             <properties/>
             <words mainWord="дверка">
                 <word>дверка</word>
-                <word>левая</word>
                 <word>дверца</word>
                 <word>дверцы</word>
                 <word>дверки</word>
                 <word>дверь</word>
+                <word>правая</word>
             </words>
             <description>
                 На дверце начертано:
@@ -1687,6 +1715,7 @@
                                 <showMessage type="text"
                                              message="&#xA;&#xA;Статуя изображает  фавна, мифического персонажа, бога пастушества и скотоводства, плодородия и дикой природы, человека с козлиными ногами, рогами и бородой. Рядом с фавном стоит девочка с кинжалом в руке."
                                              carriageReturn="true" beginWithCap="false"/>
+                                <var value="4" name="статуя"/>
                             </then>
                         </if>
                         <loop condition="не предмет.частьПейзажа" element="предмет" collection="СтатуяПред.предметыСверху">
@@ -1732,12 +1761,13 @@
                 </locations>
             </startingPosition>
         </item>
-        <item name="кинжал" id="КинжалПред">
+        <item name="острый кинжал" id="КинжалПред">
             <hooks/>
             <roles/>
             <properties/>
             <words mainWord="кинжал">
                 <word>кинжал</word>
+                <word>острый</word>
             </words>
             <description>
                 Обоюдоострый кинжал с рукояткой украшенной золотом и драгоценными камнями. Гарда кинжала сделана в виде бараньих рогов –
@@ -1752,7 +1782,14 @@
             </startingPosition>
         </item>
         <item name="жаба" id="ЖабаПред">
-            <hooks/>
+            <hooks>
+                <hook type="instead" objectElement="предмет" action="взять">
+                    <instructions>
+                        <showMessage type="text" message="&#xA;Не буду я брать в руки эту жабу. Бородавак боюсь.&#xA;" carriageReturn="true"
+                                     beginWithCap="false"/>
+                    </instructions>
+                </hook>
+            </hooks>
             <roles/>
             <properties/>
             <words mainWord="жаба">
@@ -1764,12 +1801,12 @@
                 ее единственным желанием было только одно - поесть.
             </description>
             <attributes>
-                <attribute>прикреплён</attribute>
+                <attribute>частьПейзажа</attribute>
             </attributes>
             <startingPosition>
                 <inventory>false</inventory>
                 <locations>
-                    <location>СкрытаяЛок</location>
+                    <location>ЯмаЛок</location>
                 </locations>
             </startingPosition>
         </item>
@@ -2068,7 +2105,7 @@
                 <word>с кровью</word>
             </words>
             <description>
-                Небольшой гмедный кувшин. Внутри него плещется немного крови.
+                Небольшой медный кувшин. Внутри него плещется немного крови.
             </description>
             <attributes>
                 <attribute>хрупкий</attribute>
@@ -2102,9 +2139,114 @@
                 </locations>
             </startingPosition>
         </item>
+        <item name="пол" id="ПолПред">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="пол">
+                <word>пол</word>
+            </words>
+            <description>
+                Пол из больших каменных плит.
+            </description>
+            <attributes>
+                <attribute>частьПейзажа</attribute>
+            </attributes>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>ЦентрЛок</location>
+                    <location>ССВЛок</location>
+                    <location>ЯмаЛок</location>
+                    <location>ЕвгЛок</location>
+                    <location>АлтарьЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item name="стена" id="СтенаПред">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="стена">
+                <word>стена</word>
+                <word>стены</word>
+            </words>
+            <description>
+                Каменная стена.
+            </description>
+            <attributes>
+                <attribute>частьПейзажа</attribute>
+            </attributes>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>ЦентрЛок</location>
+                    <location>ССВЛок</location>
+                    <location>ЯмаЛок</location>
+                    <location>ЕвгЛок</location>
+                    <location>АлтарьЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item name="потолок" id="ПотолокПред">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="потолок">
+                <word>потолок</word>
+            </words>
+            <description>
+                Вместо потолка видно небо, голубеющее где-то там, вдали, спокойное и безмятежное.
+            </description>
+            <attributes>
+                <attribute>частьПейзажа</attribute>
+            </attributes>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>ЦентрЛок</location>
+                    <location>ССВЛок</location>
+                    <location>ЯмаЛок</location>
+                    <location>ЕвгЛок</location>
+                    <location>АлтарьЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item name="фавн" id="ФавнПред">
+            <hooks>
+                <hook type="instead" objectElement="предмет" action="осмотреть">
+                    <instructions>
+                        <if condition="статуя =2 или статуя = 3 или статуя = 4 и ТекущаяЛокация = ЦентрЛок">
+                            <else>
+                                <showMessage type="text" message="&#xA;Нет здесь никакого фавна.&#xA;" carriageReturn="true"
+                                             beginWithCap="false"/>
+                            </else>
+                            <then>
+                                <showMessage type="text"
+                                             message="&#xA;Мифическое существо, изображающее человека с козлинными ногами, рогами и бородой.&#xA;"
+                                             carriageReturn="true" beginWithCap="false"/>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words mainWord="фавн">
+                <word>фавн</word>
+            </words>
+            <description/>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>ЦентрЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
     </items>
     <actions>
-        <action description="нарисовать мелом дверь на стене" name="нарисовать">
+        <action description="нарисовать мелом дверь на стене" name="нарисовать дверь">
             <templates>
                 <template>
                     <literalElement>
@@ -2121,10 +2263,10 @@
                     </literalElement>
                 </template>
             </templates>
-            <procedureCall procedure="нарисоватьДверь"/>
+            <procedureCall procedure="нарисовать дверь"/>
             <restrictions/>
         </action>
-        <action description="спуститься в яму" name="спуститься">
+        <action description="осмотреть яму" name="осмотреть яму">
             <templates>
                 <template>
                     <literalElement>
@@ -2139,10 +2281,10 @@
                     </literalElement>
                 </template>
             </templates>
-            <procedureCall procedure="спуститьсяВЯму"/>
+            <procedureCall procedure="осмотреть яму"/>
             <restrictions/>
         </action>
-        <action description="кормит жабу" name="скормить жабе камень">
+        <action description="кормит жабу" name="дать камень жабе">
             <templates>
                 <template>
                     <literalElement>
@@ -2157,7 +2299,7 @@
                     </literalElement>
                 </template>
             </templates>
-            <procedureCall procedure="каменьЖабе"/>
+            <procedureCall procedure="дать камень жабе"/>
             <restrictions/>
         </action>
         <action description="искать ключ" name="искать ключ">
@@ -2183,7 +2325,7 @@
                     </literalElement>
                 </template>
             </templates>
-            <procedureCall procedure="искатьКлюч"/>
+            <procedureCall procedure="искать ключ"/>
             <restrictions/>
         </action>
         <action description="скормить жабе жука" name="дать жука">
@@ -2205,7 +2347,7 @@
                     </literalElement>
                 </template>
             </templates>
-            <procedureCall procedure="датьЖука"/>
+            <procedureCall procedure="дать жука"/>
             <restrictions/>
         </action>
         <action description="ударить евга кинжалом" name="ударить кинжалом">
@@ -2324,7 +2466,7 @@
             <procedureCall procedure="кровь на алтарь"/>
             <restrictions/>
         </action>
-        <action description="взять слизь" name="слизь">
+        <action description="взять слизь" name="взять слизь">
             <templates>
                 <template>
                     <literalElement>
@@ -2336,7 +2478,7 @@
             <procedureCall procedure="взять слизь"/>
             <restrictions/>
         </action>
-        <action description="осмотреть глаза на тарелке" name="осм глаза">
+        <action description="осмотреть глаза на тарелке" name="осмотреть глаза">
             <templates>
                 <template>
                     <literalElement>
@@ -2348,7 +2490,7 @@
                     </literalElement>
                 </template>
             </templates>
-            <procedureCall procedure="глаза"/>
+            <procedureCall procedure="осмотреть глаза"/>
             <restrictions/>
         </action>
         <action description="говорить" name="говорить">
@@ -2376,7 +2518,7 @@
             <procedureCall procedure="положить"/>
             <restrictions/>
         </action>
-        <action description="" name="осм себя">
+        <action description="" name="осмотреть себя">
             <templates>
                 <template>
                     <literalElement>
@@ -2385,8 +2527,14 @@
                         <synonym>посмотреть на себя</synonym>
                     </literalElement>
                 </template>
+                <template>
+                    <literalElement>
+                        <synonym>осм девочку</synonym>
+                        <synonym>осмотреть девочку</synonym>
+                    </literalElement>
+                </template>
             </templates>
-            <procedureCall procedure="Осмотреть себя"/>
+            <procedureCall procedure="осмотреть себя"/>
             <restrictions/>
         </action>
         <action description="" name="дать мел">
@@ -2400,8 +2548,56 @@
                         <synonym>дать евгу мел</synonym>
                     </literalElement>
                 </template>
+                <template>
+                    <literalElement>
+                        <synonym>дать книгу жабе</synonym>
+                        <synonym>дать жабе книгу</synonym>
+                        <synonym>дать книгу евгу</synonym>
+                        <synonym>дать евгу книгу</synonym>
+                        <synonym>дать книгу</synonym>
+                    </literalElement>
+                </template>
             </templates>
             <procedureCall procedure="дать мел"/>
+            <restrictions/>
+        </action>
+        <action description="" name="осмотр неинтересного">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>осм небо</synonym>
+                        <synonym>осм замок</synonym>
+                        <synonym>осм воду</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="осмотр неинтересного"/>
+            <restrictions/>
+        </action>
+        <action description="" name="счет">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>счет</synonym>
+                        <synonym>счёт</synonym>
+                        <synonym>очки</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="счет"/>
+            <restrictions/>
+        </action>
+        <action description="" name="убить жука">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>убить жука</synonym>
+                        <synonym>раздавить жука</synonym>
+                        <synonym>растоптать жука</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="убить жука"/>
             <restrictions/>
         </action>
     </actions>
