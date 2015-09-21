@@ -10,7 +10,64 @@
         <procedure name="положитьЧтоКуда">
             <procedureVariables/>
             <procedureBody>
-                <showMessage type="expression" message="'Вы кладёте ' + что.ВП + ' в ' + куда.ВП + '.'" carriageReturn="true" beginWithCap="false"/>
+                <showMessage type="expression"
+                             message="'Вы кладёте ' + что.ВП + '\nв\n' + куда.ВП + '.' + 'a: \a, b: \b, r: \r, f: \f. v: \v'"
+                             carriageReturn="true" beginWithCap="false"/>
+                <var value="1" name="пер"/>
+                <showMessage type="expression" message="'пер = ' + пер" carriageReturn="true" beginWithCap="false"/>
+                <if condition="пер = пусто">
+                    <else>
+                        <showMessage type="expression" message="&quot;Переменная не пустая, а равна &quot; + пер" carriageReturn="true"
+                                     beginWithCap="false"/>
+                    </else>
+                    <then>
+                        <showMessage type="text" message="Переменная пустая!" carriageReturn="true" beginWithCap="false"/>
+                    </then>
+                </if>
+                <var value="'тест'" name="пер2"/>
+                <showMessage type="expression" message="'пер2 = ' + пер2" carriageReturn="true" beginWithCap="false"/>
+                <if condition="пер2 = пусто">
+                    <else>
+                        <showMessage type="expression" message="&quot;Переменная не пустая, а равна &quot; + пер2" carriageReturn="true"
+                                     beginWithCap="false"/>
+                    </else>
+                    <then>
+                        <showMessage type="text" message="Переменная пустая!" carriageReturn="true" beginWithCap="false"/>
+                    </then>
+                </if>
+                <var value="да" name="пер3"/>
+                <showMessage type="expression" message="'пер3 = ' + пер3" carriageReturn="true" beginWithCap="false"/>
+                <if condition="пер3 = пусто">
+                    <else>
+                        <showMessage type="expression" message="&quot;Переменная не пустая, а равна &quot; + пер3" carriageReturn="true"
+                                     beginWithCap="false"/>
+                    </else>
+                    <then>
+                        <showMessage type="text" message="Переменная пустая!" carriageReturn="true" beginWithCap="false"/>
+                    </then>
+                </if>
+                <var value="пусто" name="пер4"/>
+                <showMessage type="expression" message="'пер4 = ' + пер4" carriageReturn="true" beginWithCap="false"/>
+                <if condition="пер4 = пусто">
+                    <else>
+                        <showMessage type="expression" message="&quot;Переменная не пустая, а равна &quot; + пер4" carriageReturn="true"
+                                     beginWithCap="false"/>
+                    </else>
+                    <then>
+                        <showMessage type="text" message="Переменная пустая!" carriageReturn="true" beginWithCap="false"/>
+                    </then>
+                </if>
+                <var value="инвентарь" name="пер5"/>
+                <showMessage type="expression" message="'пер5 = ' + пер5" carriageReturn="true" beginWithCap="false"/>
+                <if condition="пер5 = пусто">
+                    <else>
+                        <showMessage type="expression" message="&quot;Переменная не пустая, а равна &quot; + пер5" carriageReturn="true"
+                                     beginWithCap="false"/>
+                    </else>
+                    <then>
+                        <showMessage type="text" message="Переменная пустая!" carriageReturn="true" beginWithCap="false"/>
+                    </then>
+                </if>
             </procedureBody>
             <parameters>
                 <parameter name="что"/>
@@ -43,7 +100,7 @@
             <roles/>
             <properties/>
             <words/>
-            <description></description>
+            <description/>
             <attributes/>
         </location>
     </locations>
@@ -55,7 +112,7 @@
             <words mainWord="пицца">
                 <word>пицца</word>
             </words>
-            <description></description>
+            <description/>
             <attributes/>
             <startingPosition>
                 <inventory>true</inventory>
@@ -69,7 +126,7 @@
             <words mainWord="микроволновка">
                 <word>микроволновка</word>
             </words>
-            <description></description>
+            <description/>
             <attributes/>
             <startingPosition>
                 <inventory>false</inventory>
