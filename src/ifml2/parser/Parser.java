@@ -414,6 +414,8 @@ public class Parser
             +4.2) если ни один из вариантов слова не имеет пересечений с первым словом, завершить анализ, вернув первое слово
         */
 
+        List<Word> foundWords = new ArrayList<Word>();
+
         // find the first word (the longest from available)
         Word firstWord = null;
         int firstWordChunksCount = 0;
@@ -423,6 +425,7 @@ public class Parser
             if (wordCount > firstWordChunksCount)
             {
                 firstWord = word;
+                foundWords.add(word);
                 firstWordChunksCount = wordCount;
             }
             else if (wordCount > 0 && wordCount == firstWordChunksCount)
@@ -440,8 +443,6 @@ public class Parser
                     .format("У меня в словаре нет слов, которые в падеже {0} пишутся как \"{1}\".", gramCase.getAbbreviation(),
                             firstPhraseWord), usedPhraseWords);
         }
-
-        //fittedWords.add(firstWord);
 
         // get the first word objects
         List<IFMLObject> firstWordObjects = new ArrayList<IFMLObject>(firstWord.getLinkerObjects());
@@ -462,20 +463,32 @@ public class Parser
             try
             {
                 FitObjectWithPhraseResult result = fitObjectWithPhrase(gramCase, phraseRest, storyDataHelper);
+
+                // check word duplicates to separate next template element
+                List<Word> nextWords = result.getFoundWords();
+                List<Word> commonWords = new ArrayList<Word>(foundWords);
+                commonWords.retainAll(nextWords);
+                if (commonWords.size() > 0) // there are common words next -> it may be next template element
+                {
+                    return new FitObjectWithPhraseResult(foundWords, firstWordObjects, firstWordChunksCount);
+                }
+
+                foundWords.addAll(nextWords);
+
                 List<IFMLObject> commonObjects = new ArrayList<IFMLObject>(firstWordObjects);
                 commonObjects.retainAll(result.getObjects()); // retains only intersection of objects
-                if (commonObjects.size() > 0)
+                if (commonObjects.size() > 0) // there is common objects for two words -> so it's the other word of the same object
                 {
-                    return new FitObjectWithPhraseResult(commonObjects, firstWordChunksCount + result.getUsedWordsQty());
+                    return new FitObjectWithPhraseResult(foundWords, commonObjects, firstWordChunksCount + result.getUsedWordsQty());
                 }
             }
             catch (IFML2ParseException e)
             {
-                return new FitObjectWithPhraseResult(firstWordObjects, firstWordChunksCount);
+                return new FitObjectWithPhraseResult(foundWords, firstWordObjects, firstWordChunksCount);
             }
         }
 
-        return new FitObjectWithPhraseResult(firstWordObjects, firstWordChunksCount);
+        return new FitObjectWithPhraseResult(foundWords, firstWordObjects, firstWordChunksCount);
     }
 
     private int fitWordWithPhrase(Word word, Word.GramCaseEnum gramCase, List<String> restPhrase)
@@ -656,11 +669,13 @@ public class Parser
 
     public class FitObjectWithPhraseResult
     {
+        private final List<Word> foundWords;
         private final List<IFMLObject> objects;
         private final int usedWordsQty;
 
-        public FitObjectWithPhraseResult(List<IFMLObject> objects, int usedWordsQty)
+        public FitObjectWithPhraseResult(List<Word> foundWords, List<IFMLObject> objects, int usedWordsQty)
         {
+            this.foundWords = foundWords;
             this.objects = objects;
             this.usedWordsQty = usedWordsQty;
         }
@@ -673,6 +688,11 @@ public class Parser
         public List<IFMLObject> getObjects()
         {
             return objects;
+        }
+
+        public List<Word> getFoundWords()
+        {
+            return foundWords;
         }
     }
 }
