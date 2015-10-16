@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<story xmlns="http://toysoft.narod.ru/IFML2Schema" id="story">
+    <storyOptions>
+        <startLocationOption showStartLocDesc="false"/>
+        <startProcedureOption/>
+        <storyDescription/>
+        <globalVars/>
+    </storyOptions>
+    <procedures>
+        <procedure name="положитьЧтоКуда">
+            <procedureVariables/>
+            <procedureBody>
+                <showMessage type="expression" message="'Вы кладёте ' + что.ВП + ' в ' + куда.ВП + '.'" carriageReturn="true" beginWithCap="false"/>
+            </procedureBody>
+            <parameters>
+                <parameter name="что"/>
+                <parameter name="куда"/>
+            </parameters>
+        </procedure>
+    </procedures>
+    <libraries/>
+    <dictionary>
+        <word>
+            <ip>пицца</ip>
+            <rp>пиццы</rp>
+            <dp>пиццу</dp>
+            <vp>пиццу</vp>
+            <tp>пиццей</tp>
+            <pp>пицце</pp>
+        </word>
+        <word>
+            <ip>микроволновка</ip>
+            <rp>микроволновки</rp>
+            <dp>микроволновке</dp>
+            <vp>микроволновку</vp>
+            <tp>микроволновкой</tp>
+            <pp>микроволновке</pp>
+        </word>
+    </dictionary>
+    <locations>
+        <location name="Кухня" id="КухняЛок">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words/>
+            <description></description>
+            <attributes/>
+        </location>
+    </locations>
+    <items>
+        <item name="пицца" id="ПиццаПред">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="пицца">
+                <word>пицца</word>
+            </words>
+            <description></description>
+            <attributes/>
+            <startingPosition>
+                <inventory>true</inventory>
+                <locations/>
+            </startingPosition>
+        </item>
+        <item name="микроволновка" id="МикроволновкаПред">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="микроволновка">
+                <word>микроволновка</word>
+            </words>
+            <description></description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>КухняЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+    </items>
+    <actions>
+        <action description="" name="положить что куда">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>положить</synonym>
+                    </literalElement>
+                    <objectElement case="vp" parameter="что"/>
+                    <literalElement>
+                        <synonym>в</synonym>
+                    </literalElement>
+                    <objectElement case="vp" parameter="куда"/>
+                </template>
+                <template>
+                    <literalElement>
+                        <synonym>положить</synonym>
+                    </literalElement>
+                    <literalElement>
+                        <synonym>в</synonym>
+                    </literalElement>
+                    <objectElement case="vp" parameter="куда"/>
+                    <objectElement case="vp" parameter="что"/>
+                </template>
+            </templates>
+            <procedureCall procedure="положитьЧтоКуда"/>
+            <restrictions/>
+        </action>
+    </actions>
+</story>
