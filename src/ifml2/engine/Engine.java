@@ -7,6 +7,7 @@ import ifml2.SystemIdentifiers;
 import ifml2.engine.saved.SavedGame;
 import ifml2.om.*;
 import ifml2.parser.FormalElement;
+import ifml2.parser.IFML2ParseException;
 import ifml2.parser.Parser;
 import ifml2.players.GameInterface;
 import ifml2.vm.*;
@@ -18,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -25,6 +27,8 @@ import java.util.concurrent.Callable;
 public class Engine
 {
     public static final FormatLogger LOG = FormatLogger.getLogger(Engine.class);
+    private static final String PARSE_ERROR_HANDLER_PRM_PHRASE = "Фраза";
+    private static final String PARSE_ERROR_HANDLER_PRM_ERROR = "Ошибка";
     private final HashMap<String, Value> globalVariables = new HashMap<String, Value>();
     private final Parser parser = new Parser();
     private final VirtualMachine virtualMachine = new VirtualMachine();
@@ -291,6 +295,10 @@ public class Engine
             // fire AFTER hooks
             fireAfterHooks(parameters, objectHooks, locationHooks);
         }
+        catch (IFML2ParseException e)
+        {
+            handleParseError(trimmedCommand, e);
+        }
         catch (IFML2VMException e)
         {
             outTextLn("[Ошибка!] " + e.getMessage());
@@ -301,6 +309,39 @@ public class Engine
         }
 
         return true;
+    }
+
+    private void handleParseError(String trimmedCommand, IFML2ParseException parseException)
+    {
+        Procedure parseErrorHandler = dataHelper.getParseErrorHandler();
+        if (parseErrorHandler != null)
+        {
+            try
+            {
+                // prepare parameters
+                List<Variable> parameters = Arrays.asList(new Variable(PARSE_ERROR_HANDLER_PRM_PHRASE, new TextValue(trimmedCommand)),
+                        new Variable(PARSE_ERROR_HANDLER_PRM_ERROR, new TextValue(parseException.getMessage())));
+
+                // call handler
+                Value returnValue = virtualMachine.callProcedureWithParameters(parseErrorHandler, parameters);
+
+                // check return value
+                if (returnValue != null && returnValue instanceof BooleanValue)
+                {
+                    Boolean isErrorHandled = ((BooleanValue) returnValue)
+                            .getValue(); // error handler should return false if he can't handle error
+                    if (!isErrorHandled)
+                    {
+                        // show original parser error
+                        outTextLn(parseException.getMessage());
+                    }
+                }
+            }
+            catch (IFML2Exception e)
+            {
+                outTextLn(e.getMessage());
+            }
+        }
     }
 
     private List<Variable> convertFormalElementsToParameters(@NotNull List<FormalElement> formalElements) throws IFML2Exception
@@ -668,6 +709,13 @@ public class Engine
         public boolean isObjectAccessible(IFMLObject ifmlObject) throws IFML2Exception
         {
             return Engine.this.isObjectAccessible(ifmlObject);
+        }
+
+        public
+        @Nullable
+        Procedure getParseErrorHandler()
+        {
+            return virtualMachine.getInheritedSystemProcedure(Procedure.SystemProcedureEnum.PARSE_ERROR_HANDLER);
         }
     }
 

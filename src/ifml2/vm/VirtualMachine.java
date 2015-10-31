@@ -237,4 +237,11 @@ public class VirtualMachine
     {
         inheritedSystemProcedures.clear();
     }
+
+    public
+    @Nullable
+    Procedure getInheritedSystemProcedure(@NotNull SystemProcedureEnum systemProcedureEnum)
+    {
+        return inheritedSystemProcedures.get(systemProcedureEnum);
+    }
 }

@@ -147,7 +147,9 @@ public class Procedure extends IFMLEntity implements Cloneable
     public enum SystemProcedureEnum
     {
         @XmlEnumValue(value = "showLocation")
-        SHOW_LOCATION
+        SHOW_LOCATION,
+        @XmlEnumValue(value = "parseErrorHandler")
+        PARSE_ERROR_HANDLER
     }
 
     @XmlAccessorType(XmlAccessType.NONE)

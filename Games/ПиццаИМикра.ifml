@@ -74,6 +74,19 @@
                 <parameter name="куда"/>
             </parameters>
         </procedure>
+        <procedure name="parseError" inheritsSystemProcedure="parseErrorHandler">
+            <procedureVariables/>
+            <procedureBody>
+                <showMessage type="expression"
+                             message="'Игрок ввёл: &quot;' + Фраза + '&quot;, а Парсер ответил: &quot;' + Ошибка + '&quot;.'"
+                             carriageReturn="true" beginWithCap="false"/>
+                <return value="нет"/>
+            </procedureBody>
+            <parameters>
+                <parameter name="Фраза"/>
+                <parameter name="Ошибка"/>
+            </parameters>
+        </procedure>
     </procedures>
     <libraries/>
     <dictionary>
@@ -100,7 +113,7 @@
             <roles/>
             <properties/>
             <words/>
-            <description/>
+            <description></description>
             <attributes/>
         </location>
     </locations>
@@ -112,7 +125,7 @@
             <words mainWord="пицца">
                 <word>пицца</word>
             </words>
-            <description/>
+            <description></description>
             <attributes/>
             <startingPosition>
                 <inventory>true</inventory>
@@ -126,7 +139,7 @@
             <words mainWord="микроволновка">
                 <word>микроволновка</word>
             </words>
-            <description/>
+            <description></description>
             <attributes/>
             <startingPosition>
                 <inventory>false</inventory>

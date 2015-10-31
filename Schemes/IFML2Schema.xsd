@@ -587,11 +587,18 @@
         <restriction base="string">
             <enumeration value="showLocation">
                 <annotation>
-                    <documentation>Системная процедур, выводящая описание текущей локации: её имя, описание и список предметов в ней.
+                    <documentation>Системная процедура, выводящая описание текущей локации: её имя, описание и список предметов в ней.
                         Параметров не принимает.
                     </documentation>
                 </annotation>
             </enumeration>
+            <xs:enumeration value="parseErrorHandler">
+                <xs:annotation>
+                    <xs:documentation>Системная процедура, обрабатывающая ошибки парсинга.
+                        Параметры: текст Фраза - фраза, введённая игроком; текст Ошибка - текст ошибки парсинга.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
         </restriction>
     </simpleType>
 
