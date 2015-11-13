@@ -128,7 +128,7 @@ public class VirtualMachine
 
     public void showLocation(@Nullable Location location) throws IFML2Exception
     {
-        if(location == null)
+        if (location == null)
         {
             return;
         }
@@ -236,12 +236,5 @@ public class VirtualMachine
     public void init()
     {
         inheritedSystemProcedures.clear();
-    }
-
-    public
-    @Nullable
-    Procedure getInheritedSystemProcedure(@NotNull SystemProcedureEnum systemProcedureEnum)
-    {
-        return inheritedSystemProcedures.get(systemProcedureEnum);
     }
 }

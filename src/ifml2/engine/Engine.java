@@ -212,7 +212,7 @@ public class Engine
             }
         }
 
-        if(getCurrentLocation() == null)
+        if (getCurrentLocation() == null)
         {
             // if current location isn't set then take any
             setCurrentLocation(story.getAnyLocation());
@@ -341,6 +341,10 @@ public class Engine
             {
                 outTextLn(e.getMessage());
             }
+        }
+        else
+        {
+            outTextLn(parseException.getMessage());
         }
     }
 
@@ -621,7 +625,7 @@ public class Engine
     {
         Location currentLocation = getCurrentLocation();
 
-        if(currentLocation == null)
+        if (currentLocation == null)
         {
             throw new IFML2Exception("Системная ошибка: Текущая локация не задана!");
         }
@@ -647,14 +651,14 @@ public class Engine
 
     public Variable searchGlobalVariable(@Nullable String name)
     {
-        if(name == null)
+        if (name == null)
         {
             return null;
         }
 
         String loweredName = name.toLowerCase();
 
-        if(globalVariables.containsKey(loweredName))
+        if (globalVariables.containsKey(loweredName))
         {
             return new GlobalVariableProxy(globalVariables, name, globalVariables.get(loweredName));
         }
@@ -715,7 +719,7 @@ public class Engine
         @Nullable
         Procedure getParseErrorHandler()
         {
-            return virtualMachine.getInheritedSystemProcedure(Procedure.SystemProcedureEnum.PARSE_ERROR_HANDLER);
+            return story.getInheritedSystemProcedures().getParseErrorHandler();
         }
     }
 

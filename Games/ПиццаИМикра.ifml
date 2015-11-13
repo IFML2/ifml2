@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <story xmlns="http://toysoft.narod.ru/IFML2Schema" id="story">
+    <inheritedSystemProcedures>
+        <parseErrorHandler>parseError</parseErrorHandler>
+    </inheritedSystemProcedures>
     <storyOptions>
         <startLocationOption showStartLocDesc="false"/>
         <startProcedureOption/>
@@ -113,7 +116,7 @@
             <roles/>
             <properties/>
             <words/>
-            <description></description>
+            <description/>
             <attributes/>
         </location>
     </locations>
@@ -125,7 +128,7 @@
             <words mainWord="пицца">
                 <word>пицца</word>
             </words>
-            <description></description>
+            <description/>
             <attributes/>
             <startingPosition>
                 <inventory>true</inventory>
@@ -139,7 +142,7 @@
             <words mainWord="микроволновка">
                 <word>микроволновка</word>
             </words>
-            <description></description>
+            <description/>
             <attributes/>
             <startingPosition>
                 <inventory>false</inventory>
