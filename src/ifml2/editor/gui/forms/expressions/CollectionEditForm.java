@@ -42,6 +42,10 @@ public class CollectionEditForm extends JInternalFrame
     {
         collectionListEditForm = new ListEditForm<IFMLObject>(owner, "элемент", "элемента", Word.GenderEnum.MASCULINE, IFMLObject.class)
         {
+            {
+                setShowEditButton(false);
+            }
+
             @Override
             protected IFMLObject createElement() throws Exception
             {
@@ -51,7 +55,7 @@ public class CollectionEditForm extends JInternalFrame
                 for (Iterator<IFMLObject> iterator = allObjects.iterator(); iterator.hasNext(); )
                 {
                     IFMLObject object = iterator.next();
-                    if (!filterByClass.isInstance(object) || clonedList.contains(object) || holder.equals(object))
+                    if (!filterByClass.isInstance(object) || getClonedList().contains(object) || holder.equals(object))
                     {
                         iterator.remove();
                     }
@@ -68,10 +72,6 @@ public class CollectionEditForm extends JInternalFrame
                             .showMessageDialog(owner, "Не осталось предметов для добавления", "Нет предметов", JOptionPane.WARNING_MESSAGE);
                     return null;
                 }
-            }
-
-            {
-                setShowEditButton(false);
             }
 
 

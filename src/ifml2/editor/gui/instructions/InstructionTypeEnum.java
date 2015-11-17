@@ -17,7 +17,8 @@ public enum InstructionTypeEnum
     ROLL_DICE(RollDiceInstruction.class, RollDiceInstrEditor.class),
     SET_PROPERTY(SetPropertyInstruction.class, null), // todo SetPropertyInstruction Editor
     RUN_PROCEDURE(RunProcedureInstruction.class, RunProcedureInstrEditor.class),
-    RETURN(ReturnInstruction.class, null); // todo ReturnInstruction Editor
+    RETURN(ReturnInstruction.class, ReturnInstrEditor.class);
+
     private Class<? extends Instruction> instrClass;
     private String title;
     private Class<? extends AbstractInstrEditor> editorClass;
