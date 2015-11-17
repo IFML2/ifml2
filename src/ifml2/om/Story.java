@@ -156,6 +156,13 @@ public class Story
                     {
                         startProcedureOption.setProcedure(null);
                     }
+
+                    // -- delete from system inherited procedures --
+                    Procedure parseErrorHandler = inheritedSystemProcedures.getParseErrorHandler();
+                    if(parseErrorHandler != null && !proceduresList.contains(parseErrorHandler))
+                    {
+                        inheritedSystemProcedures.setParseErrorHandler(null);
+                    }
                 }
             }
         });

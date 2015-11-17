@@ -735,13 +735,21 @@ public class Editor extends JFrame
                         return answer == JOptionPane.YES_OPTION;
                     }
 
+                    // check for usages as inherited system procedures
+                    if (selectedElement.equals(story.getInheritedSystemProcedures().getParseErrorHandler()))
+                    {
+                        int answer = JOptionPane.showConfirmDialog(Editor.this,
+                                "Эта процедура установлена как перекрывающая системный обработчик ошибки парсинга. Всё равно удалить?\n" +
+                                "В этом случае перекрытие будет отменено.", "Процедура используется", JOptionPane.YES_NO_OPTION,
+                                JOptionPane.WARNING_MESSAGE);
+                        return answer == JOptionPane.YES_OPTION;
+                    }
+
                     return super.beforeDelete(selectedElement); // do standard asking
                 }
 
                 return false;
             }
-
-
         };
 
         actionsListEditForm = new ListEditForm<Action>(this, "действие", "действия", Word.GenderEnum.NEUTER, Action.class)
