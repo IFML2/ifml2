@@ -1,6 +1,7 @@
 package ifml2.engine;
 
 import ca.odell.glazedlists.BasicEventList;
+import ifml2.CommonConstants;
 import ifml2.FormatLogger;
 import ifml2.IFML2Exception;
 import ifml2.SystemIdentifiers;
@@ -27,8 +28,6 @@ import java.util.concurrent.Callable;
 public class Engine
 {
     public static final FormatLogger LOG = FormatLogger.getLogger(Engine.class);
-    private static final String PARSE_ERROR_HANDLER_PRM_PHRASE = "Фраза";
-    private static final String PARSE_ERROR_HANDLER_PRM_ERROR = "Ошибка";
     private final HashMap<String, Value> globalVariables = new HashMap<String, Value>();
     private final Parser parser = new Parser();
     private final VirtualMachine virtualMachine = new VirtualMachine();
@@ -319,8 +318,9 @@ public class Engine
             try
             {
                 // prepare parameters
-                List<Variable> parameters = Arrays.asList(new Variable(PARSE_ERROR_HANDLER_PRM_PHRASE, new TextValue(trimmedCommand)),
-                        new Variable(PARSE_ERROR_HANDLER_PRM_ERROR, new TextValue(parseException.getMessage())));
+                List<Variable> parameters = Arrays
+                        .asList(new Variable(CommonConstants.PARSE_ERROR_HANDLER_PRM_PHRASE, new TextValue(trimmedCommand)),
+                                new Variable(CommonConstants.PARSE_ERROR_HANDLER_PRM_ERROR, new TextValue(parseException.getMessage())));
 
                 // call handler
                 Value returnValue = virtualMachine.callProcedureWithParameters(parseErrorHandler, parameters);

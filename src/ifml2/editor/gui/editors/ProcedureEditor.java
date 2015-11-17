@@ -20,13 +20,13 @@ import java.awt.*;
 public class ProcedureEditor extends AbstractEditor<Procedure>
 {
     private static final String PROCEDURE_EDITOR_TITLE = "Процедура";
+    protected ListEditForm<Parameter> paramsEditForm;
     private Procedure procedureClone;
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
     private JTextField nameText;
     private ListEditForm<Instruction> instructionsEditForm;
-    private ListEditForm<Parameter> paramsEditForm;
     private Story.DataHelper storyDataHelper;
     private Procedure originalProcedure;
 
@@ -148,5 +148,18 @@ public class ProcedureEditor extends AbstractEditor<Procedure>
                 return selectedElement != null && EditorUtils.showAssociatedEditor(owner, selectedElement, storyDataHelper);
             }
         };
+    }
+
+    protected boolean hasParameter(@NotNull String name)
+    {
+        for (Parameter parameter : paramsEditForm.getClonedList())
+        {
+            if (name.equalsIgnoreCase(parameter.getName()))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -20,4 +20,6 @@ public interface CommonConstants
     String LIBS_FOLDER = "libs"; //todo merge with LIBRARIES_DIRECTORY constant
     String LIBRARY_EXTENSION = ".xml";
     String LIBRARY_FILE_FILTER_NAME = MessageFormat.format("Файл библиотеки (*{0})", LIBRARY_EXTENSION);
+    String PARSE_ERROR_HANDLER_PRM_PHRASE = "Фраза";
+    String PARSE_ERROR_HANDLER_PRM_ERROR = "Ошибка";
 }
