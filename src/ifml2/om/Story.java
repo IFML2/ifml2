@@ -33,6 +33,10 @@ public class Story
             put(Word.class, Word.getClassName());
         }
     };
+
+    @XmlElement(name = "inheritedSystemProcedures")
+    private final InheritedSystemProcedures inheritedSystemProcedures = new InheritedSystemProcedures();
+
     @XmlElement(name = "storyOptions")
     private final StoryOptions storyOptions = new StoryOptions();
 
@@ -56,6 +60,21 @@ public class Story
     @XmlElement(name = LOCATIONS_LOCATION_ELEMENT)
     @XmlJavaTypeAdapter(value = LocationAdapter.class)
     private EventList<Location> locations = new BasicEventList<Location>();
+    @XmlElementWrapper(name = STORY_ITEMS_ELEMENT)
+    @XmlElement(name = ITEMS_ITEM_ELEMENT)
+    private EventList<Item> items = new BasicEventList<Item>();
+    /**
+     * objectsHeap holds all game object - locations and items
+     */
+    private HashMap<String, IFMLObject> objectsHeap = new HashMap<String, IFMLObject>(); // todo subscribe objectsHeap to locations and items updates
+    // todo subscribe all objects to attributes change
+    @XmlElementWrapper(name = "actions")
+    @XmlElement(name = "action")
+    private EventList<Action> actions = new BasicEventList<Action>();
+    @XmlTransient
+    private EventList<Attribute> allAttributes = null;
+    @XmlTransient
+    private EventList<RoleDefinition> allRoleDefinitions = null;
 
     {
         // subscribe to locations changes for object tree update
@@ -137,28 +156,19 @@ public class Story
                     {
                         startProcedureOption.setProcedure(null);
                     }
+
+                    // -- delete from system inherited procedures --
+                    Procedure parseErrorHandler = inheritedSystemProcedures.getParseErrorHandler();
+                    if(parseErrorHandler != null && !proceduresList.contains(parseErrorHandler))
+                    {
+                        inheritedSystemProcedures.setParseErrorHandler(null);
+                    }
                 }
             }
         });
 
         // todo subscribe to other lists changes
     }
-
-    @XmlElementWrapper(name = STORY_ITEMS_ELEMENT)
-    @XmlElement(name = ITEMS_ITEM_ELEMENT)
-    private EventList<Item> items = new BasicEventList<Item>();
-    /**
-     * objectsHeap holds all game object - locations and items
-     */
-    private HashMap<String, IFMLObject> objectsHeap = new HashMap<String, IFMLObject>(); // todo subscribe objectsHeap to locations and items updates
-    // todo subscribe all objects to attributes change
-    @XmlElementWrapper(name = "actions")
-    @XmlElement(name = "action")
-    private EventList<Action> actions = new BasicEventList<Action>();
-    @XmlTransient
-    private EventList<Attribute> allAttributes = null;
-    @XmlTransient
-    private EventList<RoleDefinition> allRoleDefinitions = null;
 
     public DataHelper getDataHelper()
     {
@@ -337,6 +347,11 @@ public class Story
     {
         items.add(item);
         objectsHeap.put(item.getId().toLowerCase(), item);
+    }
+
+    public InheritedSystemProcedures getInheritedSystemProcedures()
+    {
+        return inheritedSystemProcedures;
     }
 
     public class DataHelper

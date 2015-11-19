@@ -1,12 +1,14 @@
 package ifml2.engine;
 
 import ca.odell.glazedlists.BasicEventList;
+import ifml2.CommonConstants;
 import ifml2.FormatLogger;
 import ifml2.IFML2Exception;
 import ifml2.SystemIdentifiers;
 import ifml2.engine.saved.SavedGame;
 import ifml2.om.*;
 import ifml2.parser.FormalElement;
+import ifml2.parser.IFML2ParseException;
 import ifml2.parser.Parser;
 import ifml2.players.GameInterface;
 import ifml2.vm.*;
@@ -18,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -208,7 +211,7 @@ public class Engine
             }
         }
 
-        if(getCurrentLocation() == null)
+        if (getCurrentLocation() == null)
         {
             // if current location isn't set then take any
             setCurrentLocation(story.getAnyLocation());
@@ -291,6 +294,10 @@ public class Engine
             // fire AFTER hooks
             fireAfterHooks(parameters, objectHooks, locationHooks);
         }
+        catch (IFML2ParseException e)
+        {
+            handleParseError(trimmedCommand, e);
+        }
         catch (IFML2VMException e)
         {
             outTextLn("[Ошибка!] " + e.getMessage());
@@ -301,6 +308,44 @@ public class Engine
         }
 
         return true;
+    }
+
+    private void handleParseError(String trimmedCommand, IFML2ParseException parseException)
+    {
+        Procedure parseErrorHandler = dataHelper.getParseErrorHandler();
+        if (parseErrorHandler != null)
+        {
+            try
+            {
+                // prepare parameters
+                List<Variable> parameters = Arrays
+                        .asList(new Variable(CommonConstants.PARSE_ERROR_HANDLER_PRM_PHRASE, new TextValue(trimmedCommand)),
+                                new Variable(CommonConstants.PARSE_ERROR_HANDLER_PRM_ERROR, new TextValue(parseException.getMessage())));
+
+                // call handler
+                Value returnValue = virtualMachine.callProcedureWithParameters(parseErrorHandler, parameters);
+
+                // check return value
+                if (returnValue != null && returnValue instanceof BooleanValue)
+                {
+                    Boolean isErrorHandled = ((BooleanValue) returnValue)
+                            .getValue(); // error handler should return false if he can't handle error
+                    if (!isErrorHandled)
+                    {
+                        // show original parser error
+                        outTextLn(parseException.getMessage());
+                    }
+                }
+            }
+            catch (IFML2Exception e)
+            {
+                outTextLn(e.getMessage());
+            }
+        }
+        else
+        {
+            outTextLn(parseException.getMessage());
+        }
     }
 
     private List<Variable> convertFormalElementsToParameters(@NotNull List<FormalElement> formalElements) throws IFML2Exception
@@ -580,7 +625,7 @@ public class Engine
     {
         Location currentLocation = getCurrentLocation();
 
-        if(currentLocation == null)
+        if (currentLocation == null)
         {
             throw new IFML2Exception("Системная ошибка: Текущая локация не задана!");
         }
@@ -606,14 +651,14 @@ public class Engine
 
     public Variable searchGlobalVariable(@Nullable String name)
     {
-        if(name == null)
+        if (name == null)
         {
             return null;
         }
 
         String loweredName = name.toLowerCase();
 
-        if(globalVariables.containsKey(loweredName))
+        if (globalVariables.containsKey(loweredName))
         {
             return new GlobalVariableProxy(globalVariables, name, globalVariables.get(loweredName));
         }
@@ -668,6 +713,13 @@ public class Engine
         public boolean isObjectAccessible(IFMLObject ifmlObject) throws IFML2Exception
         {
             return Engine.this.isObjectAccessible(ifmlObject);
+        }
+
+        public
+        @Nullable
+        Procedure getParseErrorHandler()
+        {
+            return story.getInheritedSystemProcedures().getParseErrorHandler();
         }
     }
 

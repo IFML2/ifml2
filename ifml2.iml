@@ -8,13 +8,22 @@
       <sourceFolder url="file://$MODULE_DIR$/src/ifml2/editor/gui/images" type="java-resource" />
       <excludeFolder url="file://$MODULE_DIR$/JSmooth" />
       <excludeFolder url="file://$MODULE_DIR$/launch4j" />
+      <excludeFolder url="file://$MODULE_DIR$/lib" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="GlazedLists" level="project" />
-    <orderEntry type="library" name="annotations" level="application" />
-    <orderEntry type="library" name="junit" level="application" />
     <orderEntry type="library" exported="" name="log4j-1.2.17" level="project" />
     <orderEntry type="library" name="forms_rt" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$APPLICATION_HOME_DIR$/lib/annotations.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="junit:junit:4.12" level="project" />
   </component>
 </module>

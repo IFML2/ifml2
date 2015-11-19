@@ -32,7 +32,7 @@ import java.util.List;
 public abstract class ListEditForm<T> extends JInternalFrame
 {
     protected Window owner;
-    protected EventList<T> clonedList;
+    private EventList<T> clonedList;
     private JPanel contentPane;
     private JList elementsList;
     private JButton upButton;
@@ -396,5 +396,10 @@ public abstract class ListEditForm<T> extends JInternalFrame
     public void setShowEditButton(boolean showEditButton)
     {
         editElementButton.setVisible(showEditButton);
+    }
+
+    public EventList<T> getClonedList()
+    {
+        return clonedList;
     }
 }

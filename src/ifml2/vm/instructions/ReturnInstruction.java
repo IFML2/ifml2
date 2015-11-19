@@ -5,16 +5,29 @@ import ifml2.vm.ExpressionCalculator;
 import ifml2.vm.RunningContext;
 import ifml2.vm.values.Value;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.text.MessageFormat;
 
 @XmlRootElement(name = "return")
+@XmlAccessorType(XmlAccessType.NONE)
 @IFML2Instruction(title = "Вернуть значение")
 public class ReturnInstruction extends Instruction
 {
     @XmlAttribute(name = "value")
     private String value;
+
+    public String getValue()
+    {
+        return value;
+    }
+
+    public void setValue(String value)
+    {
+        this.value = value;
+    }
 
     @Override
     public void run(RunningContext runningContext) throws IFML2Exception

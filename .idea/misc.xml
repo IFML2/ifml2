@@ -20,6 +20,7 @@
     <option name="HEAP_SIZE" />
     <option name="LOCALE" />
     <option name="OPEN_IN_BROWSER" value="true" />
+    <option name="OPTION_INCLUDE_LIBS" value="false" />
   </component>
   <component name="MavenProjectsManager">
     <option name="originalFiles">
@@ -41,5 +42,8 @@
   </component>
   <component name="SvnBranchConfigurationManager">
     <option name="mySupportsUserInfoFilter" value="true" />
+  </component>
+  <component name="TaskProjectConfiguration">
+    <server type="Redmine" url="https://www.hostedredmine.com" />
   </component>
 </project>
