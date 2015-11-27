@@ -3,6 +3,7 @@ package ifml2.vm;
 import ifml2.IFML2Exception;
 import ifml2.om.IFMLObject;
 import ifml2.vm.values.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.StreamTokenizer;
@@ -22,16 +23,16 @@ public class ExpressionCalculator
     private static final char QUOTE_CHAR = '"';
     private static final char SINGLE_QUOTE_CHAR = '\'';
 
-    private RunningContext runningContext = null;
+    private ISymbolResolver symbolResolver = null;
 
-    private ExpressionCalculator(RunningContext runningContext)
+    private ExpressionCalculator(ISymbolResolver symbolResolver)
     {
-        this.runningContext = runningContext;
+        this.symbolResolver = symbolResolver;
     }
 
-    public static Value calculate(RunningContext runningContext, String expression) throws IFML2Exception
+    public static Value calculate(@NotNull ISymbolResolver symbolResolver, String expression) throws IFML2Exception
     {
-        ExpressionCalculator expressionCalculator = new ExpressionCalculator(runningContext);
+        ExpressionCalculator expressionCalculator = new ExpressionCalculator(symbolResolver);
         return expressionCalculator.calculate(expression);
     }
 
@@ -188,7 +189,7 @@ public class ExpressionCalculator
     private Value resolveSymbol(UnresolvedSymbolValue unresolvedSymbolValue) throws IFML2VMException
     {
         String symbol = unresolvedSymbolValue.getValue().trim();
-        return runningContext.resolveSymbol(symbol);
+        return symbolResolver.resolveSymbol(symbol);
     }
 
     /**
@@ -312,31 +313,10 @@ public class ExpressionCalculator
             {
                 case GET_PROPERTY:
                 {
-                    ObjectValue objectValue;
-
-                    if (leftValue instanceof ObjectValue)
+                    Value resolvedLeftValue = ensureValueResolved(leftValue);
+                    if (!(resolvedLeftValue instanceof ObjectValue))
                     {
-                        objectValue = (ObjectValue) leftValue;
-                    }
-                    else
-                    {
-                        if (leftValue instanceof UnresolvedSymbolValue)
-                        {
-                            Value resolvedValue = resolveSymbol((UnresolvedSymbolValue) leftValue);
-
-                            if (resolvedValue instanceof ObjectValue)
-                            {
-                                objectValue = (ObjectValue) resolvedValue;
-                            }
-                            else
-                            {
-                                throw new IFML2ExpressionException("Величина не является объектом ({0})", leftValue);
-                            }
-                        }
-                        else
-                        {
-                            throw new IFML2ExpressionException("Величина не является объектом ({0})", leftValue);
-                        }
+                        throw new IFML2ExpressionException("Величина не является объектом ({0})", leftValue);
                     }
 
                     if (!(rightValue instanceof UnresolvedSymbolValue))
@@ -344,45 +324,27 @@ public class ExpressionCalculator
                         throw new IFML2ExpressionException("Величина не является именем свойства ({0})", rightValue);
                     }
 
-                    IFMLObject object = objectValue.getValue();
-
+                    IFMLObject object = ((ObjectValue) resolvedLeftValue).getValue();
                     if (object == null)
                     {
                         throw new IFML2ExpressionException("Объект {0} не задан (пуст)", leftValue);
                     }
 
                     String propertyName = ((UnresolvedSymbolValue) rightValue).getValue();
-
-                    Value propertyValue = object.getMemberValue(propertyName, runningContext);
-
-                    if (propertyValue == null)
-                    {
-                        throw new IFML2ExpressionException("Свойство {0} не задано у объекта {1}", rightValue, leftValue);
-                    }
-
-                    result = propertyValue;
+                    Value propertyValue = object.getMemberValue(propertyName, symbolResolver);
+                    result = propertyValue == null ? new EmptyValue() : propertyValue;
 
                     break;
                 }
 
                 case COMPARE_EQUALITY:
                 {
-                    Value preparedLeftValue = leftValue;
-                    Value preparedRightValue = rightValue;
+                    Value resolvedLeftValue = ensureValueResolved(leftValue);
+                    Value resolvedRightValue = ensureValueResolved(rightValue);
 
-                    if (preparedLeftValue instanceof UnresolvedSymbolValue)
-                    {
-                        preparedLeftValue = resolveSymbol((UnresolvedSymbolValue) preparedLeftValue);
-                    }
+                    assert resolvedLeftValue != null;
 
-                    if (preparedRightValue instanceof UnresolvedSymbolValue)
-                    {
-                        preparedRightValue = resolveSymbol((UnresolvedSymbolValue) preparedRightValue);
-                    }
-
-                    assert preparedLeftValue != null;
-
-                    Value.ValueCompareResultEnum compareResult = preparedLeftValue.compareTo(preparedRightValue);
+                    Value.ValueCompareResultEnum compareResult = resolvedLeftValue.compareTo(resolvedRightValue);
                     switch (compareResult)
                     {
                         case EQUAL:
@@ -395,8 +357,9 @@ public class ExpressionCalculator
                             break;
                         case NOT_APPLICABLE:
                             throw new IFML2ExpressionException("Сравниваемые величины разного типа ({0} и {1})", leftValue, rightValue);
-                            default:
-                                throw new IFML2VMException("Неизвестный результат сравнения величин ({0})", compareResult);
+
+                        default:
+                            throw new IFML2VMException("Неизвестный результат сравнения величин ({0})", compareResult);
                     }
 
                     break;
@@ -404,36 +367,26 @@ public class ExpressionCalculator
 
                 case ADD:
                 {
-                    Value preparedLeftValue = leftValue;
-                    Value preparedRightValue = rightValue;
+                    Value resolvedLeftValue = ensureValueResolved(leftValue);
+                    Value resolvedRightValue = ensureValueResolved(rightValue);
 
-                    if (preparedLeftValue instanceof UnresolvedSymbolValue)
+                    assert resolvedLeftValue != null;
+
+                    if (resolvedLeftValue instanceof IAddableValue)
                     {
-                        preparedLeftValue = resolveSymbol((UnresolvedSymbolValue) preparedLeftValue);
+                        result = ((IAddableValue) resolvedLeftValue).add(resolvedRightValue);
                     }
-
-                    if (preparedRightValue instanceof UnresolvedSymbolValue)
-                    {
-                        preparedRightValue = resolveSymbol((UnresolvedSymbolValue) preparedRightValue);
-                    }
-
-                    assert preparedLeftValue != null;
-
-                    if (preparedLeftValue instanceof IAddableValue)
-                    {
-                        result = ((IAddableValue) preparedLeftValue).add(preparedRightValue);
-                    }
-                    else if (preparedRightValue instanceof TextValue)
+                    else if (resolvedRightValue instanceof TextValue)
                     {
                         /*
                         если левый операнд не поддерживает сложение, но правый - текст, то всё превращаем в строку и клеим
                          */
-                        result = new TextValue(preparedLeftValue.toString() + ((TextValue) preparedRightValue).getValue());
+                        result = new TextValue(resolvedLeftValue.toString() + ((TextValue) resolvedRightValue).getValue());
                     }
                     else
                     {
                         throw new IFML2ExpressionException("Не поддерживается операция \"{0}\" между типом \"{1}\" и \"{2}\"",
-                                Value.OperationEnum.ADD, preparedLeftValue.getTypeName(), preparedLeftValue.getTypeName());
+                                Value.OperationEnum.ADD, resolvedLeftValue.getTypeName(), resolvedLeftValue.getTypeName());
                     }
 
                     break;
@@ -441,17 +394,20 @@ public class ExpressionCalculator
 
                 case AND:
                 {
-                    if (!(leftValue instanceof BooleanValue))
+                    Value resolvedLeftValue = ensureValueResolved(leftValue);
+                    Value resolvedRightValue = ensureValueResolved(rightValue);
+
+                    if (!(resolvedLeftValue instanceof BooleanValue))
                     {
                         throw new IFML2ExpressionException("Величина не является логической ({0})", leftValue);
                     }
-                    if (!(rightValue instanceof BooleanValue))
+                    if (!(resolvedRightValue instanceof BooleanValue))
                     {
                         throw new IFML2ExpressionException("Величина не является логической ({0})", rightValue);
                     }
 
-                    boolean leftBoolValue = ((BooleanValue) leftValue).getValue();
-                    boolean rightBoolValue = ((BooleanValue) rightValue).getValue();
+                    boolean leftBoolValue = ((BooleanValue) resolvedLeftValue).getValue();
+                    boolean rightBoolValue = ((BooleanValue) resolvedRightValue).getValue();
 
                     result = new BooleanValue(leftBoolValue && rightBoolValue);
 
@@ -460,17 +416,20 @@ public class ExpressionCalculator
 
                 case OR:
                 {
-                    if (!(leftValue instanceof BooleanValue))
+                    Value resolvedLeftValue = ensureValueResolved(leftValue);
+                    Value resolvedRightValue = ensureValueResolved(rightValue);
+
+                    if (!(resolvedLeftValue instanceof BooleanValue))
                     {
                         throw new IFML2ExpressionException("Величина не является логической ({0})", leftValue);
                     }
-                    if (!(rightValue instanceof BooleanValue))
+                    if (!(resolvedRightValue instanceof BooleanValue))
                     {
                         throw new IFML2ExpressionException("Величина не является логической ({0})", rightValue);
                     }
 
-                    boolean leftBoolValue = ((BooleanValue) leftValue).getValue();
-                    boolean rightBoolValue = ((BooleanValue) rightValue).getValue();
+                    boolean leftBoolValue = ((BooleanValue) resolvedLeftValue).getValue();
+                    boolean rightBoolValue = ((BooleanValue) resolvedRightValue).getValue();
 
                     result = new BooleanValue(leftBoolValue || rightBoolValue);
 
@@ -479,12 +438,14 @@ public class ExpressionCalculator
 
                 case NOT:
                 {
-                    if (!(rightValue instanceof BooleanValue))
+                    Value resolvedRightValue = ensureValueResolved(rightValue);
+
+                    if (!(resolvedRightValue instanceof BooleanValue))
                     {
                         throw new IFML2ExpressionException("Величина не является логической ({0})", rightValue);
                     }
 
-                    boolean booleanValue = ((BooleanValue) rightValue).getValue();
+                    boolean booleanValue = ((BooleanValue) resolvedRightValue).getValue();
 
                     result = new BooleanValue(!booleanValue);
 
@@ -493,18 +454,8 @@ public class ExpressionCalculator
 
                 case IN:
                 {
-                    Value preparedLeftValue = leftValue;
-                    Value preparedRightValue = rightValue;
-
-                    if (preparedLeftValue instanceof UnresolvedSymbolValue)
-                    {
-                        preparedLeftValue = resolveSymbol((UnresolvedSymbolValue) preparedLeftValue);
-                    }
-
-                    if (preparedRightValue instanceof UnresolvedSymbolValue)
-                    {
-                        preparedRightValue = resolveSymbol((UnresolvedSymbolValue) preparedRightValue);
-                    }
+                    Value preparedLeftValue = ensureValueResolved(leftValue);
+                    Value preparedRightValue = ensureValueResolved(rightValue);
 
                     if (!(preparedLeftValue instanceof ObjectValue))
                     {
@@ -530,6 +481,22 @@ public class ExpressionCalculator
             }
 
             return result;
+        }
+
+        private Value ensureValueResolved(Value unpreparedValue) throws IFML2VMException
+        {
+            Value preparedValue;
+
+            if (unpreparedValue instanceof UnresolvedSymbolValue)
+            {
+                preparedValue = resolveSymbol((UnresolvedSymbolValue) unpreparedValue);
+            }
+            else
+            {
+                preparedValue = unpreparedValue;
+            }
+
+            return preparedValue;
         }
 
         private boolean firstHasLessOrEqPriority(ExpressionOperatorEnum firstOperator, ExpressionOperatorEnum secondOperator)
@@ -560,10 +527,7 @@ public class ExpressionCalculator
             {
                 Value lastValue = valueStack.pop();
 
-                if (lastValue instanceof UnresolvedSymbolValue)
-                {
-                    lastValue = resolveSymbol((UnresolvedSymbolValue) lastValue);
-                }
+                lastValue = ensureValueResolved(lastValue);
                 valueStack.push(lastValue);
             }
             else
