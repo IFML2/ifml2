@@ -1,5 +1,7 @@
 package ifml2;
 
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.swing.DefaultEventComboBoxModel;
 import ifml2.editor.gui.ShowMemoDialog;
 import ifml2.om.IFML2LoadXmlException;
 import ifml2.om.Word;
@@ -16,6 +18,7 @@ import java.text.MessageFormat;
 
 public class GUIUtils
 {
+    private static final String IFML2_EDITOR_GUI_IMAGES = "/ifml2/editor/gui/images/";
     public static final Icon ADD_ELEMENT_ICON = getEditorIcon("Add24.gif");
     public static final Icon EDIT_ELEMENT_ICON = getEditorIcon("Edit24.gif");
     public static final Icon DEL_ELEMENT_ICON = getEditorIcon("Delete24.gif");
@@ -32,7 +35,6 @@ public class GUIUtils
     public static final Icon SAVE_FILE_ICON = getEditorIcon("Save24.gif");
     public static final Icon STORY_FILE_ICON = getEditorIcon("Edit24.gif");
     public static final Icon CIPHERED_STORY_FILE_ICON = STORY_FILE_ICON;
-    private static final String IFML2_EDITOR_GUI_IMAGES = "/ifml2/editor/gui/images/";
     public static final Icon LIBRARY_FILE_ICON = STORY_FILE_ICON;
 
     public static void packAndCenterWindow(@NotNull Window window)
@@ -148,5 +150,28 @@ public class GUIUtils
             errorMessage += stringWriter.toString();
         }
         showMemoDialog(owner, "Произошла ошибка", errorMessage);
+    }
+
+    public static class EventComboBoxModelWithNullElement<T> extends DefaultEventComboBoxModel<T>
+    {
+        public EventComboBoxModelWithNullElement(EventList<T> eventList, T selectedItem)
+        {
+            super(eventList);
+            setSelectedItem(selectedItem);
+        }
+
+        // override model to add null element
+
+        @Override
+        public int getSize()
+        {
+            return super.getSize() + 1; // add null element
+        }
+
+        @Override
+        public Object getElementAt(int index)
+        {
+            return index == 0 ? null : super.getElementAt(index - 1); // assume element 0 is null
+        }
     }
 }

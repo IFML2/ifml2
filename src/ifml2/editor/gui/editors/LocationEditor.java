@@ -98,12 +98,6 @@ public class LocationEditor extends AbstractEditor<Location>
         });
         editItemButton.setAction(new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON)
         {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                editItem((Item) itemsList.getSelectedValue());
-            }
-
             {
                 setEnabled(false); // disabled at start
                 itemsList.addListSelectionListener(new ListSelectionListener()
@@ -116,10 +110,28 @@ public class LocationEditor extends AbstractEditor<Location>
                 });
             }
 
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                editItem((Item) itemsList.getSelectedValue());
+            }
+
 
         });
         delItemButton.setAction(new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
         {
+            {
+                setEnabled(false); // disabled at start
+                itemsList.addListSelectionListener(new ListSelectionListener()
+                {
+                    @Override
+                    public void valueChanged(ListSelectionEvent e)
+                    {
+                        setEnabled(!itemsList.isSelectionEmpty()); // depends on selection
+                    }
+                });
+            }
+
             @Override
             public void actionPerformed(ActionEvent e)
             {
@@ -133,18 +145,6 @@ public class LocationEditor extends AbstractEditor<Location>
                         updateItems();
                     }
                 }
-            }
-
-            {
-                setEnabled(false); // disabled at start
-                itemsList.addListSelectionListener(new ListSelectionListener()
-                {
-                    @Override
-                    public void valueChanged(ListSelectionEvent e)
-                    {
-                        setEnabled(!itemsList.isSelectionEmpty()); // depends on selection
-                    }
-                });
             }
 
 
@@ -178,6 +178,18 @@ public class LocationEditor extends AbstractEditor<Location>
         });
         editHookButton.setAction(new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON)
         {
+            {
+                setEnabled(false); // initially disabled
+                hooksList.addListSelectionListener(new ListSelectionListener()
+                {
+                    @Override
+                    public void valueChanged(ListSelectionEvent e)
+                    {
+                        setEnabled(!hooksList.isSelectionEmpty()); // dependent from selection
+                    }
+                });
+            }
+
             @Override()
             public void actionPerformed(ActionEvent e)
             {
@@ -188,6 +200,10 @@ public class LocationEditor extends AbstractEditor<Location>
                 }
             }
 
+
+        });
+        deleteHookButton.setAction(new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
+        {
             {
                 setEnabled(false); // initially disabled
                 hooksList.addListSelectionListener(new ListSelectionListener()
@@ -200,32 +216,16 @@ public class LocationEditor extends AbstractEditor<Location>
                 });
             }
 
-
-        });
-        deleteHookButton.setAction(new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
-        {
             @Override
             public void actionPerformed(ActionEvent e)
             {
                 Hook selectedHook = (Hook) hooksList.getSelectedValue();
-                if (selectedHook != null && JOptionPane.showConfirmDialog(LocationEditor.this,
+                if (selectedHook != null &&              JOptionPane.showConfirmDialog(LocationEditor.this,
                         "Вы действительно хотите удалить выбранный перехват?", "Удаление перехвата", JOptionPane.YES_NO_OPTION,
                         JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
                 {
                     hooksClone.remove(selectedHook);
                 }
-            }
-
-            {
-                setEnabled(false); // initially disabled
-                hooksList.addListSelectionListener(new ListSelectionListener()
-                {
-                    @Override
-                    public void valueChanged(ListSelectionEvent e)
-                    {
-                        setEnabled(!hooksList.isSelectionEmpty()); // dependent from selection
-                    }
-                });
             }
 
 
@@ -283,11 +283,11 @@ public class LocationEditor extends AbstractEditor<Location>
         updateDictionaryLinks(storyDataHelper.getDictionary());
         //TODO:dictWordCombo.setSelectedItem(location.getWord());
 
-        updateLocationLinks(storyDataHelper.getLocations());
         for (ExitDirection exitDirection : ExitDirection.values())
         {
-            JComboBox combo = exitCombosMap.get(exitDirection);
-            combo.setSelectedItem(location.getExit(exitDirection));
+            JComboBox comboBox = exitCombosMap.get(exitDirection);
+            comboBox.setModel(new GUIUtils.EventComboBoxModelWithNullElement<Location>(storyDataHelper.getLocations(),
+                    location.getExit(exitDirection)));
         }
 
         itemsClone = new ArrayList<Item>(location.getItems());
@@ -362,23 +362,6 @@ public class LocationEditor extends AbstractEditor<Location>
             itemsListModel.addElement(item);
         }
         itemsList.setModel(itemsListModel);
-    }
-
-    private void updateLocationLinks(EventList<Location> locations)
-    {
-        Object[] locationsArray = locations.toArray();
-
-        for (ExitDirection exitDirection : ExitDirection.values())
-        {
-            JComboBox combo = exitCombosMap.get(exitDirection);
-            initExitCombo(locationsArray, combo);
-        }
-    }
-
-    private void initExitCombo(Object[] locationsArray, @NotNull JComboBox combo)
-    {
-        combo.setModel(new DefaultComboBoxModel(locationsArray));
-        combo.insertItemAt(null, 0);
     }
 
     private void updateDictionaryLinks(HashMap<String, Word> dictionary)

@@ -389,6 +389,7 @@ public class Editor extends JFrame
                     try
                     {
                         inheritedSystemProceduresEditor.getData(inheritedSystemProcedures);
+                        markStoryEdited();
                     }
                     catch (IFML2EditorException ex)
                     {
