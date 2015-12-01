@@ -8,6 +8,7 @@
             <documentation>История - тип</documentation>
         </annotation>
         <all>
+            <xs:element name="inheritedSystemProcedures" type="ifml2:inheritedSystemProceduresType" maxOccurs="1" minOccurs="0"/>
             <element name="storyOptions" type="ifml2:storyOptionsType" maxOccurs="1" minOccurs="0"/>
             <element name="libraries" type="ifml2:usedLibrariesType" maxOccurs="1" minOccurs="0"/>
             <element name="attribute-definitions" type="ifml2:attribute-definitionsType" maxOccurs="1" minOccurs="0"/>
@@ -561,6 +562,12 @@
         </all>
     </complexType>
 
+    <xs:complexType name="inheritedSystemProceduresType">
+        <all minOccurs="1" maxOccurs="1">
+            <xs:element name="parseErrorHandler" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        </all>
+    </xs:complexType>
+
     <complexType name="startLocationOptionType">
         <attribute name="location" type="string"/>
         <attribute name="showStartLocDesc" type="boolean"/>
@@ -587,11 +594,18 @@
         <restriction base="string">
             <enumeration value="showLocation">
                 <annotation>
-                    <documentation>Системная процедур, выводящая описание текущей локации: её имя, описание и список предметов в ней.
+                    <documentation>Системная процедура, выводящая описание текущей локации: её имя, описание и список предметов в ней.
                         Параметров не принимает.
                     </documentation>
                 </annotation>
             </enumeration>
+            <xs:enumeration value="parseErrorHandler">
+                <xs:annotation>
+                    <xs:documentation>Системная процедура, обрабатывающая ошибки парсинга.
+                        Параметры: текст Фраза - фраза, введённая игроком; текст Ошибка - текст ошибки парсинга.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
         </restriction>
     </simpleType>
 

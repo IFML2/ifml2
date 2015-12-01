@@ -376,6 +376,27 @@ public class Editor extends JFrame
                 }
             }
         });
+        storyMenu.add(new AbstractAction("Перехваты системных процедур...", GUIUtils.PREFERENCES_ICON)
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                InheritedSystemProcedures inheritedSystemProcedures = story.getInheritedSystemProcedures();
+                InheritedSystemProceduresEditor inheritedSystemProceduresEditor = new InheritedSystemProceduresEditor(Editor.this,
+                        inheritedSystemProcedures, story.getDataHelper());
+                if (inheritedSystemProceduresEditor.showDialog())
+                {
+                    try
+                    {
+                        inheritedSystemProceduresEditor.getData(inheritedSystemProcedures);
+                    }
+                    catch (IFML2EditorException ex)
+                    {
+                        GUIUtils.ReportError(Editor.this, ex);
+                    }
+                }
+            }
+        });
         storyMenu.addSeparator();
         storyMenu.add(new AbstractAction("Используемые библиотеки...")
         {
@@ -587,15 +608,6 @@ public class Editor extends JFrame
     {
         locationsListEditForm = new ListEditForm<Location>(this, "локацию", "локации", Word.GenderEnum.FEMININE, Location.class)
         {
-            @Override
-            protected void addElementToList(Location location)
-            {
-                if (location != null)
-                {
-                    story.addLocation(location);
-                }
-            }
-
             {
                 addListChangeListener(new ChangeListener()
                 {
@@ -605,6 +617,15 @@ public class Editor extends JFrame
                         markStoryEdited();
                     }
                 });
+            }
+
+            @Override
+            protected void addElementToList(Location location)
+            {
+                if (location != null)
+                {
+                    story.addLocation(location);
+                }
             }
 
             @Override
@@ -626,15 +647,6 @@ public class Editor extends JFrame
 
         itemsListEditForm = new ListEditForm<Item>(this, "предмет", "предмета", Word.GenderEnum.MASCULINE, Item.class)
         {
-            @Override
-            protected void addElementToList(Item item)
-            {
-                if (item != null)
-                {
-                    story.addItem(item);
-                }
-            }
-
             {
                 addListChangeListener(new ChangeListener()
                 {
@@ -644,6 +656,15 @@ public class Editor extends JFrame
                         markStoryEdited();
                     }
                 });
+            }
+
+            @Override
+            protected void addElementToList(Item item)
+            {
+                if (item != null)
+                {
+                    story.addItem(item);
+                }
             }
 
             @Override
@@ -664,13 +685,6 @@ public class Editor extends JFrame
 
         proceduresListEditForm = new ListEditForm<Procedure>(this, "процедуру", "процедуры", Word.GenderEnum.FEMININE, Procedure.class)
         {
-            @Override
-            protected Procedure createElement() throws Exception
-            {
-                Procedure procedure = new Procedure();
-                return editProcedure(procedure) ? procedure : null;
-            }
-
             {
                 addListChangeListener(new ChangeListener()
                 {
@@ -680,6 +694,13 @@ public class Editor extends JFrame
                         markStoryEdited();
                     }
                 });
+            }
+
+            @Override
+            protected Procedure createElement() throws Exception
+            {
+                Procedure procedure = new Procedure();
+                return editProcedure(procedure) ? procedure : null;
             }
 
             @Override
@@ -714,24 +735,25 @@ public class Editor extends JFrame
                         return answer == JOptionPane.YES_OPTION;
                     }
 
+                    // check for usages as inherited system procedures
+                    if (selectedElement.equals(story.getInheritedSystemProcedures().getParseErrorHandler()))
+                    {
+                        int answer = JOptionPane.showConfirmDialog(Editor.this,
+                                "Эта процедура установлена как перекрывающая системный обработчик ошибки парсинга. Всё равно удалить?\n" +
+                                "В этом случае перекрытие будет отменено.", "Процедура используется", JOptionPane.YES_NO_OPTION,
+                                JOptionPane.WARNING_MESSAGE);
+                        return answer == JOptionPane.YES_OPTION;
+                    }
+
                     return super.beforeDelete(selectedElement); // do standard asking
                 }
 
                 return false;
             }
-
-
         };
 
         actionsListEditForm = new ListEditForm<Action>(this, "действие", "действия", Word.GenderEnum.NEUTER, Action.class)
         {
-            @Override
-            protected Action createElement() throws Exception
-            {
-                Action action = new Action();
-                return editAction(action) ? action : null;
-            }
-
             {
                 addListChangeListener(new ChangeListener()
                 {
@@ -741,6 +763,13 @@ public class Editor extends JFrame
                         markStoryEdited();
                     }
                 });
+            }
+
+            @Override
+            protected Action createElement() throws Exception
+            {
+                Action action = new Action();
+                return editAction(action) ? action : null;
             }
 
             @Override
