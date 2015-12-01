@@ -128,8 +128,7 @@ public class GUIPlayer extends JFrame
             else
             {
                 JOptionPane.showMessageDialog(null, "Файл истории \"" + storyFile + "\" не найден.\n" +
-                                                    "Файл будет выбран вручную.", "Файл не найден",
-                                              JOptionPane.ERROR_MESSAGE);
+                                                    "Файл будет выбран вручную.", "Файл не найден", JOptionPane.ERROR_MESSAGE);
             }
         }
 
@@ -178,9 +177,15 @@ public class GUIPlayer extends JFrame
         return null;
     }
 
-    public static void main(String[] args)
+    public static void main(final String[] args)
     {
-        startFromFile(acquireStoryFileNameForPlay(args), false);
+        SwingUtilities.invokeLater(new Runnable()
+        {
+            public void run()
+            {
+                startFromFile(acquireStoryFileNameForPlay(args), false);
+            }
+        });
     }
 
     public static void startFromFile(String fileName, boolean isFromTempFile)
@@ -216,13 +221,13 @@ public class GUIPlayer extends JFrame
                 return;
             }
 
-            if(SAVE_COMMAND.equalsIgnoreCase(gamerCommand))
+            if (SAVE_COMMAND.equalsIgnoreCase(gamerCommand))
             {
                 saveGame();
                 return;
             }
 
-            if(LOAD_COMMAND.equalsIgnoreCase(gamerCommand))
+            if (LOAD_COMMAND.equalsIgnoreCase(gamerCommand))
             {
                 loadGame();
                 return;
@@ -260,7 +265,7 @@ public class GUIPlayer extends JFrame
             @Override
             public Icon getIcon(File f)
             {
-                if(f.isDirectory())
+                if (f.isDirectory())
                 {
                     return GUIUtils.DIRECTORY_ICON;
                 }
@@ -273,7 +278,7 @@ public class GUIPlayer extends JFrame
             String saveFileName = savedGameFileChooser.getSelectedFile().getAbsolutePath();
             try
             {
-                if(new File(saveFileName).exists())
+                if (new File(saveFileName).exists())
                 {
                     engine.loadGame(saveFileName);
                 }
@@ -317,7 +322,7 @@ public class GUIPlayer extends JFrame
             @Override
             public Icon getIcon(File f)
             {
-                if(f.isDirectory())
+                if (f.isDirectory())
                 {
                     return GUIUtils.DIRECTORY_ICON;
                 }
@@ -365,11 +370,11 @@ public class GUIPlayer extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                if (JOptionPane.showConfirmDialog(GUIPlayer.this,
-                                                  "Вы действительно хотите завершить текущую историю и начать новую?\r\n" +
-                                                  "Ведь всё, чего Вы тут достигли - не сохранится.", "Новая история",
-                                                  JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) ==
-                    JOptionPane.YES_OPTION)
+                int answer = JOptionPane.showConfirmDialog(GUIPlayer.this,
+                        "Вы действительно хотите завершить текущую историю и начать новую?\r\n" +
+                        "Ведь всё, чего Вы тут достигли - не сохранится.", "Новая история", JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE);
+                if (answer == JOptionPane.YES_OPTION)
                 {
                     String fileName = showOpenStoryFileDialog(GUIPlayer.this);
                     if (fileName != null)
@@ -377,6 +382,8 @@ public class GUIPlayer extends JFrame
                         loadStory(fileName);
                     }
                 }
+
+                focusCommandText();
             }
         });
         storyMenu.add(new AbstractAction("Начать сначала...")
@@ -384,14 +391,15 @@ public class GUIPlayer extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                if (JOptionPane.showConfirmDialog(GUIPlayer.this, "Вы действительно хотите начать историю заново?\r\n" +
-                                                                  "Ведь всё, чего Вы тут достигли - не сохранится.",
-                                                  "Начать заново", JOptionPane.YES_NO_OPTION,
-                                                  JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
+                int answer = JOptionPane.showConfirmDialog(GUIPlayer.this,
+                        "Вы действительно хотите начать историю заново?\r\n" + "Ведь всё, чего Вы тут достигли - не сохранится.",
+                        "Начать заново", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (answer == JOptionPane.YES_OPTION)
                 {
-                    //startAnew();
                     processCommand(START_ANEW_COMMAND);
                 }
+
+                focusCommandText();
             }
         });
         storyMenu.addSeparator();
@@ -417,17 +425,33 @@ public class GUIPlayer extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                if (JOptionPane.showConfirmDialog(GUIPlayer.this, "Вы действительно хотите выйти?\r\n" +
-                                                                  "Ведь всё, чего Вы тут достигли - не сохранится.",
-                                                  "Выйти", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) ==
-                    JOptionPane.YES_OPTION)
+                int answer = JOptionPane.showConfirmDialog(GUIPlayer.this,
+                        "Вы действительно хотите выйти?\r\n" + "Ведь всё, чего Вы тут достигли - не сохранится.", "Выйти",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (answer == JOptionPane.YES_OPTION)
                 {
                     GUIPlayer.this.dispose();
+                }
+                else
+                {
+                    focusCommandText();
                 }
             }
         });
         mainMenu.add(storyMenu);
         return mainMenu;
+    }
+
+    private void focusCommandText()
+    {
+        SwingUtilities.invokeLater(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                commandText.requestFocus();
+            }
+        });
     }
 
     private void loadStory(String storyFile)
@@ -467,9 +491,9 @@ public class GUIPlayer extends JFrame
             gameInterface.outputText("\nВ файле истории есть ошибки:");
             for (ValidationEvent validationEvent : ((IFML2LoadXmlException) exception).getEvents())
             {
-                gameInterface.outputText(MessageFormat.format("\n\"{0}\" at {1},{2}", validationEvent.getMessage(),
-                                                             validationEvent.getLocator().getLineNumber(),
-                                                             validationEvent.getLocator().getColumnNumber()));
+                gameInterface.outputText(MessageFormat
+                        .format("\n\"{0}\" at {1},{2}", validationEvent.getMessage(), validationEvent.getLocator().getLineNumber(),
+                                validationEvent.getLocator().getColumnNumber()));
             }
         }
         else

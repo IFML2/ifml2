@@ -3,9 +3,9 @@ package ifml2.editor.gui.editors;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.matchers.Matcher;
-import ca.odell.glazedlists.swing.DefaultEventComboBoxModel;
 import ifml2.CommonConstants;
 import ifml2.GUIUtils;
+import ifml2.GUIUtils.EventComboBoxModelWithNullElement;
 import ifml2.editor.DataNotValidException;
 import ifml2.editor.IFML2EditorException;
 import ifml2.editor.gui.AbstractEditor;
@@ -52,23 +52,8 @@ public class InheritedSystemProceduresEditor extends AbstractEditor<InheritedSys
             }
         });
 
-        parseErrorHandlerCombo.setModel(new DefaultEventComboBoxModel<Procedure>(filteredProcedures)
-        {
-            // override model to add null element
-
-            @Override
-            public int getSize()
-            {
-                return super.getSize() + 1; // add null element
-            }
-
-            @Override
-            public Object getElementAt(int index)
-            {
-                return index == 0 ? null : super.getElementAt(index - 1); // assume element 0 is null
-            }
-        });
-        parseErrorHandlerCombo.setSelectedItem(inheritedSystemProcedures.getParseErrorHandler());
+        parseErrorHandlerCombo.setModel(
+                new EventComboBoxModelWithNullElement<Procedure>(filteredProcedures, inheritedSystemProcedures.getParseErrorHandler()));
 
         //  -- buttons --
 

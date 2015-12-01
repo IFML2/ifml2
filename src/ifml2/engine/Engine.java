@@ -40,10 +40,10 @@ public class Engine
     private HashMap<String, Callable<? extends Value>> ENGINE_SYMBOLS = new HashMap<String, Callable<? extends Value>>()
     {
         {
-            Callable<? extends Value> returnInv = new Callable<Value>()
+            Callable<CollectionValue> returnInv = new Callable<CollectionValue>()
             {
                 @Override
-                public Value call() throws Exception
+                public CollectionValue call() throws Exception
                 {
                     return new CollectionValue(inventory);
                 }
@@ -51,36 +51,60 @@ public class Engine
 
             put("инвентарий", returnInv);
             put("инвентарь", returnInv);
-            put("куча", new Callable<Value>()
+            put("куча", new Callable<CollectionValue>()
             {
                 @Override
-                public Value call() throws Exception
+                public CollectionValue call() throws Exception
                 {
                     return new CollectionValue(new ArrayList<IFMLObject>(story.getObjectsHeap().values()));
                 }
             });
-            put("словарь", new Callable<Value>()
+            put("словарь", new Callable<CollectionValue>()
             {
                 @Override
-                public Value call() throws Exception
+                public CollectionValue call() throws Exception
                 {
                     return new CollectionValue(new ArrayList<Word>(story.getDictionary().values()));
                 }
             });
-            put("пустота", new Callable<Value>()
+            put("пустота", new Callable<CollectionValue>()
             {
                 @Override
-                public Value call() throws Exception
+                public CollectionValue call() throws Exception
                 {
                     return new CollectionValue(abyss);
                 }
             });
-            put("глобальные", new Callable<Value>()
+            put("глобальные", new Callable<TextValue>()
             {
                 @Override
-                public Value call() throws Exception
+                public TextValue call() throws Exception
                 {
                     return new TextValue(globalVariables.entrySet().toString());
+                }
+            });
+            put("локации", new Callable<TextValue>()
+            {
+                @Override
+                public TextValue call() throws Exception
+                {
+                    return new TextValue(story.getLocations().toString());
+                }
+            });
+            put("предметы", new Callable<TextValue>()
+            {
+                @Override
+                public TextValue call() throws Exception
+                {
+                    return new TextValue(story.getItems().toString());
+                }
+            });
+            put("системные", new Callable<TextValue>()
+            {
+                @Override
+                public TextValue call() throws Exception
+                {
+                    return new TextValue(String.format("Системные переменные: %s", ENGINE_SYMBOLS.keySet()));
                 }
             });
         }

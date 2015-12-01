@@ -2,6 +2,7 @@ package ifml2.editor.gui.editors;
 
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
+import ifml2.GUIUtils.EventComboBoxModelWithNullElement;
 import ifml2.editor.gui.AbstractEditor;
 import ifml2.editor.gui.EditorUtils;
 import ifml2.editor.gui.forms.ListEditForm;
@@ -40,13 +41,11 @@ public class StoryOptionsEditor extends AbstractEditor<StoryOptions>
 
         // -- init form --
 
-        startProcedureCombo.setModel(new DefaultComboBoxModel(storyDataHelper.getProcedures().toArray()));
-        startProcedureCombo.insertItemAt(null, 0);
-        startProcedureCombo.setSelectedItem(storyOptions.getStartProcedureOption().getProcedure());
+        startProcedureCombo.setModel(new EventComboBoxModelWithNullElement<Procedure>(storyDataHelper.getProcedures(),
+                storyOptions.getStartProcedureOption().getProcedure()));
 
-        startLocCombo.setModel(new DefaultComboBoxModel(storyDataHelper.getLocations().toArray()));
-        startLocCombo.insertItemAt(null, 0);
-        startLocCombo.setSelectedItem(storyOptions.getStartLocationOption().getLocation());
+        startLocCombo.setModel(new EventComboBoxModelWithNullElement<Location>(storyDataHelper.getLocations(),
+                storyOptions.getStartLocationOption().getLocation()));
 
         showStartLocDescCheck.setSelected(storyOptions.getStartLocationOption().getShowStartLocDesc());
 

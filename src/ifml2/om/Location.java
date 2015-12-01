@@ -1,7 +1,7 @@
 package ifml2.om;
 
 import ifml2.IFML2Exception;
-import ifml2.vm.RunningContext;
+import ifml2.vm.ISymbolResolver;
 import ifml2.vm.values.CollectionValue;
 import ifml2.vm.values.ObjectValue;
 import ifml2.vm.values.Value;
@@ -26,7 +26,7 @@ public class Location extends IFMLObject implements Cloneable
                 @Override
                 public Value call() throws Exception
                 {
-                    return new ObjectValue(getExit(ExitDirection.NORTH));
+                    return getObjectValue(ExitDirection.NORTH);
                 }
             });
             put("северовосток", new Callable<Value>()
@@ -34,7 +34,7 @@ public class Location extends IFMLObject implements Cloneable
                 @Override
                 public Value call() throws Exception
                 {
-                    return new ObjectValue(getExit(ExitDirection.NORTH_EAST));
+                    return getObjectValue(ExitDirection.NORTH_EAST);
                 }
             });
             put("восток", new Callable<Value>()
@@ -42,7 +42,7 @@ public class Location extends IFMLObject implements Cloneable
                 @Override
                 public Value call() throws Exception
                 {
-                    return new ObjectValue(getExit(ExitDirection.EAST));
+                    return getObjectValue(ExitDirection.EAST);
                 }
             });
             put("юговосток", new Callable<Value>()
@@ -50,7 +50,7 @@ public class Location extends IFMLObject implements Cloneable
                 @Override
                 public Value call() throws Exception
                 {
-                    return new ObjectValue(getExit(ExitDirection.SOUTH_EAST));
+                    return getObjectValue(ExitDirection.SOUTH_EAST);
                 }
             });
             put("юг", new Callable<Value>()
@@ -58,7 +58,7 @@ public class Location extends IFMLObject implements Cloneable
                 @Override
                 public Value call() throws Exception
                 {
-                    return new ObjectValue(getExit(ExitDirection.SOUTH));
+                    return getObjectValue(ExitDirection.SOUTH);
                 }
             });
             put("югозапад", new Callable<Value>()
@@ -66,7 +66,7 @@ public class Location extends IFMLObject implements Cloneable
                 @Override
                 public Value call() throws Exception
                 {
-                    return new ObjectValue(getExit(ExitDirection.SOUTH_WEST));
+                    return getObjectValue(ExitDirection.SOUTH_WEST);
                 }
             });
             put("запад", new Callable<Value>()
@@ -74,7 +74,7 @@ public class Location extends IFMLObject implements Cloneable
                 @Override
                 public Value call() throws Exception
                 {
-                    return new ObjectValue(getExit(ExitDirection.WEST));
+                    return getObjectValue(ExitDirection.WEST);
                 }
             });
             put("северозапад", new Callable<Value>()
@@ -82,7 +82,7 @@ public class Location extends IFMLObject implements Cloneable
                 @Override
                 public Value call() throws Exception
                 {
-                    return new ObjectValue(getExit(ExitDirection.NORTH_WEST));
+                    return getObjectValue(ExitDirection.NORTH_WEST);
                 }
             });
             put("верх", new Callable<Value>()
@@ -90,7 +90,7 @@ public class Location extends IFMLObject implements Cloneable
                 @Override
                 public Value call() throws Exception
                 {
-                    return new ObjectValue(getExit(ExitDirection.UP));
+                    return getObjectValue(ExitDirection.UP);
                 }
             });
             put("низ", new Callable<Value>()
@@ -98,9 +98,10 @@ public class Location extends IFMLObject implements Cloneable
                 @Override
                 public Value call() throws Exception
                 {
-                    return new ObjectValue(getExit(ExitDirection.DOWN));
+                    return getObjectValue(ExitDirection.DOWN);
                 }
             });
+
             put("предметы", new Callable<Value>()
             {
                 @Override
@@ -109,6 +110,12 @@ public class Location extends IFMLObject implements Cloneable
                     return new CollectionValue(items);
                 }
             });
+        }
+
+        @NotNull
+        private ObjectValue getObjectValue(ExitDirection exitDirection)
+        {
+            return new ObjectValue(getExit(exitDirection));
         }
     };
 
@@ -205,7 +212,7 @@ public class Location extends IFMLObject implements Cloneable
     }
 
     @Override
-    public Value getMemberValue(@NotNull String propertyName, RunningContext runningContext) throws IFML2Exception
+    public Value getMemberValue(@NotNull String propertyName, ISymbolResolver symbolResolver) throws IFML2Exception
     {
         String loweredPropName = propertyName.toLowerCase();
 
@@ -222,7 +229,7 @@ public class Location extends IFMLObject implements Cloneable
         }
         else
         {
-            return super.getMemberValue(propertyName, runningContext);
+            return super.getMemberValue(propertyName, symbolResolver);
         }
     }
 

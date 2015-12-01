@@ -90,16 +90,23 @@ public class Editor extends JFrame
         setStory(new Story());
     }
 
-    public static void main(String[] args)
+    public static void main(final String[] args)
     {
-        Editor editor = new Editor();
-        editor.setVisible(true);
-
-        if (args != null && args.length >= 1)
+        SwingUtilities.invokeLater(new Runnable()
         {
-            // load story
-            editor.loadStory(args[0]);
-        }
+            @Override
+            public void run()
+            {
+                Editor editor = new Editor();
+                editor.setVisible(true);
+
+                if (args != null && args.length >= 1)
+                {
+                    // load story
+                    editor.loadStory(args[0]);
+                }
+            }
+        });
     }
 
     private boolean editProcedure(@Nullable Procedure procedure)
@@ -389,6 +396,7 @@ public class Editor extends JFrame
                     try
                     {
                         inheritedSystemProceduresEditor.getData(inheritedSystemProcedures);
+                        markStoryEdited();
                     }
                     catch (IFML2EditorException ex)
                     {
