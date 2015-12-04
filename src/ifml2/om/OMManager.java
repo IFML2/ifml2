@@ -602,7 +602,7 @@ public class OMManager
                 }
             }
 
-            public boolean containsKeyOfClass(String name, Class aClass)
+            public boolean containsKeyOfClass(String name, Class<?> aClass)
             {
                 String loweredName = name.toLowerCase();
 
@@ -627,7 +627,7 @@ public class OMManager
                 return false;
             }
 
-            public Object getObjectOfClass(String name, Class aClass)
+            public Object getObjectOfClass(String name, Class<?> aClass)
             {
                 String loweredName = name.toLowerCase();
 
