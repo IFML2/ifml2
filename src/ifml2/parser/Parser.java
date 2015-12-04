@@ -4,10 +4,12 @@ import ifml2.CommonUtils;
 import ifml2.IFML2Exception;
 import ifml2.engine.Engine;
 import ifml2.om.*;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.text.MessageFormat;
 import java.util.*;
+
+import static java.lang.String.format;
 
 public class Parser
 {
@@ -44,10 +46,9 @@ public class Parser
                     if (lastException == null ||
                         (lastException instanceof IFML2ParseException && e.isMoreFull((IFML2ParseException) lastException, templateSize)))
                     {
-                        lastException = new IFML2ParseException(MessageFormat
-                                                                        .format("Я бы понял, если бы вы сказали \"{0}\", но я не понял вот эту часть фразы: \"{1}\".",
+                        lastException = new IFML2ParseException(format("Я бы понял, если бы вы сказали \"%s\", но я не понял вот эту часть фразы: \"%s\".",
                                                                                 convertFittedToString(e.getFittedFormalElements()),
-                                                                                convertArrayToString(e.getPhraseRest())),
+                                                                                convertListToString(e.getPhraseRest())),
                                                                 e.getUsedWords(), templateSize);
                     }
                 }
@@ -110,7 +111,7 @@ public class Parser
                 List<IFMLObject> objects = ((FittedObjects) fittedFormalElement).objects;
                 if (objects.size() > 1)
                 {
-                    throw new IFML2ParseException("Не понятно, что за " + objects.get(0).getWordLinks().getMainWord() + " имеется в виду.",
+                    throw new IFML2ParseException(format("Не понятно, что за %s имеется в виду.", objects.get(0).getWordLinks().getMainWord()),
                                                   phraseAsList.size());
                 }
             }
@@ -132,9 +133,8 @@ public class Parser
             }
             else
             {
-                throw new IFML2Exception(
-                        "Системная ошибка: ПодходящийФомральныйЭлемент имеет неизвестный тип\n" + "Фраза: " + phrase + "\n" + "Шаблон: " +
-                        firstFittedTemplate.fittedFormalElements + ".");
+                throw new IFML2Exception(format("Системная ошибка: ПодходящийФомральныйЭлемент имеет неизвестный тип\nФраза: %s\nШаблон: %s.", phrase,
+                                firstFittedTemplate.fittedFormalElements));
             }
 
             formalElements.add(formalElement);
@@ -143,7 +143,7 @@ public class Parser
         return new ParseResult(firstFittedTemplate.action, formalElements);
     }
 
-    private String convertArrayToString(List<String> stringArrayList)
+    private String convertListToString(List<String> stringArrayList)
     {
         String result = "";
         for (String element : stringArrayList)
@@ -157,6 +157,7 @@ public class Parser
         return result;
     }
 
+    @NotNull
     private String convertFittedToString(List<FittedFormalElement> fittedFormalElements) throws IFML2Exception
     {
         String result = "";
@@ -178,9 +179,8 @@ public class Parser
                 }
                 else
                 {
-                    throw new IFML2Exception("Системная ошибка: в FittedObjects кол-во объектов = 0\n" +
-                                             "fittedFormalElements = " + fittedFormalElements + '\n' +
-                                             "fittedFormalElement = " + fittedFormalElement);
+                    throw new IFML2Exception(format("Системная ошибка: в FittedObjects кол-во объектов = 0\nfittedFormalElements = %s\nfittedFormalElement = %s",
+                            fittedFormalElements, fittedFormalElement));
                 }
             }
             result += " " + element;
@@ -243,12 +243,11 @@ public class Parser
         {
             if (inaccessibleObject != null)
             {
-                throw new IFML2ParseException("Не вижу здесь " + inaccessibleObject.getName(Word.GramCaseEnum.RP) + ".");
+                throw new IFML2ParseException(format("Не вижу здесь %s.", inaccessibleObject.getName(Word.GramCaseEnum.RP)));
             }
             else
             {
-                throw new IFML2Exception(
-                        "Системная ошибка: inaccessibleObject = null в Parser.removeInaccessibleObjects() при result.size() = 0.");
+                throw new IFML2Exception("Системная ошибка: inaccessibleObject = null в Parser.removeInaccessibleObjects() при result.size() = 0.");
             }
             // it doesn't require word count because it's outstanding exception
         }
@@ -284,7 +283,7 @@ public class Parser
         }
         else if (templateRest.size() > 0 && phraseRest.size() == 0)
         {
-            throw new IFML2ParseException(makeQuestionsForTemplate(templateRest) + " (пишите ответ полностью)", result.usedWordsQty);
+            throw new IFML2ParseException(format("%s (пишите ответ полностью)", makeQuestionsForTemplate(templateRest)), result.usedWordsQty);
         }
         else if (templateRest.size() == 0 && phraseRest.size() > 0)
         {
@@ -312,6 +311,7 @@ public class Parser
         }
     }
 
+    @Contract("null, _, _ -> fail")
     private TemplateElementFitResult fitTemplateElementWithPhrase(TemplateElement templateElement, ArrayList<String> phrase,
             Story.DataHelper storyDataHelper) throws IFML2Exception
     {
@@ -393,9 +393,8 @@ public class Parser
         }
     }
 
-    private
     @NotNull
-    FitObjectWithPhraseResult fitObjectWithPhrase(@NotNull Word.GramCaseEnum gramCase, @NotNull List<String> phrase,
+    private FitObjectWithPhraseResult fitObjectWithPhrase(@NotNull Word.GramCaseEnum gramCase, @NotNull List<String> phrase,
             @NotNull Story.DataHelper storyDataHelper) throws IFML2Exception
     {
         if (phrase.size() == 0)
@@ -430,8 +429,8 @@ public class Parser
             }
             else if (wordCount > 0 && wordCount == firstWordChunksCount)
             {
-                throw new IFML2Exception("Внутренняя ошибка словаря: найдено две одинаковых записи словаря: \"{0}\" и \"{1}\"!", firstWord,
-                        word);
+                throw new IFML2Exception(format("Внутренняя ошибка словаря: найдено две одинаковых записи словаря: \"%s\" и \"%s\"!", firstWord,
+                        word));
             }
         }
 
@@ -439,8 +438,7 @@ public class Parser
         {
             String firstPhraseWord = phrase.size() > 0 ? phrase.get(0) : "";
             int usedPhraseWords = phrase.size() > 0 ? 1 : 0;
-            throw new IFML2ParseException(MessageFormat
-                    .format("У меня в словаре нет слов, которые в падеже {0} пишутся как \"{1}\".", gramCase.getAbbreviation(),
+            throw new IFML2ParseException(format("У меня в словаре нет слов, которые в падеже %s пишутся как \"%s\".", gramCase.getAbbreviation(),
                             firstPhraseWord), usedPhraseWords);
         }
 
@@ -449,8 +447,7 @@ public class Parser
         // case when dict word has no links to objects
         if (firstWordObjects.size() == 0)
         {
-            throw new IFML2ParseException(
-                    MessageFormat.format("Вообще нигде не вижу {0}.", firstWord.getFormByGramCase(Word.GramCaseEnum.RP)),
+            throw new IFML2ParseException(format("Вообще нигде не вижу %s.", firstWord.getFormByGramCase(Word.GramCaseEnum.RP)),
                     firstWordChunksCount);
         }
 
@@ -533,7 +530,8 @@ public class Parser
             String synonymWord = synonymWords.get(wordIdx);
             if (!synonymWord.equalsIgnoreCase(phraseWord))
             {
-                throw new IFML2ParseException("Не знаю, что такое \"" + phraseWord + "\".", usedWordsQty);
+                throw new IFML2ParseException(format("Не понимаю, что значит \"%s\", но я понял начало фразы: \"%s\".",
+                        convertListToString(phrase), convertListToString(phrase.subList(0, usedWordsQty))), usedWordsQty);
             }
             usedWordsQty++;
         }
@@ -567,7 +565,7 @@ public class Parser
             }
         }
 
-        return CommonUtils.uppercaseFirstLetter(result.trim()) + "?";
+        return format("%s?", CommonUtils.uppercaseFirstLetter(result.trim()));
     }
 
     public class ParseResult

@@ -24,6 +24,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="junit:junit:4.12" level="project" />
+    <orderEntry type="library" name="junit:junit:Latest" level="project" />
+    <orderEntry type="library" name="org.mockito:mockito-core:Latest" level="project" />
   </component>
 </module>

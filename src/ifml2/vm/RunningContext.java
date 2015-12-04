@@ -1,10 +1,7 @@
 package ifml2.vm;
 
 import ifml2.IFML2Exception;
-import ifml2.om.IFMLObject;
-import ifml2.om.Parameter;
-import ifml2.om.Procedure;
-import ifml2.om.Story;
+import ifml2.om.*;
 import ifml2.vm.values.EmptyValue;
 import ifml2.vm.values.Value;
 import org.jetbrains.annotations.Contract;
@@ -15,7 +12,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
-public class RunningContext
+public class RunningContext implements ISymbolResolver
 {
     private HashMap<String, Variable> loweredLocalVariablesMap = new HashMap<String, Variable>();
     private VirtualMachine virtualMachine = null;
@@ -88,7 +85,7 @@ public class RunningContext
         return runningContext;
     }
 
-    public Value resolveSymbol(String symbol) throws IFML2VMException
+    public Value resolveSymbol(@NotNull String symbol) throws IFML2VMException
     {
         String loweredSymbol = symbol.toLowerCase();
 
@@ -125,6 +122,18 @@ public class RunningContext
 
         // check VM symbols
         return virtualMachine.resolveSymbol(symbol);
+    }
+
+    @Override
+    public List<Attribute> getAttributeList()
+    {
+        return virtualMachine.getStory().getAllAttributes();
+    }
+
+    @Override
+    public List<RoleDefinition> getRoleDefinitionList()
+    {
+        return virtualMachine.getStory().getAllRoleDefinitions();
     }
 
     private Variable searchVariable(String name) throws IFML2Exception
@@ -166,11 +175,6 @@ public class RunningContext
         }
 
         return null;
-    }
-
-    public Story getStory()
-    {
-        return virtualMachine.getStory();
     }
 
     /**
@@ -229,7 +233,7 @@ public class RunningContext
         this.returnValue = returnValue;
     }
 
-    public void writeLocalVariable(@NotNull Variable variable)
+    private void writeLocalVariable(@NotNull Variable variable)
     {
         String name = variable.getName();
         if(name != null)

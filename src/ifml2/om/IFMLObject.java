@@ -6,7 +6,7 @@ import ca.odell.glazedlists.GlazedLists;
 import ifml2.IFML2Exception;
 import ifml2.IFMLEntity;
 import ifml2.vm.IFML2VMException;
-import ifml2.vm.RunningContext;
+import ifml2.vm.ISymbolResolver;
 import ifml2.vm.values.BooleanValue;
 import ifml2.vm.values.TextValue;
 import ifml2.vm.values.Value;
@@ -149,7 +149,7 @@ public class IFMLObject extends IFMLEntity implements Cloneable
         return wordLinks.getMainWord().getFormByGramCase(gramCase);
     }
 
-    public Value getMemberValue(String propertyName, RunningContext runningContext) throws IFML2Exception
+    public Value getMemberValue(String propertyName, ISymbolResolver symbolResolver) throws IFML2Exception
     {
         // test system properties
         if (NAME_PROPERTY_LITERAL.equalsIgnoreCase(propertyName))
@@ -206,7 +206,7 @@ public class IFMLObject extends IFMLEntity implements Cloneable
         }
 
         // test principal possibility of attribute
-        for (Attribute attribute : runningContext.getStory().getAllAttributes())
+        for (Attribute attribute : symbolResolver.getAttributeList())
         {
             if (attribute.getName().equalsIgnoreCase(propertyName))
             {
@@ -216,7 +216,7 @@ public class IFMLObject extends IFMLEntity implements Cloneable
         }
 
         // test principal possibility of role
-        for (RoleDefinition roleDefinition : runningContext.getStory().getAllRoleDefinitions())
+        for (RoleDefinition roleDefinition : symbolResolver.getRoleDefinitionList())
         {
             if (roleDefinition.getName().equalsIgnoreCase(propertyName))
             {
@@ -229,11 +229,11 @@ public class IFMLObject extends IFMLEntity implements Cloneable
                 propertyName);
     }
 
-    public Value tryGetMemberValue(String symbol, RunningContext runningContext)
+    public Value tryGetMemberValue(String symbol, ISymbolResolver symbolResolver)
     {
         try
         {
-            return getMemberValue(symbol, runningContext);
+            return getMemberValue(symbol, symbolResolver);
         }
         catch (IFML2Exception e)
         {
