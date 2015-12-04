@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="6.0.5" transformSequenceNumber="5">
-  <directoryPresets config="../Games/Гардероб.ifml" />
-  <application name="ЯРИЛ 2.0" distributionSourceDir="" applicationId="3169-8645-0418-5303" mediaDir="./" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="9" lzmaCompression="true" pack200Compression="true" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="true" shortName="${compiler:sys.fullName}" publisher="TOY Soft" publisherWeb="http://toysoft.narod.ru" version="2015/1.5" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" macVolumeId="2bfa8d73a3fad6ee" javaMinVersion="1.6" javaMaxVersion="1.6" allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
+  <directoryPresets config="../../../Dropbox/Public/IFML2"/>
+  <application name="ЯРИЛ 2.0" distributionSourceDir="" applicationId="3169-8645-0418-5303" mediaDir="./"
+               mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="9"
+               lzmaCompression="true" pack200Compression="true" excludeSignedFromPacking="true" commonExternalFiles="false"
+               createMd5Sums="true" shrinkRuntime="true" shortName="${compiler:sys.fullName}" publisher="TOY Soft"
+               publisherWeb="http://toysoft.narod.ru" version="2015/2" allPathsRelative="true" backupOnSave="false" autoSave="false"
+               convertDotsToUnderscores="true" macSignature="????" macVolumeId="2bfa8d73a3fad6ee" javaMinVersion="1.6" javaMaxVersion=""
+               allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="true" languageSelectionInPrincipalLanguage="false">
       <principalLanguage id="ru" customLocalizationFile="" />
       <additionalLanguages>
@@ -1485,7 +1491,15 @@ return true;</string>
         <customAttributes />
       </autoUpdate>
     </windowsArchive>
-    <windows name="Windows with JRE 8" id="258" customizedId="" mediaFileName="IFML2_${compiler:sys.version}_JRE8_${compiler:sys.date}_${compiler:sys.time}" installDir="${compiler:sys.publisher}\${compiler:sys.fullName}" overridePrincipalLanguage="false" jreBitType="32" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="windows-x86-1.8.0_40" manualJREEntry="false" bundleType="1" jreURL="" jreShared="true" directDownload="false" installOnlyIfNecessary="true" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
+    <windows name="Windows with JRE 8" id="258" customizedId=""
+             mediaFileName="IFML2_${compiler:sys.version}_JRE8_${compiler:sys.date}_${compiler:sys.time}"
+             installDir="${compiler:sys.publisher}\${compiler:sys.fullName}" overridePrincipalLanguage="false" jreBitType="32"
+             runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds=""
+             downloadURL="" includeAllDownloadableComponents="false" includedJRE="../../../Dropbox/Public/IFML2/windows-x86-1.8.0_66.tar.gz"
+             manualJREEntry="true" bundleType="1" jreURL="" jreShared="true" directDownload="false" installOnlyIfNecessary="true"
+             customInstallBaseDir="" contentFilesType="1" verifyIntegrity="true">
+      <excludedComponents/>
+      <includedDownloadableComponents/>
       <excludedLaunchers />
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
@@ -1495,10 +1509,16 @@ return true;</string>
         <commentFiles />
         <customAttributes />
       </autoUpdate>
-      <excludedComponents />
-      <includedDownloadableComponents />
     </windows>
-    <windows name="Windows w/o JRE 8" id="263" customizedId="" mediaFileName="IFML2_${compiler:sys.version}_${compiler:sys.date}_${compiler:sys.time}" installDir="${compiler:sys.publisher}\${compiler:sys.fullName}" overridePrincipalLanguage="false" jreBitType="32" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="windows-x86-1.8.0_40" manualJREEntry="false" bundleType="2" jreURL="https://dl.dropboxusercontent.com/u/87862945/IFML2/windows-x86-1.8.0_40.tar.gz" jreShared="false" directDownload="false" installOnlyIfNecessary="true" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
+    <windows name="Windows w/o JRE 8" id="263" customizedId=""
+             mediaFileName="IFML2_${compiler:sys.version}_${compiler:sys.date}_${compiler:sys.time}"
+             installDir="${compiler:sys.publisher}\${compiler:sys.fullName}" overridePrincipalLanguage="false" jreBitType="32"
+             runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds=""
+             downloadURL="" includeAllDownloadableComponents="false" includedJRE="windows-x86-1.8.0_66" manualJREEntry="false"
+             bundleType="2" jreURL="https://dl.dropboxusercontent.com/u/87862945/IFML2/windows-x86-1.8.0_66.tar.gz" jreShared="false"
+             directDownload="false" installOnlyIfNecessary="true" customInstallBaseDir="" contentFilesType="1" verifyIntegrity="true">
+      <excludedComponents />
+      <includedDownloadableComponents />
       <excludedLaunchers />
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
@@ -1508,8 +1528,6 @@ return true;</string>
         <commentFiles />
         <customAttributes />
       </autoUpdate>
-      <excludedComponents />
-      <includedDownloadableComponents />
     </windows>
   </mediaSets>
   <buildIds buildAll="false">
