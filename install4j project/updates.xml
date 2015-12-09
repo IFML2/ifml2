@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <updateDescriptor baseUrl="">
-  <entry targetMediaFileId="29" updatableVersionMin="" updatableVersionMax="" fileName="IFML2_2015_1_5_20151204_164050.exe" newVersion="2015/1.5" newMediaFileId="29" fileSize="2281472" bundledJre="" archive="false">
+    <entry targetMediaFileId="29" updatableVersionMin="" updatableVersionMax="" fileName="IFML2_2015_1_5_1_20151207_160148.exe"
+           newVersion="2015/1.5.1" newMediaFileId="29" fileSize="2280960" bundledJre="" archive="false">
     <comment language="ru">﻿ЯРИЛ 2.0 Заметки к выпускам&#xD;
 ==========================================================================&#xD;
 Обозначения:&#xD;
@@ -17,6 +18,13 @@ http://ifml2.myjetbrains.com/youtrack&#xD;
 ==========================================================================&#xD;
 &#xD;
 -------------------------------------------------&#xD;
+        Выпуск 2015/1.5.1&#xD;
+        -------------------------------------------------&#xD;
+        07.12.2015&#xD;
+        ^ [Парсер] Ответ "Не понимаю, что значит "XX YY", но я понял начало фразы "XX" заменён на "В данной команде "YY" мне не понятно." по&#xD;
+        совету ASBer'а.&#xD;
+        &#xD;
+        -------------------------------------------------&#xD;
 Выпуск 2015/1.5&#xD;
 -------------------------------------------------&#xD;
 26.11.2015&#xD;
@@ -201,7 +209,8 @@ http://ifml2.myjetbrains.com/youtrack&#xD;
     *   [Парсер] Теперь слово объекта (предмета) берётся, если только оно полность подошло, а не частично.</comment>
     <comment language="en" />
   </entry>
-  <entry targetMediaFileId="37" updatableVersionMin="" updatableVersionMax="" fileName="IFML2_2015_1_5_JRE6_20151204_164050.exe" newVersion="2015/1.5" newMediaFileId="37" fileSize="19039744" bundledJre="windows-x86-1.6.0_45" archive="false">
+    <entry targetMediaFileId="37" updatableVersionMin="" updatableVersionMax="" fileName="IFML2_2015_1_5_1_JRE6_20151207_160148.exe"
+           newVersion="2015/1.5.1" newMediaFileId="37" fileSize="19040256" bundledJre="windows-x86-1.6.0_45" archive="false">
     <comment language="ru">﻿ЯРИЛ 2.0 Заметки к выпускам&#xD;
 ==========================================================================&#xD;
 Обозначения:&#xD;
@@ -216,6 +225,13 @@ Issue trackers:&#xD;
 https://www.hostedredmine.com/projects/ifml2/issues&#xD;
 http://ifml2.myjetbrains.com/youtrack&#xD;
 ==========================================================================&#xD;
+        &#xD;
+        -------------------------------------------------&#xD;
+        Выпуск 2015/1.5.1&#xD;
+        -------------------------------------------------&#xD;
+        07.12.2015&#xD;
+        ^ [Парсер] Ответ "Не понимаю, что значит "XX YY", но я понял начало фразы "XX" заменён на "В данной команде "YY" мне не понятно." по&#xD;
+        совету ASBer'а.&#xD;
 &#xD;
 -------------------------------------------------&#xD;
 Выпуск 2015/1.5&#xD;

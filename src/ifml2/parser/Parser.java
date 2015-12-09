@@ -1,6 +1,5 @@
 package ifml2.parser;
 
-import ifml2.CommonUtils;
 import ifml2.IFML2Exception;
 import ifml2.engine.Engine;
 import ifml2.om.*;
@@ -9,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+import static ifml2.CommonUtils.uppercaseFirstLetter;
 import static java.lang.String.format;
 
 public class Parser
@@ -530,8 +530,7 @@ public class Parser
             String synonymWord = synonymWords.get(wordIdx);
             if (!synonymWord.equalsIgnoreCase(phraseWord))
             {
-                throw new IFML2ParseException(format("Не понимаю, что значит \"%s\", но я понял начало фразы: \"%s\".",
-                        convertListToString(phrase), convertListToString(phrase.subList(0, usedWordsQty))), usedWordsQty);
+                throw new IFML2ParseException(format("В данной команде \"%s\" мне не понятно.", phraseWord), usedWordsQty);
             }
             usedWordsQty++;
         }
@@ -565,7 +564,7 @@ public class Parser
             }
         }
 
-        return format("%s?", CommonUtils.uppercaseFirstLetter(result.trim()));
+        return format("%s?", uppercaseFirstLetter(result.trim()));
     }
 
     public class ParseResult
