@@ -9,11 +9,10 @@
       <excludeFolder url="file://$MODULE_DIR$/JSmooth" />
       <excludeFolder url="file://$MODULE_DIR$/launch4j" />
       <excludeFolder url="file://$MODULE_DIR$/lib" />
+      <excludeFolder url="file://$MODULE_DIR$/portable" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="GlazedLists" level="project" />
-    <orderEntry type="library" exported="" name="log4j-1.2.17" level="project" />
     <orderEntry type="library" name="forms_rt" level="project" />
     <orderEntry type="module-library">
       <library>
@@ -24,7 +23,9 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="junit:junit:Latest" level="project" />
-    <orderEntry type="library" name="org.mockito:mockito-core:Latest" level="project" />
+    <orderEntry type="library" scope="TEST" name="junit:junit:Latest" level="project" />
+    <orderEntry type="library" scope="TEST" name="org.mockito:mockito-core:Latest" level="project" />
+    <orderEntry type="library" name="log4j:log4j:Latest" level="project" />
+    <orderEntry type="library" name="net.java.dev.glazedlists:glazedlists_java15:Latest" level="project" />
   </component>
 </module>
