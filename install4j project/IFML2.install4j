@@ -8,6 +8,7 @@
                publisherWeb="http://toysoft.narod.ru" version="2015/2" allPathsRelative="true" backupOnSave="false" autoSave="false"
                convertDotsToUnderscores="true" macSignature="????" macVolumeId="2bfa8d73a3fad6ee" javaMinVersion="1.6" javaMaxVersion=""
                allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
+  <directoryPresets config="../Games/Гардероб.ifml" />
     <languages skipLanguageSelection="true" languageSelectionInPrincipalLanguage="false">
       <principalLanguage id="ru" customLocalizationFile="" />
       <additionalLanguages>

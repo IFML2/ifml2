@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+import static ifml2.CommonUtils.uppercaseFirstLetter;
 import static java.lang.String.format;
 
 public class Parser
@@ -600,8 +601,7 @@ public class Parser
                 outParsDebug(synWordDebugLvl, engineDataHelper,
                         "Слова не равны -> ошибка сопоставления слова фразы \"{0}\" c кол-вом слов {1}.", phraseWord,
                              usedWordsQty);
-                throw new IFML2ParseException(format("Не понимаю, что значит \"%s\", но я понял начало фразы: \"%s\".",
-                        convertListToString(phrase), convertListToString(phrase.subList(0, usedWordsQty))), usedWordsQty);
+                throw new IFML2ParseException(format("В данной команде \"%s\" мне не понятно.", phraseWord), usedWordsQty);
             }
             usedWordsQty++;
             outParsDebug(synWordDebugLvl, engineDataHelper, "Слово подошло, увеличиваем кол-во слов до {0} и идём дальше.", usedWordsQty);
@@ -638,7 +638,7 @@ public class Parser
             }
         }
 
-        return format("%s?", CommonUtils.uppercaseFirstLetter(result.trim()));
+        return format("%s?", uppercaseFirstLetter(result.trim()));
     }
 
     public class ParseResult
