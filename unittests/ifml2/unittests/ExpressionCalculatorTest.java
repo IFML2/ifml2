@@ -14,11 +14,18 @@ import static org.mockito.Mockito.when;
 
 public class ExpressionCalculatorTest extends TestCase
 {
+
+    private ISymbolResolver mockSymbolResolver;
+
+    public void setUp() throws Exception
+    {
+        super.setUp();
+        mockSymbolResolver = mock(ISymbolResolver.class);
+    }
+
     // 1 + 1
     public void testCalculateOnePlusOne() throws IFML2Exception
     {
-        ISymbolResolver mockSymbolResolver = mock(ISymbolResolver.class);
-
         Value result = calculate(mockSymbolResolver, "1 + 1");
 
         boolean resultIsNumberValue = result instanceof NumberValue;
@@ -32,7 +39,6 @@ public class ExpressionCalculatorTest extends TestCase
     // не да
     public void testCalculateNotYes() throws IFML2Exception
     {
-        ISymbolResolver mockSymbolResolver = mock(ISymbolResolver.class);
         when(mockSymbolResolver.resolveSymbol("да")).thenReturn(new BooleanValue(true));
 
         Value result = calculate(mockSymbolResolver, "не да");
@@ -48,7 +54,6 @@ public class ExpressionCalculatorTest extends TestCase
     // локация.свойство
     public void testCalculateLocationDotProperty() throws IFML2Exception
     {
-        ISymbolResolver mockSymbolResolver = mock(ISymbolResolver.class);
         Location mockLocation = mock(Location.class);
         when(mockSymbolResolver.resolveSymbol("локация")).thenReturn(new ObjectValue(mockLocation));
         when(mockLocation.getMemberValue(eq("свойство"), Matchers.<ISymbolResolver>any())).thenReturn(new TextValue("значение"));
@@ -66,8 +71,6 @@ public class ExpressionCalculatorTest extends TestCase
     // 1 = 1
     public void testCalculateOneEqualsOne() throws IFML2Exception
     {
-        ISymbolResolver mockSymbolResolver = mock(ISymbolResolver.class);
-
         Value result = calculate(mockSymbolResolver, "1 = 1");
 
         boolean resultIsBooleanValue = result instanceof BooleanValue;
@@ -81,8 +84,6 @@ public class ExpressionCalculatorTest extends TestCase
     // "Номер " + 1
     public void testCalculateStringPlusOne() throws IFML2Exception
     {
-        ISymbolResolver mockSymbolResolver = mock(ISymbolResolver.class);
-
         Value result = calculate(mockSymbolResolver, "\"Номер \" + 1");
 
         boolean resultIsTextValue = result instanceof TextValue;
