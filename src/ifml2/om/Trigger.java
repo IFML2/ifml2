@@ -1,26 +1,24 @@
 package ifml2.om;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlEnumValue;
+import javax.xml.bind.annotation.*;
 
 public class Trigger
 {
-    public TriggerTypeEnum getType()
+    public Type getType()
     {
         return type;
     }
 
     @XmlEnum
-    public enum TriggerTypeEnum
+    @XmlType(namespace = "Trigger")
+    public enum Type
     {
         @XmlEnumValue(value = "getAccessibleContent")
         GET_ACCESSIBLE_CONTENT
     }
 
     @XmlAttribute(name = "type")
-    TriggerTypeEnum type;
+    Type type;
 
     @XmlElement(name = "instructions")
     private InstructionList instructions = new InstructionList();

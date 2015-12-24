@@ -15,7 +15,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import static ifml2.om.Procedure.SystemProcedureEnum;
+import static ifml2.om.Procedure.SystemProcedureType;
+import static ifml2.om.Procedure.SystemProcedureType.SHOW_LOCATION;
 
 public class VirtualMachine
 {
@@ -28,7 +29,7 @@ public class VirtualMachine
         }
     };
     private Engine engine;
-    private final HashMap<Procedure.SystemProcedureEnum, Procedure> inheritedSystemProcedures = new HashMap<Procedure.SystemProcedureEnum, Procedure>()
+    private final HashMap<SystemProcedureType, Procedure> inheritedSystemProcedures = new HashMap<SystemProcedureType, Procedure>()
     {
         @Override
         public Procedure get(Object key)
@@ -36,8 +37,8 @@ public class VirtualMachine
             // lazy initialization
             if (!containsKey(key))
             {
-                Procedure inheritor = engine.getStory().getSystemInheritorProcedure((SystemProcedureEnum) key);
-                put((SystemProcedureEnum) key, inheritor);
+                Procedure inheritor = engine.getStory().getSystemInheritorProcedure((SystemProcedureType) key);
+                put((SystemProcedureType) key, inheritor);
                 return inheritor;
             }
             else
@@ -134,7 +135,7 @@ public class VirtualMachine
         }
 
         // check if inherited
-        Procedure inheritor = inheritedSystemProcedures.get(SystemProcedureEnum.SHOW_LOCATION);
+        Procedure inheritor = inheritedSystemProcedures.get(SHOW_LOCATION);
 
         if (inheritor != null)
         {

@@ -81,7 +81,7 @@ public class Word extends IFMLEntity
         }
     }
 
-    public String getFormByGramCase(GramCaseEnum gramCase)
+    public String getFormByGramCase(GramCase gramCase)
     {
         switch (gramCase)
         {
@@ -109,7 +109,7 @@ public class Word extends IFMLEntity
     }
 
     @XmlEnum
-    public enum GramCaseEnum
+    public enum GramCase
     {
         @XmlEnumValue(value = "ip")
         IP("ИП", "кто (что)"),
@@ -129,15 +129,15 @@ public class Word extends IFMLEntity
         @XmlTransient
         private final String questionWord;
 
-        GramCaseEnum(String abbreviation, String questionWord)
+        GramCase(String abbreviation, String questionWord)
         {
             this.abbreviation = abbreviation;
             this.questionWord = questionWord;
         }
 
-        public static GramCaseEnum getValueByAbbr(String abbreviation)
+        public static GramCase getValueByAbbr(String abbreviation)
         {
-            for (GramCaseEnum caseEnum : values())
+            for (GramCase caseEnum : values())
             {
                 if (caseEnum.abbreviation.equalsIgnoreCase(abbreviation))
                 {
@@ -164,7 +164,7 @@ public class Word extends IFMLEntity
         }
     }
 
-    public enum GenderEnum
+    public enum Gender
     {
         MASCULINE,
         FEMININE,

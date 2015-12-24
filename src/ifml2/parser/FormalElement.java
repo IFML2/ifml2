@@ -4,21 +4,21 @@ import ifml2.om.IFMLObject;
 
 public class FormalElement
 {
-    public final FormalElementTypeEnum type;
+    public final Type type;
     public IFMLObject object = null;
     private String literal = "";
     private String parameterName = "";
 
     public FormalElement(String formalElement, String parameter)
     {
-        this.type = FormalElementTypeEnum.LITERAL;
+        this.type = Type.LITERAL;
         this.literal = formalElement;
         this.parameterName = parameter;
     }
 
     public FormalElement(IFMLObject object, String parameter)
     {
-        this.type = FormalElementTypeEnum.OBJECT;
+        this.type = Type.OBJECT;
         this.object = object;
         this.parameterName = parameter;
     }
@@ -33,7 +33,7 @@ public class FormalElement
         return literal;
     }
 
-    public FormalElementTypeEnum getType()
+    public Type getType()
     {
         return type;
     }
@@ -59,7 +59,7 @@ public class FormalElement
 		}
 	}
 
-    public enum FormalElementTypeEnum
+    public enum Type
     {
         LITERAL,
         OBJECT

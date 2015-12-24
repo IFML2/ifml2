@@ -44,6 +44,6 @@
     <option name="mySupportsUserInfoFilter" value="true" />
   </component>
   <component name="TaskProjectConfiguration">
-    <server type="Redmine" url="https://www.hostedredmine.com" />
+    <server type="Redmine" url="http://www.hostedredmine.com" />
   </component>
 </project>

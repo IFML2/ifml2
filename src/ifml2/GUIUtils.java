@@ -68,7 +68,7 @@ public class GUIUtils
      * @param gender       Gender of word.
      * @return true if user pressed YES.
      */
-    public static boolean showDeleteConfirmDialog(Component owner, String objectNameVP, String objectNameRP, Word.GenderEnum gender)
+    public static boolean showDeleteConfirmDialog(Component owner, String objectNameVP, String objectNameRP, Word.Gender gender)
     {
         String thisGendered = "";
         switch (gender)

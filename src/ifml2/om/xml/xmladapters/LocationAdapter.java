@@ -1,6 +1,5 @@
 package ifml2.om.xml.xmladapters;
 
-import ifml2.om.ExitDirection;
 import ifml2.om.Location;
 import org.jetbrains.annotations.NotNull;
 

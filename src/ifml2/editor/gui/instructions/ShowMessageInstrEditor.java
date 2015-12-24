@@ -9,8 +9,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.text.MessageFormat;
 
-import static ifml2.vm.instructions.ShowMessageInstr.MessageTypeEnum.EXPRESSION;
-import static ifml2.vm.instructions.ShowMessageInstr.MessageTypeEnum.TEXT;
+import static ifml2.vm.instructions.ShowMessageInstr.Type.EXPRESSION;
+import static ifml2.vm.instructions.ShowMessageInstr.Type.TEXT;
 
 public class ShowMessageInstrEditor extends AbstractInstrEditor
 {
