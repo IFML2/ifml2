@@ -637,6 +637,7 @@
     </xs:complexType>
 
     <xs:complexType name="systemCommandsDisableOptionType">
-
+        <xs:attribute type="xs:boolean" name="DisableHelp"/>
+        <xs:attribute type="xs:boolean" name="DisableDebug"/>
     </xs:complexType>
 </schema>

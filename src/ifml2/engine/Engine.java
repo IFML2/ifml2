@@ -110,6 +110,36 @@ public class Engine
             });
         }
     };
+    private HashMap<String, SystemCommand> SYSTEM_COMMANDS = new HashMap<String, SystemCommand>()
+    {
+        {
+            put("помощь", HELP);
+            put("помоги", HELP);
+            put("помогите", HELP);
+            put("help", HELP);
+            put("info", HELP);
+            put("инфо", HELP);
+            put("информация", HELP);
+        }
+
+        @Override
+        public SystemCommand get(@NotNull Object key)
+        {
+            return super.get(key.toString().toLowerCase());
+        }
+
+        @Override
+        public boolean containsKey(@NotNull Object key)
+        {
+            return super.containsKey(key.toString().toLowerCase());
+        }
+
+        @Override
+        public SystemCommand put(@NotNull String key, SystemCommand value)
+        {
+            return super.put(key.toLowerCase(), value);
+        }
+    };
     private DataHelper dataHelper = new DataHelper();
     private String storyFileName;
 
@@ -250,51 +280,25 @@ public class Engine
     {
         String trimmedCommand = gamerCommand.trim();
 
-        HashMap<String, SystemCommand> SYSTEM_COMMANDS = new HashMap<String, SystemCommand>()
-        {
-            {
-                put("помощь", HELP);
-                put("помоги", HELP);
-                put("помогите", HELP);
-                put("help", HELP);
-                put("info", HELP);
-                put("инфо", HELP);
-                put("информация", HELP);
-            }
+        StoryOptions.SystemCommandsDisableOption systemCommandsDisableOption = story.getStoryOptions().getSystemCommandsDisableOption();
 
-            @Override
-            public SystemCommand get(@NotNull Object key)
-            {
-                return super.get(key.toString().toLowerCase());
-            }
-
-            @Override
-            public boolean containsKey(@NotNull Object key)
-            {
-                return super.containsKey(key.toString().toLowerCase());
-            }
-
-            @Override
-            public SystemCommand put(@NotNull String key, SystemCommand value)
-            {
-                return super.put(key.toLowerCase(), value);
-            }
-        };
-
-        // check help command
+        // check system commands
         if (SYSTEM_COMMANDS.containsKey(trimmedCommand))
         {
             SystemCommand systemCommand = SYSTEM_COMMANDS.get(trimmedCommand);
             switch (systemCommand)
             {
                 case HELP:
-                    outTextLn("Попробуйте одну из команд: " + story.getAllActions());
-                    return true;
+                    if (!systemCommandsDisableOption.isDisableHelp())
+                    {
+                        outTextLn("Попробуйте одну из команд: " + story.getAllActions());
+                        return true;
+                    }
             }
         }
 
         // check debug command
-        if (trimmedCommand.length() > 0 && trimmedCommand.charAt(0) == '?')
+        if (trimmedCommand.length() > 0 && trimmedCommand.charAt(0) == '?' && !systemCommandsDisableOption.isDisableDebug())
         {
             String expression = trimmedCommand.substring(1);
             try

@@ -34,6 +34,8 @@ public class StoryOptionsEditor extends AbstractEditor<StoryOptions>
     private JTextField versionText;
     private JTextArea descriptionTextArea;
     private ListEditForm<SetVarInstruction> globalVarListEditForm;
+    private JCheckBox disHelpCheck;
+    private JCheckBox disDebugCheck;
 
     public StoryOptionsEditor(Window owner, StoryOptions storyOptions, final Story.DataHelper storyDataHelper)
     {
@@ -57,11 +59,17 @@ public class StoryOptionsEditor extends AbstractEditor<StoryOptions>
         // set vars
         globalVarListEditForm.bindData(varsClone);
 
+        // set descr
         StoryOptions.StoryDescription storyDescription = storyOptions.getStoryDescription();
         nameText.setText(storyDescription.getName());
         authorText.setText(storyDescription.getAuthor());
         versionText.setText(storyDescription.getVersion());
         descriptionTextArea.setText(storyDescription.getDescription());
+
+        // set disables
+        StoryOptions.SystemCommandsDisableOption systemCommandsDisableOption = storyOptions.getSystemCommandsDisableOption();
+        disHelpCheck.setSelected(systemCommandsDisableOption.isDisableHelp());
+        disDebugCheck.setSelected(systemCommandsDisableOption.isDisableDebug());
     }
 
     @Override
@@ -80,6 +88,10 @@ public class StoryOptionsEditor extends AbstractEditor<StoryOptions>
         storyDescription.setAuthor(authorText.getText());
         storyDescription.setVersion(versionText.getText());
         storyDescription.setDescription(descriptionTextArea.getText());
+
+        StoryOptions.SystemCommandsDisableOption systemCommandsDisableOption = data.getSystemCommandsDisableOption();
+        systemCommandsDisableOption.setDisableHelp(disHelpCheck.isSelected());
+        systemCommandsDisableOption.setDisableDebug(disDebugCheck.isSelected());
     }
 
     private void createUIComponents()
