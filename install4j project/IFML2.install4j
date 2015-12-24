@@ -5,7 +5,7 @@
                mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="9"
                lzmaCompression="true" pack200Compression="true" excludeSignedFromPacking="true" commonExternalFiles="false"
                createMd5Sums="true" shrinkRuntime="true" shortName="${compiler:sys.fullName}" publisher="TOY Soft"
-               publisherWeb="http://toysoft.narod.ru" version="2015/1.5.1" allPathsRelative="true" backupOnSave="false" autoSave="false"
+               publisherWeb="http://toysoft.narod.ru" version="2015/1.6" allPathsRelative="true" backupOnSave="false" autoSave="false"
                convertDotsToUnderscores="true" macSignature="????" macVolumeId="2bfa8d73a3fad6ee" javaMinVersion="1.6" javaMaxVersion="1.6"
                allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="true" languageSelectionInPrincipalLanguage="false">
