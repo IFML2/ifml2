@@ -5,7 +5,6 @@ import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ifml2.GUIUtils;
 import ifml2.editor.gui.AbstractEditor;
 import ifml2.editor.gui.EditorUtils;
-import ifml2.editor.gui.instructions.InstructionTypeEnum;
 import ifml2.om.InstructionList;
 import ifml2.om.Story;
 import ifml2.vm.instructions.Instruction;
@@ -107,7 +106,7 @@ public class InstructionsEditor extends AbstractEditor<InstructionList>
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                InstructionTypeEnum instrType = EditorUtils.askInstructionType(InstructionsEditor.this);
+                Instruction.Type instrType = EditorUtils.askInstructionType(InstructionsEditor.this);
                 if(instrType != null)
                 {
                     try

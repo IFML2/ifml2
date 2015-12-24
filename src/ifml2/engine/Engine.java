@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import static ifml2.engine.Engine.SystemCommand.HELP;
+
 public class Engine
 {
     public static final FormatLogger LOG = FormatLogger.getLogger(Engine.class);
@@ -248,14 +250,47 @@ public class Engine
     {
         String trimmedCommand = gamerCommand.trim();
 
-        // check help command
-        if ("помощь".equalsIgnoreCase(trimmedCommand) || "помоги".equalsIgnoreCase(trimmedCommand) ||
-            "помогите".equalsIgnoreCase(trimmedCommand) || "help".equalsIgnoreCase(trimmedCommand) ||
-            "info".equalsIgnoreCase(trimmedCommand) ||
-            "инфо".equalsIgnoreCase(trimmedCommand)) // todo refactor to List.contains() or something similar
+        HashMap<String, SystemCommand> SYSTEM_COMMANDS = new HashMap<String, SystemCommand>()
         {
-            outTextLn("Попробуйте одну из команд: " + story.getAllActions());
-            return true;
+            {
+                put("помощь", HELP);
+                put("помоги", HELP);
+                put("помогите", HELP);
+                put("help", HELP);
+                put("info", HELP);
+                put("инфо", HELP);
+                put("информация", HELP);
+            }
+
+            @Override
+            public SystemCommand get(@NotNull Object key)
+            {
+                return super.get(key.toString().toLowerCase());
+            }
+
+            @Override
+            public boolean containsKey(@NotNull Object key)
+            {
+                return super.containsKey(key.toString().toLowerCase());
+            }
+
+            @Override
+            public SystemCommand put(@NotNull String key, SystemCommand value)
+            {
+                return super.put(key.toLowerCase(), value);
+            }
+        };
+
+        // check help command
+        if (SYSTEM_COMMANDS.containsKey(trimmedCommand))
+        {
+            SystemCommand systemCommand = SYSTEM_COMMANDS.get(trimmedCommand);
+            switch (systemCommand)
+            {
+                case HELP:
+                    outTextLn("Попробуйте одну из команд: " + story.getAllActions());
+                    return true;
+            }
         }
 
         // check debug command
@@ -282,21 +317,21 @@ public class Engine
             List<FormalElement> formalElements = parseResult.getFormalElements();
 
             // check hooks & run procedure
-            HashMap<Hook.HookTypeEnum, List<Hook>> objectHooks = collectObjectHooks(action, formalElements);
-            HashMap<Hook.HookTypeEnum, List<Hook>> locationHooks = collectLocationHooks(action);
+            HashMap<Hook.Type, List<Hook>> objectHooks = collectObjectHooks(action, formalElements);
+            HashMap<Hook.Type, List<Hook>> locationHooks = collectLocationHooks(action);
 
             List<Variable> parameters = convertFormalElementsToParameters(formalElements);
 
             // if there are INSTEAD hooks then fire them and finish
-            if (objectHooks.get(Hook.HookTypeEnum.INSTEAD).size() > 0 || locationHooks.get(Hook.HookTypeEnum.INSTEAD).size() > 0)
+            if (objectHooks.get(Hook.Type.INSTEAD).size() > 0 || locationHooks.get(Hook.Type.INSTEAD).size() > 0)
             {
                 // fire object hooks
-                for (Hook hook : objectHooks.get(Hook.HookTypeEnum.INSTEAD))
+                for (Hook hook : objectHooks.get(Hook.Type.INSTEAD))
                 {
                     virtualMachine.runHook(hook, parameters);
                 }
                 // fire location hooks
-                for (Hook hook : locationHooks.get(Hook.HookTypeEnum.INSTEAD))
+                for (Hook hook : locationHooks.get(Hook.Type.INSTEAD))
                 {
                     virtualMachine.runHook(hook, parameters);
                 }
@@ -378,7 +413,7 @@ public class Engine
         for (FormalElement formalElement : formalElements)
         {
             Value value;
-            FormalElement.FormalElementTypeEnum formalElementType = formalElement.getType();
+            FormalElement.Type formalElementType = formalElement.getType();
             switch (formalElementType)
             {
                 case LITERAL:
@@ -396,45 +431,45 @@ public class Engine
         return parameters;
     }
 
-    private void fireAfterHooks(List<Variable> parameters, HashMap<Hook.HookTypeEnum, List<Hook>> objectHooks,
-            HashMap<Hook.HookTypeEnum, List<Hook>> locationHooks) throws IFML2Exception
+    private void fireAfterHooks(List<Variable> parameters, HashMap<Hook.Type, List<Hook>> objectHooks,
+            HashMap<Hook.Type, List<Hook>> locationHooks) throws IFML2Exception
     {
         // ... object hooks
-        for (Hook hook : objectHooks.get(Hook.HookTypeEnum.AFTER))
+        for (Hook hook : objectHooks.get(Hook.Type.AFTER))
         {
             virtualMachine.runHook(hook, parameters);
         }
         // ... and location hooks
-        for (Hook hook : locationHooks.get(Hook.HookTypeEnum.AFTER))
+        for (Hook hook : locationHooks.get(Hook.Type.AFTER))
         {
             virtualMachine.runHook(hook, parameters);
         }
     }
 
-    private void fireBeforeHooks(List<Variable> parameters, HashMap<Hook.HookTypeEnum, List<Hook>> objectHooks,
-            HashMap<Hook.HookTypeEnum, List<Hook>> locationHooks) throws IFML2Exception
+    private void fireBeforeHooks(List<Variable> parameters, HashMap<Hook.Type, List<Hook>> objectHooks,
+            HashMap<Hook.Type, List<Hook>> locationHooks) throws IFML2Exception
     {
         // ... object hooks
-        for (Hook hook : objectHooks.get(Hook.HookTypeEnum.BEFORE))
+        for (Hook hook : objectHooks.get(Hook.Type.BEFORE))
         {
             virtualMachine.runHook(hook, parameters);
         }
         // ... and location hooks
-        for (Hook hook : locationHooks.get(Hook.HookTypeEnum.BEFORE))
+        for (Hook hook : locationHooks.get(Hook.Type.BEFORE))
         {
             virtualMachine.runHook(hook, parameters);
         }
     }
 
-    private HashMap<Hook.HookTypeEnum, List<Hook>> collectLocationHooks(Action action) throws IFML2Exception
+    private HashMap<Hook.Type, List<Hook>> collectLocationHooks(Action action) throws IFML2Exception
     {
         // create HashMap with all location hooks
-        HashMap<Hook.HookTypeEnum, List<Hook>> locationHooks = new HashMap<Hook.HookTypeEnum, List<Hook>>()
+        HashMap<Hook.Type, List<Hook>> locationHooks = new HashMap<Hook.Type, List<Hook>>()
         {
             {
-                put(Hook.HookTypeEnum.BEFORE, new ArrayList<Hook>());
-                put(Hook.HookTypeEnum.INSTEAD, new ArrayList<Hook>());
-                put(Hook.HookTypeEnum.AFTER, new ArrayList<Hook>());
+                put(Hook.Type.BEFORE, new ArrayList<Hook>());
+                put(Hook.Type.INSTEAD, new ArrayList<Hook>());
+                put(Hook.Type.AFTER, new ArrayList<Hook>());
             }
         };
 
@@ -455,22 +490,22 @@ public class Engine
         return locationHooks;
     }
 
-    private HashMap<Hook.HookTypeEnum, List<Hook>> collectObjectHooks(Action action, List<FormalElement> formalElements)
+    private HashMap<Hook.Type, List<Hook>> collectObjectHooks(Action action, List<FormalElement> formalElements)
     {
         // create HashMap with all object hooks
-        HashMap<Hook.HookTypeEnum, List<Hook>> objectHooks = new HashMap<Hook.HookTypeEnum, List<Hook>>()
+        HashMap<Hook.Type, List<Hook>> objectHooks = new HashMap<Hook.Type, List<Hook>>()
         {
             {
-                put(Hook.HookTypeEnum.BEFORE, new ArrayList<Hook>());
-                put(Hook.HookTypeEnum.INSTEAD, new ArrayList<Hook>());
-                put(Hook.HookTypeEnum.AFTER, new ArrayList<Hook>());
+                put(Hook.Type.BEFORE, new ArrayList<Hook>());
+                put(Hook.Type.INSTEAD, new ArrayList<Hook>());
+                put(Hook.Type.AFTER, new ArrayList<Hook>());
             }
         };
 
         // collect all object hooks
         for (FormalElement formalElement : formalElements)
         {
-            if (FormalElement.FormalElementTypeEnum.OBJECT.equals(formalElement.getType()) && formalElement.getObject() instanceof Item)
+            if (FormalElement.Type.OBJECT.equals(formalElement.getType()) && formalElement.getObject() instanceof Item)
             {
                 Item item = (Item) formalElement.getObject();
                 for (Hook hook : item.getHooks())
@@ -782,5 +817,10 @@ public class Engine
         {
             throw new RuntimeException("Внутренняя ошибка: Запрещено менять имена переменных");
         }
+    }
+
+    public enum SystemCommand
+    {
+        HELP
     }
 }

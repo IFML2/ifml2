@@ -3,7 +3,6 @@ package ifml2.editor.gui;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ifml2.GUIUtils;
-import ifml2.editor.gui.instructions.InstructionTypeEnum;
 import ifml2.om.InstructionList;
 import ifml2.om.Story;
 import ifml2.om.Word;
@@ -60,7 +59,7 @@ public class InstructionsEditForm extends JInternalFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                InstructionTypeEnum instrType = EditorUtils.askInstructionType(owner);
+                Instruction.Type instrType = EditorUtils.askInstructionType(owner);
                 if (instrType != null)
                 {
                     try
@@ -98,7 +97,7 @@ public class InstructionsEditForm extends JInternalFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                if (GUIUtils.showDeleteConfirmDialog(owner, "инструкцию", "инструкции", Word.GenderEnum.FEMININE))
+                if (GUIUtils.showDeleteConfirmDialog(owner, "инструкцию", "инструкции", Word.Gender.FEMININE))
                 {
                     Instruction selectedInstr = (Instruction) instructionsList.getSelectedValue();
                     if (selectedInstr != null)

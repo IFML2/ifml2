@@ -6,12 +6,17 @@ import ifml2.GUIUtils.EventComboBoxModelWithNullElement;
 import ifml2.editor.gui.AbstractEditor;
 import ifml2.editor.gui.EditorUtils;
 import ifml2.editor.gui.forms.ListEditForm;
-import ifml2.om.*;
+import ifml2.om.Location;
+import ifml2.om.Procedure;
+import ifml2.om.Story;
+import ifml2.om.StoryOptions;
 import ifml2.vm.instructions.SetVarInstruction;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
+
+import static ifml2.om.Word.Gender.FEMININE;
 
 public class StoryOptionsEditor extends AbstractEditor<StoryOptions>
 {
@@ -79,8 +84,8 @@ public class StoryOptionsEditor extends AbstractEditor<StoryOptions>
 
     private void createUIComponents()
     {
-        globalVarListEditForm = new ListEditForm<SetVarInstruction>(this, "глобальную переменную", "глобальной переменной",
-                Word.GenderEnum.FEMININE, SetVarInstruction.class)
+        globalVarListEditForm = new ListEditForm<SetVarInstruction>(this, "глобальную переменную", "глобальной переменной", FEMININE,
+                SetVarInstruction.class)
         {
             @Override
             protected SetVarInstruction createElement() throws Exception

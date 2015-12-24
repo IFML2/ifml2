@@ -3,6 +3,8 @@ package ifml2.vm.values;
 import ifml2.IFMLEntity;
 import org.jetbrains.annotations.NotNull;
 
+import static ifml2.vm.values.Value.CompareResult.*;
+
 public abstract class Value<T> extends IFMLEntity implements Cloneable
 {
     protected T value;
@@ -25,19 +27,19 @@ public abstract class Value<T> extends IFMLEntity implements Cloneable
         return value;
     }
 
-    public ValueCompareResultEnum compareTo(@NotNull Value rightValue)
+    public CompareResult compareTo(@NotNull Value rightValue)
     {
         if(getClass().equals(rightValue.getClass()))
         {
             // одинаковые классы сравниваем напрямую через equals
-            return equals(rightValue) ? ValueCompareResultEnum.EQUAL : ValueCompareResultEnum.UNEQUAL;
+            return equals(rightValue) ? EQUAL : UNEQUAL;
         }
         else if(rightValue instanceof EmptyValue)
         {
             // если правое значение - пустота, то возвращаем равенство, если this тоже пустота
-            return this instanceof EmptyValue ? ValueCompareResultEnum.EQUAL : ValueCompareResultEnum.UNEQUAL;
+            return this instanceof EmptyValue ? EQUAL : UNEQUAL;
         }
-        return ValueCompareResultEnum.NOT_APPLICABLE;
+        return NOT_APPLICABLE;
     }
 
     @Override
@@ -69,13 +71,13 @@ public abstract class Value<T> extends IFMLEntity implements Cloneable
         return (Value) super.clone();
     }
 
-    public enum OperationEnum
+    public enum Operation
     {
         ADD("сложение");
 
         final String caption;
 
-        OperationEnum(String caption)
+        Operation(String caption)
         {
             this.caption = caption;
         }
@@ -87,7 +89,7 @@ public abstract class Value<T> extends IFMLEntity implements Cloneable
         }
     }
 
-    public enum ValueCompareResultEnum
+    public enum CompareResult
     {
         EQUAL,
         UNEQUAL,

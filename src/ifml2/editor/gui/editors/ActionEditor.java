@@ -169,8 +169,7 @@ public class ActionEditor extends AbstractEditor<Action>
             {
                 Restriction restriction = (Restriction) restrictionsList.getSelectedValue();
                 if (restriction != null &&
-                    GUIUtils.showDeleteConfirmDialog(ActionEditor.this, "ограничение", "ограничения",
-                                                     Word.GenderEnum.NEUTER))
+                    GUIUtils.showDeleteConfirmDialog(ActionEditor.this, "ограничение", "ограничения", Word.Gender.NEUTER))
                 {
                     restrictionsClone.remove(restriction);
                 }

@@ -21,6 +21,8 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static ifml2.om.Word.GramCase.*;
+
 public class WordLinksEditor extends AbstractEditor<WordLinks>
 {
     public static final String NEW_WORD_ACTION = "Новое...";
@@ -102,22 +104,22 @@ public class WordLinksEditor extends AbstractEditor<WordLinks>
             }
         };
 
-        ipText.getDocument().putProperty(CASE_DOC_PROPERTY, Word.GramCaseEnum.IP);
+        ipText.getDocument().putProperty(CASE_DOC_PROPERTY, IP);
         ipText.getDocument().addDocumentListener(wordDocListener);
 
-        rpText.getDocument().putProperty(CASE_DOC_PROPERTY, Word.GramCaseEnum.RP);
+        rpText.getDocument().putProperty(CASE_DOC_PROPERTY, RP);
         rpText.getDocument().addDocumentListener(wordDocListener);
 
-        dpText.getDocument().putProperty(CASE_DOC_PROPERTY, Word.GramCaseEnum.DP);
+        dpText.getDocument().putProperty(CASE_DOC_PROPERTY, DP);
         dpText.getDocument().addDocumentListener(wordDocListener);
 
-        vpText.getDocument().putProperty(CASE_DOC_PROPERTY, Word.GramCaseEnum.VP);
+        vpText.getDocument().putProperty(CASE_DOC_PROPERTY, VP);
         vpText.getDocument().addDocumentListener(wordDocListener);
 
-        tpText.getDocument().putProperty(CASE_DOC_PROPERTY, Word.GramCaseEnum.TP);
+        tpText.getDocument().putProperty(CASE_DOC_PROPERTY, TP);
         tpText.getDocument().addDocumentListener(wordDocListener);
 
-        ppText.getDocument().putProperty(CASE_DOC_PROPERTY, Word.GramCaseEnum.PP);
+        ppText.getDocument().putProperty(CASE_DOC_PROPERTY, PP);
         ppText.getDocument().addDocumentListener(wordDocListener);
 
         newWordButton.setAction(new AbstractAction(NEW_WORD_ACTION, GUIUtils.ADD_ELEMENT_ICON)
@@ -223,7 +225,7 @@ public class WordLinksEditor extends AbstractEditor<WordLinks>
                 text = text.trim();
             }
 
-            Word.GramCaseEnum gramCase = (Word.GramCaseEnum) document.getProperty(CASE_DOC_PROPERTY);
+            Word.GramCase gramCase = (Word.GramCase) document.getProperty(CASE_DOC_PROPERTY);
             switch (gramCase)
             {
                 case IP:

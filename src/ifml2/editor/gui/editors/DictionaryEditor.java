@@ -120,22 +120,22 @@ public class DictionaryEditor extends JDialog
             }
         };
 
-        ipText.getDocument().putProperty(CASE_DOC_PROPERTY, Word.GramCaseEnum.IP);
+        ipText.getDocument().putProperty(CASE_DOC_PROPERTY, Word.GramCase.IP);
         ipText.getDocument().addDocumentListener(wordDocListener);
 
-        rpText.getDocument().putProperty(CASE_DOC_PROPERTY, Word.GramCaseEnum.RP);
+        rpText.getDocument().putProperty(CASE_DOC_PROPERTY, Word.GramCase.RP);
         rpText.getDocument().addDocumentListener(wordDocListener);
 
-        dpText.getDocument().putProperty(CASE_DOC_PROPERTY, Word.GramCaseEnum.DP);
+        dpText.getDocument().putProperty(CASE_DOC_PROPERTY, Word.GramCase.DP);
         dpText.getDocument().addDocumentListener(wordDocListener);
 
-        vpText.getDocument().putProperty(CASE_DOC_PROPERTY, Word.GramCaseEnum.VP);
+        vpText.getDocument().putProperty(CASE_DOC_PROPERTY, Word.GramCase.VP);
         vpText.getDocument().addDocumentListener(wordDocListener);
 
-        tpText.getDocument().putProperty(CASE_DOC_PROPERTY, Word.GramCaseEnum.TP);
+        tpText.getDocument().putProperty(CASE_DOC_PROPERTY, Word.GramCase.TP);
         tpText.getDocument().addDocumentListener(wordDocListener);
 
-        ppText.getDocument().putProperty(CASE_DOC_PROPERTY, Word.GramCaseEnum.PP);
+        ppText.getDocument().putProperty(CASE_DOC_PROPERTY, Word.GramCase.PP);
         ppText.getDocument().addDocumentListener(wordDocListener);
 
         newWordButton.setAction(new AbstractAction("Новое...", GUIUtils.ADD_ELEMENT_ICON)
@@ -191,7 +191,7 @@ public class DictionaryEditor extends JDialog
                 return;
             }
 
-            Word.GramCaseEnum gramCase = (Word.GramCaseEnum) document.getProperty(CASE_DOC_PROPERTY);
+            Word.GramCase gramCase = (Word.GramCase) document.getProperty(CASE_DOC_PROPERTY);
             switch (gramCase)
             {
                 case IP:
