@@ -66,7 +66,7 @@ public class RoleDefinition
         return null;
     }
 
-    public Trigger getTrigger(Trigger.TriggerTypeEnum triggerType)
+    public Trigger getTrigger(Trigger.Type triggerType)
     {
         for (Trigger trigger : getTriggers())
         {

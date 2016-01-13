@@ -19,6 +19,10 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
 
+import static ifml2.om.Word.GramCase.VP;
+import static ifml2.vm.instructions.ShowMessageInstr.Type.EXPRESSION;
+import static ifml2.vm.instructions.ShowMessageInstr.Type.TEXT;
+
 /**
  * Lib load utility main frame
  *
@@ -186,14 +190,14 @@ public class LibLoadUtility extends JFrame
                                 String message = parts[2];
                                 log("Разбивка строки:\n\tглагол: {0}\n\tтип: {1}\n\tсообщение: {2}", verb, type, message);
 
-                                ShowMessageInstr.MessageTypeEnum messageType;
+                                ShowMessageInstr.Type messageType;
                                 if ("текст".equalsIgnoreCase(type))
                                 {
-                                    messageType = ShowMessageInstr.MessageTypeEnum.TEXT;
+                                    messageType = TEXT;
                                 }
                                 else if ("выражение".equalsIgnoreCase(type))
                                 {
-                                    messageType = ShowMessageInstr.MessageTypeEnum.EXPRESSION;
+                                    messageType = EXPRESSION;
                                 }
                                 else
                                 {
@@ -205,7 +209,7 @@ public class LibLoadUtility extends JFrame
                                 ShowMessageInstr showMessageInstr = new ShowMessageInstr();
                                 showMessageInstr.setType(messageType);
                                 showMessageInstr.setBeginWithCap(true);
-                                if (messageType == ShowMessageInstr.MessageTypeEnum.TEXT)
+                                if (messageType == TEXT)
                                 {
                                     showMessageInstr.setMessageExpr(message);
                                 }
@@ -230,9 +234,9 @@ public class LibLoadUtility extends JFrame
                                     showMessageInstr.setMessageExpr("'" + constPart + " ' + " + exprPart);
                                 }
                                 // create procedure
-                                String procedureName = messageType == ShowMessageInstr.MessageTypeEnum.TEXT ? verb : verb + "Предмет";
+                                String procedureName = messageType == TEXT ? verb : verb + "Предмет";
                                 Procedure procedure = new Procedure(procedureName);
-                                if (messageType == ShowMessageInstr.MessageTypeEnum.EXPRESSION)
+                                if (messageType == EXPRESSION)
                                 {
                                     // add parameter to procedure
                                     Parameter parameter = new Parameter();
@@ -248,18 +252,18 @@ public class LibLoadUtility extends JFrame
                                 LiteralTemplateElement verbLit = new LiteralTemplateElement();
                                 verbLit.getSynonyms().add(verb);
                                 template.getElements().add(verbLit);
-                                if (messageType == ShowMessageInstr.MessageTypeEnum.EXPRESSION)
+                                if (messageType == EXPRESSION)
                                 {
                                     // add object element
                                     ObjectTemplateElement itemTem = new ObjectTemplateElement();
-                                    itemTem.setGramCase(Word.GramCaseEnum.VP);
+                                    itemTem.setGramCase(VP);
                                     itemTem.setParameter("предмет");
                                     template.getElements().add(itemTem);
                                 }
 
                                 // create action
                                 ifml2.om.Action action = new ifml2.om.Action();
-                                String actionName = messageType == ShowMessageInstr.MessageTypeEnum.TEXT ? verb : verb + " [что]";
+                                String actionName = messageType == TEXT ? verb : verb + " [что]";
                                 action.setName(actionName);
                                 action.setDescription(procedureName);
                                 action.getTemplates().add(template);

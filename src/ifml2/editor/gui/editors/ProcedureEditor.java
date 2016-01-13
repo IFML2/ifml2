@@ -6,16 +6,17 @@ import ifml2.editor.IFML2EditorException;
 import ifml2.editor.gui.AbstractEditor;
 import ifml2.editor.gui.EditorUtils;
 import ifml2.editor.gui.forms.ListEditForm;
-import ifml2.editor.gui.instructions.InstructionTypeEnum;
 import ifml2.om.Parameter;
 import ifml2.om.Procedure;
 import ifml2.om.Story;
-import ifml2.om.Word;
 import ifml2.vm.instructions.Instruction;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
+
+import static ifml2.om.Word.Gender.FEMININE;
+import static ifml2.om.Word.Gender.MASCULINE;
 
 public class ProcedureEditor extends AbstractEditor<Procedure>
 {
@@ -98,7 +99,7 @@ public class ProcedureEditor extends AbstractEditor<Procedure>
 
     private void createUIComponents()
     {
-        paramsEditForm = new ListEditForm<Parameter>(this, "параметр", "параметра", Word.GenderEnum.MASCULINE, Parameter.class)
+        paramsEditForm = new ListEditForm<Parameter>(this, "параметр", "параметра", MASCULINE, Parameter.class)
         {
             @Override
             protected Parameter createElement() throws Exception
@@ -125,12 +126,12 @@ public class ProcedureEditor extends AbstractEditor<Procedure>
             }
         };
 
-        instructionsEditForm = new ListEditForm<Instruction>(this, "инструкцию", "инструкции", Word.GenderEnum.FEMININE, Instruction.class)
+        instructionsEditForm = new ListEditForm<Instruction>(this, "инструкцию", "инструкции", FEMININE, Instruction.class)
         {
             @Override
             protected Instruction createElement() throws Exception
             {
-                InstructionTypeEnum instrType = EditorUtils.askInstructionType(ProcedureEditor.this);
+                Instruction.Type instrType = EditorUtils.askInstructionType(ProcedureEditor.this);
                 if (instrType != null)
                 {
                     Instruction instruction = instrType.createInstrInstance();

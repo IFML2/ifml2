@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.*;
 public class Procedure extends IFMLEntity implements Cloneable
 {
     @XmlAttribute(name = "inheritsSystemProcedure")
-    private SystemProcedureEnum inheritsSystemProcedure = null;
+    private SystemProcedureType inheritsSystemProcedure = null;
     @XmlElementWrapper(name = "procedureVariables")
     @XmlElement(name = "procedureVariable")
     private EventList<ProcedureVariable> variables = new BasicEventList<ProcedureVariable>();
@@ -63,7 +63,7 @@ public class Procedure extends IFMLEntity implements Cloneable
         this.name = name;
     }
 
-    public SystemProcedureEnum getInheritsSystemProcedure()
+    public SystemProcedureType getInheritsSystemProcedure()
     {
         return inheritsSystemProcedure;
     }
@@ -144,7 +144,7 @@ public class Procedure extends IFMLEntity implements Cloneable
     }
 
     @XmlEnum
-    public enum SystemProcedureEnum
+    public enum SystemProcedureType
     {
         @XmlEnumValue(value = "showLocation")
         SHOW_LOCATION("Описать локацию"),
@@ -153,7 +153,7 @@ public class Procedure extends IFMLEntity implements Cloneable
 
         private String name;
 
-        SystemProcedureEnum(String name)
+        SystemProcedureType(String name)
         {
             this.name = name;
         }

@@ -23,6 +23,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.MessageFormat;
 
+import static ifml2.om.Hook.Type.*;
+
 public class HookEditor extends AbstractEditor<Hook>
 {
     private JPanel contentPane;
@@ -169,15 +171,15 @@ public class HookEditor extends AbstractEditor<Hook>
         hook.setObjectElement((String) parameterCombo.getSelectedItem());
         if(beforeRadio.isSelected())
         {
-            hook.setType(Hook.HookTypeEnum.BEFORE);
+            hook.setType(BEFORE);
         }
         else if(afterRadio.isSelected())
         {
-            hook.setType(Hook.HookTypeEnum.AFTER);
+            hook.setType(AFTER);
         }
         else if(insteadRadio.isSelected())
         {
-            hook.setType(Hook.HookTypeEnum.INSTEAD);
+            hook.setType(INSTEAD);
         }
         else
         {

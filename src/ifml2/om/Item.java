@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.xml.bind.annotation.*;
 import java.util.List;
 
+import static ifml2.om.Trigger.Type.GET_ACCESSIBLE_CONTENT;
 import static ifml2.om.xml.XmlSchemaConstants.ITEM_STARTING_POSITION_ELEMENT;
 import static ifml2.om.xml.XmlSchemaConstants.STARTING_POSITION_INVENTORY_ELEMENT;
 
@@ -73,7 +74,7 @@ public class Item extends IFMLObject implements Cloneable
         // run roles' triggers
         for (Role role : roles)
         {
-            Trigger trigger = role.getRoleDefinition().getTrigger(Trigger.TriggerTypeEnum.GET_ACCESSIBLE_CONTENT);
+            Trigger trigger = role.getRoleDefinition().getTrigger(GET_ACCESSIBLE_CONTENT);
             if (trigger != null)
             {
                 return virtualMachine.runTrigger(trigger, this);

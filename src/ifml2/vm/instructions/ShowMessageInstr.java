@@ -5,27 +5,24 @@ import ifml2.IFML2Exception;
 import ifml2.vm.ExpressionCalculator;
 import ifml2.vm.RunningContext;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlEnumValue;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
 
 @XmlRootElement(name = "showMessage")
 @IFML2Instruction(title = "Вывести сообщение")
 public class ShowMessageInstr extends Instruction
 {
-    private MessageTypeEnum type = MessageTypeEnum.TEXT; // default type
+    private Type type = Type.TEXT; // default type
     private Boolean carriageReturn = true;
     private Boolean beginWithCap = false;
     private String messageExpr;
 
-    public MessageTypeEnum getType()
+    public Type getType()
     {
         return type;
     }
 
     @XmlAttribute(name = "type")
-    public void setType(MessageTypeEnum type)
+    public void setType(Type type)
     {
         this.type = type;
     }
@@ -100,7 +97,8 @@ public class ShowMessageInstr extends Instruction
     }
 
     @XmlEnum
-    public enum MessageTypeEnum
+    @XmlType(namespace = "ShowMessageInstr")
+    public enum Type
     {
         @XmlEnumValue(value = "text")
         TEXT,

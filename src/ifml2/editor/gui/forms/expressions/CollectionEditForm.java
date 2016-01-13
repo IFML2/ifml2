@@ -40,7 +40,7 @@ public class CollectionEditForm extends JInternalFrame
 
     private void createUIComponents()
     {
-        collectionListEditForm = new ListEditForm<IFMLObject>(owner, "элемент", "элемента", Word.GenderEnum.MASCULINE, IFMLObject.class)
+        collectionListEditForm = new ListEditForm<IFMLObject>(owner, "элемент", "элемента", Word.Gender.MASCULINE, IFMLObject.class)
         {
             {
                 setShowEditButton(false);

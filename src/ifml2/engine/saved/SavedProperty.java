@@ -2,6 +2,7 @@ package ifml2.engine.saved;
 
 import ifml2.FormatLogger;
 import ifml2.om.*;
+import ifml2.om.PropertyDefinition.Type;
 import ifml2.vm.values.CollectionValue;
 import ifml2.vm.values.Value;
 import org.jetbrains.annotations.NotNull;
@@ -57,7 +58,7 @@ public class SavedProperty
             if (propertyDefinition != null)
             {
                 // restore only collections
-                if (PropertyDefinition.PropertyTypeEnum.COLLECTION.equals(propertyDefinition.getType()))
+                if (Type.COLLECTION.equals(propertyDefinition.getType()))
                 {
                     List<Item> propItems = new ArrayList<Item>();
                     for (String itemId : items)

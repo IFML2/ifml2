@@ -2,6 +2,7 @@ package ifml2.engine.saved;
 
 import ifml2.FormatLogger;
 import ifml2.om.*;
+import ifml2.om.PropertyDefinition.Type;
 import org.jetbrains.annotations.NotNull;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -34,7 +35,7 @@ public class SavedRole
             if (propertyDefinition != null)
             {
                 // save only collections
-                if (PropertyDefinition.PropertyTypeEnum.COLLECTION.equals(propertyDefinition.getType()))
+                if (Type.COLLECTION.equals(propertyDefinition.getType()))
                 {
                     properties.add(new SavedProperty(property));
                 }

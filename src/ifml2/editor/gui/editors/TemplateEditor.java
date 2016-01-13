@@ -18,6 +18,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Collections;
 
+import static ifml2.om.Word.Gender.MASCULINE;
+
 public class TemplateEditor extends AbstractEditor<Template>
 {
     private JPanel contentPane;
@@ -143,7 +145,7 @@ public class TemplateEditor extends AbstractEditor<Template>
                 TemplateElement selectedElement = (TemplateElement) templateList.getSelectedValue();
                 if (selectedElement != null)
                 {
-                    if (GUIUtils.showDeleteConfirmDialog(TemplateEditor.this, "шаблон", "шаблона", Word.GenderEnum.MASCULINE))
+                    if (GUIUtils.showDeleteConfirmDialog(TemplateEditor.this, "шаблон", "шаблона", MASCULINE))
                     {
                         templateClone.getElements().remove(selectedElement);
                     }
