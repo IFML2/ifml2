@@ -24,6 +24,7 @@ public class PropertyDefinition
 
     @XmlAttribute(name = "type")
     private Type type;
+
     public Type getType()
     {
         return type;

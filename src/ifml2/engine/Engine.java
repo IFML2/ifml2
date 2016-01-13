@@ -325,7 +325,7 @@ public class Engine
         }
 
         // switch debug mode
-        if("!отладка".equalsIgnoreCase(trimmedCommand) && !systemCommandsDisableOption.isDisableDebug())
+        if ("!отладка".equalsIgnoreCase(trimmedCommand) && !systemCommandsDisableOption.isDisableDebug())
         {
             isDebugMode = !isDebugMode;
             outTextLn(DEBUG_OUTPUT_PREFIX + "Режим отладки {0}.", isDebugMode ? "включен" : "выключен");

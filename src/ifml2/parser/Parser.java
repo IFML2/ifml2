@@ -1,7 +1,6 @@
 package ifml2.parser;
 
 import ca.odell.glazedlists.EventList;
-import ifml2.CommonUtils;
 import ifml2.IFML2Exception;
 import ifml2.engine.Engine;
 import ifml2.om.*;
