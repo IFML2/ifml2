@@ -18,7 +18,7 @@ public class Hook extends IFMLEntity
     private String objectElement = "";
 
     @XmlAttribute(name = "type")
-    private HookTypeEnum type = HookTypeEnum.INSTEAD; // default value for new hook in editors
+    private Type type = Type.INSTEAD; // default value for new hook in editors
 
     @Override
     protected Hook clone() throws CloneNotSupportedException
@@ -52,12 +52,12 @@ public class Hook extends IFMLEntity
         this.objectElement = objectElement;
     }
 
-    public HookTypeEnum getType()
+    public Type getType()
     {
         return type;
     }
 
-    public void setType(HookTypeEnum type)
+    public void setType(Type type)
     {
         this.type = type;
     }
@@ -74,7 +74,8 @@ public class Hook extends IFMLEntity
     }
 
     @XmlEnum
-    public enum HookTypeEnum
+    @XmlType(namespace = "Hook")
+    public enum Type
     {
         @XmlEnumValue(value = "before")
         BEFORE(0, "до"),
@@ -85,7 +86,7 @@ public class Hook extends IFMLEntity
         public final int sortValue;
         private String ruName;
 
-        HookTypeEnum(int sortValue, String ruName)
+        Type(int sortValue, String ruName)
         {
             this.sortValue = sortValue;
             this.ruName = ruName;

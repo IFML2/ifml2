@@ -6,12 +6,17 @@ import ifml2.GUIUtils.EventComboBoxModelWithNullElement;
 import ifml2.editor.gui.AbstractEditor;
 import ifml2.editor.gui.EditorUtils;
 import ifml2.editor.gui.forms.ListEditForm;
-import ifml2.om.*;
+import ifml2.om.Location;
+import ifml2.om.Procedure;
+import ifml2.om.Story;
+import ifml2.om.StoryOptions;
 import ifml2.vm.instructions.SetVarInstruction;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
+
+import static ifml2.om.Word.Gender.FEMININE;
 
 public class StoryOptionsEditor extends AbstractEditor<StoryOptions>
 {
@@ -29,6 +34,8 @@ public class StoryOptionsEditor extends AbstractEditor<StoryOptions>
     private JTextField versionText;
     private JTextArea descriptionTextArea;
     private ListEditForm<SetVarInstruction> globalVarListEditForm;
+    private JCheckBox disHelpCheck;
+    private JCheckBox disDebugCheck;
 
     public StoryOptionsEditor(Window owner, StoryOptions storyOptions, final Story.DataHelper storyDataHelper)
     {
@@ -52,11 +59,17 @@ public class StoryOptionsEditor extends AbstractEditor<StoryOptions>
         // set vars
         globalVarListEditForm.bindData(varsClone);
 
+        // set descr
         StoryOptions.StoryDescription storyDescription = storyOptions.getStoryDescription();
         nameText.setText(storyDescription.getName());
         authorText.setText(storyDescription.getAuthor());
         versionText.setText(storyDescription.getVersion());
         descriptionTextArea.setText(storyDescription.getDescription());
+
+        // set disables
+        StoryOptions.SystemCommandsDisableOption systemCommandsDisableOption = storyOptions.getSystemCommandsDisableOption();
+        disHelpCheck.setSelected(systemCommandsDisableOption.isDisableHelp());
+        disDebugCheck.setSelected(systemCommandsDisableOption.isDisableDebug());
     }
 
     @Override
@@ -75,12 +88,16 @@ public class StoryOptionsEditor extends AbstractEditor<StoryOptions>
         storyDescription.setAuthor(authorText.getText());
         storyDescription.setVersion(versionText.getText());
         storyDescription.setDescription(descriptionTextArea.getText());
+
+        StoryOptions.SystemCommandsDisableOption systemCommandsDisableOption = data.getSystemCommandsDisableOption();
+        systemCommandsDisableOption.setDisableHelp(disHelpCheck.isSelected());
+        systemCommandsDisableOption.setDisableDebug(disDebugCheck.isSelected());
     }
 
     private void createUIComponents()
     {
-        globalVarListEditForm = new ListEditForm<SetVarInstruction>(this, "глобальную переменную", "глобальной переменной",
-                Word.GenderEnum.FEMININE, SetVarInstruction.class)
+        globalVarListEditForm = new ListEditForm<SetVarInstruction>(this, "глобальную переменную", "глобальной переменной", FEMININE,
+                SetVarInstruction.class)
         {
             @Override
             protected SetVarInstruction createElement() throws Exception

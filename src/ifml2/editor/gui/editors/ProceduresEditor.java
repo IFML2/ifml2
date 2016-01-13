@@ -6,7 +6,6 @@ import ifml2.GUIUtils;
 import ifml2.editor.IFML2EditorException;
 import ifml2.editor.gui.AbstractEditor;
 import ifml2.editor.gui.EditorUtils;
-import ifml2.editor.gui.instructions.InstructionTypeEnum;
 import ifml2.om.Procedure;
 import ifml2.om.Story;
 import ifml2.vm.instructions.Instruction;
@@ -66,7 +65,7 @@ public class ProceduresEditor extends AbstractEditor<HashMap<String, Procedure>>
 
             if (procedure != null)
             {
-                InstructionTypeEnum instrType = EditorUtils.askInstructionType(ProceduresEditor.this);
+                Instruction.Type instrType = EditorUtils.askInstructionType(ProceduresEditor.this);
 
                 if (instrType != null)
                 {

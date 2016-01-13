@@ -22,6 +22,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static ifml2.om.Location.ExitDirection;
+import static ifml2.om.Location.ExitDirection.*;
+
 public class LocationEditor extends AbstractEditor<Location>
 {
     private static final String LOCATION_EDITOR_TITLE = "Локация";
@@ -52,19 +55,19 @@ public class LocationEditor extends AbstractEditor<Location>
     private JComboBox southEastCombo;
     private JComboBox southWestCombo;
     private JComboBox northWestCombo;
-    private Map<ExitDirection, JComboBox> exitCombosMap = new HashMap<ExitDirection, JComboBox>()
+    private Map<Location.ExitDirection, JComboBox> exitCombosMap = new HashMap<Location.ExitDirection, JComboBox>()
     {
         {
-            put(ExitDirection.NORTH, northCombo);
-            put(ExitDirection.NORTH_EAST, northEastCombo);
-            put(ExitDirection.EAST, eastCombo);
-            put(ExitDirection.SOUTH_EAST, southEastCombo);
-            put(ExitDirection.SOUTH, southCombo);
-            put(ExitDirection.SOUTH_WEST, southWestCombo);
-            put(ExitDirection.WEST, westCombo);
-            put(ExitDirection.NORTH_WEST, northWestCombo);
-            put(ExitDirection.UP, upCombo);
-            put(ExitDirection.DOWN, downCombo);
+            put(NORTH, northCombo);
+            put(NORTH_EAST, northEastCombo);
+            put(EAST, eastCombo);
+            put(SOUTH_EAST, southEastCombo);
+            put(SOUTH, southCombo);
+            put(SOUTH_WEST, southWestCombo);
+            put(WEST, westCombo);
+            put(NORTH_WEST, northWestCombo);
+            put(UP, upCombo);
+            put(DOWN, downCombo);
         }
     };
     private boolean toGenerateId = false;

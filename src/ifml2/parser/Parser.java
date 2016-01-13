@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 import static ifml2.CommonUtils.uppercaseFirstLetter;
+import static ifml2.om.Word.GramCase.RP;
 import static java.lang.String.format;
 
 public class Parser
@@ -243,7 +244,7 @@ public class Parser
         {
             if (inaccessibleObject != null)
             {
-                throw new IFML2ParseException(format("Не вижу здесь %s.", inaccessibleObject.getName(Word.GramCaseEnum.RP)));
+                throw new IFML2ParseException(format("Не вижу здесь %s.", inaccessibleObject.getName(RP)));
             }
             else
             {
@@ -379,7 +380,7 @@ public class Parser
 
         else if (templateElement instanceof ObjectTemplateElement)
         {
-            Word.GramCaseEnum gramCase = ((ObjectTemplateElement) templateElement).getGramCase();
+            Word.GramCase gramCase = ((ObjectTemplateElement) templateElement).getGramCase();
 
             FitObjectWithPhraseResult fitObjectWithPhraseResult = fitObjectWithPhrase(gramCase, phrase, storyDataHelper);
             List<IFMLObject> objects = fitObjectWithPhraseResult.getObjects();
@@ -394,7 +395,7 @@ public class Parser
     }
 
     @NotNull
-    private FitObjectWithPhraseResult fitObjectWithPhrase(@NotNull Word.GramCaseEnum gramCase, @NotNull List<String> phrase,
+    private FitObjectWithPhraseResult fitObjectWithPhrase(@NotNull Word.GramCase gramCase, @NotNull List<String> phrase,
             @NotNull Story.DataHelper storyDataHelper) throws IFML2Exception
     {
         if (phrase.size() == 0)
@@ -447,7 +448,7 @@ public class Parser
         // case when dict word has no links to objects
         if (firstWordObjects.size() == 0)
         {
-            throw new IFML2ParseException(format("Вообще нигде не вижу %s.", firstWord.getFormByGramCase(Word.GramCaseEnum.RP)),
+            throw new IFML2ParseException(format("Вообще нигде не вижу %s.", firstWord.getFormByGramCase(RP)),
                     firstWordChunksCount);
         }
 
@@ -488,7 +489,7 @@ public class Parser
         return new FitObjectWithPhraseResult(foundWords, firstWordObjects, firstWordChunksCount);
     }
 
-    private int fitWordWithPhrase(Word word, Word.GramCaseEnum gramCase, List<String> restPhrase)
+    private int fitWordWithPhrase(Word word, Word.GramCase gramCase, List<String> restPhrase)
     {
         String casedDictWord = word.getFormByGramCase(gramCase);
         List<String> casedDictWordArray = Arrays.asList(casedDictWord.split("\\s+"));
@@ -642,10 +643,10 @@ public class Parser
 
     private class FittedObjects extends FittedFormalElement
     {
-        final Word.GramCaseEnum gramCase;
+        final Word.GramCase gramCase;
         List<IFMLObject> objects = new ArrayList<IFMLObject>();
 
-        public FittedObjects(List<IFMLObject> objects, Word.GramCaseEnum gramCase, String parameter)
+        public FittedObjects(List<IFMLObject> objects, Word.GramCase gramCase, String parameter)
         {
             this.objects = objects;
             this.gramCase = gramCase;

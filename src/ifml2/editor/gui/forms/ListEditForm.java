@@ -42,7 +42,7 @@ public abstract class ListEditForm<T> extends JInternalFrame
     private JButton delElementButton;
     private String objectNameVP;
     private String objectNameRP;
-    private Word.GenderEnum gender;
+    private Word.Gender gender;
     private JPopupMenu popupMenu;
     private List<ChangeListener> listChangeListeners = new ArrayList<ChangeListener>();
     private Class<T> clazz;
@@ -57,7 +57,7 @@ public abstract class ListEditForm<T> extends JInternalFrame
      * @param clazz        T class.
      */
     public ListEditForm(@Nullable final Window owner, @NotNull final String objectNameVP, @NotNull final String objectNameRP,
-            @NotNull final Word.GenderEnum gender, Class<T> clazz)
+            @NotNull final Word.Gender gender, Class<T> clazz)
     {
         setContentPane(contentPane);
 

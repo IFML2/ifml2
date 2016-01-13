@@ -10,6 +10,8 @@ import java.io.StreamTokenizer;
 import java.io.StringReader;
 import java.util.Stack;
 
+import static ifml2.vm.ExpressionCalculator.ExprContext.*;
+
 public class ExpressionCalculator
 {
     private static final char GET_PROPERTY_OPERATOR = '.';
@@ -45,7 +47,7 @@ public class ExpressionCalculator
         tokenizer.commentChar(0);
         tokenizer.quoteChar(QUOTE_CHAR);
         tokenizer.quoteChar(SINGLE_QUOTE_CHAR);
-        for (ExpressionOperatorEnum expressionOperator : ExpressionOperatorEnum.values())
+        for (ExpressionOperator expressionOperator : ExpressionOperator.values())
         {
             if (expressionOperator.operatorCharacter != 0)
             {
@@ -56,7 +58,7 @@ public class ExpressionCalculator
         CalculationStack calculationStack = new CalculationStack();
 
         int token;
-        ExprContextEnum context = ExprContextEnum.START;
+        ExprContext context = START;
         try
         {
             while ((token = tokenizer.nextToken()) != StreamTokenizer.TT_EOF)
@@ -66,25 +68,25 @@ public class ExpressionCalculator
                     case StreamTokenizer.TT_WORD:
                         if (NOT_OPERATOR.equalsIgnoreCase(tokenizer.sval))
                         {
-                            if (ExprContextEnum.OPERAND.equals(context))
+                            if (OPERAND.equals(context))
                             {
                                 // NOT can't follow operand!
                                 throw new IFML2ExpressionException("Ошибка в выражении: НЕ не может следовать за операндом");
                             }
-                            calculationStack.pushOperator(ExpressionOperatorEnum.NOT);
-                            context = ExprContextEnum.OPERATOR;
+                            calculationStack.pushOperator(ExpressionOperator.NOT);
+                            context = OPERATOR;
                         }
                         else if (AND_OPERATOR.equalsIgnoreCase(tokenizer.sval))
                         {
                             switch (context)
                             {
                                 case OPERAND:
-                                    calculationStack.pushOperator(ExpressionOperatorEnum.AND);
-                                    context = ExprContextEnum.OPERATOR;
+                                    calculationStack.pushOperator(ExpressionOperator.AND);
+                                    context = OPERATOR;
                                     break;
                                 default:
                                     calculationStack.pushSymbol(tokenizer.sval);
-                                    context = ExprContextEnum.OPERAND;
+                                    context = OPERAND;
                             }
                         }
                         else if (OR_OPERATOR.equalsIgnoreCase(tokenizer.sval))
@@ -92,12 +94,12 @@ public class ExpressionCalculator
                             switch (context)
                             {
                                 case OPERAND:
-                                    calculationStack.pushOperator(ExpressionOperatorEnum.OR);
-                                    context = ExprContextEnum.OPERATOR;
+                                    calculationStack.pushOperator(ExpressionOperator.OR);
+                                    context = OPERATOR;
                                     break;
                                 default:
                                     calculationStack.pushSymbol(tokenizer.sval);
-                                    context = ExprContextEnum.OPERAND;
+                                    context = OPERAND;
                             }
                         }
                         else if (IN_OPERATOR.equalsIgnoreCase(tokenizer.sval))
@@ -105,60 +107,60 @@ public class ExpressionCalculator
                             switch (context)
                             {
                                 case OPERAND:
-                                    calculationStack.pushOperator(ExpressionOperatorEnum.IN);
-                                    context = ExprContextEnum.OPERATOR;
+                                    calculationStack.pushOperator(ExpressionOperator.IN);
+                                    context = OPERATOR;
                                     break;
                                 default:
                                     calculationStack.pushSymbol(tokenizer.sval);
-                                    context = ExprContextEnum.OPERAND;
+                                    context = OPERAND;
                             }
                         }
                         else
                         {
-                            if (ExprContextEnum.OPERAND.equals(context))
+                            if (OPERAND.equals(context))
                             {
                                 throw new IFML2ExpressionException(
                                         "Ошибка в выражении: идентификатор ({0}) не может следовать за другим операндом", tokenizer.sval);
                             }
                             calculationStack.pushSymbol(tokenizer.sval);
-                            context = ExprContextEnum.OPERAND;
+                            context = OPERAND;
                         }
                         break;
 
                     case StreamTokenizer.TT_NUMBER:
-                        if (ExprContextEnum.OPERAND.equals(context))
+                        if (OPERAND.equals(context))
                         {
                             throw new IFML2ExpressionException("Ошибка в выражении: число ({0}) не может следовать за другим операндом",
                                     tokenizer.nval);
                         }
                         calculationStack.pushNumericLiteral(tokenizer.nval);
-                        context = ExprContextEnum.OPERAND;
+                        context = OPERAND;
                         break;
 
                     case QUOTE_CHAR:
                     case SINGLE_QUOTE_CHAR:
-                        if (ExprContextEnum.OPERAND.equals(context))
+                        if (OPERAND.equals(context))
                         {
                             throw new IFML2ExpressionException("Ошибка в выражении: текст ({0}) не может следовать за другим операндом",
                                     tokenizer.sval);
                         }
                         calculationStack.pushTextLiteral(tokenizer.sval);
-                        context = ExprContextEnum.OPERAND;
+                        context = OPERAND;
                         break;
 
                     case GET_PROPERTY_OPERATOR:
-                        calculationStack.pushOperator(ExpressionOperatorEnum.GET_PROPERTY);
-                        context = ExprContextEnum.OPERATOR;
+                        calculationStack.pushOperator(ExpressionOperator.GET_PROPERTY);
+                        context = OPERATOR;
                         break;
 
                     case EQUALITY_OPERATOR:
-                        calculationStack.pushOperator(ExpressionOperatorEnum.COMPARE_EQUALITY);
-                        context = ExprContextEnum.OPERATOR;
+                        calculationStack.pushOperator(ExpressionOperator.COMPARE_EQUALITY);
+                        context = OPERATOR;
                         break;
 
                     case ADD_OPERATOR:
-                        calculationStack.pushOperator(ExpressionOperatorEnum.ADD);
-                        context = ExprContextEnum.OPERATOR;
+                        calculationStack.pushOperator(ExpressionOperator.ADD);
+                        context = OPERATOR;
                         break;
 
                     default:
@@ -195,41 +197,41 @@ public class ExpressionCalculator
     /**
      * What is just happened
      */
-    enum ExprContextEnum
+    enum ExprContext
     {
         START,
         OPERATOR,
         OPERAND
     }
 
-    private enum OperatorTypeEnum
+    private enum OperatorType
     {
         BINARY,
         UNARY_RIGHT
     }
 
-    private enum ExpressionOperatorEnum
+    private enum ExpressionOperator
     {
         GET_PROPERTY(GET_PROPERTY_OPERATOR, 100),
-        IN(IN_OPERATOR, OperatorTypeEnum.BINARY, 50),
-        NOT(NOT_OPERATOR, OperatorTypeEnum.UNARY_RIGHT, 40),
+        IN(IN_OPERATOR, OperatorType.BINARY, 50),
+        NOT(NOT_OPERATOR, OperatorType.UNARY_RIGHT, 40),
         ADD(ADD_OPERATOR, 30),
         COMPARE_EQUALITY(EQUALITY_OPERATOR, 20),
-        AND(AND_OPERATOR, OperatorTypeEnum.BINARY, 10),
-        OR(OR_OPERATOR, OperatorTypeEnum.BINARY, 5);
+        AND(AND_OPERATOR, OperatorType.BINARY, 10),
+        OR(OR_OPERATOR, OperatorType.BINARY, 5);
 
         public final char operatorCharacter;
         public final int priority;
         public String operatorString;
-        private OperatorTypeEnum operatorType = OperatorTypeEnum.BINARY;
+        private OperatorType operatorType = OperatorType.BINARY;
 
-        ExpressionOperatorEnum(char operatorCharacter, int priority)
+        ExpressionOperator(char operatorCharacter, int priority)
         {
             this.operatorCharacter = operatorCharacter;
             this.priority = priority;
         }
 
-        ExpressionOperatorEnum(String operatorString, OperatorTypeEnum operatorType, int priority)
+        ExpressionOperator(String operatorString, OperatorType operatorType, int priority)
         {
             this((char) 0, priority);
             this.operatorString = operatorString;
@@ -240,7 +242,7 @@ public class ExpressionCalculator
     private class CalculationStack
     {
         final Stack<Value> valueStack = new Stack<Value>();
-        final Stack<ExpressionOperatorEnum> operatorStack = new Stack<ExpressionOperatorEnum>();
+        final Stack<ExpressionOperator> operatorStack = new Stack<ExpressionOperator>();
 
         public void pushSymbol(String symbol)
         {
@@ -257,7 +259,7 @@ public class ExpressionCalculator
             valueStack.push(new NumberValue(number));
         }
 
-        public void pushOperator(ExpressionOperatorEnum operator) throws IFML2Exception
+        public void pushOperator(ExpressionOperator operator) throws IFML2Exception
         {
             operatorStack.push(operator);
             shrink();
@@ -267,8 +269,8 @@ public class ExpressionCalculator
         {
             while (operatorStack.size() >= 2)
             {
-                ExpressionOperatorEnum lastOperator = operatorStack.pop();
-                ExpressionOperatorEnum prevOperator = operatorStack.pop();
+                ExpressionOperator lastOperator = operatorStack.pop();
+                ExpressionOperator prevOperator = operatorStack.pop();
 
                 if (firstHasLessOrEqPriority(lastOperator, prevOperator))
                 {
@@ -287,7 +289,7 @@ public class ExpressionCalculator
             }
         }
 
-        private Value doOperation(ExpressionOperatorEnum operator) throws IFML2Exception
+        private Value doOperation(ExpressionOperator operator) throws IFML2Exception
         {
             Value result;
 
@@ -344,7 +346,7 @@ public class ExpressionCalculator
 
                     assert resolvedLeftValue != null;
 
-                    Value.ValueCompareResultEnum compareResult = resolvedLeftValue.compareTo(resolvedRightValue);
+                    Value.CompareResult compareResult = resolvedLeftValue.compareTo(resolvedRightValue);
                     switch (compareResult)
                     {
                         case EQUAL:
@@ -386,7 +388,7 @@ public class ExpressionCalculator
                     else
                     {
                         throw new IFML2ExpressionException("Не поддерживается операция \"{0}\" между типом \"{1}\" и \"{2}\"",
-                                Value.OperationEnum.ADD, resolvedLeftValue.getTypeName(), resolvedLeftValue.getTypeName());
+                                Value.Operation.ADD, resolvedLeftValue.getTypeName(), resolvedLeftValue.getTypeName());
                     }
 
                     break;
@@ -499,7 +501,7 @@ public class ExpressionCalculator
             return preparedValue;
         }
 
-        private boolean firstHasLessOrEqPriority(ExpressionOperatorEnum firstOperator, ExpressionOperatorEnum secondOperator)
+        private boolean firstHasLessOrEqPriority(ExpressionOperator firstOperator, ExpressionOperator secondOperator)
         {
             return firstOperator.priority <= secondOperator.priority;
         }
@@ -516,7 +518,7 @@ public class ExpressionCalculator
 
             while (!operatorStack.isEmpty())
             {
-                ExpressionOperatorEnum operator = operatorStack.pop();
+                ExpressionOperator operator = operatorStack.pop();
 
                 Value operationResult = doOperation(operator);
 

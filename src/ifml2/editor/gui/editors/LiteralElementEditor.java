@@ -11,12 +11,13 @@ import ifml2.editor.gui.AbstractEditor;
 import ifml2.om.LiteralTemplateElement;
 import ifml2.om.Parameter;
 import ifml2.om.Procedure;
-import ifml2.om.Word;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+
+import static ifml2.om.Word.Gender.MASCULINE;
 
 public class LiteralElementEditor extends AbstractEditor<LiteralTemplateElement>
 {
@@ -75,7 +76,7 @@ public class LiteralElementEditor extends AbstractEditor<LiteralTemplateElement>
             {
                 String selectedSynonym = (String) synonymsList.getSelectedValue();
                 if (selectedSynonym != null && GUIUtils.showDeleteConfirmDialog(LiteralElementEditor.this, "синоним", "синонима",
-                                                                                Word.GenderEnum.MASCULINE))
+                        MASCULINE))
                 {
                     synonymsClone.remove(selectedSynonym);
                 }

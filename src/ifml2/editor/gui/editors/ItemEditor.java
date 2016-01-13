@@ -25,6 +25,9 @@ import java.awt.event.KeyEvent;
 import java.text.MessageFormat;
 import java.util.List;
 
+import static ifml2.om.Word.Gender.FEMININE;
+import static ifml2.om.Word.Gender.MASCULINE;
+
 public class ItemEditor extends AbstractEditor<Item>
 {
     private static final String ITEM_EDITOR_TITLE = "Предмет";
@@ -282,7 +285,7 @@ public class ItemEditor extends AbstractEditor<Item>
 
     private void createUIComponents()
     {
-        rolesListEditForm = new ListEditForm<Role>(this, "роль", "роли", Word.GenderEnum.FEMININE, Role.class)
+        rolesListEditForm = new ListEditForm<Role>(this, "роль", "роли", FEMININE, Role.class)
         {
             @Override
             protected Role createElement() throws Exception
@@ -322,7 +325,7 @@ public class ItemEditor extends AbstractEditor<Item>
             }
         };
 
-        hooksListEditForm = new ListEditForm<Hook>(this, "перехват", "перехвата", Word.GenderEnum.MASCULINE, Hook.class)
+        hooksListEditForm = new ListEditForm<Hook>(this, "перехват", "перехвата", MASCULINE, Hook.class)
         {
             @Override
             protected Hook createElement() throws Exception

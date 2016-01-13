@@ -55,7 +55,7 @@ public class ObjectElementEditor extends AbstractEditor<ObjectTemplateElement>
 
         // load data
 
-        comboCase.setModel(new DefaultComboBoxModel(Word.GramCaseEnum.values()));
+        comboCase.setModel(new DefaultComboBoxModel(Word.GramCase.values()));
         comboCase.setSelectedItem(elementClone.getGramCase());
 
         if (procedure != null)
@@ -87,7 +87,7 @@ public class ObjectElementEditor extends AbstractEditor<ObjectTemplateElement>
     @Override
     public void getData(@NotNull ObjectTemplateElement data) throws IFML2EditorException
     {
-        data.setGramCase((Word.GramCaseEnum) comboCase.getSelectedItem());
+        data.setGramCase((Word.GramCase) comboCase.getSelectedItem());
         Parameter selectedItem = (Parameter) comboParameter.getSelectedItem();
         data.setParameter(checkUseParameter.isSelected() && selectedItem != null ? selectedItem.toString() : null);
     }

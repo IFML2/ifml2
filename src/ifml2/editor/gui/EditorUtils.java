@@ -3,7 +3,6 @@ package ifml2.editor.gui;
 import ifml2.GUIUtils;
 import ifml2.editor.IFML2EditorException;
 import ifml2.editor.gui.instructions.AbstractInstrEditor;
-import ifml2.editor.gui.instructions.InstructionTypeEnum;
 import ifml2.om.Story;
 import ifml2.vm.instructions.Instruction;
 import org.jetbrains.annotations.NotNull;
@@ -17,11 +16,11 @@ import java.text.MessageFormat;
 
 public class EditorUtils
 {
-    public static InstructionTypeEnum askInstructionType(Dialog owner)
+    public static Instruction.Type askInstructionType(Dialog owner)
     {
-        return (InstructionTypeEnum) JOptionPane
-                .showInputDialog(owner, "Выберите тип инструкции", "Новая инструкция", JOptionPane.QUESTION_MESSAGE,
-                                 null, InstructionTypeEnum.values(), InstructionTypeEnum.SHOW_MESSAGE);
+        return (Instruction.Type) JOptionPane
+                .showInputDialog(owner, "Выберите тип инструкции", "Новая инструкция", JOptionPane.QUESTION_MESSAGE, null,
+                        Instruction.Type.values(), Instruction.Type.SHOW_MESSAGE);
     }
 
     /**
@@ -36,7 +35,7 @@ public class EditorUtils
     {
         try
         {
-            InstructionTypeEnum instrType = InstructionTypeEnum.getItemByClass(instruction.getClass());
+            Instruction.Type instrType = Instruction.Type.getItemByClass(instruction.getClass());
             Class<? extends Instruction> instrClass = instrType.getInstrClass();
             Class<? extends AbstractInstrEditor> editorClass = instrType.getAssociatedEditor();
             if (editorClass != null)

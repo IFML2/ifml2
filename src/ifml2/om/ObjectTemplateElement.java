@@ -4,15 +4,15 @@ import javax.xml.bind.annotation.XmlAttribute;
 
 public class ObjectTemplateElement extends TemplateElement
 {
-    private Word.GramCaseEnum gramCase = Word.GramCaseEnum.IP;
+    private Word.GramCase gramCase = Word.GramCase.IP;
 
     @XmlAttribute(name = "case")
-    public Word.GramCaseEnum getGramCase()
+    public Word.GramCase getGramCase()
     {
         return gramCase;
     }
 
-    public void setGramCase(Word.GramCaseEnum gramCase)
+    public void setGramCase(Word.GramCase gramCase)
     {
         this.gramCase = gramCase;
     }

@@ -7,6 +7,8 @@ import ca.odell.glazedlists.event.ListEvent;
 import ca.odell.glazedlists.event.ListEventListener;
 import ifml2.CommonUtils;
 import ifml2.IFML2Exception;
+import ifml2.om.Location.ExitDirection;
+import ifml2.om.Procedure.SystemProcedureType;
 import ifml2.om.xml.xmladapters.DictionaryAdapter;
 import ifml2.om.xml.xmladapters.LocationAdapter;
 import ifml2.om.xml.xmladapters.UsedLibrariesAdapter;
@@ -291,12 +293,12 @@ public class Story
         return MessageFormat.format("История \"{0}\"", id);
     }
 
-    public Procedure getSystemInheritorProcedure(Procedure.SystemProcedureEnum systemProcedure)
+    public Procedure getSystemInheritorProcedure(SystemProcedureType systemProcedureType)
     {
         // for this story
         for (Procedure procedure : procedures)
         {
-            if (systemProcedure.equals(procedure.getInheritsSystemProcedure()))
+            if (systemProcedureType.equals(procedure.getInheritsSystemProcedure()))
             {
                 return procedure;
             }
@@ -307,7 +309,7 @@ public class Story
         {
             for (Procedure procedure : library.procedures)
             {
-                if (systemProcedure.equals(procedure.getInheritsSystemProcedure()))
+                if (systemProcedureType.equals(procedure.getInheritsSystemProcedure()))
                 {
                     return procedure;
                 }

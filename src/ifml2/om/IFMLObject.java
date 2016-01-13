@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.xml.bind.annotation.*;
 import java.text.MessageFormat;
 
-import static ifml2.om.Word.GramCaseEnum;
+import static ifml2.om.Word.GramCase;
 import static ifml2.om.xml.XmlSchemaConstants.*;
 
 @XmlAccessorType(XmlAccessType.NONE)
@@ -135,7 +135,7 @@ public class IFMLObject extends IFMLEntity implements Cloneable
         return name;
     }
 
-    public String getName(GramCaseEnum gramCase) throws IFML2Exception
+    public String getName(GramCase gramCase) throws IFML2Exception
     {
         if (wordLinks == null)
         {
@@ -162,7 +162,7 @@ public class IFMLObject extends IFMLEntity implements Cloneable
         }
 
         // test gram cases
-        GramCaseEnum caseEnum = GramCaseEnum.getValueByAbbr(propertyName);
+        GramCase caseEnum = GramCase.getValueByAbbr(propertyName);
         if (caseEnum != null)
         {
             return new TextValue(wordLinks.getMainWord().getFormByGramCase(caseEnum));
