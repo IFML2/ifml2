@@ -29,6 +29,9 @@ import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 
+import static ifml2.CommonConstants.RUSSIAN_PRODUCT_NAME;
+import static java.lang.String.format;
+
 public class Editor extends JFrame
 {
     private static final String FILE_MENU_NAME = "Файл";
@@ -169,9 +172,8 @@ public class Editor extends JFrame
      */
     private void updateTitle()
     {
-        File file = new File(storyFileName);
-        String fileName = file.getName();
-        String editorTitle = MessageFormat.format("ЯРИЛ 2.0 Редактор {0} -- {1}{2}", EngineVersion.VERSION, fileName,
+        String fileName = new File(storyFileName).getName();
+        String editorTitle =  format("%s Редактор %s -- %s%s", RUSSIAN_PRODUCT_NAME, EngineVersion.VERSION, fileName,
                 isStoryEdited ? " - * история не сохранена" : "");
         setTitle(editorTitle);
     }

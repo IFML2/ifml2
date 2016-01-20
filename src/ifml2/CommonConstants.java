@@ -22,4 +22,5 @@ public interface CommonConstants
     String LIBRARY_FILE_FILTER_NAME = MessageFormat.format("Файл библиотеки (*{0})", LIBRARY_EXTENSION);
     String PARSE_ERROR_HANDLER_PRM_PHRASE = "Фраза";
     String PARSE_ERROR_HANDLER_PRM_ERROR = "Ошибка";
+    String RUSSIAN_PRODUCT_NAME = "ЯРИЛ 2.0";
 }

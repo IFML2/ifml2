@@ -24,6 +24,9 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.ListIterator;
 
+import static ifml2.CommonConstants.RUSSIAN_PRODUCT_NAME;
+import static java.lang.String.format;
+
 public class GUIPlayer extends JFrame
 {
     private static final Logger LOG = Logger.getLogger(GUIPlayer.class);
@@ -43,7 +46,7 @@ public class GUIPlayer extends JFrame
 
     private GUIPlayer(boolean fromTempFile)
     {
-        super("ЯРИЛ 2.0 Плеер " + EngineVersion.VERSION);
+        super(format("%s Плеер %s", RUSSIAN_PRODUCT_NAME, EngineVersion.VERSION));
         this.isFromTempFile = fromTempFile;
 
         setContentPane(mainPanel);
@@ -541,7 +544,7 @@ public class GUIPlayer extends JFrame
                 titleFile = file.getName();
             }
         }
-        setTitle("ЯРИЛ 2.0 Плеер " + EngineVersion.VERSION + " -- " + titleFile);
+        setTitle(format("%s Плеер %s -- %s", RUSSIAN_PRODUCT_NAME, EngineVersion.VERSION, titleFile));
     }
 
     private class GUIPlayerGameInterface implements GameInterface
