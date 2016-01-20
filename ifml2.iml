@@ -24,8 +24,8 @@
       </library>
     </orderEntry>
     <orderEntry type="library" scope="TEST" name="junit:junit:Latest" level="project" />
-    <orderEntry type="library" scope="TEST" name="org.mockito:mockito-core:Latest" level="project" />
     <orderEntry type="library" name="log4j:log4j:Latest" level="project" />
     <orderEntry type="library" name="net.java.dev.glazedlists:glazedlists_java15:Latest" level="project" />
+    <orderEntry type="library" name="org.mockito:mockito-core:Latest" level="project" />
   </component>
 </module>
