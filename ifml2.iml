@@ -7,6 +7,7 @@
       <sourceFolder url="file://$MODULE_DIR$/unittests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/ifml2/editor/gui/images" type="java-resource" />
       <excludeFolder url="file://$MODULE_DIR$/JSmooth" />
+      <excludeFolder url="file://$MODULE_DIR$/bitrock" />
       <excludeFolder url="file://$MODULE_DIR$/launch4j" />
       <excludeFolder url="file://$MODULE_DIR$/lib" />
       <excludeFolder url="file://$MODULE_DIR$/portable" />
