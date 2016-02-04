@@ -26,7 +26,7 @@ import static java.lang.String.*;
 public class TestRunner extends JFrame
 {
     private final TestManager testManager = new TestManager();
-    private final ArrayList<ListDataListener> commandsListDataListeners = new ArrayList<ListDataListener>();
+    private final ArrayList<ListDataListener> commandsListDataListeners = new ArrayList<>();
     private JList<IFMLTestPlan> testsList;
     private JList<String> commandsList;
     private JTextArea logText;
@@ -107,43 +107,38 @@ public class TestRunner extends JFrame
                 commandsListDataListeners.remove(l);
             }
         });
-        loadTestsButton.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent event)
+        loadTestsButton.addActionListener(event -> {
+            JFileChooser testFileChooser = new JFileChooser(CommonUtils.getTestsDirectory());
+            testFileChooser.setFileFilter(new FileFilter()
             {
-                JFileChooser testFileChooser = new JFileChooser(CommonUtils.getTestsDirectory());
-                testFileChooser.setFileFilter(new FileFilter()
+                @Override
+                public String getDescription()
                 {
-                    @Override
-                    public String getDescription()
-                    {
-                        return CommonConstants.TEST_FILE_FILTER_NAME;
-                    }
-
-                    @Override
-                    public boolean accept(File file)
-                    {
-                        return file.isDirectory() || file.getName().toLowerCase().endsWith(CommonConstants.TEST_EXTENSION);
-                    }
-                });
-                testFileChooser.setMultiSelectionEnabled(true);
-
-                if (testFileChooser.showOpenDialog(TestRunner.this) != JFileChooser.APPROVE_OPTION)
-                {
-                    return;
+                    return CommonConstants.TEST_FILE_FILTER_NAME;
                 }
 
-                File[] testFiles = testFileChooser.getSelectedFiles();
+                @Override
+                public boolean accept(File file)
+                {
+                    return file.isDirectory() || file.getName().toLowerCase().endsWith(CommonConstants.TEST_EXTENSION);
+                }
+            });
+            testFileChooser.setMultiSelectionEnabled(true);
 
-                try
-                {
-                    loadTestsFromFiles(testFiles);
-                }
-                catch (Throwable e)
-                {
-                    showError(e);
-                }
+            if (testFileChooser.showOpenDialog(TestRunner.this) != JFileChooser.APPROVE_OPTION)
+            {
+                return;
+            }
+
+            File[] testFiles = testFileChooser.getSelectedFiles();
+
+            try
+            {
+                loadTestsFromFiles(testFiles);
+            }
+            catch (Throwable e)
+            {
+                showError(e);
             }
         });
         startButton.addActionListener(new ActionListener()
@@ -209,7 +204,7 @@ public class TestRunner extends JFrame
     {
         try
         {
-            ArrayList<File> files = new ArrayList<File>();
+            ArrayList<File> files = new ArrayList<>();
             for (String fileToLoad : testsToLoad)
             {
                 File testFile = new File(fileToLoad);
