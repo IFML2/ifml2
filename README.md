@@ -1,8 +1,9 @@
-ifml2
-=====
+# Interactive Fiction Markup Language ver. 2.0
 
-[![Build Status](https://travis-ci.org/realsonic/ifml2.svg)](https://travis-ci.org/realsonic/ifml2)
+Russian [Interactive Fiction](http://ifwiki.org/index.php/Interactive_fiction) Platform ([parser](http://ifwiki.org/index.php/Parser)).
 
-Russian Interactive Fiction Platform (parser)
+[More info](http://forum.ifiction.ru/viewtopic.php?id=1765) (russian).
 
-More info (russian): http://forum.ifiction.ru/viewtopic.php?id=1765
+## Supported by
+* Cross-platform installer  
+[![BitRock Logo](https://dl.dropboxusercontent.com/u/87862945/IFML2/installersby_tiny.png)](http://bitrock.com)
