@@ -1,13 +1,11 @@
 package ifml2.players.guiplayer;
 
-import ifml2.CommonConstants;
 import ifml2.CommonUtils;
 import ifml2.GUIUtils;
 import ifml2.IFML2Exception;
 import ifml2.engine.Engine;
-import ifml2.engine.EngineVersion;
 import ifml2.om.IFML2LoadXmlException;
-import ifml2.players.GameInterface;
+import ifml2.engine.featureproviders.text.IOutputPlainTextProvider;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
@@ -24,10 +22,13 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.ListIterator;
 
-import static ifml2.CommonConstants.RUSSIAN_PRODUCT_NAME;
+import static ifml2.CommonConstants.*;
+import static ifml2.GUIUtils.*;
+import static ifml2.engine.EngineVersion.VERSION;
 import static java.lang.String.format;
+import static javax.swing.JOptionPane.*;
 
-public class GUIPlayer extends JFrame implements GameInterface
+public class GUIPlayer extends JFrame implements IOutputPlainTextProvider
 {
     private static final Logger LOG = Logger.getLogger(GUIPlayer.class);
     private static final String START_ANEW_COMMAND = "заново!";
@@ -45,7 +46,7 @@ public class GUIPlayer extends JFrame implements GameInterface
 
     private GUIPlayer(boolean fromTempFile)
     {
-        super(format("%s Плеер %s", RUSSIAN_PRODUCT_NAME, EngineVersion.VERSION));
+        super(format("%s Плеер %s", RUSSIAN_PRODUCT_NAME, VERSION));
         this.isFromTempFile = fromTempFile;
 
         setContentPane(mainPanel);
@@ -92,7 +93,7 @@ public class GUIPlayer extends JFrame implements GameInterface
                     }
                     else
                     {
-                        processCommand(inputText());
+                        processCommand(getCommandText());
                     }
                 }
                 else
@@ -147,14 +148,14 @@ public class GUIPlayer extends JFrame implements GameInterface
             @Override
             public String getDescription()
             {
-                return CommonConstants.STORY_ALL_TYPES_FILE_FILTER_NAME;
+                return STORY_ALL_TYPES_FILE_FILTER_NAME;
             }
 
             @Override
             public boolean accept(File f)
             {
-                return f.isDirectory() || f.getName().toLowerCase().endsWith(CommonConstants.STORY_EXTENSION) ||
-                       f.getName().toLowerCase().endsWith(CommonConstants.CIPHERED_STORY_EXTENSION);
+                return f.isDirectory() || f.getName().toLowerCase().endsWith(STORY_EXTENSION) ||
+                       f.getName().toLowerCase().endsWith(CIPHERED_STORY_EXTENSION);
             }
         });
 
@@ -163,11 +164,7 @@ public class GUIPlayer extends JFrame implements GameInterface
             @Override
             public Icon getIcon(File f)
             {
-                if (f.isDirectory())
-                {
-                    return GUIUtils.DIRECTORY_ICON;
-                }
-                return GUIUtils.STORY_FILE_ICON;
+                return f.isDirectory() ? DIRECTORY_ICON : STORY_FILE_ICON;
             }
         });
 
@@ -204,7 +201,7 @@ public class GUIPlayer extends JFrame implements GameInterface
 
         if ("".equals(gamerCommand.trim()))
         {
-            outputText("Введите что-нибудь.\n");
+            outputPlainText("Введите что-нибудь.\n");
             return;
         }
 
@@ -232,7 +229,7 @@ public class GUIPlayer extends JFrame implements GameInterface
         }
         catch (IFML2Exception ex)
         {
-            ReportError(ex, "Ошибка при перезапуске истории!");
+            reportError(ex, "Ошибка при перезапуске истории!");
         }
 
         engine.executeGamerCommand(gamerCommand);
@@ -247,13 +244,13 @@ public class GUIPlayer extends JFrame implements GameInterface
             @Override
             public String getDescription()
             {
-                return CommonConstants.SAVE_FILE_FILTER_NAME;
+                return SAVE_FILE_FILTER_NAME;
             }
 
             @Override
             public boolean accept(File f)
             {
-                return f.isDirectory() || f.getName().toLowerCase().endsWith(CommonConstants.SAVE_EXTENSION);
+                return f.isDirectory() || f.getName().toLowerCase().endsWith(SAVE_EXTENSION);
             }
         });
 
@@ -262,11 +259,7 @@ public class GUIPlayer extends JFrame implements GameInterface
             @Override
             public Icon getIcon(File f)
             {
-                if (f.isDirectory())
-                {
-                    return GUIUtils.DIRECTORY_ICON;
-                }
-                return GUIUtils.SAVE_FILE_ICON;
+                return f.isDirectory() ? DIRECTORY_ICON : SAVE_FILE_ICON;
             }
         });
 
@@ -281,7 +274,7 @@ public class GUIPlayer extends JFrame implements GameInterface
                 }
                 else
                 {
-                    outputText("Выбранный файл не существует.");
+                    outputPlainText("Выбранный файл не существует.");
                 }
             }
             catch (IFML2Exception ex)
@@ -291,7 +284,7 @@ public class GUIPlayer extends JFrame implements GameInterface
         }
         else
         {
-            outputText("Загрузка отменена.\n");
+            outputPlainText("Загрузка отменена.\n");
         }
     }
 
@@ -304,13 +297,13 @@ public class GUIPlayer extends JFrame implements GameInterface
             @Override
             public String getDescription()
             {
-                return CommonConstants.SAVE_FILE_FILTER_NAME;
+                return SAVE_FILE_FILTER_NAME;
             }
 
             @Override
             public boolean accept(File f)
             {
-                return f.isDirectory() || f.getName().toLowerCase().endsWith(CommonConstants.SAVE_EXTENSION);
+                return f.isDirectory() || f.getName().toLowerCase().endsWith(SAVE_EXTENSION);
             }
         });
 
@@ -319,11 +312,7 @@ public class GUIPlayer extends JFrame implements GameInterface
             @Override
             public Icon getIcon(File f)
             {
-                if (f.isDirectory())
-                {
-                    return GUIUtils.DIRECTORY_ICON;
-                }
-                return GUIUtils.SAVE_FILE_ICON;
+                return f.isDirectory() ? DIRECTORY_ICON : SAVE_FILE_ICON;
             }
         });
 
@@ -331,9 +320,9 @@ public class GUIPlayer extends JFrame implements GameInterface
         if (savedGameFileChooser.showSaveDialog(GUIPlayer.this) == JFileChooser.APPROVE_OPTION)
         {
             String saveFileName = savedGameFileChooser.getSelectedFile().getAbsolutePath();
-            if (!saveFileName.toLowerCase().endsWith(CommonConstants.SAVE_EXTENSION))
+            if (!saveFileName.toLowerCase().endsWith(SAVE_EXTENSION))
             {
-                saveFileName += CommonConstants.SAVE_EXTENSION;
+                saveFileName += SAVE_EXTENSION;
             }
             try
             {
@@ -346,13 +335,13 @@ public class GUIPlayer extends JFrame implements GameInterface
         }
         else
         {
-            outputText("Сохранение отменено.\n");
+            outputPlainText("Сохранение отменено.\n");
         }
     }
 
     private void startAnew() throws IFML2Exception
     {
-        outputText("Начинаем заново...\n");
+        outputPlainText("Начинаем заново...\n");
         engine.loadStory(storyFile, true);
         engine.initGame();
     }
@@ -362,16 +351,16 @@ public class GUIPlayer extends JFrame implements GameInterface
         JMenuBar mainMenu = new JMenuBar();
 
         JMenu storyMenu = new JMenu("История");
-        storyMenu.add(new AbstractAction("Начать новую историю...", GUIUtils.NEW_ELEMENT_ICON)
+        storyMenu.add(new AbstractAction("Начать новую историю...", NEW_ELEMENT_ICON)
         {
             @Override
             public void actionPerformed(ActionEvent e)
             {
                 int answer = JOptionPane.showConfirmDialog(GUIPlayer.this,
                         "Вы действительно хотите завершить текущую историю и начать новую?\r\n" +
-                        "Ведь всё, чего Вы тут достигли - не сохранится.", "Новая история", JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE);
-                if (answer == JOptionPane.YES_OPTION)
+                        "Ведь всё, чего Вы тут достигли - не сохранится.", "Новая история", YES_NO_OPTION,
+                        QUESTION_MESSAGE);
+                if (answer == YES_OPTION)
                 {
                     String fileName = showOpenStoryFileDialog(GUIPlayer.this);
                     if (fileName != null)
@@ -390,8 +379,8 @@ public class GUIPlayer extends JFrame implements GameInterface
             {
                 int answer = JOptionPane.showConfirmDialog(GUIPlayer.this,
                         "Вы действительно хотите начать историю заново?\r\n" + "Ведь всё, чего Вы тут достигли - не сохранится.",
-                        "Начать заново", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                if (answer == JOptionPane.YES_OPTION)
+                        "Начать заново", YES_NO_OPTION, QUESTION_MESSAGE);
+                if (answer == YES_OPTION)
                 {
                     processCommand(START_ANEW_COMMAND);
                 }
@@ -400,7 +389,7 @@ public class GUIPlayer extends JFrame implements GameInterface
             }
         });
         storyMenu.addSeparator();
-        storyMenu.add(new AbstractAction("Сохранить игру...", GUIUtils.SAVE_ICON)
+        storyMenu.add(new AbstractAction("Сохранить игру...", SAVE_ICON)
         {
             @Override
             public void actionPerformed(ActionEvent e)
@@ -408,7 +397,7 @@ public class GUIPlayer extends JFrame implements GameInterface
                 processCommand(SAVE_COMMAND);
             }
         });
-        storyMenu.add(new AbstractAction("Загрузить игру...", GUIUtils.OPEN_ICON)
+        storyMenu.add(new AbstractAction("Загрузить игру...", OPEN_ICON)
         {
             @Override
             public void actionPerformed(ActionEvent e)
@@ -424,8 +413,8 @@ public class GUIPlayer extends JFrame implements GameInterface
             {
                 int answer = JOptionPane.showConfirmDialog(GUIPlayer.this,
                         "Вы действительно хотите выйти?\r\n" + "Ведь всё, чего Вы тут достигли - не сохранится.", "Выйти",
-                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                if (answer == JOptionPane.YES_OPTION)
+                        YES_NO_OPTION, QUESTION_MESSAGE);
+                if (answer == YES_OPTION)
                 {
                     GUIPlayer.this.dispose();
                 }
@@ -463,29 +452,29 @@ public class GUIPlayer extends JFrame implements GameInterface
         }
         catch (Throwable e)
         {
-            ReportError(e, "Ошибка при загрузке истории!");
+            reportError(e, "Ошибка при загрузке истории!");
         }
     }
 
-    private void ReportError(Throwable exception, String message)
+    private void reportError(Throwable exception, String message)
     {
         exception.printStackTrace();
         LOG.error(message, exception);
         if (exception instanceof IFML2LoadXmlException)
         {
-            outputText("\nВ файле истории есть ошибки:");
+            outputPlainText("\nВ файле истории есть ошибки:");
             for (ValidationEvent validationEvent : ((IFML2LoadXmlException) exception).getEvents())
             {
-                outputText(MessageFormat
-                        .format("\n\"{0}\" at {1},{2}", validationEvent.getMessage(), validationEvent.getLocator().getLineNumber(),
-                                validationEvent.getLocator().getColumnNumber()));
+                outputPlainText(MessageFormat
+                                .format("\n\"{0}\" at {1},{2}", validationEvent.getMessage(), validationEvent.getLocator().getLineNumber(),
+                                        validationEvent.getLocator().getColumnNumber()));
             }
         }
         else
         {
             StringWriter stringWriter = new StringWriter();
             exception.printStackTrace(new PrintWriter(stringWriter));
-            outputText(MessageFormat.format("\nПроизошла ошибка: {0}", stringWriter.toString()));
+            outputPlainText(MessageFormat.format("\nПроизошла ошибка: {0}", stringWriter.toString()));
         }
     }
 
@@ -526,27 +515,19 @@ public class GUIPlayer extends JFrame implements GameInterface
                 titleFile = file.getName();
             }
         }
-        setTitle(format("%s Плеер %s -- %s", RUSSIAN_PRODUCT_NAME, EngineVersion.VERSION, titleFile));
+        setTitle(format("%s Плеер %s -- %s", RUSSIAN_PRODUCT_NAME, VERSION, titleFile));
     }
 
-    public void outputText(String text)
-    {
-        logTextArea.append(text);
-    }
-
-    @Override
-    public String inputText()
+    public String getCommandText()
     {
         String command = commandText.getText();
         commandText.setText("");
-        //echoCommand(command);
-
         return command;
     }
 
     private void echoCommand(String command)
     {
-        outputText("\n");
+        outputPlainText("\n");
 
         // prepare for scrolling to command
         Rectangle startLocation;
@@ -562,7 +543,7 @@ public class GUIPlayer extends JFrame implements GameInterface
         }
 
         // echo command
-        outputText("> " + command + "\n");
+        outputPlainText("> " + command + "\n");
 
         // scroll to inputted command
         final Point viewPosition = new Point(startLocation.x, startLocation.y);
@@ -581,5 +562,10 @@ public class GUIPlayer extends JFrame implements GameInterface
                 }
             }
         });
+    }
+
+    @Override
+    public void outputPlainText(String text) {
+        logTextArea.append(text);
     }
 }

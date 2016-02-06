@@ -241,8 +241,8 @@ public class ExpressionCalculator
 
     private class CalculationStack
     {
-        final Stack<Value> valueStack = new Stack<Value>();
-        final Stack<ExpressionOperator> operatorStack = new Stack<ExpressionOperator>();
+        final Stack<Value> valueStack = new Stack<>();
+        final Stack<ExpressionOperator> operatorStack = new Stack<>();
 
         public void pushSymbol(String symbol)
         {
