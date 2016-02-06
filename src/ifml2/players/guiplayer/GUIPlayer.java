@@ -4,6 +4,7 @@ import ifml2.CommonUtils;
 import ifml2.GUIUtils;
 import ifml2.IFML2Exception;
 import ifml2.engine.Engine;
+import ifml2.engine.featureproviders.graphic.IOutputIconProvider;
 import ifml2.om.IFML2LoadXmlException;
 import ifml2.engine.featureproviders.text.IOutputPlainTextProvider;
 import org.apache.log4j.Logger;
@@ -12,6 +13,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileView;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.StyledDocument;
 import javax.xml.bind.ValidationEvent;
 import java.awt.*;
 import java.awt.event.*;
@@ -28,7 +30,7 @@ import static ifml2.engine.EngineVersion.VERSION;
 import static java.lang.String.format;
 import static javax.swing.JOptionPane.*;
 
-public class GUIPlayer extends JFrame implements IOutputPlainTextProvider
+public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutputIconProvider
 {
     private static final Logger LOG = Logger.getLogger(GUIPlayer.class);
     private static final String START_ANEW_COMMAND = "заново!";
@@ -37,7 +39,7 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider
     private final ArrayList<String> commandHistory = new ArrayList<>();
     private JPanel mainPanel;
     private JTextField commandText;
-    private JTextArea logTextArea;
+    private JTextPane logTextPane;
     private JScrollPane scrollPane;
     private Engine engine = new Engine(this);
     private ListIterator<String> historyIterator = commandHistory.listIterator();
@@ -440,9 +442,9 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider
         // load story
         try
         {
-            logTextArea.setText("Загрузка...");
+            logTextPane.setText("Загрузка...");
             engine.loadStory(this.storyFile, true);
-            logTextArea.setText("");
+            logTextPane.setText("");
             engine.initGame();
 
             SwingUtilities.invokeLater(() -> {
@@ -460,22 +462,23 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider
     {
         exception.printStackTrace();
         LOG.error(message, exception);
-        if (exception instanceof IFML2LoadXmlException)
-        {
-            outputPlainText("\nВ файле истории есть ошибки:");
-            for (ValidationEvent validationEvent : ((IFML2LoadXmlException) exception).getEvents())
+
+            if (exception instanceof IFML2LoadXmlException)
             {
-                outputPlainText(MessageFormat
-                                .format("\n\"{0}\" at {1},{2}", validationEvent.getMessage(), validationEvent.getLocator().getLineNumber(),
-                                        validationEvent.getLocator().getColumnNumber()));
+                outputPlainText("\nВ файле истории есть ошибки:");
+                for (ValidationEvent validationEvent : ((IFML2LoadXmlException) exception).getEvents())
+                {
+                    outputPlainText(MessageFormat
+                                    .format("\n\"{0}\" at {1},{2}", validationEvent.getMessage(), validationEvent.getLocator().getLineNumber(),
+                                            validationEvent.getLocator().getColumnNumber()));
+                }
             }
-        }
-        else
-        {
-            StringWriter stringWriter = new StringWriter();
-            exception.printStackTrace(new PrintWriter(stringWriter));
-            outputPlainText(MessageFormat.format("\nПроизошла ошибка: {0}", stringWriter.toString()));
-        }
+            else
+            {
+                StringWriter stringWriter = new StringWriter();
+                exception.printStackTrace(new PrintWriter(stringWriter));
+                outputPlainText(MessageFormat.format("\nПроизошла ошибка: {0}", stringWriter.toString()));
+            }
     }
 
     private String goHistoryNext()
@@ -531,10 +534,9 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider
 
         // prepare for scrolling to command
         Rectangle startLocation;
-        int lastLine = logTextArea.getLineCount() - 1;
         try
         {
-            startLocation = logTextArea.modelToView(logTextArea.getLineStartOffset(lastLine));
+            startLocation = logTextPane.modelToView(logTextPane.getStyledDocument().getLength());
         }
         catch (BadLocationException e)
         {
@@ -566,6 +568,18 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider
 
     @Override
     public void outputPlainText(String text) {
-        logTextArea.append(text);
+        StyledDocument document = logTextPane.getStyledDocument();
+        try {
+            document.insertString(document.getLength(), text, null);
+        } catch (BadLocationException e) {
+            LOG.error("Error while inserting string to JTextPane", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void outputIcon(Icon icon) {
+        logTextPane.setCaretPosition(logTextPane.getStyledDocument().getLength());
+        logTextPane.insertIcon(icon);
     }
 }

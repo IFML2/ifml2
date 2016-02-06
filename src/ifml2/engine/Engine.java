@@ -5,20 +5,26 @@ import ifml2.CommonConstants;
 import ifml2.FormatLogger;
 import ifml2.IFML2Exception;
 import ifml2.SystemIdentifiers;
+import ifml2.engine.featureproviders.IPlayerFeatureProvider;
+import ifml2.engine.featureproviders.graphic.IOutputIconProvider;
+import ifml2.engine.featureproviders.text.IOutputPlainTextProvider;
 import ifml2.engine.saved.SavedGame;
+import ifml2.om.Action;
 import ifml2.om.*;
 import ifml2.parser.FormalElement;
 import ifml2.parser.IFML2ParseException;
 import ifml2.parser.Parser;
-import ifml2.engine.featureproviders.text.IOutputPlainTextProvider;
-import ifml2.engine.featureproviders.IPlayerFeatureProvider;
 import ifml2.vm.*;
 import ifml2.vm.instructions.SetVarInstruction;
 import ifml2.vm.values.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -377,6 +383,27 @@ public class Engine
         }
 
         return true;
+    }
+
+    public void outIcon(String iconFilePath, int maxHeight, int maxWidth) {
+        if (playerFeatureProvider instanceof IOutputIconProvider)
+        {
+            // convert path relative to game to absolute path
+            Path storyFolder = Paths.get(storyFileName).normalize().getParent();
+            Path iconPath = Paths.get(iconFilePath);
+            Path iconFullPath = storyFolder.resolve(iconPath);
+
+            // load and resize icon
+            ImageIcon imageIcon = new ImageIcon(iconFullPath.toAbsolutePath().toString());
+            int needHeight = maxHeight > 0 ? Math.min(maxHeight, imageIcon.getIconHeight()) : imageIcon.getIconHeight();
+            int needWidth = maxWidth > 0 ? Math.min(maxWidth, imageIcon.getIconWidth()) : imageIcon.getIconWidth();
+            Image image = imageIcon.getImage() ;
+            Image resizedImage = image.getScaledInstance( needWidth, needHeight, java.awt.Image.SCALE_SMOOTH ) ;
+            Icon icon = new ImageIcon( resizedImage );
+
+            // output icon
+            ((IOutputIconProvider) playerFeatureProvider).outputIcon(icon);
+        }
     }
 
     private void handleParseError(String trimmedCommand, IFML2ParseException parseException)
