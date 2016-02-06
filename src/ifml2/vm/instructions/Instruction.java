@@ -40,7 +40,7 @@ public abstract class Instruction implements Cloneable
     protected static <T> List<T> convertToClassedList(List<? extends IFMLEntity> unknownList,
             Class<T> convertingClass) throws IFML2VMException
     {
-        List<T> ifmlObjects = new BasicEventList<T>();
+        List<T> ifmlObjects = new BasicEventList<>();
         for (Object obj : unknownList)
         {
             if (convertingClass.isInstance(obj))
@@ -175,7 +175,8 @@ public abstract class Instruction implements Cloneable
         ROLL_DICE(RollDiceInstruction.class, RollDiceInstrEditor.class),
         SET_PROPERTY(SetPropertyInstruction.class, null), // todo SetPropertyInstruction Editor
         RUN_PROCEDURE(RunProcedureInstruction.class, RunProcedureInstrEditor.class),
-        RETURN(ReturnInstruction.class, ReturnInstrEditor.class);
+        RETURN(ReturnInstruction.class, ReturnInstrEditor.class),
+        SHOW_PICTURE(ShowPictureInstruction.class, ShowPictureInstrEditor.class);
 
         private Class<? extends Instruction> instrClass;
         private String title;

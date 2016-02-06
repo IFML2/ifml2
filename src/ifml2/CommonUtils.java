@@ -11,7 +11,7 @@ public class CommonUtils
         return System.getProperty("user.dir");
     }
 
-    public static String getSamplesDirectory()
+    public static String getGamesDirectory()
     {
         return getCurrentDirectory() + CommonConstants.GAMES_DIRECTORY;
     }

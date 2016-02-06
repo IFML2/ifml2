@@ -143,7 +143,7 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
 
     private static String showOpenStoryFileDialog(Window owner)
     {
-        JFileChooser storyFileChooser = new JFileChooser(CommonUtils.getSamplesDirectory());
+        JFileChooser storyFileChooser = new JFileChooser(CommonUtils.getGamesDirectory());
         storyFileChooser.removeChoosableFileFilter(storyFileChooser.getAcceptAllFileFilter()); // remove All files filter
         storyFileChooser.setFileFilter(new FileFilter()
         {
