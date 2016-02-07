@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="6.0.5" transformSequenceNumber="5">
-  <directoryPresets config="../Games/Гардероб.ifml" />
+  <directoryPresets config=".."/>
   <application name="ЯРИЛ 2.0" distributionSourceDir="" applicationId="3169-8645-0418-5303" mediaDir="./"
                mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="9"
                lzmaCompression="true" pack200Compression="true" excludeSignedFromPacking="true" commonExternalFiles="false"
                createMd5Sums="true" shrinkRuntime="true" shortName="${compiler:sys.fullName}" publisher="TOY Soft"
-               publisherWeb="http://toysoft.narod.ru" version="2015/1.6" allPathsRelative="true" backupOnSave="false" autoSave="false"
-               convertDotsToUnderscores="true" macSignature="????" macVolumeId="2bfa8d73a3fad6ee" javaMinVersion="1.6" javaMaxVersion="1.6"
-               allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
+               publisherWeb="http://toysoft.narod.ru" version="2015/2" allPathsRelative="true" backupOnSave="false" autoSave="false"
+               convertDotsToUnderscores="true" macSignature="????" macVolumeId="2bfa8d73a3fad6ee" javaMinVersion="1.6" javaMaxVersion=""
+               allowBetaVM="true" jdkMode="jdk" jdkName="JDK 1.6">
     <languages skipLanguageSelection="true" languageSelectionInPrincipalLanguage="false">
       <principalLanguage id="ru" customLocalizationFile="" />
       <additionalLanguages>
@@ -33,10 +33,12 @@
       <root id="87" fileset="86" location="" />
     </roots>
     <mountPoints>
+      <mountPoint id="252" root="" location="libs" mode="755" />
       <mountPoint id="191" root="" location="Games" mode="755" />
       <mountPoint id="192" root="" location="Saved Games" mode="755" />
       <mountPoint id="23" root="" location="" mode="755" />
       <mountPoint id="194" root="33" location="Games" mode="755" />
+      <mountPoint id="253" root="87" location="Tests" mode="755" />
       <mountPoint id="88" root="87" location="" mode="755" />
     </mountPoints>
     <entries>
@@ -50,14 +52,16 @@
         </exclude>
       </dirEntry>
       <fileEntry mountPoint="23" file="../out/artifacts/IFML2/IFML2.jar" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
-      <fileEntry mountPoint="23" file="../lib/glazedlists_java15-1.9.0.jar" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
-      <fileEntry mountPoint="23" file="../lib/apache-log4j-1.2.17/log4j-1.2.17.jar" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
       <fileEntry mountPoint="23" file="../docs/notes.txt" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
       <fileEntry mountPoint="23" file="../log4j.xml" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
-      <fileEntry mountPoint="194" file="../Games/Гардероб.ifml" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
-      <fileEntry mountPoint="194" file="../Games/Кувшин.ifml" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
-      <fileEntry mountPoint="194" file="../Games/Спелеолог.ifml" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
       <fileEntry mountPoint="194" file="../Games/Руслан и Людмила.ifml" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
+      <fileEntry mountPoint="194" file="../Games/Лабиринт фавна.ifml" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
+      <fileEntry mountPoint="194" file="../Games/Комсомолец [демо-1.1б].ifml" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
+      <fileEntry mountPoint="194" file="../Games/Комсомолец-Инфо.txt" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
+      <fileEntry mountPoint="194" file="../Games/ZorkPort [пример].ifml" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
+      <fileEntry mountPoint="194" file="../Games/Гардероб [пример].ifml" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
+      <fileEntry mountPoint="194" file="../Games/Кувшин [пример].ifml" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
+      <fileEntry mountPoint="194" file="../Games/Спелеолог [пример].ifml" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
       <dirEntry mountPoint="88" file="../tests" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="Tests" excludeSuffixes="" dirMode="755" overrideDirMode="false">
         <exclude>
           <entry location="Тайна.Тест01.xml" fileType="regular" />
@@ -94,20 +98,22 @@
   </files>
   <launchers>
     <launcher name="${compiler:sys.fullName} Плеер" id="25" customizedId="" external="false" excludeFromMenu="false" unixMode="755" menuName="" icnsFile="" customMacBundleIdentifier="false" macBundleIdentifier="" swtApp="false" fileset="" macBundleBinary="JavaApplicationStub" addMacEntitlements="false" macEntitlementsFile="" useCustomMacosExecutableName="false" customMacosExecutableName="">
-      <executable name="${compiler:sys.fullName} Плеер" type="1" iconSet="false" iconFile="" executableDir="." redirectStderr="true" stderrFile="error.log" stderrMode="overwrite" redirectStdout="false" stdoutFile="output.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="highestAvailable" checkConsoleParameter="true" globalSingleInstance="false" singleInstanceActivate="true" dpiAware="false">
+      <executable name="${compiler:sys.fullName} Плеер" type="1" iconSet="true" iconFile="" executableDir="." redirectStderr="true"
+                  stderrFile="error.log" stderrMode="overwrite" redirectStdout="false" stdoutFile="output.log" stdoutMode="overwrite"
+                  failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false"
+                  serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="highestAvailable"
+                  checkConsoleParameter="true" globalSingleInstance="false" singleInstanceActivate="true" dpiAware="false">
         <versionInfo include="false" fileVersion="" fileDescription="" legalCopyright="" internalName="" productName="" />
       </executable>
-      <splashScreen show="false" width="0" height="0" bitmapFile="" windowsNative="false" textOverlay="false">
+      <splashScreen show="true" width="378" height="257" bitmapFile="../ifmlicon.png" windowsNative="false" textOverlay="true">
         <text>
-          <statusLine x="20" y="20" text="" fontSize="8" fontColor="0,0,0" bold="false" />
+          <statusLine x="20" y="20" text="Плеер" fontSize="8" fontColor="0,0,0" bold="false"/>
           <versionLine x="20" y="40" text="version ${compiler:sys.version}" fontSize="8" fontColor="0,0,0" bold="false" />
         </text>
       </splashScreen>
-      <java mainClass="ifml2.Launcher" vmParameters="-version:&quot;1.6*&quot; -Dlog4j.configuration=file:log4j.xml" arguments="&quot;player&quot;" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
+      <java mainClass="ifml2.Launcher" vmParameters="-Dlog4j.configuration=file:log4j.xml" arguments="&quot;player&quot;" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
         <classPath>
           <archive location="IFML2.jar" failOnError="true" />
-          <archive location="glazedlists_java15-1.9.0.jar" failOnError="true" />
-          <archive location="log4j-1.2.17.jar" failOnError="false" />
         </classPath>
         <nativeLibraryDirectories />
       </java>
@@ -122,23 +128,27 @@
       <infoPlist mode="1" file="">
         <content />
       </infoPlist>
-      <iconImageFiles />
+      <iconImageFiles>
+        <file path="../ifmlicon.png"/>
+      </iconImageFiles>
     </launcher>
     <launcher name="${compiler:sys.fullName} Редактор" id="26" customizedId="" external="false" excludeFromMenu="false" unixMode="755" menuName="" icnsFile="" customMacBundleIdentifier="false" macBundleIdentifier="" swtApp="false" fileset="" macBundleBinary="JavaApplicationStub" addMacEntitlements="false" macEntitlementsFile="" useCustomMacosExecutableName="false" customMacosExecutableName="">
-      <executable name="${compiler:sys.fullName} Редактор" type="1" iconSet="false" iconFile="" executableDir="." redirectStderr="true" stderrFile="error.log" stderrMode="overwrite" redirectStdout="false" stdoutFile="output.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="highestAvailable" checkConsoleParameter="true" globalSingleInstance="false" singleInstanceActivate="true" dpiAware="false">
+      <executable name="${compiler:sys.fullName} Редактор" type="1" iconSet="true" iconFile="" executableDir="." redirectStderr="true"
+                  stderrFile="error.log" stderrMode="overwrite" redirectStdout="false" stdoutFile="output.log" stdoutMode="overwrite"
+                  failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false"
+                  serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="highestAvailable"
+                  checkConsoleParameter="true" globalSingleInstance="false" singleInstanceActivate="true" dpiAware="false">
         <versionInfo include="false" fileVersion="" fileDescription="" legalCopyright="" internalName="" productName="" />
       </executable>
-      <splashScreen show="false" width="0" height="0" bitmapFile="" windowsNative="false" textOverlay="false">
+      <splashScreen show="true" width="378" height="257" bitmapFile="../ifmlicon.png" windowsNative="false" textOverlay="true">
         <text>
-          <statusLine x="20" y="20" text="" fontSize="8" fontColor="0,0,0" bold="false" />
+          <statusLine x="20" y="20" text="Редактор" fontSize="8" fontColor="0,0,0" bold="false"/>
           <versionLine x="20" y="40" text="version ${compiler:sys.version}" fontSize="8" fontColor="0,0,0" bold="false" />
         </text>
       </splashScreen>
-      <java mainClass="ifml2.Launcher" vmParameters="-version:&quot;1.6*&quot; -Dlog4j.configuration=file:log4j.xml" arguments="&quot;editor&quot;" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
+      <java mainClass="ifml2.Launcher" vmParameters="-Dlog4j.configuration=file:log4j.xml" arguments="&quot;editor&quot;" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
         <classPath>
           <archive location="IFML2.jar" failOnError="true" />
-          <archive location="glazedlists_java15-1.9.0.jar" failOnError="true" />
-          <archive location="log4j-1.2.17.jar" failOnError="false" />
         </classPath>
         <nativeLibraryDirectories />
       </java>
@@ -153,23 +163,27 @@
       <infoPlist mode="1" file="">
         <content />
       </infoPlist>
-      <iconImageFiles />
+      <iconImageFiles>
+        <file path="../ifmlicon.png"/>
+      </iconImageFiles>
     </launcher>
     <launcher name="${compiler:sys.fullName} Тестер" id="89" customizedId="" external="false" excludeFromMenu="false" unixMode="755" menuName="" icnsFile="" customMacBundleIdentifier="false" macBundleIdentifier="" swtApp="false" fileset="86" macBundleBinary="JavaApplicationStub" addMacEntitlements="false" macEntitlementsFile="" useCustomMacosExecutableName="false" customMacosExecutableName="">
-      <executable name="${compiler:sys.fullName} Тестер" type="1" iconSet="false" iconFile="" executableDir="." redirectStderr="true" stderrFile="error.log" stderrMode="overwrite" redirectStdout="false" stdoutFile="output.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="highestAvailable" checkConsoleParameter="true" globalSingleInstance="false" singleInstanceActivate="true" dpiAware="false">
+      <executable name="${compiler:sys.fullName} Тестер" type="1" iconSet="true" iconFile="" executableDir="." redirectStderr="true"
+                  stderrFile="error.log" stderrMode="overwrite" redirectStdout="false" stdoutFile="output.log" stdoutMode="overwrite"
+                  failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false"
+                  serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="highestAvailable"
+                  checkConsoleParameter="true" globalSingleInstance="false" singleInstanceActivate="true" dpiAware="false">
         <versionInfo include="false" fileVersion="" fileDescription="" legalCopyright="" internalName="" productName="" />
       </executable>
-      <splashScreen show="false" width="0" height="0" bitmapFile="" windowsNative="false" textOverlay="false">
+      <splashScreen show="true" width="378" height="257" bitmapFile="../ifmlicon.png" windowsNative="false" textOverlay="true">
         <text>
-          <statusLine x="20" y="20" text="" fontSize="8" fontColor="0,0,0" bold="false" />
+          <statusLine x="20" y="20" text="Тестер" fontSize="8" fontColor="0,0,0" bold="false"/>
           <versionLine x="20" y="40" text="version ${compiler:sys.version}" fontSize="8" fontColor="0,0,0" bold="false" />
         </text>
       </splashScreen>
-      <java mainClass="ifml2.tests.gui.TestRunner" vmParameters="-version:&quot;1.6*&quot; -Dlog4j.configuration=file:log4j.xml" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
+      <java mainClass="ifml2.tests.gui.TestRunner" vmParameters="-Dlog4j.configuration=file:log4j.xml" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
         <classPath>
           <archive location="IFML2.jar" failOnError="true" />
-          <archive location="glazedlists_java15-1.9.0.jar" failOnError="true" />
-          <archive location="log4j-1.2.17.jar" failOnError="false" />
         </classPath>
         <nativeLibraryDirectories />
       </java>
@@ -184,7 +198,9 @@
       <infoPlist mode="1" file="">
         <content />
       </infoPlist>
-      <iconImageFiles />
+      <iconImageFiles>
+        <file path="../ifmlicon.png"/>
+      </iconImageFiles>
     </launcher>
   </launchers>
   <installerGui installerType="1" addOnAppId="" suggestPreviousLocations="true" autoUpdateDescriptorUrl="https://dl.dropboxusercontent.com/u/87862945/IFML2/updates.xml" useAutoUpdateBaseUrl="false" autoUpdateBaseUrl="">
@@ -1459,7 +1475,13 @@ return true;</string>
         <customAttributes />
       </autoUpdate>
     </windows>
-    <windows name="Windows with JRE 7" id="146" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}_with_java7_${compiler:sys.date}" installDir="${compiler:sys.publisher}\${compiler:sys.fullName}" overridePrincipalLanguage="false" jreBitType="32" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" downloadURL="" includeAllDownloadableComponents="false" includedJRE="windows-x86-1.7.0_07" manualJREEntry="false" bundleType="1" jreURL="" jreShared="true" directDownload="false" installOnlyIfNecessary="true" customInstallBaseDir="" contentFilesType="1" verifyIntegrity="true">
+    <windows name="Windows with JRE 8" id="258" customizedId=""
+             mediaFileName="IFML2_${compiler:sys.version}_JRE8_${compiler:sys.date}_${compiler:sys.time}"
+             installDir="${compiler:sys.publisher}\${compiler:sys.fullName}" overridePrincipalLanguage="false" jreBitType="32"
+             runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds=""
+             downloadURL="" includeAllDownloadableComponents="false" includedJRE="../../../Dropbox/Public/IFML2/windows-x86-1.8.0_66.tar.gz"
+             manualJREEntry="true" bundleType="1" jreURL="" jreShared="true" directDownload="false" installOnlyIfNecessary="true"
+             customInstallBaseDir="" contentFilesType="1" verifyIntegrity="true">
       <excludedComponents />
       <includedDownloadableComponents />
       <excludedLaunchers />
@@ -1472,7 +1494,13 @@ return true;</string>
         <customAttributes />
       </autoUpdate>
     </windows>
-    <windowsArchive name="Windows with JRE 6 Archive" id="154" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}_with_java6_${compiler:sys.date}" installDir="${compiler:sys.fullName}" overridePrincipalLanguage="false" jreBitType="32" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" downloadURL="" includeAllDownloadableComponents="true" includedJRE="windows-x86-1.6.0_37" manualJREEntry="false">
+    <windows name="Windows w/o JRE 8" id="263" customizedId=""
+             mediaFileName="IFML2_${compiler:sys.version}_${compiler:sys.date}_${compiler:sys.time}"
+             installDir="${compiler:sys.publisher}\${compiler:sys.fullName}" overridePrincipalLanguage="false" jreBitType="32"
+             runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds=""
+             downloadURL="" includeAllDownloadableComponents="false" includedJRE="windows-x86-1.8.0_66" manualJREEntry="false"
+             bundleType="2" jreURL="https://dl.dropboxusercontent.com/u/87862945/IFML2/windows-x86-1.8.0_66.tar.gz" jreShared="false"
+             directDownload="false" installOnlyIfNecessary="true" customInstallBaseDir="" contentFilesType="1" verifyIntegrity="true">
       <excludedComponents />
       <includedDownloadableComponents />
       <excludedLaunchers />
@@ -1484,27 +1512,11 @@ return true;</string>
         <commentFiles />
         <customAttributes />
       </autoUpdate>
-    </windowsArchive>
-    <unixInstaller name="Unix Installer" id="381" customizedId="" mediaFileName="" installDir="${compiler:sys.shortName}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" downloadURL="" includeAllDownloadableComponents="false" includedJRE="" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1">
-      <excludedComponents />
-      <includedDownloadableComponents />
-      <excludedLaunchers />
-      <excludedBeans />
-      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
-      <exclude />
-      <variables />
-      <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
-        <commentFiles />
-        <customAttributes />
-      </autoUpdate>
-      <installerScript mode="3" file="">
-        <content />
-      </installerScript>
-    </unixInstaller>
+    </windows>
   </mediaSets>
   <buildIds buildAll="false">
-    <mediaSet refId="29" />
-    <mediaSet refId="37" />
+    <mediaSet refId="258" />
+    <mediaSet refId="263" />
   </buildIds>
   <buildOptions verbose="false" faster="false" disableSigning="false" disableJreBundling="false" debug="false" />
 </install4j>

@@ -20,12 +20,15 @@ import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 
+import static ifml2.CommonConstants.RUSSIAN_PRODUCT_NAME;
+import static java.lang.String.*;
+
 public class TestRunner extends JFrame
 {
     private final TestManager testManager = new TestManager();
-    private final ArrayList<ListDataListener> commandsListDataListeners = new ArrayList<ListDataListener>();
-    private JList testsList;
-    private JList commandsList;
+    private final ArrayList<ListDataListener> commandsListDataListeners = new ArrayList<>();
+    private JList<IFMLTestPlan> testsList;
+    private JList<String> commandsList;
     private JTextArea logText;
     private JButton loadTestsButton;
     private JButton startButton;
@@ -33,12 +36,12 @@ public class TestRunner extends JFrame
 
     public TestRunner()
     {
-        super("ЯРИЛ 2.0 Тестер " + EngineVersion.VERSION);
+        super(format("%s Тестер %s", RUSSIAN_PRODUCT_NAME, EngineVersion.VERSION));
         setContentPane(mainPanel);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         GUIUtils.packAndCenterWindow(this);
 
-        testsList.setModel(new ListModel()
+        testsList.setModel(new ListModel<IFMLTestPlan>()
         {
             @Override
             public int getSize()
@@ -47,7 +50,7 @@ public class TestRunner extends JFrame
             }
 
             @Override
-            public Object getElementAt(int index)
+            public IFMLTestPlan getElementAt(int index)
             {
                 return testManager.getTestsListElementAt(index);
             }
@@ -78,7 +81,7 @@ public class TestRunner extends JFrame
                 }
             }
         });
-        commandsList.setModel(new ListModel()
+        commandsList.setModel(new ListModel<String>()
         {
             @Override
             public int getSize()
@@ -87,9 +90,9 @@ public class TestRunner extends JFrame
             }
 
             @Override
-            public Object getElementAt(int index)
+            public String getElementAt(int index)
             {
-                return ((IFMLTestPlan) testsList.getSelectedValue()).getCommandWithAnswer(index);
+                return testsList.getSelectedValue().getCommandWithAnswer(index);
             }
 
             @Override
@@ -104,43 +107,38 @@ public class TestRunner extends JFrame
                 commandsListDataListeners.remove(l);
             }
         });
-        loadTestsButton.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent event)
+        loadTestsButton.addActionListener(event -> {
+            JFileChooser testFileChooser = new JFileChooser(CommonUtils.getTestsDirectory());
+            testFileChooser.setFileFilter(new FileFilter()
             {
-                JFileChooser testFileChooser = new JFileChooser(CommonUtils.getTestsDirectory());
-                testFileChooser.setFileFilter(new FileFilter()
+                @Override
+                public String getDescription()
                 {
-                    @Override
-                    public String getDescription()
-                    {
-                        return CommonConstants.TEST_FILE_FILTER_NAME;
-                    }
-
-                    @Override
-                    public boolean accept(File file)
-                    {
-                        return file.isDirectory() || file.getName().toLowerCase().endsWith(CommonConstants.TEST_EXTENSION);
-                    }
-                });
-                testFileChooser.setMultiSelectionEnabled(true);
-
-                if (testFileChooser.showOpenDialog(TestRunner.this) != JFileChooser.APPROVE_OPTION)
-                {
-                    return;
+                    return CommonConstants.TEST_FILE_FILTER_NAME;
                 }
 
-                File[] testFiles = testFileChooser.getSelectedFiles();
+                @Override
+                public boolean accept(File file)
+                {
+                    return file.isDirectory() || file.getName().toLowerCase().endsWith(CommonConstants.TEST_EXTENSION);
+                }
+            });
+            testFileChooser.setMultiSelectionEnabled(true);
 
-                try
-                {
-                    loadTestsFromFiles(testFiles);
-                }
-                catch (Throwable e)
-                {
-                    showError(e);
-                }
+            if (testFileChooser.showOpenDialog(TestRunner.this) != JFileChooser.APPROVE_OPTION)
+            {
+                return;
+            }
+
+            File[] testFiles = testFileChooser.getSelectedFiles();
+
+            try
+            {
+                loadTestsFromFiles(testFiles);
+            }
+            catch (Throwable e)
+            {
+                showError(e);
             }
         });
         startButton.addActionListener(new ActionListener()
@@ -194,7 +192,7 @@ public class TestRunner extends JFrame
 
     private int getSelectedTestSize()
     {
-        return testsList.getSelectedValue() != null ? ((IFMLTestPlan) testsList.getSelectedValue()).getSize() : 0;
+        return testsList.getSelectedValue() != null ? testsList.getSelectedValue().getSize() : 0;
     }
 
     private void showError(Throwable exception)
@@ -206,7 +204,7 @@ public class TestRunner extends JFrame
     {
         try
         {
-            ArrayList<File> files = new ArrayList<File>();
+            ArrayList<File> files = new ArrayList<>();
             for (String fileToLoad : testsToLoad)
             {
                 File testFile = new File(fileToLoad);

@@ -1,3 +1,0 @@
-@title Starting Player...
-@rem %~dp0 means current path to this cmd file
-start "Player" /D "%~dp0" IFML2.exe "player" %1

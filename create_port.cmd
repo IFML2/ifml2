@@ -1,3 +1,4 @@
+rem @echo off
 rem rmdir portable
 rem mkdir portable
 rem mkdir "portable\Saved Games"

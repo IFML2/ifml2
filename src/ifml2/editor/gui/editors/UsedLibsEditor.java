@@ -15,13 +15,10 @@ import ifml2.om.Story;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileView;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.List;
 
@@ -48,69 +45,64 @@ public class UsedLibsEditor extends AbstractEditor<List<Library>>
         initializeEditor(USED_LIBS_EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
 
         // -- init actions --
-        addButton.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
+        addButton.addActionListener(e -> {
+            JFileChooser libFileChooser = new JFileChooser(CommonUtils.getLibrariesDirectory());
+            libFileChooser.setFileFilter(new FileFilter()
             {
-                JFileChooser libFileChooser = new JFileChooser(CommonUtils.getLibrariesDirectory());
-                libFileChooser.setFileFilter(new FileFilter()
+                @Override
+                public String getDescription()
                 {
-                    @Override
-                    public String getDescription()
-                    {
-                        return CommonConstants.LIBRARY_FILE_FILTER_NAME;
-                    }
+                    return CommonConstants.LIBRARY_FILE_FILTER_NAME;
+                }
 
-                    @Override
-                    public boolean accept(File file)
-                    {
-                        return file.isDirectory() || file.getName().toLowerCase().endsWith(CommonConstants.LIBRARY_EXTENSION);
-                    }
-                });
-
-                libFileChooser.setFileView(new FileView()
+                @Override
+                public boolean accept(File file)
                 {
-                    @Override
-                    public Icon getIcon(File f)
-                    {
-                        if (f.isDirectory())
-                        {
-                            return GUIUtils.DIRECTORY_ICON;
-                        }
-                        return GUIUtils.LIBRARY_FILE_ICON;
-                    }
-                });
+                    return file.isDirectory() || file.getName().toLowerCase().endsWith(CommonConstants.LIBRARY_EXTENSION);
+                }
+            });
 
-                if (libFileChooser.showOpenDialog(UsedLibsEditor.this) == JFileChooser.APPROVE_OPTION)
+            libFileChooser.setFileView(new FileView()
+            {
+                @Override
+                public Icon getIcon(File f)
                 {
-                    Library library;
-                    try
+                    if (f.isDirectory())
                     {
-                        library = OMManager.loadLibrary(libFileChooser.getSelectedFile());
-                        if(!storyDataHelper.isLibListContainsLib(librariesClone, library))
-                        {
-                            librariesClone.add(library);
-                        }
-                        else
-                        {
-                            JOptionPane.showMessageDialog(UsedLibsEditor.this, "В списке уже есть эта библиотека", "Уже есть",
-                                                          JOptionPane.WARNING_MESSAGE);
-                        }
+                        return GUIUtils.DIRECTORY_ICON;
                     }
-                    catch (IFML2Exception error)
-                    {
-                        JOptionPane.showMessageDialog(UsedLibsEditor.this,
-                                                      "Произошла ошибка во время загрузки библиотеки: \n" + error.getMessage(),
-                                                      "Ошибка при загрузке", JOptionPane.ERROR_MESSAGE);
+                    return GUIUtils.LIBRARY_FILE_ICON;
+                }
+            });
 
-                        return;
-                    }
-
-                    if (library != null)
+            if (libFileChooser.showOpenDialog(UsedLibsEditor.this) == JFileChooser.APPROVE_OPTION)
+            {
+                Library library;
+                try
+                {
+                    library = OMManager.loadLibrary(libFileChooser.getSelectedFile());
+                    if(!storyDataHelper.isLibListContainsLib(librariesClone, library))
                     {
-                        usedLibsList.setSelectedValue(library, true);
+                        librariesClone.add(library);
                     }
+                    else
+                    {
+                        JOptionPane.showMessageDialog(UsedLibsEditor.this, "В списке уже есть эта библиотека", "Уже есть",
+                                                      JOptionPane.WARNING_MESSAGE);
+                    }
+                }
+                catch (IFML2Exception error)
+                {
+                    JOptionPane.showMessageDialog(UsedLibsEditor.this,
+                                                  "Произошла ошибка во время загрузки библиотеки: \n" + error.getMessage(),
+                                                  "Ошибка при загрузке", JOptionPane.ERROR_MESSAGE);
+
+                    return;
+                }
+
+                if (library != null)
+                {
+                    usedLibsList.setSelectedValue(library, true);
                 }
             }
         });
@@ -118,13 +110,8 @@ public class UsedLibsEditor extends AbstractEditor<List<Library>>
         {
             {
                 setEnabled(false); // disabled at start
-                usedLibsList.addListSelectionListener(new ListSelectionListener()
-                {
-                    @Override
-                    public void valueChanged(ListSelectionEvent e)
-                    {
-                        setEnabled(!usedLibsList.isSelectionEmpty()); // depends on selection
-                    }
+                usedLibsList.addListSelectionListener(e -> {
+                    setEnabled(!usedLibsList.isSelectionEmpty()); // depends on selection
                 });
             }
 
@@ -147,7 +134,7 @@ public class UsedLibsEditor extends AbstractEditor<List<Library>>
         librariesClone = GlazedLists.eventList(libraries);
 
         // init controls
-        usedLibsList.setModel(new DefaultEventListModel<Library>(librariesClone));
+        usedLibsList.setModel(new DefaultEventListModel<>(librariesClone));
     }
 
     @Override

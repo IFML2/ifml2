@@ -30,6 +30,7 @@ import static ifml2.engine.Engine.SystemCommand.HELP;
 public class Engine
 {
     public static final FormatLogger LOG = FormatLogger.getLogger(Engine.class);
+    private static final String DEBUG_OUTPUT_PREFIX = "    [ОТЛАДКА] ";
     private final HashMap<String, Value> globalVariables = new HashMap<String, Value>();
     private final Parser parser = new Parser();
     private final VirtualMachine virtualMachine = new VirtualMachine();
@@ -142,6 +143,7 @@ public class Engine
     };
     private DataHelper dataHelper = new DataHelper();
     private String storyFileName;
+    private boolean isDebugMode = false;
 
     public Engine(GameInterface gameInterface)
     {
@@ -169,14 +171,23 @@ public class Engine
         LOG.info("Story \"{0}\" loaded", story);
     }
 
-    public void outText(String text)
+    public void outText(String text, Object... args)
     {
-        gameInterface.outputText(text);
+        String resultText;
+        if(args.length > 0) // protection against {\d} in story
+        {
+            resultText = MessageFormat.format(text, args);
+        }
+        else
+        {
+            resultText = text;
+        }
+        gameInterface.outputText(resultText);
     }
 
-    public void outTextLn(String text)
+    public void outTextLn(String text, Object... args)
     {
-        outText(text + "\n");
+        outText(text + "\n", args);
     }
 
     public void initGame() throws IFML2Exception
@@ -298,63 +309,98 @@ public class Engine
         }
 
         // check debug command
-        if (trimmedCommand.length() > 0 && trimmedCommand.charAt(0) == '?' && !systemCommandsDisableOption.isDisableDebug())
+        if (isDebugMode && trimmedCommand.length() > 0 && trimmedCommand.charAt(0) == '?')
         {
             String expression = trimmedCommand.substring(1);
             try
             {
                 Value value = ExpressionCalculator.calculate(RunningContext.CreateNewContext(virtualMachine), expression);
-                outTextLn(MessageFormat.format("[ОТЛАДКА] ({0}) {1}", value.getTypeName(), value));
+                outDebug("({0}) {1}", value.getTypeName(), value);
             }
             catch (IFML2Exception e)
             {
-                outTextLn("[ОТЛАДКА] Ошибка при вычислении выражения: " + e.getMessage());
+                outDebug("Ошибка при вычислении выражения: {0}", e.getMessage());
             }
+            return true;
+        }
+
+        // switch debug mode
+        if ("!отладка".equalsIgnoreCase(trimmedCommand) && !systemCommandsDisableOption.isDisableDebug())
+        {
+            isDebugMode = !isDebugMode;
+            outTextLn(DEBUG_OUTPUT_PREFIX + "Режим отладки {0}.", isDebugMode ? "включен" : "выключен");
             return true;
         }
 
         Parser.ParseResult parseResult;
         try
         {
+            outEngDebug("Анализируем команду игрока \"{0}\"...", trimmedCommand);
             parseResult = parser.parse(trimmedCommand, story.getDataHelper(), dataHelper);
+            outEngDebug("Анализ завершился успешно. Результат анализа команды: {0}.", parseResult);
+
             Action action = parseResult.getAction();
             List<FormalElement> formalElements = parseResult.getFormalElements();
 
             // check hooks & run procedure
+            outEngDebug("Поиск перехватов для действия \"{0}\"...", action);
+
             HashMap<Hook.Type, List<Hook>> objectHooks = collectObjectHooks(action, formalElements);
+            //outEngDebug("Кол-во найденных перехватов на предмете - {0}.", objectHooks.size()); // нужно выводить не кол-во списков перехватов,
+            // а само кол-во перехватов
+
             HashMap<Hook.Type, List<Hook>> locationHooks = collectLocationHooks(action);
+            //outEngDebug("Кол-во найденных перехватов в локации - {0}.", locationHooks.size()); // нужно выводить не кол-во списков перехватов,
+            // а само кол-во перехватов
 
             List<Variable> parameters = convertFormalElementsToParameters(formalElements);
 
             // if there are INSTEAD hooks then fire them and finish
-            if (objectHooks.get(Hook.Type.INSTEAD).size() > 0 || locationHooks.get(Hook.Type.INSTEAD).size() > 0)
+            int itemInsteadHooksQty = objectHooks.get(Hook.Type.INSTEAD).size();
+            int locInsteadHooksQty = locationHooks.get(Hook.Type.INSTEAD).size();
+            if (itemInsteadHooksQty > 0 || locInsteadHooksQty > 0)
             {
+                outEngDebug("Найдено перехватов типа \"ВМЕСТО\": на предмете - {0}, в локации - {1}.", itemInsteadHooksQty, locInsteadHooksQty);
+
                 // fire object hooks
                 for (Hook hook : objectHooks.get(Hook.Type.INSTEAD))
                 {
+                    outEngDebug("Запуск перехвата \"{0}\" на предмете...", hook);
                     virtualMachine.runHook(hook, parameters);
+                    outEngDebug("Перехват выполнен.");
                 }
                 // fire location hooks
                 for (Hook hook : locationHooks.get(Hook.Type.INSTEAD))
                 {
+                    outEngDebug("Запуск перехвата \"{0}\" в локации...", hook);
                     virtualMachine.runHook(hook, parameters);
+                    outEngDebug("Перехват выполнен.");
                 }
 
                 // ... and finish
+                outEngDebug("Завершение работы команды.");
                 return true;
             }
 
             // check restrictions
+            outEngDebug("Проверка ограничений действия...");
             if (checkActionRestrictions(action, parameters))
             {
+                outEngDebug("Сработало ограничение, команда завершается.");
                 return true;
             }
 
             // fire BEFORE hooks
+            outEngDebug("Выполнение перехватов \"ДО\"...");
             fireBeforeHooks(parameters, objectHooks, locationHooks);
+
+
             // fire action
+            outEngDebug("Выполнение самого действия \"{0}\"...", action);
             virtualMachine.runAction(action, parameters);
+
             // fire AFTER hooks
+            outEngDebug("Выполнение перехватов \"ПОСЛЕ\"...");
             fireAfterHooks(parameters, objectHooks, locationHooks);
         }
         catch (IFML2ParseException e)
@@ -363,10 +409,11 @@ public class Engine
         }
         catch (IFML2VMException e)
         {
-            outTextLn("[Ошибка!] " + e.getMessage());
+            outTextLn("[Ошибка!] {0}", e.getMessage());
         }
         catch (IFML2Exception e)
         {
+            outEngDebug("Анализ завершился неудачно.");
             outTextLn(e.getMessage());
         }
 
@@ -433,6 +480,52 @@ public class Engine
         }
 
         return parameters;
+    }
+
+    private void outEngDebug(String message, Object... args)
+    {
+        outDebug(this.getClass(), message, args);
+    }
+
+    public void outDebug(Class reporter, String message, Object... args)
+    {
+        String reporterName = genReporterName(reporter);
+        outDebug(reporterName + message, args);
+    }
+
+    private String genReporterName(Class reporter)
+    {
+        String reporterName;
+        if(Engine.class.equals(reporter))
+        {
+            reporterName = "Движок";
+        }
+        else if(Parser.class.equals(reporter))
+        {
+            reporterName = "Парсер";
+        }
+        else if(VirtualMachine.class.equals(reporter))
+        {
+            reporterName = "ВиртуальнаяМашина";
+        }
+        else
+        {
+            reporterName = reporter != null ? reporter.getClass().getSimpleName() : "";
+        }
+        return '[' + reporterName + "] ";
+    }
+
+    /**
+     * Outputs debug message in game window only if debug mode is on.
+     * @param message Debug message.
+     * @param args Arguments for message formatting.
+     */
+    public void outDebug(String message, Object... args)
+    {
+        if(isDebugMode)
+        {
+            outTextLn(DEBUG_OUTPUT_PREFIX + message, args);
+        }
     }
 
     private void fireAfterHooks(List<Variable> parameters, HashMap<Hook.Type, List<Hook>> objectHooks,
@@ -613,7 +706,7 @@ public class Engine
     {
         SavedGame savedGame = new SavedGame(dataHelper, story.getDataHelper());
         OMManager.saveGame(saveFileName, savedGame);
-        outTextLn(MessageFormat.format("Игра сохранена в файл {0}.", saveFileName));
+        outTextLn("Игра сохранена в файл {0}.", saveFileName);
     }
 
     public void loadGame(String saveFileName) throws IFML2Exception
@@ -622,7 +715,7 @@ public class Engine
         {
             SavedGame savedGame = OMManager.loadGame(saveFileName);
             savedGame.restoreGame(dataHelper, story.getDataHelper());
-            outTextLn(MessageFormat.format("Игра восстановлена из файла {0}.", saveFileName));
+            outTextLn("Игра восстановлена из файла {0}.", saveFileName);
         }
         catch (IFML2Exception e)
         {
@@ -712,6 +805,21 @@ public class Engine
         }
     }
 
+    public void outDebug(Class reporter, int level, String message, Object... args)
+    {
+        outDebug(level, genReporterName(reporter) + message, args);
+    }
+
+    private void outDebug(int level, String message, Object... args)
+    {
+        String tab = "";
+        for(int i = 1; i <= level; i++)
+        {
+            tab += "  ";
+        }
+        outDebug(tab + message, args);
+    }
+
     public Variable searchGlobalVariable(@Nullable String name)
     {
         if (name == null)
@@ -776,6 +884,11 @@ public class Engine
         public boolean isObjectAccessible(IFMLObject ifmlObject) throws IFML2Exception
         {
             return Engine.this.isObjectAccessible(ifmlObject);
+        }
+
+        public void outDebug(Class reporter, int level, String message, Object... args)
+        {
+            Engine.this.outDebug(level, genReporterName(reporter) + message, args);
         }
 
         public

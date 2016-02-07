@@ -599,7 +599,7 @@
                 </restriction>
                 <restriction condition="не предмет.съедобный">
                     <reaction>
-                        <showMessage position="1" type="text" message="Не съедобено."/>
+                        <showMessage position="1" type="text" message="Не съедобно."/>
                     </reaction>
                 </restriction>
             </restrictions>

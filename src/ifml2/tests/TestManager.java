@@ -23,8 +23,8 @@ public class TestManager
         return testPlans;
     }
 
-    private final ArrayList<IFMLTestPlan> testPlans = new ArrayList<IFMLTestPlan>();
-    private final ArrayList<ListDataListener> testsListDataListeners = new ArrayList<ListDataListener>();
+    private final ArrayList<IFMLTestPlan> testPlans = new ArrayList<>();
+    private final ArrayList<ListDataListener> testsListDataListeners = new ArrayList<>();
 
     public void loadTestsFromFiles(File[] files) throws Exception
     {
@@ -103,7 +103,7 @@ public class TestManager
             }
         });
 
-        int plansSucc = 0;
+        int plansSuccess = 0;
         for (IFMLTestPlan testPlan : getTestPlans())
         {
             try
@@ -116,7 +116,7 @@ public class TestManager
                 engine.initGame();
 
                 int cmdCnt = 0;
-                int cmdSucc = 0;
+                int cmdSuccess = 0;
                 for (IFMLTestIteration testIteration : testPlan.test.testIterations)
                 {
                     log("Тест команды №{0}: \"{1}\" > \"{2}\"", ++cmdCnt, testIteration.command, testIteration.answer);
@@ -129,7 +129,7 @@ public class TestManager
                     String answer = (testIteration.answer != null) ? testIteration.answer.trim()/*.replaceAll("\t|\n|\r", "")*/ : "";
                     if (answer.equalsIgnoreCase(outString))
                     {
-                        cmdSucc++;
+                        cmdSuccess++;
                         log("Ответ ожидаемый.");
                     }
                     else
@@ -137,17 +137,17 @@ public class TestManager
                         log("Ответ не соответствует ожидаемому (\"{0}\").", outString);
                     }
                 }
-                if(cmdSucc == testPlan.test.testIterations.size())
+                if(cmdSuccess == testPlan.test.testIterations.size())
                 {
-                    plansSucc++;
+                    plansSuccess++;
                 }
-                log("--- Завершено успешно {0} из {1} команд ---", cmdSucc, testPlan.test.testIterations.size());
+                log("--- Завершено успешно {0} из {1} команд ---", cmdSuccess, testPlan.test.testIterations.size());
             }
             catch (IFML2Exception e)
             {
                 log("Ошибка! " + e.getMessage());
             }
-            log("=== Завершено успешно {0} из {1} тестов ===", plansSucc, testPlans.size());
+            log("=== Завершено успешно {0} из {1} тестов ===", plansSuccess, testPlans.size());
         }
     }
 

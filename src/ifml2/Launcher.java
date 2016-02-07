@@ -10,6 +10,9 @@ import javax.swing.*;
 import java.text.MessageFormat;
 import java.util.Map;
 
+import static ifml2.CommonConstants.RUSSIAN_PRODUCT_NAME;
+import static java.lang.String.format;
+
 public class Launcher
 {
     private static final Logger LOG = Logger.getLogger(Launcher.class);
@@ -24,7 +27,7 @@ public class Launcher
         LOG.debug("System properties:");
         for(Map.Entry<Object, Object> entry : System.getProperties().entrySet())
         {
-            LOG.debug(String.format("%s = %s", entry.getKey(), entry.getValue()));
+            LOG.debug(format("%s = %s", entry.getKey(), entry.getValue()));
         }
 
         if(args.length > 0 && "player".equalsIgnoreCase(args[0]))
@@ -65,7 +68,7 @@ public class Launcher
                     return "Тестер";
                 }
             };
-            Object answer = JOptionPane.showInputDialog(null, "Что запустить?", "ЯРИЛ 2.0 " + EngineVersion.VERSION,
+            Object answer = JOptionPane.showInputDialog(null, "Что запустить?", format("%s %s", RUSSIAN_PRODUCT_NAME, EngineVersion.VERSION),
                     JOptionPane.QUESTION_MESSAGE, null, new Object[]{playerOption, editorOption, testerOption}, playerOption);
             if(playerOption.equals(answer))
             {
