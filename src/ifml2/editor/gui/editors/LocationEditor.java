@@ -333,7 +333,7 @@ public class LocationEditor extends AbstractEditor<Location>
             HookEditor hookEditor = new HookEditor(LocationEditor.this, hook, false, storyDataHelper);
             if (hookEditor.showDialog())
             {
-                hookEditor.getData(hook);
+                hookEditor.updateData(hook);
                 return true;
             }
         }
@@ -380,7 +380,7 @@ public class LocationEditor extends AbstractEditor<Location>
             ItemEditor itemEditor = new ItemEditor(LocationEditor.this, item, storyDataHelper);
             if (itemEditor.showDialog())
             {
-                itemEditor.getData(item);
+                itemEditor.updateData(item);
                 return true;
             }
         }
@@ -424,7 +424,7 @@ public class LocationEditor extends AbstractEditor<Location>
     }
 
     @Override
-    public void getData(@NotNull Location location)
+    public void updateData(@NotNull Location location)
     {
         for (ExitDirection exitDirection : ExitDirection.values())
         {

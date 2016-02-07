@@ -59,7 +59,7 @@ public class ShowMessageInstrEditor extends AbstractInstrEditor
     @Override
     public void getInstruction(@NotNull Instruction instruction) throws IFML2EditorException
     {
-        getData(instruction);
+        updateData(instruction);
 
         ShowMessageInstr showMessageInstr = (ShowMessageInstr) instruction;
 

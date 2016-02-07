@@ -49,7 +49,7 @@ public class RestrictionEditor extends AbstractEditor<Restriction>
                 InstructionsEditor instructionsEditor = new InstructionsEditor(RestrictionEditor.this, reactionClone, storyDataHelper);
                 if(instructionsEditor.showDialog())
                 {
-                    instructionsEditor.getData(reactionClone);
+                    instructionsEditor.updateData(reactionClone);
                 }
             }
         });
@@ -69,7 +69,7 @@ public class RestrictionEditor extends AbstractEditor<Restriction>
     }
 
     @Override
-    public void getData(@NotNull Restriction data) throws IFML2EditorException
+    public void updateData(@NotNull Restriction data) throws IFML2EditorException
     {
         data.setCondition(conditionText.getText());
         data.getReaction().replaceInstructions(reactionClone);

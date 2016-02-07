@@ -251,7 +251,7 @@ public class TemplateEditor extends AbstractEditor<Template>
             LiteralElementEditor literalElementEditor = new LiteralElementEditor(this, literalElement, procedure);
             if(literalElementEditor.showDialog())
             {
-                literalElementEditor.getData(literalElement);
+                literalElementEditor.updateData(literalElement);
                 return true;
             }
         }
@@ -261,7 +261,7 @@ public class TemplateEditor extends AbstractEditor<Template>
             ObjectElementEditor objectElementEditor = new ObjectElementEditor(this, objectElement, procedure);
             if(objectElementEditor.showDialog())
             {
-                objectElementEditor.getData(objectElement);
+                objectElementEditor.updateData(objectElement);
                 return true;
             }
         }
@@ -282,7 +282,7 @@ public class TemplateEditor extends AbstractEditor<Template>
     }
 
     @Override
-    public void getData(@NotNull Template data) throws IFML2EditorException
+    public void updateData(@NotNull Template data) throws IFML2EditorException
     {
         data.setElements(templateClone.getElements());
     }

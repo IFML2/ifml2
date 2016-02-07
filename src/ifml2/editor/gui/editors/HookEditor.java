@@ -59,7 +59,7 @@ public class HookEditor extends AbstractEditor<Hook>
                                                                                storyDataHelper);
                 if(instructionsEditor.showDialog())
                 {
-                    instructionsEditor.getData(instructionListClone);
+                    instructionsEditor.updateData(instructionListClone);
                 }
             }
         });
@@ -165,7 +165,7 @@ public class HookEditor extends AbstractEditor<Hook>
     }
 
     @Override
-    public void getData(@NotNull Hook hook) throws IFML2EditorException
+    public void updateData(@NotNull Hook hook) throws IFML2EditorException
     {
         hook.setAction((Action) actionCombo.getSelectedItem());
         hook.setObjectElement((String) parameterCombo.getSelectedItem());

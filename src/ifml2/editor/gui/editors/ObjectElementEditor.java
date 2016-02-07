@@ -85,7 +85,7 @@ public class ObjectElementEditor extends AbstractEditor<ObjectTemplateElement>
     }
 
     @Override
-    public void getData(@NotNull ObjectTemplateElement data) throws IFML2EditorException
+    public void updateData(@NotNull ObjectTemplateElement data) throws IFML2EditorException
     {
         data.setGramCase((Word.GramCase) comboCase.getSelectedItem());
         Parameter selectedItem = (Parameter) comboParameter.getSelectedItem();

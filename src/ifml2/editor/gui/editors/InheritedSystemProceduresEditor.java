@@ -84,7 +84,7 @@ public class InheritedSystemProceduresEditor extends AbstractEditor<InheritedSys
                     {
                         try
                         {
-                            procedureEditor.getData(procedure);
+                            procedureEditor.updateData(procedure);
                         }
                         catch (IFML2EditorException ex)
                         {
@@ -108,7 +108,7 @@ public class InheritedSystemProceduresEditor extends AbstractEditor<InheritedSys
                 {
                     try
                     {
-                        procedureEditor.getData(procedure);
+                        procedureEditor.updateData(procedure);
                         storyDataHelper.getProcedures().add(procedure);
                         parseErrorHandlerCombo.setSelectedItem(procedure);
                     }
@@ -127,7 +127,7 @@ public class InheritedSystemProceduresEditor extends AbstractEditor<InheritedSys
     }
 
     @Override
-    public void getData(@NotNull InheritedSystemProcedures data) throws IFML2EditorException
+    public void updateData(@NotNull InheritedSystemProcedures data) throws IFML2EditorException
     {
         data.setParseErrorHandler((Procedure) parseErrorHandlerCombo.getSelectedItem());
     }

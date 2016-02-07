@@ -13,7 +13,7 @@ import java.awt.event.*;
  * Common abstract ancestor for all editors.<br/>
  * <b>Usage:</b>
  * Create descendant JDialog with needed type. In constructor first of all call super(owner) and  initializeEditor().
- * Implement getData() where fill data object with data from editor.
+ * Implement updateData() where fill data object with data from editor.
  * Implement validateData() if you need validation.
  *
  * @param <T> Edited object type.
@@ -102,7 +102,7 @@ public abstract class AbstractEditor<T> extends JDialog
      * @param data object what should be filled with edited data.
      * @throws IFML2EditorException if something goes wrong.
      */
-    public abstract void getData(@NotNull T data) throws IFML2EditorException;
+    public abstract void updateData(@NotNull T data) throws IFML2EditorException;
 
     private void onOK()
     {

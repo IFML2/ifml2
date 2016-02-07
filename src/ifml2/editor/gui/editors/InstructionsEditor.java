@@ -183,7 +183,7 @@ public class InstructionsEditor extends AbstractEditor<InstructionList>
     }
 
     @Override
-    public void getData(@NotNull InstructionList instructionList)
+    public void updateData(@NotNull InstructionList instructionList)
     {
         instructionList.replaceInstructions(instructionListClone);
     }

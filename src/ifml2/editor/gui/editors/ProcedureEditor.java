@@ -81,7 +81,7 @@ public class ProcedureEditor extends AbstractEditor<Procedure>
     }
 
     @Override
-    public void getData(@NotNull Procedure data) throws IFML2EditorException
+    public void updateData(@NotNull Procedure data) throws IFML2EditorException
     {
         // copy data from form to procedureClone
         procedureClone.setName(nameText.getText());

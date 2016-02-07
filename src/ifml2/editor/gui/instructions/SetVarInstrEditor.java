@@ -65,7 +65,7 @@ public class SetVarInstrEditor extends AbstractInstrEditor
     @Override
     public void getInstruction(@NotNull Instruction instruction) throws IFML2EditorException
     {
-        getData(instruction);
+        updateData(instruction);
 
         SetVarInstruction setVarInstruction = (SetVarInstruction) instruction;
         setVarInstruction.setName(nameText.getText().trim());

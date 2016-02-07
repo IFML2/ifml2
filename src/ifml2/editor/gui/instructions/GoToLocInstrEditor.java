@@ -71,7 +71,7 @@ public class GoToLocInstrEditor extends AbstractInstrEditor
     @Override
     public void getInstruction(@NotNull Instruction instruction) throws IFML2EditorException
     {
-        getData(instruction);
+        updateData(instruction);
 
         GoToLocInstruction goToLocInstruction = (GoToLocInstruction) instruction;
         if (locRadio.isSelected())

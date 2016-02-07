@@ -150,7 +150,7 @@ public class LiteralElementEditor extends AbstractEditor<LiteralTemplateElement>
     }
 
     @Override
-    public void getData(@NotNull LiteralTemplateElement data) throws IFML2EditorException
+    public void updateData(@NotNull LiteralTemplateElement data) throws IFML2EditorException
     {
         EventList<String> synonyms = data.getSynonyms();
         synonyms.clear();
