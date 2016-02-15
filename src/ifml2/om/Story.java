@@ -10,7 +10,6 @@ import ifml2.om.Location.ExitDirection;
 import ifml2.om.Procedure.SystemProcedureType;
 import ifml2.om.xml.xmladapters.DictionaryAdapter;
 import ifml2.om.xml.xmladapters.LocationAdapter;
-import ifml2.om.xml.xmladapters.ProceduresAdapter;
 import ifml2.om.xml.xmladapters.TimerAdapter;
 import ifml2.om.xml.xmladapters.UsedLibrariesAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -161,6 +160,11 @@ public class Story
 
         // todo subscribe to other lists changes
     }
+
+    @XmlElementWrapper(name = "timers")
+    @XmlElement(name = "timer")
+    @XmlJavaTypeAdapter(value = TimerAdapter.class)
+    private EventList<GameTimer> gameTimers = new BasicEventList<>();
 
     public DataHelper getDataHelper()
     {
