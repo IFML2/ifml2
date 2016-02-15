@@ -73,7 +73,7 @@ public class StoryOptionsEditor extends AbstractEditor<StoryOptions>
     }
 
     @Override
-    public void getData(@NotNull StoryOptions data)
+    public void updateData(@NotNull StoryOptions data)
     {
         StoryOptions.StartLocationOption startLocationOption = data.getStartLocationOption();
         startLocationOption.setLocation((Location) startLocCombo.getSelectedItem());

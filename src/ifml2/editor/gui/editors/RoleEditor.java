@@ -134,7 +134,7 @@ public class RoleEditor extends AbstractEditor<Role>
     }
 
     @Override
-    public void getData(@NotNull Role role) throws IFML2EditorException
+    public void updateData(@NotNull Role role) throws IFML2EditorException
     {
         try
         {

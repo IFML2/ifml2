@@ -66,7 +66,7 @@ public class IfInstrEditor extends AbstractInstrEditor
                 InstructionsEditor instructionsEditor = new InstructionsEditor(IfInstrEditor.this, thenInstructionsClone, storyDataHelper);
                 if (instructionsEditor.showDialog())
                 {
-                    instructionsEditor.getData(thenInstructionsClone);
+                    instructionsEditor.updateData(thenInstructionsClone);
                 }
             }
         });
@@ -78,7 +78,7 @@ public class IfInstrEditor extends AbstractInstrEditor
                 InstructionsEditor instructionsEditor = new InstructionsEditor(IfInstrEditor.this, elseInstructionsClone, storyDataHelper);
                 if (instructionsEditor.showDialog())
                 {
-                    instructionsEditor.getData(elseInstructionsClone);
+                    instructionsEditor.updateData(elseInstructionsClone);
                 }
             }
         });
@@ -109,7 +109,7 @@ public class IfInstrEditor extends AbstractInstrEditor
     @Override
     public void getInstruction(@NotNull Instruction instruction) throws IFML2EditorException
     {
-        super.getData(instruction);
+        super.updateData(instruction);
 
         IfInstruction ifInstruction = (IfInstruction) instruction;
 

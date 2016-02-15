@@ -34,7 +34,7 @@ public class UsedLibsEditor extends AbstractEditor<List<Library>>
 
     private EventList<Library> librariesClone;
 
-    /* todo editor is transactional, but it reassigns libs in getData()
+    /* todo editor is transactional, but it reassigns libs in updateData()
     * now it will be working ?
     * other objects links to previous libs and reassign should be more smart - retain previous libs - we can compare them
     * */
@@ -138,7 +138,7 @@ public class UsedLibsEditor extends AbstractEditor<List<Library>>
     }
 
     @Override
-    public void getData(@NotNull List<Library> libraries) throws IFML2EditorException
+    public void updateData(@NotNull List<Library> libraries) throws IFML2EditorException
     {
         libraries.clear();
         libraries.addAll(librariesClone);

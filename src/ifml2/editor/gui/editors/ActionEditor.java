@@ -279,7 +279,7 @@ public class ActionEditor extends AbstractEditor<Action>
         {
             try
             {
-                restrictionEditor.getData(restriction);
+                restrictionEditor.updateData(restriction);
                 return true;
             }
             catch (IFML2EditorException e)
@@ -298,7 +298,7 @@ public class ActionEditor extends AbstractEditor<Action>
         {
             try
             {
-                templateEditor.getData(template);
+                templateEditor.updateData(template);
                 return true;
             }
             catch (IFML2EditorException e)
@@ -310,7 +310,7 @@ public class ActionEditor extends AbstractEditor<Action>
     }
 
     @Override
-    public void getData(@NotNull Action data) throws IFML2EditorException
+    public void updateData(@NotNull Action data) throws IFML2EditorException
     {
         data.setName(nameText.getText());
         data.setDescription(descriptionText.getText());

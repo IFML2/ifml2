@@ -82,7 +82,7 @@ public class ItemEditor extends AbstractEditor<Item>
                 ObjectAttributesEditor objectAttributesEditor = new ObjectAttributesEditor(ItemEditor.this, attributes, storyDataHelper);
                 if (objectAttributesEditor.showDialog())
                 {
-                    objectAttributesEditor.getData(attributes);
+                    objectAttributesEditor.updateData(attributes);
                 }
             }
         });
@@ -95,7 +95,7 @@ public class ItemEditor extends AbstractEditor<Item>
                 WordLinksEditor wordLinksEditor = new WordLinksEditor(ItemEditor.this, storyDataHelper.getDictionary(), wordLinks);
                 if (wordLinksEditor.showDialog())
                 {
-                    wordLinksEditor.getData(wordLinks);
+                    wordLinksEditor.updateData(wordLinks);
                 }
             }
         });
@@ -196,7 +196,7 @@ public class ItemEditor extends AbstractEditor<Item>
                 HookEditor hookEditor = new HookEditor(ItemEditor.this, hook, true, storyDataHelper);
                 if (hookEditor.showDialog())
                 {
-                    hookEditor.getData(hook);
+                    hookEditor.updateData(hook);
                     return true;
                 }
             }
@@ -258,7 +258,7 @@ public class ItemEditor extends AbstractEditor<Item>
     }
 
     @Override
-    public void getData(@NotNull Item item)
+    public void updateData(@NotNull Item item)
     {
         try
         {
@@ -351,7 +351,7 @@ public class ItemEditor extends AbstractEditor<Item>
                 RoleEditor roleEditor = new RoleEditor(ItemEditor.this, role, originalItem, storyDataHelper);
                 if (roleEditor.showDialog())
                 {
-                    roleEditor.getData(role);
+                    roleEditor.updateData(role);
                     return true;
                 }
             }

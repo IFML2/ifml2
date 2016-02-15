@@ -287,7 +287,7 @@ public class WordLinksEditor extends AbstractEditor<WordLinks>
     //TODO: привести редактор в порядок; сделать транзакционным! позволить редактировать ИП - через обновление HashMap словаря
 
     @Override
-    public void getData(@NotNull WordLinks wordLinks)
+    public void updateData(@NotNull WordLinks wordLinks)
     {
         wordLinks.getWords().clear();
         wordLinks.getWords().addAll(wordsClone);

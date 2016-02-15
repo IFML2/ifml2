@@ -135,7 +135,7 @@ public class ActionsEditor extends AbstractEditor<EventList<Action>>
         {
             try
             {
-                actionEditor.getData(action);
+                actionEditor.updateData(action);
                 return true;
             }
             catch (IFML2EditorException ex)
@@ -147,7 +147,7 @@ public class ActionsEditor extends AbstractEditor<EventList<Action>>
     }
 
     @Override
-    public void getData(@NotNull EventList<Action> data) throws IFML2EditorException
+    public void updateData(@NotNull EventList<Action> data) throws IFML2EditorException
     {
         data.clear();
         data.addAll(actionsClone);

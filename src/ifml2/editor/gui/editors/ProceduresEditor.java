@@ -174,7 +174,7 @@ public class ProceduresEditor extends AbstractEditor<HashMap<String, Procedure>>
     }
 
     @Override
-    public void getData(@NotNull HashMap<String, Procedure> data) throws IFML2EditorException
+    public void updateData(@NotNull HashMap<String, Procedure> data) throws IFML2EditorException
     {
         // todo refactor editor to transact mode
     }

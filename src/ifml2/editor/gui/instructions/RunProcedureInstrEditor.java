@@ -13,7 +13,6 @@ import ifml2.vm.instructions.Instruction;
 import ifml2.vm.instructions.RunProcedureInstruction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -22,7 +21,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
 
 public class RunProcedureInstrEditor extends AbstractInstrEditor
 {
@@ -165,7 +163,7 @@ public class RunProcedureInstrEditor extends AbstractInstrEditor
     @Override
     public void getInstruction(@NotNull Instruction instruction) throws IFML2EditorException
     {
-        super.getData(instruction);
+        super.updateData(instruction);
 
         RunProcedureInstruction runProcedureInstruction = (RunProcedureInstruction) instruction;
         runProcedureInstruction.setProcedure((Procedure) procedureCombo.getSelectedItem());

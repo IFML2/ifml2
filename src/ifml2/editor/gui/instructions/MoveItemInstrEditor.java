@@ -87,7 +87,7 @@ public class MoveItemInstrEditor extends AbstractInstrEditor
     @Override
     public void getInstruction(@NotNull Instruction instruction) throws IFML2EditorException
     {
-        getData(instruction);
+        updateData(instruction);
 
         MoveItemInstruction moveItemInstruction = (MoveItemInstruction) instruction;
 

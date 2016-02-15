@@ -106,7 +106,7 @@ public class ObjectAttributesEditor extends AbstractEditor<EventList<Attribute>>
     }
 
     @Override
-    public void getData(@NotNull EventList<Attribute> attributes)
+    public void updateData(@NotNull EventList<Attribute> attributes)
     {
         attributes.clear();
         attributes.addAll(attributesClone);

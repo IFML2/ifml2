@@ -53,22 +53,6 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
 
         setContentPane(mainPanel);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        addWindowListener(new WindowAdapter()
-        {
-            @Override
-            public void windowClosed(WindowEvent e)
-            {
-                if (isFromTempFile)
-                {
-                    // delete temp file
-                    File tempFile = new File(storyFile);
-                    if (!tempFile.delete())
-                    {
-                        LOG.error(MessageFormat.format("Can't delete temp file {0}", tempFile.getAbsolutePath()));
-                    }
-                }
-            }
-        });
 
         setJMenuBar(createMainMenu());
 
