@@ -3,6 +3,7 @@ package ifml2.om;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
+import javax.xml.bind.annotation.XmlType;
 import java.text.MessageFormat;
 
 public class PropertyDefinition
@@ -22,8 +23,9 @@ public class PropertyDefinition
     public String description;
 
     @XmlAttribute(name = "type")
-    private PropertyTypeEnum type;
-    public PropertyTypeEnum getType()
+    private Type type;
+
+    public Type getType()
     {
         return type;
     }
@@ -34,7 +36,8 @@ public class PropertyDefinition
     }
 
     @XmlEnum
-    public enum PropertyTypeEnum
+    @XmlType(namespace = "PropertyDefinition")
+    public enum Type
     {
         @XmlEnumValue(value = "text")
         TEXT,

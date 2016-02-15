@@ -4,7 +4,6 @@ import ifml2.IFML2Exception;
 import ifml2.om.IFMLObject;
 import ifml2.om.InstructionList;
 import ifml2.vm.RunningContext;
-import ifml2.vm.Variable;
 import ifml2.vm.values.ObjectValue;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -15,55 +14,56 @@ import java.util.ArrayList;
 import java.util.List;
 
 @XmlRootElement(name = "loop")
+@IFML2Instruction(title = "Цикл")
 public class LoopInstruction extends Instruction
 {
     @XmlElement(name = "empty")
-    private final
-    InstructionList emptyInstructions = null;
+    private final InstructionList emptyInstructions = null;
+
     @XmlElement(name = "alone")
-    private final
-    InstructionList aloneInstructions = null;
+    private final InstructionList aloneInstructions = null;
+
     @XmlElement(name = "first")
-    private final
-    InstructionList firstInstructions = null;
+    private final InstructionList firstInstructions = null;
+
     @XmlElement(name = "next")
-    private final
-    InstructionList nextInstructions = null;
+    private final InstructionList nextInstructions = null;
+
     @XmlElement(name = "last")
-    private final
-    InstructionList lastInstructions = null;
+    private final InstructionList lastInstructions = null;
+
+    @SuppressWarnings("UnusedDeclaration")
     @XmlAttribute(name = "collection")
-    private
-    String collectionExpression;
+    private String collectionExpression;
+
+    @SuppressWarnings("UnusedDeclaration")
     @XmlAttribute(name = "element")
-    private
-    String elementName;
+    private String elementName;
+
+    @SuppressWarnings("UnusedDeclaration")
     @XmlAttribute(name = "condition")
-    private
-    String conditionExpression;
+    private String conditionExpression;
 
-    public static String getTitle()
-    {
-        return "Цикл";
-    }
-
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void run(RunningContext runningContext) throws IFML2Exception
     {
         // get the collection
-        List<IFMLObject> collection = (List<IFMLObject>) getCollectionFromExpression(collectionExpression, runningContext, getTitle(), "Коллекция");
-        //todo solve unsafe cast problem...
+        List<IFMLObject> collection = convertToClassedList(
+                getCollectionFromExpression(collectionExpression, runningContext, getTitle(), "Коллекция"), IFMLObject.class);
 
         List<IFMLObject> filteredCollection = new ArrayList<IFMLObject>();
+
+        RunningContext nestedContext = RunningContext.CreateNestedContext(runningContext);
 
         // iterate the collection and filter it
         if (conditionExpression != null && !"".equals(conditionExpression))
         {
             for (IFMLObject element : collection)
             {
-                runningContext.setVariable(Variable.VariableScope.LOCAL, elementName, new ObjectValue(element));
+                nestedContext.writeVariable(elementName, new ObjectValue(element));
 
-                Boolean condition = getBooleanFromExpression(conditionExpression, runningContext, getTitle(), "Условие");
+                Boolean condition = getBooleanFromExpression(conditionExpression, nestedContext, getTitle(), "Условие");
 
                 if (condition)
                 {
@@ -77,8 +77,6 @@ public class LoopInstruction extends Instruction
             filteredCollection = collection;
         }
 
-        runningContext.deleteVariable(Variable.VariableScope.LOCAL, elementName);
-
         int elementsQuantity = filteredCollection.size();
 
         // run clauses
@@ -88,30 +86,30 @@ public class LoopInstruction extends Instruction
             case 0:
                 if (emptyInstructions != null)
                 {
-                    virtualMachine.runInstructionList(emptyInstructions, runningContext, true, true);
+                    virtualMachine.runInstructionList(emptyInstructions, nestedContext);
                 }
                 break;
 
             case 1:
-                runningContext.setVariable(Variable.VariableScope.LOCAL, elementName, new ObjectValue(filteredCollection.get(0)));
+                nestedContext.writeVariable(elementName, new ObjectValue(filteredCollection.get(0)));
                 if (aloneInstructions != null)
                 {
-                    virtualMachine.runInstructionList(aloneInstructions, runningContext, true, true);
+                    virtualMachine.runInstructionList(aloneInstructions, nestedContext);
                     break;
                 }
                 if (firstInstructions != null)
                 {
-                    virtualMachine.runInstructionList(firstInstructions, runningContext, true, true);
+                    virtualMachine.runInstructionList(firstInstructions, nestedContext);
                     break;
                 }
                 if (nextInstructions != null)
                 {
-                    virtualMachine.runInstructionList(nextInstructions, runningContext, true, true);
+                    virtualMachine.runInstructionList(nextInstructions, nestedContext);
                     break;
                 }
                 if (lastInstructions != null)
                 {
-                    virtualMachine.runInstructionList(lastInstructions, runningContext, true, true);
+                    virtualMachine.runInstructionList(lastInstructions, nestedContext);
                     break;
                 }
                 break;
@@ -119,35 +117,35 @@ public class LoopInstruction extends Instruction
             default:
                 for (int index = 0; index <= elementsQuantity - 1; index++)
                 {
-                    runningContext.setVariable(Variable.VariableScope.LOCAL, elementName, new ObjectValue(filteredCollection.get(index)));
+                    nestedContext.writeVariable(elementName, new ObjectValue(filteredCollection.get(index)));
 
                     if (index == 0) // first element
                     {
                         if (firstInstructions != null)
                         {
-                            virtualMachine.runInstructionList(firstInstructions, runningContext, true, true);
+                            virtualMachine.runInstructionList(firstInstructions, nestedContext);
                         }
                         else if (nextInstructions != null)
                         {
-                            virtualMachine.runInstructionList(nextInstructions, runningContext, true, true);
+                            virtualMachine.runInstructionList(nextInstructions, nestedContext);
                         }
                     }
                     else if (index == elementsQuantity - 1) // last element
                     {
                         if (lastInstructions != null)
                         {
-                            virtualMachine.runInstructionList(lastInstructions, runningContext, true, true);
+                            virtualMachine.runInstructionList(lastInstructions, nestedContext);
                         }
                         else if (nextInstructions != null)
                         {
-                            virtualMachine.runInstructionList(nextInstructions, runningContext, true, true);
+                            virtualMachine.runInstructionList(nextInstructions, nestedContext);
                         }
                     }
                     else // other elements
                     {
                         if (nextInstructions != null)
                         {
-                            virtualMachine.runInstructionList(nextInstructions, runningContext, true, true);
+                            virtualMachine.runInstructionList(nextInstructions, nestedContext);
                         }
                     }
                 }
@@ -157,6 +155,7 @@ public class LoopInstruction extends Instruction
     @Override
     public String toString()
     {
-        return MessageFormat.format("Цикл: для каждого \"{0}\" из \"{1}\" с учётом \"{2}\"", elementName, collectionExpression, conditionExpression);
+        return MessageFormat
+                .format("Цикл: для каждого \"{0}\" из \"{1}\" с условием \"{2}\"", elementName, collectionExpression, conditionExpression);
     }
 }

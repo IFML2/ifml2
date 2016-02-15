@@ -18,7 +18,7 @@ import java.awt.event.ActionListener;
 
 public class MoveItemInstrEditor extends AbstractInstrEditor
 {
-    private static final String MOVE_ITEM_EDITOR_TITLE = MoveItemInstruction.getTitle();
+    private static final String MOVE_ITEM_EDITOR_TITLE = Instruction.getTitleFor(MoveItemInstruction.class);
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
@@ -87,7 +87,7 @@ public class MoveItemInstrEditor extends AbstractInstrEditor
     @Override
     public void getInstruction(@NotNull Instruction instruction) throws IFML2EditorException
     {
-        getData(instruction);
+        updateData(instruction);
 
         MoveItemInstruction moveItemInstruction = (MoveItemInstruction) instruction;
 

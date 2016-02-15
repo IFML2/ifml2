@@ -4,17 +4,19 @@ import ifml2.IFML2Exception;
 import ifml2.SystemIdentifiers;
 import ifml2.engine.Engine;
 import ifml2.om.*;
-import ifml2.parser.FormalElement;
 import ifml2.vm.instructions.Instruction;
 import ifml2.vm.values.BooleanValue;
+import ifml2.vm.values.EmptyValue;
 import ifml2.vm.values.Value;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
-import static ifml2.om.Procedure.SystemProcedureEnum;
+import static ifml2.om.Procedure.SystemProcedureType;
+import static ifml2.om.Procedure.SystemProcedureType.SHOW_LOCATION;
 
 public class VirtualMachine
 {
@@ -23,9 +25,11 @@ public class VirtualMachine
         {
             put(SystemIdentifiers.TRUE_BOOL_LITERAL, new BooleanValue(true));
             put(SystemIdentifiers.FALSE_BOOL_LITERAL, new BooleanValue(false));
+            put(SystemIdentifiers.EMPTY_VALUE, new EmptyValue());
         }
     };
-    private final HashMap<Procedure.SystemProcedureEnum, Procedure> inheritedSystemProcedures = new HashMap<Procedure.SystemProcedureEnum, Procedure>()
+    private Engine engine;
+    private final HashMap<SystemProcedureType, Procedure> inheritedSystemProcedures = new HashMap<SystemProcedureType, Procedure>()
     {
         @Override
         public Procedure get(Object key)
@@ -33,8 +37,8 @@ public class VirtualMachine
             // lazy initialization
             if (!containsKey(key))
             {
-                Procedure inheritor = engine.getStory().getSystemInheritorProcedure((SystemProcedureEnum) key);
-                put((SystemProcedureEnum) key, inheritor);
+                Procedure inheritor = engine.getStory().getSystemInheritorProcedure((SystemProcedureType) key);
+                put((SystemProcedureType) key, inheritor);
                 return inheritor;
             }
             else
@@ -43,44 +47,23 @@ public class VirtualMachine
             }
         }
     };
-    private Engine engine;
 
     public void setEngine(Engine engine)
     {
         this.engine = engine;
     }
 
-    private void saveGlobalVariables(RunningContext runningContext)
+    public void runAction(@NotNull Action action, List<Variable> parameters) throws IFML2Exception
     {
-        for (Map.Entry<String, Value> var : engine.getGlobalVariables().entrySet())
-        {
-            Value value = runningContext.getVariable(Variable.VariableScope.GLOBAL, var.getKey());
-            if (value != null)
-            {
-                engine.getGlobalVariables().put(var.getKey(), value);
-            }
-        }
+        runProcedure(action.getProcedureCall().getProcedure(), parameters);
     }
 
-    private void loadGlobalVariables(RunningContext runningContext)
-    {
-        for (Map.Entry<String, Value> var : engine.getGlobalVariables().entrySet())
-        {
-            runningContext.setVariable(Variable.VariableScope.GLOBAL, var.getKey(), var.getValue());
-        }
-    }
-
-    public void runAction(Action action, List<FormalElement> formalElements) throws IFML2Exception
-    {
-        runProcedure(action.getProcedureCall().getProcedure(), formalElements);
-    }
-
-    public void runProcedure(Procedure procedure) throws IFML2Exception
+    public void runProcedureWithoutParameters(@NotNull Procedure procedure) throws IFML2Exception
     {
         try
         {
-            RunningContext runningContext = new RunningContext(this);
-            runProcedureInContext(procedure, runningContext);
+            RunningContext runningContext = RunningContext.CreateCallContext(this, procedure, null);
+            runInstructionList(procedure.getProcedureBody(), runningContext);
         }
         catch (IFML2VMException e)
         {
@@ -88,12 +71,13 @@ public class VirtualMachine
         }
     }
 
-    public void runProcedure(Procedure procedure, List<FormalElement> parameters) throws IFML2Exception
+    public Value callProcedureWithParameters(@NotNull Procedure procedure, List<Variable> parameters) throws IFML2Exception
     {
         try
         {
-            RunningContext runningContext = new RunningContext(parameters, this);
-            runProcedureInContext(procedure, runningContext);
+            RunningContext runningContext = RunningContext.CreateCallContext(this, procedure, parameters);
+            runInstructionList(procedure.getProcedureBody(), runningContext);
+            return runningContext.getReturnValue();
         }
         catch (IFML2VMException e)
         {
@@ -101,115 +85,68 @@ public class VirtualMachine
         }
     }
 
-    private void runProcedureInContext(Procedure procedure, RunningContext runningContext) throws IFML2Exception
+    void runProcedure(@NotNull Procedure procedure, List<Variable> parameters) throws IFML2Exception
     {
-        loadGlobalVariables(runningContext);
-        loadProcedureVariables(runningContext, procedure);
-        runInstructionList(procedure.getProcedureBody(), runningContext, false, true);
-        saveProcedureVariables(runningContext, procedure);
-        saveGlobalVariables(runningContext);
+        try
+        {
+            RunningContext runningContext = RunningContext.CreateCallContext(this, procedure, parameters);
+            runInstructionList(procedure.getProcedureBody(), runningContext);
+        }
+        catch (IFML2VMException e)
+        {
+            throw new IFML2VMException(e, "{0}\n  в процедуре \"{1}\"", e.getMessage(), procedure.getName());
+        }
     }
 
-    public void runHook(Hook hook, List<FormalElement> formalElements) throws IFML2Exception
+    public void runHook(@NotNull Hook hook, List<Variable> parameters) throws IFML2Exception
     {
-        RunningContext runningContext = new RunningContext(formalElements, this);
-        loadGlobalVariables(runningContext);
-        runInstructionList(hook.instructionList, runningContext, false, true);
-        saveGlobalVariables(runningContext);
+        RunningContext runningContext = RunningContext.CreateNewContext(this);
+        runningContext.populateParameters(parameters);
+        runInstructionList(hook.getInstructionList(), runningContext);
     }
 
-    public void runInstructionList(InstructionList instructionList, RunningContext runningContext, boolean encloseContext, boolean returnResult) throws IFML2Exception
+    public void runInstructionList(@NotNull InstructionList instructionList, @NotNull RunningContext runningContext) throws IFML2Exception
     {
-        RunningContext instructionRunningContext;
-        instructionRunningContext = encloseContext ? new RunningContext(runningContext) : runningContext;
-
         for (Instruction instruction : instructionList.getInstructions())
         {
             instruction.virtualMachine = this;
             try
             {
-                instruction.run(instructionRunningContext);
+                instruction.run(runningContext);
             }
             catch (IFML2VMException e)
             {
                 throw new IFML2VMException(e, "{0}\n  в инструкции #{1} ({2})", e.getMessage(),
-                                           instructionList.getInstructions().indexOf(instruction) + 1,
-                                           instruction.toString());
-            }
-        }
-
-        if (returnResult && runningContext != instructionRunningContext)
-        {
-            runningContext.setReturnValue(instructionRunningContext.getReturnValue());
-        }
-    }
-
-    private void loadProcedureVariables(RunningContext runningContext, Procedure procedure) throws IFML2VMException
-    {
-        for (ProcedureVariable procedureVariable : procedure.getVariables())
-        {
-            try
-            {
-                Value value = procedureVariable.getValue();
-                if (value == null) // first initialization of procedure variable
-                {
-                    value = ExpressionCalculator.calculate(runningContext, procedureVariable.getInitialValue());
-                }
-                runningContext.setVariable(Variable.VariableScope.PROCEDURE, procedureVariable.getName(), value);
-            }
-            catch (IFML2Exception e)
-            {
-                throw new IFML2VMException(e, "{0}\n  при инициализации переменной процедуры \"{1}\"", e.getMessage(),
-                                           procedureVariable.getName());
+                        instructionList.getInstructions().indexOf(instruction) + 1, instruction.toString());
             }
         }
     }
 
-    private void saveProcedureVariables(RunningContext runningContext, Procedure procedure)
+    public void showLocation(@Nullable Location location) throws IFML2Exception
     {
-        for (ProcedureVariable procedureVariable : procedure.getVariables())
+        if (location == null)
         {
-            Value value = runningContext.getVariable(Variable.VariableScope.PROCEDURE, procedureVariable.getName());
-            if (value != null)
-            {
-                procedureVariable.setValue(value);
-            }
+            return;
         }
-    }
 
-    public void showLocName(Location location) throws IFML2Exception
-    {
         // check if inherited
-        Procedure inheritor = inheritedSystemProcedures.get(SystemProcedureEnum.SHOW_LOC_NAME);
+        Procedure inheritor = inheritedSystemProcedures.get(SHOW_LOCATION);
 
         if (inheritor != null)
         {
             // inherited! run inheritor
-            runProcedure(inheritor);
+            runProcedureWithoutParameters(inheritor);
         }
         else
         {
             // not inherited! do as usual...
-            engine.outTextLn(location.getName());
-            engine.outTextLn(location.getDescription());
+            outTextLn(location.getName());
+            outTextLn(location.getDescription());
             if (location.getItems().size() > 0)
             {
                 String objectsList = convertObjectsToString(location.getItems());
-                engine.outTextLn("А также тут " + objectsList);
+                outTextLn("А также тут {0}", objectsList);
             }
-        }
-    }
-
-    public void showInventory()
-    {
-        if (engine.getInventory().size() > 0)
-        {
-            String objectsList = convertObjectsToString(engine.getInventory());
-            engine.outTextLn("У Вас при себе " + objectsList);
-        }
-        else
-        {
-            engine.outTextLn("А у Вас ничего нет.");
         }
     }
 
@@ -256,24 +193,12 @@ public class VirtualMachine
 
     public Value runTrigger(Trigger trigger, IFMLObject ifmlObject) throws IFML2Exception
     {
-        RunningContext runningContext = new RunningContext(this);
+        RunningContext runningContext = RunningContext.CreateNewContext(this);
         runningContext.setDefaultObject(ifmlObject);
 
-        runInstructionList(trigger.getInstructions(), runningContext, false, true);
+        runInstructionList(trigger.getInstructions(), runningContext);
 
         return runningContext.getReturnValue();
-    }
-
-    /**
-     * Creates new RunningContext and loads it with global variables.
-     *
-     * @return New RunningContext loaded with global variables.
-     */
-    public RunningContext createGlobalRunningContext()
-    {
-        RunningContext runningContext = new RunningContext(this);
-        loadGlobalVariables(runningContext);
-        return runningContext;
     }
 
     public void setCurrentLocation(Location location)
@@ -286,9 +211,9 @@ public class VirtualMachine
         return engine.getStory();
     }
 
-    public void outTextLn(String text)
+    public void outTextLn(String text, Object... args)
     {
-        engine.outTextLn(text);
+        engine.outTextLn(text, args);
     }
 
     public void outText(String text)
@@ -304,5 +229,22 @@ public class VirtualMachine
     public void reportError(IFML2Exception exception, String message, Object... args)
     {
         engine.reportError(exception, message, args);
+    }
+
+    public Variable searchGlobalVariable(String name)
+    {
+        return engine.searchGlobalVariable(name);
+    }
+
+    /**
+     * Initializes (resets) virtual machine.
+     */
+    public void init()
+    {
+        inheritedSystemProcedures.clear();
+    }
+
+    public void outPicture(String filePath, int maxHeight, int maxWidth) {
+        engine.outIcon(filePath, maxHeight, maxWidth);
     }
 }

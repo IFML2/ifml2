@@ -2,54 +2,36 @@ package ifml2.vm.values;
 
 import ifml2.vm.IFML2ExpressionException;
 
-public class NumberValue extends Value implements IAddableValue
-{
-    private final Double value;
+import static ifml2.vm.values.Value.Operation.ADD;
 
+public class NumberValue extends Value<Double> implements IAddableValue
+{
     public NumberValue(double value)
     {
-        this.value = value;
-    }
-
-    @Override
-    public boolean equals(Object o)
-    {
-        if (this == o)
-        {
-            return true;
-        }
-        if (!(o instanceof NumberValue))
-        {
-            return false;
-        }
-
-        NumberValue that = (NumberValue) o;
-
-        return !(value != null ? !value.equals(that.value) : that.value != null);
+        super(value);
     }
 
     @Override
     public String toString()
     {
-        Long roundedValue = Math.round(value);
-        return value == roundedValue.doubleValue() ? roundedValue.toString() : value.toString();
+        return toLiteral();
     }
 
     @Override
     public Value add(Value rightValue) throws IFML2ExpressionException
     {
-        if(rightValue instanceof NumberValue)
+        if (rightValue instanceof NumberValue)
         {
-            return new NumberValue(value + ((NumberValue) rightValue).value);
-        }
-        
-        if(rightValue instanceof TextValue)
-        {
-            return new TextValue(toString() + ((TextValue)rightValue).getValue());
+            return new NumberValue(value + ((NumberValue) rightValue).getValue());
         }
 
-        throw new IFML2ExpressionException("Не поддерживается операция \"{0}\" между типом \"{1}\" и \"{2}\"",
-                OperationEnum.ADD, getTypeName(), rightValue.getTypeName());
+        if (rightValue instanceof TextValue)
+        {
+            return new TextValue(toLiteral() + ((TextValue) rightValue).getValue());
+        }
+
+        throw new IFML2ExpressionException("Не поддерживается операция \"{0}\" между типом \"{1}\" и \"{2}\"", ADD,
+                                           getTypeName(), rightValue.getTypeName());
     }
 
     @Override
@@ -58,8 +40,10 @@ public class NumberValue extends Value implements IAddableValue
         return "число";
     }
 
-    public Double getValue()
+    @Override
+    public String toLiteral()
     {
-        return value;
+        Long roundedValue = Math.round(value);
+        return value == roundedValue.doubleValue() ? roundedValue.toString() : value.toString();
     }
 }

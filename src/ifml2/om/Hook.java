@@ -1,22 +1,42 @@
 package ifml2.om;
 
+import ifml2.IFMLEntity;
+
 import javax.xml.bind.annotation.*;
 
-public class Hook
+@XmlAccessorType(XmlAccessType.NONE)
+public class Hook extends IFMLEntity
 {
     @XmlElement(name = "instructions")
-    public final InstructionList instructionList = new InstructionList();
-    private Action action;
+    public InstructionList instructionList = new InstructionList();
+
+    @XmlAttribute(name = "action")
+    @XmlIDREF
+    private Action action; // reference, don't clone
+
+    @XmlAttribute(name = "objectElement")
     private String objectElement = "";
-    private HookTypeEnum type = HookTypeEnum.INSTEAD; // default value for new hook in editors
+
+    @XmlAttribute(name = "type")
+    private Type type = Type.INSTEAD; // default value for new hook in editors
+
+    @Override
+    protected Hook clone() throws CloneNotSupportedException
+    {
+        final Hook clone = (Hook) super.clone(); // clone flat
+
+        // clone deep
+        clone.instructionList = instructionList.clone();
+        // action is reference, already copied
+
+        return clone;
+    }
 
     public Action getAction()
     {
         return action;
     }
 
-    @XmlAttribute(name = "action")
-    @XmlIDREF
     public void setAction(Action action)
     {
         this.action = action;
@@ -27,19 +47,17 @@ public class Hook
         return objectElement;
     }
 
-    @XmlAttribute(name = "objectElement")
     public void setObjectElement(String objectElement)
     {
         this.objectElement = objectElement;
     }
 
-    public HookTypeEnum getType()
+    public Type getType()
     {
         return type;
     }
 
-    @XmlAttribute(name = "type")
-    public void setType(HookTypeEnum type)
+    public void setType(Type type)
     {
         this.type = type;
     }
@@ -56,7 +74,8 @@ public class Hook
     }
 
     @XmlEnum
-    public enum HookTypeEnum
+    @XmlType(namespace = "Hook")
+    public enum Type
     {
         @XmlEnumValue(value = "before")
         BEFORE(0, "до"),
@@ -67,7 +86,7 @@ public class Hook
         public final int sortValue;
         private String ruName;
 
-        HookTypeEnum(int sortValue, String ruName)
+        Type(int sortValue, String ruName)
         {
             this.sortValue = sortValue;
             this.ruName = ruName;

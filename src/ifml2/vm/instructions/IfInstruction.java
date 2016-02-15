@@ -9,16 +9,12 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "if")
+@IFML2Instruction(title = "Проверить условие")
 public class IfInstruction extends Instruction
 {
     private String condition;
     private InstructionList thenInstructions = new InstructionList();
     private InstructionList elseInstructions = new InstructionList();
-
-    public static String getTitle()
-    {
-        return "Проверить условие";
-    }
 
     public String getCondition()
     {
@@ -58,14 +54,7 @@ public class IfInstruction extends Instruction
     {
         boolean conditionValue = getBooleanFromExpression(condition, runningContext, getTitle(), "Условие");
 
-        if (conditionValue)
-        {
-            virtualMachine.runInstructionList(thenInstructions, runningContext, true, conditionValue);
-        }
-        else
-        {
-            virtualMachine.runInstructionList(elseInstructions, runningContext, true, conditionValue);
-        }
+        virtualMachine.runInstructionList(conditionValue ? thenInstructions : elseInstructions, runningContext);
     }
 
     @Override

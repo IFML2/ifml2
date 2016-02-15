@@ -2,7 +2,7 @@ package ifml2.tests;
 
 import ifml2.IFML2Exception;
 import ifml2.engine.Engine;
-import ifml2.players.GameInterface;
+import ifml2.engine.featureproviders.text.IOutputPlainTextProvider;
 
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
@@ -16,15 +16,15 @@ import java.util.Date;
 
 public class TestManager
 {
-    private GameInterface uiInterface;
+    private IOutputPlainTextProvider outputPlainTextProvider;
 
     ArrayList<IFMLTestPlan> getTestPlans()
     {
         return testPlans;
     }
 
-    private final ArrayList<IFMLTestPlan> testPlans = new ArrayList<IFMLTestPlan>();
-    private final ArrayList<ListDataListener> testsListDataListeners = new ArrayList<ListDataListener>();
+    private final ArrayList<IFMLTestPlan> testPlans = new ArrayList<>();
+    private final ArrayList<ListDataListener> testsListDataListeners = new ArrayList<>();
 
     public void loadTestsFromFiles(File[] files) throws Exception
     {
@@ -81,29 +81,15 @@ public class TestManager
         testsListDataListeners.remove(listDataListener);
     }
 
-    public void run(GameInterface uiInterface)
+    public void run(IOutputPlainTextProvider outputPlainTextProvider)
     {
-        this.uiInterface = uiInterface;
+        this.outputPlainTextProvider = outputPlainTextProvider;
 
         log("=== Запуск тестов ===");
-        final String[] outText = {""};
-        Engine engine = new Engine(new GameInterface()
-        {
-            @Override
-            public void outputText(String text)
-            {
-                outText[0] += ((outText[0].length() > 0) ? '\n' : "") + text;
-                //log("Вывод движка >> " + text);
-            }
+        String[] outText = {""};
+        Engine engine = new Engine((IOutputPlainTextProvider) text -> outText[0] += ((outText[0].length() > 0) ? '\n' : "") + text);
 
-            @Override
-            public String inputText()
-            {
-                return null;
-            }
-        });
-
-        int plansSucc = 0;
+        int plansSuccess = 0;
         for (IFMLTestPlan testPlan : getTestPlans())
         {
             try
@@ -112,11 +98,11 @@ public class TestManager
                 String storyLink = testPlan.storyLink;
                 String storyFile = new File(testFile).getParent() + storyLink;
                 log("--- Загрузка теста {0} для файла истории {1} ---", testPlan.name, storyFile);
-                engine.loadStory(storyFile);
+                engine.loadStory(storyFile, false);
                 engine.initGame();
 
                 int cmdCnt = 0;
-                int cmdSucc = 0;
+                int cmdSuccess = 0;
                 for (IFMLTestIteration testIteration : testPlan.test.testIterations)
                 {
                     log("Тест команды №{0}: \"{1}\" > \"{2}\"", ++cmdCnt, testIteration.command, testIteration.answer);
@@ -129,7 +115,7 @@ public class TestManager
                     String answer = (testIteration.answer != null) ? testIteration.answer.trim()/*.replaceAll("\t|\n|\r", "")*/ : "";
                     if (answer.equalsIgnoreCase(outString))
                     {
-                        cmdSucc++;
+                        cmdSuccess++;
                         log("Ответ ожидаемый.");
                     }
                     else
@@ -137,27 +123,23 @@ public class TestManager
                         log("Ответ не соответствует ожидаемому (\"{0}\").", outString);
                     }
                 }
-                if(cmdSucc == testPlan.test.testIterations.size())
+                if(cmdSuccess == testPlan.test.testIterations.size())
                 {
-                    plansSucc++;
+                    plansSuccess++;
                 }
-                log("--- Завершено успешно {0} из {1} команд ---", cmdSucc, testPlan.test.testIterations.size());
+                log("--- Завершено успешно {0} из {1} команд ---", cmdSuccess, testPlan.test.testIterations.size());
             }
             catch (IFML2Exception e)
             {
                 log("Ошибка! " + e.getMessage());
             }
-            log("=== Завершено успешно {0} из {1} тестов ===", plansSucc, testPlans.size());
+            log("=== Завершено успешно {0} из {1} тестов ===", plansSuccess, testPlans.size());
         }
     }
 
-    private void log(String message, Object... argument)
+    private void log(String message, Object... arguments)
     {
-        log(MessageFormat.format(message, argument));
-    }
-
-    private void log(String message)
-    {
-        uiInterface.outputText(MessageFormat.format("[{0}] {1}\n", new Date(), message));
+        String formattedMessage = MessageFormat.format(message, arguments);
+        outputPlainTextProvider.outputPlainText(MessageFormat.format("[{0}] {1}\n", new Date(), formattedMessage));
     }
 }

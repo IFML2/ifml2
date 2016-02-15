@@ -1,7 +1,7 @@
 package ifml2;
 
 import ifml2.editor.gui.Editor;
-import ifml2.engine.Engine;
+import ifml2.engine.EngineVersion;
 import ifml2.players.guiplayer.GUIPlayer;
 import ifml2.tests.gui.TestRunner;
 import org.apache.log4j.Logger;
@@ -9,6 +9,9 @@ import org.apache.log4j.Logger;
 import javax.swing.*;
 import java.text.MessageFormat;
 import java.util.Map;
+
+import static ifml2.CommonConstants.RUSSIAN_PRODUCT_NAME;
+import static java.lang.String.format;
 
 public class Launcher
 {
@@ -24,7 +27,7 @@ public class Launcher
         LOG.debug("System properties:");
         for(Map.Entry<Object, Object> entry : System.getProperties().entrySet())
         {
-            LOG.debug(String.format("%s = %s", entry.getKey(), entry.getValue()));
+            LOG.debug(format("%s = %s", entry.getKey(), entry.getValue()));
         }
 
         if(args.length > 0 && "player".equalsIgnoreCase(args[0]))
@@ -65,7 +68,7 @@ public class Launcher
                     return "Тестер";
                 }
             };
-            Object answer = JOptionPane.showInputDialog(null, "Что запустить?", "ЯРИЛ 2.0 " + Engine.ENGINE_VERSION,
+            Object answer = JOptionPane.showInputDialog(null, "Что запустить?", format("%s %s", RUSSIAN_PRODUCT_NAME, EngineVersion.VERSION),
                     JOptionPane.QUESTION_MESSAGE, null, new Object[]{playerOption, editorOption, testerOption}, playerOption);
             if(playerOption.equals(answer))
             {

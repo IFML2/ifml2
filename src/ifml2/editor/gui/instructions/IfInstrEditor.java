@@ -4,7 +4,7 @@ import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ifml2.GUIUtils;
 import ifml2.editor.IFML2EditorException;
 import ifml2.editor.gui.EditorUtils;
-import ifml2.editor.gui.InstructionsEditor;
+import ifml2.editor.gui.editors.InstructionsEditor;
 import ifml2.om.InstructionList;
 import ifml2.om.Story;
 import ifml2.vm.instructions.IfInstruction;
@@ -19,7 +19,7 @@ import java.awt.event.MouseEvent;
 
 public class IfInstrEditor extends AbstractInstrEditor
 {
-    private static final String IF_INSTR_EDITOR_TITLE = IfInstruction.getTitle();
+    private static final String IF_INSTR_EDITOR_TITLE = Instruction.getTitleFor(IfInstruction.class);
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
@@ -66,7 +66,7 @@ public class IfInstrEditor extends AbstractInstrEditor
                 InstructionsEditor instructionsEditor = new InstructionsEditor(IfInstrEditor.this, thenInstructionsClone, storyDataHelper);
                 if (instructionsEditor.showDialog())
                 {
-                    instructionsEditor.getData(thenInstructionsClone);
+                    instructionsEditor.updateData(thenInstructionsClone);
                 }
             }
         });
@@ -78,7 +78,7 @@ public class IfInstrEditor extends AbstractInstrEditor
                 InstructionsEditor instructionsEditor = new InstructionsEditor(IfInstrEditor.this, elseInstructionsClone, storyDataHelper);
                 if (instructionsEditor.showDialog())
                 {
-                    instructionsEditor.getData(elseInstructionsClone);
+                    instructionsEditor.updateData(elseInstructionsClone);
                 }
             }
         });
@@ -109,7 +109,7 @@ public class IfInstrEditor extends AbstractInstrEditor
     @Override
     public void getInstruction(@NotNull Instruction instruction) throws IFML2EditorException
     {
-        super.getData(instruction);
+        super.updateData(instruction);
 
         IfInstruction ifInstruction = (IfInstruction) instruction;
 

@@ -11,11 +11,14 @@
           <option name="issueRegexp" value="ifml2-(\d+)" />
           <option name="linkRegexp" value="http://www.hostedredmine.com/issues/$1" />
         </IssueNavigationLink>
+        <IssueNavigationLink>
+          <option name="issueRegexp" value="[A-Z]+\-\d+" />
+          <option name="linkRegexp" value="http://ifml2.myjetbrains.com/youtrack/issue/$0" />
+        </IssueNavigationLink>
       </list>
     </option>
   </component>
   <component name="VcsDirectoryMappings">
-    <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$" vcs="Git" />
   </component>
 </project>
-

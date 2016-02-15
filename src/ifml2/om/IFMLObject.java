@@ -4,44 +4,69 @@ import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
 import ifml2.IFML2Exception;
+import ifml2.IFMLEntity;
 import ifml2.vm.IFML2VMException;
-import ifml2.vm.RunningContext;
+import ifml2.vm.ISymbolResolver;
 import ifml2.vm.values.BooleanValue;
 import ifml2.vm.values.TextValue;
 import ifml2.vm.values.Value;
+import org.jetbrains.annotations.NotNull;
 
 import javax.xml.bind.annotation.*;
 import java.text.MessageFormat;
 
-import static ifml2.om.Word.GramCaseEnum;
+import static ifml2.om.Word.GramCase;
 import static ifml2.om.xml.XmlSchemaConstants.*;
 
-public class IFMLObject implements Cloneable
+@XmlAccessorType(XmlAccessType.NONE)
+public class IFMLObject extends IFMLEntity implements Cloneable
 {
     private static final String NAME_PROPERTY_LITERAL = "имя";
     private static final String DESCRIPTION_PROPERTY_LITERAL = "описание";
+
     @XmlElementWrapper(name = ITEM_HOOKS_ELEMENT)
     @XmlElement(name = ITEM_HOOK_ELEMENT)
-    public EventList<Hook> hooks = new BasicEventList<Hook>();
-    @XmlElementWrapper(name = OBJECT_PROPERTIES_ELEMENT)
-    @XmlElement(name = OBJECT_PROPERTY_ELEMENT)
-    private EventList<Property> properties = new BasicEventList<Property>();
-    private String id;
-    private WordLinks wordLinks = new WordLinks();
-    private String name;
-    private String description;
-    private EventList<Attribute> attributes = new BasicEventList<Attribute>();
+    protected EventList<Hook> hooks = new BasicEventList<Hook>();
+
     @XmlElementWrapper(name = IFML_OBJECT_ROLES_ELEMENT)
     @XmlElement(name = IFML_OBJECT_ROLE_ELEMENT)
-    private EventList<Role> roles = new BasicEventList<Role>();
+    protected EventList<Role> roles = new BasicEventList<Role>();
+
+    @XmlElementWrapper(name = OBJECT_PROPERTIES_ELEMENT)
+    @XmlElement(name = OBJECT_PROPERTY_ELEMENT)
+    protected EventList<Property> properties = new BasicEventList<Property>();
+
+    @XmlAttribute(name = "id")
+    @XmlID
+    protected String id;
+
+    @XmlElement(name = OBJECT_WORDS_TAG)
+    protected WordLinks wordLinks = new WordLinks();
+
+    @XmlAttribute(name = "name")
+    protected String name;
+
+    @XmlElement(name = "description")
+    protected String description;
+
+    @XmlElementWrapper(name = IFML_OBJECT_ATTRIBUTES_ELEMENT)
+    @XmlElement(name = IFML_OBJECT_ATTRIBUTE_ELEMENT)
+    @XmlIDREF
+    protected EventList<Attribute> attributes = new BasicEventList<Attribute>();
 
     @Override
     public IFMLObject clone() throws CloneNotSupportedException
     {
-        IFMLObject ifmlObject = (IFMLObject) super.clone();
-        ifmlObject.wordLinks = wordLinks.clone();
-        ifmlObject.attributes = GlazedLists.eventList(attributes);
-        return ifmlObject;
+        IFMLObject clone = (IFMLObject) super.clone(); // clone flat fields
+
+        // clone deeper
+        clone.hooks = deepCloneEventList(hooks, Hook.class);
+        clone.roles = deepCloneEventList(roles, Role.class);
+        clone.properties = deepCloneEventList(properties, Property.class);
+        clone.wordLinks = wordLinks.clone();
+        clone.attributes = GlazedLists.eventList(attributes); // copy refs
+
+        return clone;
     }
 
     public String getId()
@@ -49,8 +74,6 @@ public class IFMLObject implements Cloneable
         return id;
     }
 
-    @XmlAttribute(name = "id")
-    @XmlID
     public void setId(String id)
     {
         this.id = id;
@@ -61,8 +84,7 @@ public class IFMLObject implements Cloneable
         return wordLinks;
     }
 
-    @XmlElement(name = OBJECT_WORDS_TAG)
-    public void setWordLinks(WordLinks wordLinks)
+    public void setWordLinks(@NotNull WordLinks wordLinks)
     {
         this.wordLinks = wordLinks;
     }
@@ -72,7 +94,6 @@ public class IFMLObject implements Cloneable
         return name;
     }
 
-    @XmlAttribute(name = "name")
     public void setName(String name)
     {
         this.name = name;
@@ -83,7 +104,6 @@ public class IFMLObject implements Cloneable
         return description;
     }
 
-    @XmlElement(name = "description")
     public void setDescription(String description)
     {
         this.description = description;
@@ -94,9 +114,6 @@ public class IFMLObject implements Cloneable
         return attributes;
     }
 
-    @XmlElementWrapper(name = IFML_OBJECT_ATTRIBUTES_ELEMENT)
-    @XmlElement(name = IFML_OBJECT_ATTRIBUTE_ELEMENT)
-    @XmlIDREF
     public void setAttributes(EventList<Attribute> attributes)
     {
         this.attributes = attributes;
@@ -107,13 +124,18 @@ public class IFMLObject implements Cloneable
         return roles;
     }
 
+    public void setRoles(EventList<Role> roles)
+    {
+        this.roles = roles;
+    }
+
     @Override
     public String toString()
     {
         return name;
     }
 
-    public String getName(GramCaseEnum gramCase) throws IFML2Exception
+    public String getName(GramCase gramCase) throws IFML2Exception
     {
         if (wordLinks == null)
         {
@@ -127,7 +149,7 @@ public class IFMLObject implements Cloneable
         return wordLinks.getMainWord().getFormByGramCase(gramCase);
     }
 
-    public Value getMemberValue(String propertyName, RunningContext runningContext) throws IFML2Exception
+    public Value getMemberValue(String propertyName, ISymbolResolver symbolResolver) throws IFML2Exception
     {
         // test system properties
         if (NAME_PROPERTY_LITERAL.equalsIgnoreCase(propertyName))
@@ -140,7 +162,7 @@ public class IFMLObject implements Cloneable
         }
 
         // test gram cases
-        GramCaseEnum caseEnum = GramCaseEnum.getValueByAbbr(propertyName);
+        GramCase caseEnum = GramCase.getValueByAbbr(propertyName);
         if (caseEnum != null)
         {
             return new TextValue(wordLinks.getMainWord().getFormByGramCase(caseEnum));
@@ -184,7 +206,7 @@ public class IFMLObject implements Cloneable
         }
 
         // test principal possibility of attribute
-        for (Attribute attribute : runningContext.getStory().getAllAttributes())
+        for (Attribute attribute : symbolResolver.getAttributeList())
         {
             if (attribute.getName().equalsIgnoreCase(propertyName))
             {
@@ -194,7 +216,7 @@ public class IFMLObject implements Cloneable
         }
 
         // test principal possibility of role
-        for (RoleDefinition roleDefinition : runningContext.getStory().getAllRoleDefinitions())
+        for (RoleDefinition roleDefinition : symbolResolver.getRoleDefinitionList())
         {
             if (roleDefinition.getName().equalsIgnoreCase(propertyName))
             {
@@ -203,15 +225,15 @@ public class IFMLObject implements Cloneable
             }
         }
 
-        throw new IFML2VMException("У объекта \"{0}\" нет свойства \"{1}\", а также в игре" +
-                " нет признаков и ролей с таким названием.", this, propertyName);
+        throw new IFML2VMException("У объекта \"{0}\" нет свойства \"{1}\", а также в игре нет признаков и ролей с таким названием.", this,
+                propertyName);
     }
 
-    public Value tryGetMemberValue(String symbol, RunningContext runningContext)
+    public Value tryGetMemberValue(String symbol, ISymbolResolver symbolResolver)
     {
         try
         {
-            return getMemberValue(symbol, runningContext);
+            return getMemberValue(symbol, symbolResolver);
         }
         catch (IFML2Exception e)
         {
@@ -219,7 +241,7 @@ public class IFMLObject implements Cloneable
         }
     }
 
-    public Property getPropertyByName(String name)
+    public Property findPropertyByName(String name)
     {
         // search in local properties
         for (Property property : properties)
@@ -233,7 +255,7 @@ public class IFMLObject implements Cloneable
         // search in roles' properties
         for (Role role : roles)
         {
-            Property property = role.getPropertyByName(name);
+            Property property = role.findPropertyByName(name);
             if (property != null)
             {
                 return property;
@@ -241,5 +263,45 @@ public class IFMLObject implements Cloneable
         }
 
         return null;
+    }
+
+    public Role findRoleByName(String name)
+    {
+        for (Role role : roles)
+        {
+            if (role.getName().equalsIgnoreCase(name))
+            {
+                return role;
+            }
+        }
+
+        return null;
+    }
+
+    public void copyTo(IFMLObject ifmlObject) throws CloneNotSupportedException
+    {
+        ifmlObject.setId(id);
+        ifmlObject.setName(name);
+        ifmlObject.setDescription(description);
+        ifmlObject.setWordLinks(wordLinks.clone());
+        ifmlObject.setAttributes(GlazedLists.eventList(attributes)); // copy refs
+        ifmlObject.setProperties(deepCloneEventList(properties, Property.class));
+        ifmlObject.setHooks(deepCloneEventList(hooks, Hook.class));
+        ifmlObject.setRoles(deepCloneEventList(roles, Role.class));
+    }
+
+    public void setProperties(EventList<Property> properties)
+    {
+        this.properties = properties;
+    }
+
+    public EventList<Hook> getHooks()
+    {
+        return hooks;
+    }
+
+    public void setHooks(EventList<Hook> hooks)
+    {
+        this.hooks = hooks;
     }
 }

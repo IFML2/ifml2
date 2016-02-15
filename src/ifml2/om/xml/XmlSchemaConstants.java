@@ -12,8 +12,8 @@ public interface XmlSchemaConstants
     public static final String STARTING_POSITION_LOCATIONS_ELEMENT = "locations";
     public static final String STARTING_POSITION_LOCATION_ELEMENT = "location";
     public static final String STORY_LOCATIONS_ELEMENT = "locations";
-    public static final String STORY_ITEMS_ELEMENT = "items";
     public static final String LOCATIONS_LOCATION_ELEMENT = "location";
+    public static final String STORY_ITEMS_ELEMENT = "items";
     public static final String ITEMS_ITEM_ELEMENT = "item";
     public static final String ITEM_HOOKS_ELEMENT = "hooks";
     public static final String ITEM_HOOK_ELEMENT = "hook";
@@ -31,4 +31,7 @@ public interface XmlSchemaConstants
     String IFML_OBJECT_ATTRIBUTE_ELEMENT = "attribute";
     String ROLE_DEFINITION_ATTRIBUTES_ELEMENT = "attributes";
     String ROLE_DEFINITION_ATTRIBUTE_ELEMENT = "attribute";
+    String STORY_PROCEDURES_ELEMENT = "procedures";
+    String LIBRARY_PROCEDURES_ELEMENT = "procedures";
+    String PROCEDURES_PROCEDURE_ELEMENT = "procedure";
 }

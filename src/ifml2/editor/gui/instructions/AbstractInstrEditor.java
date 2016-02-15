@@ -25,7 +25,7 @@ public abstract class AbstractInstrEditor extends AbstractEditor<Instruction>
     public abstract void getInstruction(@NotNull Instruction instruction) throws IFML2EditorException;
 
     @Override
-    public void getData(@NotNull Instruction data) throws IFML2EditorException
+    public void updateData(@NotNull Instruction data) throws IFML2EditorException
     {
         if (!data.getClass().equals(getInstrClass()))
         {

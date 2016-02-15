@@ -3,51 +3,57 @@ package ifml2.om;
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
+import ifml2.FormatLogger;
 import ifml2.IFML2Exception;
+import ifml2.IFMLEntity;
 import ifml2.om.xml.XmlSchemaConstants;
 import ifml2.vm.VirtualMachine;
 import ifml2.vm.values.Value;
 import org.jetbrains.annotations.NotNull;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlIDREF;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.*;
 import java.util.List;
 
+import static ifml2.om.Trigger.Type.GET_ACCESSIBLE_CONTENT;
 import static ifml2.om.xml.XmlSchemaConstants.ITEM_STARTING_POSITION_ELEMENT;
 import static ifml2.om.xml.XmlSchemaConstants.STARTING_POSITION_INVENTORY_ELEMENT;
 
+@XmlAccessorType(XmlAccessType.NONE)
 public class Item extends IFMLObject implements Cloneable
 {
+    private static final FormatLogger LOG = FormatLogger.getLogger(Item.class);
     @XmlElement(name = ITEM_STARTING_POSITION_ELEMENT)
     private ItemStartingPosition startingPosition = new ItemStartingPosition();
+
     @XmlTransient
-    private List<?> container;
+    private List<? extends IFMLEntity> container;
+
+    public static String getClassName()
+    {
+        return "Предмет";
+    }
 
     public ItemStartingPosition getStartingPosition()
     {
         return startingPosition;
     }
 
-    public EventList<Hook> getHooks()
+    public void setStartingPosition(ItemStartingPosition startingPosition)
     {
-        return hooks;
+        this.startingPosition = startingPosition;
     }
 
-    //    /**
-    //     * JAXB afterUnmarshal listener
-    //     * @param unmarshaller Unmarshaller
-    //     * @param parent Parent, should be Role
-    //     */
-    //    @SuppressWarnings("UnusedDeclaration")
-    //    private void afterUnmarshal(final Unmarshaller unmarshaller,
-    //                                final Object parent)
-    //    {
-    //        assert parent instanceof List;
-    //        parentLIst = (List) parent;
-
-//    }
+    /**
+     * Copies all field of item but container.
+     *
+     * @param item item to copy to
+     * @throws CloneNotSupportedException
+     */
+    public void copyTo(@NotNull Item item) throws CloneNotSupportedException
+    {
+        super.copyTo(item);
+        item.setStartingPosition(startingPosition.clone());
+    }
 
     @Override
     public String toString()
@@ -66,9 +72,9 @@ public class Item extends IFMLObject implements Cloneable
         //todo: run own triggers -- when they will exist
 
         // run roles' triggers
-        for (Role role : getRoles())
+        for (Role role : roles)
         {
-            Trigger trigger = role.getRoleDefinition().getTrigger(Trigger.TriggerTypeEnum.GET_ACCESSIBLE_CONTENT);
+            Trigger trigger = role.getRoleDefinition().getTrigger(GET_ACCESSIBLE_CONTENT);
             if (trigger != null)
             {
                 return virtualMachine.runTrigger(trigger, this);
@@ -78,12 +84,12 @@ public class Item extends IFMLObject implements Cloneable
         return null;
     }
 
-    public List<?> getContainer()
+    public List<? extends IFMLEntity> getContainer()
     {
         return container;
     }
 
-    public void setContainer(List<?> container)
+    public void setContainer(List<? extends IFMLEntity> container)
     {
         this.container = container;
     }
@@ -94,6 +100,11 @@ public class Item extends IFMLObject implements Cloneable
         assert container != null;
         //
 
+        if (!container.contains(this))
+        {
+            LOG.error("moveTo(): Item's container hasn't the item!");
+        }
+
         container.remove(this);
         collection.add(this);
         container = collection;
@@ -102,20 +113,20 @@ public class Item extends IFMLObject implements Cloneable
     @Override
     public Item clone() throws CloneNotSupportedException
     {
-        Item clone = (Item) super.clone();
+        Item clone = (Item) super.clone(); // flat clone
+
+        // deep clone
         clone.startingPosition = startingPosition.clone();
-        clone.hooks = GlazedLists.eventList(hooks);
+
         return clone;
     }
 
-    public static String getClassName()
-    {
-        return "Предмет";
-    }
-
+    @XmlAccessorType(XmlAccessType.NONE)
     public static class ItemStartingPosition implements Cloneable
     {
+        @XmlElement(name = STARTING_POSITION_INVENTORY_ELEMENT)
         private boolean inventory = false;
+
         @XmlElementWrapper(name = XmlSchemaConstants.STARTING_POSITION_LOCATIONS_ELEMENT)
         @XmlElement(name = XmlSchemaConstants.STARTING_POSITION_LOCATION_ELEMENT)
         @XmlIDREF
@@ -124,8 +135,11 @@ public class Item extends IFMLObject implements Cloneable
         @Override
         public ItemStartingPosition clone() throws CloneNotSupportedException
         {
-            ItemStartingPosition clone = (ItemStartingPosition) super.clone();
-            clone.locations = GlazedLists.eventList(locations);
+            ItemStartingPosition clone = (ItemStartingPosition) super.clone(); // flat clone
+
+            // deep clone
+            clone.locations = GlazedLists.eventList(locations); // copy refs
+
             return clone;
         }
 
@@ -134,7 +148,6 @@ public class Item extends IFMLObject implements Cloneable
             return inventory;
         }
 
-        @XmlElement(name = STARTING_POSITION_INVENTORY_ELEMENT)
         public void setInventory(boolean inventory)
         {
             this.inventory = inventory;

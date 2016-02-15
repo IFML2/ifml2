@@ -9,12 +9,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.text.MessageFormat;
 
-import static ifml2.vm.instructions.ShowMessageInstr.MessageTypeEnum.EXPRESSION;
-import static ifml2.vm.instructions.ShowMessageInstr.MessageTypeEnum.TEXT;
+import static ifml2.vm.instructions.ShowMessageInstr.Type.EXPRESSION;
+import static ifml2.vm.instructions.ShowMessageInstr.Type.TEXT;
 
 public class ShowMessageInstrEditor extends AbstractInstrEditor
 {
-    private static final String SHOW_MESSAGE_INSTR_EDITOR_TITLE = ShowMessageInstr.getTitle();
+    private static final String SHOW_MESSAGE_INSTR_EDITOR_TITLE = Instruction.getTitleFor(ShowMessageInstr.class);
     private static final String TYPE_ERROR = "Message type \"{0}\" is unknown";
     private JPanel contentPane;
     private JButton buttonOK;
@@ -59,7 +59,7 @@ public class ShowMessageInstrEditor extends AbstractInstrEditor
     @Override
     public void getInstruction(@NotNull Instruction instruction) throws IFML2EditorException
     {
-        getData(instruction);
+        updateData(instruction);
 
         ShowMessageInstr showMessageInstr = (ShowMessageInstr) instruction;
 

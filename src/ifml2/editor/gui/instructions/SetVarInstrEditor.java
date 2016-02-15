@@ -11,7 +11,7 @@ import java.awt.*;
 
 public class SetVarInstrEditor extends AbstractInstrEditor
 {
-    private static final String SET_VAR_EDITOR_TITLE = SetVarInstruction.getTitle();
+    private static final String SET_VAR_EDITOR_TITLE = Instruction.getTitleFor(SetVarInstruction.class);
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
@@ -65,7 +65,7 @@ public class SetVarInstrEditor extends AbstractInstrEditor
     @Override
     public void getInstruction(@NotNull Instruction instruction) throws IFML2EditorException
     {
-        getData(instruction);
+        updateData(instruction);
 
         SetVarInstruction setVarInstruction = (SetVarInstruction) instruction;
         setVarInstruction.setName(nameText.getText().trim());

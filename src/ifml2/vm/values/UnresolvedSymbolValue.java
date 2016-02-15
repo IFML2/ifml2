@@ -1,35 +1,10 @@
 package ifml2.vm.values;
 
-public class UnresolvedSymbolValue extends Value
+public class UnresolvedSymbolValue extends Value<String>
 {
-    public final String value;
-
-    @Override
-    public boolean equals(Object o)
-    {
-        if (this == o)
-        {
-            return true;
-        }
-        if (!(o instanceof UnresolvedSymbolValue))
-        {
-            return false;
-        }
-
-        UnresolvedSymbolValue that = (UnresolvedSymbolValue) o;
-
-        return !(value != null ? !value.equals(that.value) : that.value != null);
-    }
-
     public UnresolvedSymbolValue(String value)
     {
-        this.value = value;
-    }
-
-    @Override
-    public String toString()
-    {
-        return value;
+        super(value);
     }
 
     @Override
@@ -38,7 +13,8 @@ public class UnresolvedSymbolValue extends Value
         return "идентификатор";
     }
 
-    public String getValue()
+    @Override
+    public String toLiteral()
     {
         return value;
     }

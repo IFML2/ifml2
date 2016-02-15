@@ -4,79 +4,95 @@ import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ifml2.vm.instructions.SetVarInstruction;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlIDREF;
+import javax.xml.bind.annotation.*;
 
+import static javax.xml.bind.annotation.XmlAccessType.NONE;
+
+@XmlAccessorType(NONE)
 public class StoryOptions
 {
     @XmlElement(name = "startLocationOption")
     private final StartLocationOption startLocationOption = new StartLocationOption();
-    @XmlElement(name = "startProcedureOption")
-    private final StartProcedureOption startProcedureOption = new StartProcedureOption();
-    @XmlElement(name = "storyDescription")
-    private final StoryDescription storyDescription = new StoryDescription();
-    private EventList<SetVarInstruction> vars = new BasicEventList<SetVarInstruction>();
 
     public StartLocationOption getStartLocationOption()
     {
         return startLocationOption;
     }
 
+    @XmlElement(name = "startProcedureOption")
+    private final StartProcedureOption startProcedureOption = new StartProcedureOption();
+
     public StartProcedureOption getStartProcedureOption()
     {
         return startProcedureOption;
     }
+
+    @XmlElement(name = "storyDescription")
+    private final StoryDescription storyDescription = new StoryDescription();
 
     public StoryDescription getStoryDescription()
     {
         return storyDescription;
     }
 
+    @XmlElementWrapper(name = "globalVars")
+    @XmlElement(name = "var")
+    private EventList<SetVarInstruction> vars = new BasicEventList<SetVarInstruction>();
+
     public EventList<SetVarInstruction> getVars()
     {
         return vars;
     }
 
-    @XmlElementWrapper(name = "globalVars")
-    @XmlElement(name = "var")
     public void setVars(EventList<SetVarInstruction> vars)
     {
         this.vars = vars;
     }
 
+    @XmlElement(name = "systemCommandsDisableOption")
+    private final SystemCommandsDisableOption systemCommandsDisableOption = new SystemCommandsDisableOption();
+
+    public SystemCommandsDisableOption getSystemCommandsDisableOption()
+    {
+        return systemCommandsDisableOption;
+    }
+
+    @XmlAccessorType(NONE)
     public static class StartLocationOption
     {
+        @XmlIDREF
+        @XmlAttribute(name = "location")
         private Location location;
-        private boolean showStartLocDesc;
 
         public Location getLocation()
         {
             return location;
         }
 
-        @XmlAttribute(name = "location")
-        @XmlIDREF
         public void setLocation(Location location)
         {
             this.location = location;
         }
+
+        @XmlAttribute(name = "showStartLocDesc")
+        private boolean showStartLocDesc;
 
         public boolean getShowStartLocDesc()
         {
             return showStartLocDesc;
         }
 
-        @XmlAttribute(name = "showStartLocDesc")
         public void setShowStartLocDesc(boolean showStartLocDesc)
         {
             this.showStartLocDesc = showStartLocDesc;
         }
     }
 
+    @XmlAccessorType(NONE)
     public static class StartProcedureOption
     {
+        @XmlAttribute(name = "procedure")
+        @XmlIDREF
         private Procedure procedure;
 
         public Procedure getProcedure()
@@ -84,43 +100,95 @@ public class StoryOptions
             return procedure;
         }
 
-        @XmlAttribute(name = "procedure")
-        @XmlIDREF
         public void setProcedure(Procedure procedure)
         {
             this.procedure = procedure;
         }
     }
 
+    @XmlAccessorType(NONE)
     public static class StoryDescription
     {
         @XmlAttribute(name = "name")
-        public String name;
-        @XmlAttribute(name = "description")
-        public String description;
-        @XmlAttribute(name = "version")
-        public String version;
-        @XmlAttribute(name = "author")
-        public String author;
+        private String name;
 
         public String getName()
         {
             return name;
         }
 
+        public void setName(String name)
+        {
+            this.name = name;
+        }
+
+        @XmlAttribute(name = "description")
+        private String description;
+
         public String getDescription()
         {
             return description;
         }
+
+        public void setDescription(String description)
+        {
+            this.description = description;
+        }
+
+        @XmlAttribute(name = "version")
+        private String version;
 
         public String getVersion()
         {
             return version;
         }
 
+        public void setVersion(String version)
+        {
+            this.version = version;
+        }
+
+        @XmlAttribute(name = "author")
+        private String author;
+
         public String getAuthor()
         {
             return author;
+        }
+
+        public void setAuthor(String author)
+        {
+            this.author = author;
+        }
+    }
+
+    @XmlAccessorType(NONE)
+    public static class SystemCommandsDisableOption
+    {
+        @XmlAttribute(name = "DisableHelp")
+        private boolean disableHelp = false;
+
+        public boolean isDisableHelp()
+        {
+            return disableHelp;
+        }
+
+        public void setDisableHelp(boolean disableHelp)
+        {
+            this.disableHelp = disableHelp;
+        }
+
+        @XmlAttribute(name = "DisableDebug")
+        private boolean disableDebug = false;
+
+        public boolean isDisableDebug()
+        {
+            return disableDebug;
+        }
+
+        public void setDisableDebug(boolean disableDebug)
+        {
+            this.disableDebug = disableDebug;
         }
     }
 }

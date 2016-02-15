@@ -35,17 +35,14 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="3c7c7" class="javax.swing.JTextArea" binding="logTextArea">
+          <component id="26eea" class="javax.swing.JTextPane" binding="logTextPane">
             <constraints/>
             <properties>
               <background awt-color="black"/>
               <editable value="false"/>
               <font name="Segoe UI" size="16"/>
               <foreground awt-color="green"/>
-              <lineWrap value="true"/>
               <margin top="4" left="4" bottom="4" right="4"/>
-              <requestFocusEnabled value="false"/>
-              <wrapStyleWord value="true"/>
             </properties>
           </component>
         </children>

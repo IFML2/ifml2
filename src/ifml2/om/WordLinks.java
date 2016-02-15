@@ -8,36 +8,16 @@ import ca.odell.glazedlists.event.ListEventListener;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlIDREF;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
 import static ifml2.om.xml.XmlSchemaConstants.WORDS_MAIN_WORD_ATTRIBUTE;
 import static ifml2.om.xml.XmlSchemaConstants.WORDS_WORD_TAG;
 
+@XmlAccessorType(XmlAccessType.NONE)
 public class WordLinks implements Cloneable
 {
-    @Override
-    public WordLinks clone() throws CloneNotSupportedException
-    {
-        WordLinks clone = (WordLinks) super.clone();
-        clone.words = GlazedLists.eventList(words);
-        return clone;
-    }
-
-    private Word mainWord;
-    @XmlAttribute(name = WORDS_MAIN_WORD_ATTRIBUTE)
-    @XmlIDREF
-    public void setMainWord(Word mainWord)
-    {
-        this.mainWord = mainWord;
-        fireChangeEvent();
-    }
-    public Word getMainWord() { return mainWord; }
-
     private final ListEventListener<Word> listEventListener = new ListEventListener<Word>()
     {
         @Override
@@ -47,27 +27,60 @@ public class WordLinks implements Cloneable
         }
     };
 
+    @XmlTransient
+    private final List<ChangeListener> changeListeners = new ArrayList<ChangeListener>();
+
+    @XmlAttribute(name = WORDS_MAIN_WORD_ATTRIBUTE)
+    @XmlIDREF
+    private Word mainWord;
+
+    @XmlElement(name = WORDS_WORD_TAG)
+    @XmlIDREF
     private EventList<Word> words = new BasicEventList<Word>();
+
     {
         words.addListEventListener(listEventListener);
     }
-    @XmlElement(name = WORDS_WORD_TAG)
-    @XmlIDREF
+
+    @Override
+    public WordLinks clone() throws CloneNotSupportedException
+    {
+        WordLinks clone = (WordLinks) super.clone();
+        clone.words = GlazedLists.eventList(words); // copy links
+        return clone;
+    }
+
+    public Word getMainWord()
+    {
+        return mainWord;
+    }
+
+    public void setMainWord(Word mainWord)
+    {
+        this.mainWord = mainWord;
+        fireChangeEvent();
+    }
+
+    public EventList<Word> getWords()
+    {
+        return words;
+    }
+
     public void setWords(EventList<Word> words)
     {
         this.words = words;
         words.addListEventListener(listEventListener);
         fireChangeEvent();
     }
-    public EventList<Word> getWords() { return words; }
 
-    @XmlTransient
-    private final List<ChangeListener> changeListeners = new ArrayList<ChangeListener>();
-    public void addChangeListener(ChangeListener listener) { changeListeners.add(listener); }
+    public void addChangeListener(ChangeListener listener)
+    {
+        changeListeners.add(listener);
+    }
 
     private void fireChangeEvent()
     {
-        for(ChangeListener changeListener : changeListeners)
+        for (ChangeListener changeListener : changeListeners)
         {
             changeListener.stateChanged(new ChangeEvent(this));
         }
@@ -77,9 +90,9 @@ public class WordLinks implements Cloneable
     {
         String result = "";
 
-        if(words != null)
+        if (words != null)
         {
-            for(Word word : getWords())
+            for (Word word : getWords())
             {
                 result += ' ' + word.ip;
             }

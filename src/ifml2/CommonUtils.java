@@ -1,5 +1,9 @@
 package ifml2;
 
+import javax.crypto.Cipher;
+import javax.crypto.NoSuchPaddingException;
+import java.security.NoSuchAlgorithmException;
+
 public class CommonUtils
 {
     private static String getCurrentDirectory()
@@ -7,7 +11,7 @@ public class CommonUtils
         return System.getProperty("user.dir");
     }
 
-    public static String getSamplesDirectory()
+    public static String getGamesDirectory()
     {
         return getCurrentDirectory() + CommonConstants.GAMES_DIRECTORY;
     }
@@ -32,6 +36,16 @@ public class CommonUtils
     public static String getTestsDirectory()
     {
         return getCurrentDirectory() + CommonConstants.TESTS_DIRECTORY;
+    }
+
+    public static String getSavesDirectory()
+    {
+        return getCurrentDirectory() + CommonConstants.SAVES_DIRECTORY;
+    }
+
+    public static Cipher createCipher() throws NoSuchAlgorithmException, NoSuchPaddingException
+    {
+        return Cipher.getInstance("DES/ECB/PKCS5Padding");
     }
 
     /*public static String getExtendedStackTrace(Throwable e)

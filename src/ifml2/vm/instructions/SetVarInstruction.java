@@ -9,20 +9,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.text.MessageFormat;
 
 @XmlRootElement(name = "var")
+@IFML2Instruction(title = "Установить переменную")
 public class SetVarInstruction extends Instruction
 {
     private String name;
     private String value;
 
-    public static String getTitle()
-    {
-        return "Установить переменную";
-    }
-
     @Override
     public void run(RunningContext runningContext) throws IFML2Exception
     {
-        runningContext.setContextVariable(name, ExpressionCalculator.calculate(runningContext, value));
+        runningContext.writeVariable(name, ExpressionCalculator.calculate(runningContext, value));
     }
 
     @Override

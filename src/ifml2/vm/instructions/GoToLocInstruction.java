@@ -8,14 +8,10 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "goToLoc")
+@IFML2Instruction(title = "Перейти в локацию")
 public class GoToLocInstruction extends Instruction
 {
     private String locationExpr = "";
-
-    public static String getTitle()
-    {
-        return "Перейти в локацию ";
-    }
 
     @Override
     public void run(RunningContext runningContext) throws IFML2Exception
@@ -30,7 +26,7 @@ public class GoToLocInstruction extends Instruction
         virtualMachine.setCurrentLocation(location);
 
         // run show loc name instruction
-        virtualMachine.showLocName(location);
+        virtualMachine.showLocation(location);
     }
 
     public String getLocationExpr()

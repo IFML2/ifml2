@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<schema xmlns:ifml2="http://toysoft.narod.ru/IFML2Schema" elementFormDefault="qualified"
-        targetNamespace="http://toysoft.narod.ru/IFML2Schema" xmlns="http://www.w3.org/2001/XMLSchema"
-        xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<schema xmlns:ifml2="http://toysoft.narod.ru/IFML2Schema" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="qualified" targetNamespace="http://toysoft.narod.ru/IFML2Schema"
+        xmlns="http://www.w3.org/2001/XMLSchema">
 
     <complexType name="storyType">
         <annotation>
             <documentation>История - тип</documentation>
         </annotation>
         <all>
+            <xs:element name="inheritedSystemProcedures" type="ifml2:inheritedSystemProceduresType" maxOccurs="1" minOccurs="0"/>
             <element name="storyOptions" type="ifml2:storyOptionsType" maxOccurs="1" minOccurs="0"/>
             <element name="libraries" type="ifml2:usedLibrariesType" maxOccurs="1" minOccurs="0"/>
             <element name="attribute-definitions" type="ifml2:attribute-definitionsType" maxOccurs="1" minOccurs="0"/>
@@ -62,7 +63,7 @@
         </sequence>
         <attribute name="mainWord" type="string" use="optional"/>
     </complexType>
-    
+
     <complexType name="rolesLinksType">
         <sequence minOccurs="0" maxOccurs="unbounded">
             <element name="role" type="ifml2:roleLinkType"/>
@@ -101,9 +102,13 @@
             <extension base="ifml2:objectType">
                 <all minOccurs="1" maxOccurs="1">
                     <element name="north" type="ifml2:idType" minOccurs="0" maxOccurs="1"/>
+                    <element name="north-east" type="ifml2:idType" minOccurs="0" maxOccurs="1"/>
                     <element name="east" type="ifml2:idType" minOccurs="0" maxOccurs="1"/>
+                    <element name="south-east" type="ifml2:idType" minOccurs="0" maxOccurs="1"/>
                     <element name="south" type="ifml2:idType" minOccurs="0" maxOccurs="1"/>
+                    <element name="south-west" type="ifml2:idType" minOccurs="0" maxOccurs="1"/>
                     <element name="west" type="ifml2:idType" minOccurs="0" maxOccurs="1"/>
+                    <element name="north-west" type="ifml2:idType" minOccurs="0" maxOccurs="1"/>
                     <element name="up" type="ifml2:idType" minOccurs="0" maxOccurs="1"/>
                     <element name="down" type="ifml2:idType" minOccurs="0" maxOccurs="1"/>
                 </all>
@@ -207,10 +212,10 @@
     </complexType>
 
     <complexType name="templateElementType">
-        <attribute name="position" use="required">
+        <attribute name="position" use="optional">
             <simpleType>
                 <restriction base="positiveInteger">
-                    <minInclusive value="1"/>
+                    <minInclusive value="0"/>
                 </restriction>
             </simpleType>
         </attribute>
@@ -247,7 +252,7 @@
     </simpleType>
 
     <complexType name="procedureCallType">
-        <attribute name="procedure" type="IDREF" use="required"/>
+        <attribute name="procedure" type="string" use="required"/>
     </complexType>
 
     <complexType name="proceduresType">
@@ -267,6 +272,9 @@
             <element name="setProperty" type="ifml2:instructionSetPropertyType"/>
             <element name="moveItem" type="ifml2:instructionMoveItemType"/>
             <element name="startTimer" type="ifml2:instructionStartTimerType"/>
+            <element name="rollDice" type="ifml2:instructionRollDiceType"/>
+            <element name="runProcedure" type="ifml2:instructionRunProcedureType"/>
+            <xs:element name="showPicture" type="ifml2:instructionShowPictureType"/>
         </choice>
     </complexType>
 
@@ -276,7 +284,7 @@
             <element name="procedureVariables" minOccurs="0" maxOccurs="1" type="ifml2:procedureVariablesType"/>
             <element name="procedureBody" minOccurs="1" maxOccurs="1" type="ifml2:instructionsType"/>
         </all>
-        <attribute name="name" type="ID" use="required"/>
+        <attribute name="name" type="string" use="required"/>
         <attribute name="inheritsSystemProcedure" type="ifml2:systemProcedureEnumType" use="optional"/>
     </complexType>
 
@@ -302,10 +310,10 @@
     </complexType>
 
     <complexType name="instructionType">
-        <attribute name="position" use="required">
+        <attribute name="position" use="optional">
             <simpleType>
                 <restriction base="positiveInteger">
-                    <minInclusive value="1"/>
+                    <!--<minInclusive value="1"/>-->
                 </restriction>
             </simpleType>
         </attribute>
@@ -354,7 +362,8 @@
         </sequence>
         <attribute name="type" type="ifml2:hookEnumType" use="required"/>
         <attribute name="action" type="string" use="required"/>
-        <attribute name="objectElement" type="string" use="optional"/> <!-- action template parameter name for item hooks -->
+        <attribute name="objectElement" type="string" use="optional"/>
+        <!-- action template parameter name for item hooks -->
     </complexType>
 
     <simpleType name="hookEnumType">
@@ -394,14 +403,6 @@
             <enumeration value="expression"/>
         </restriction>
     </simpleType>
-
-    <complexType name="instructionDropItemType">
-        <complexContent>
-            <extension base="ifml2:instructionType">
-                <attribute name="item" type="string"/>
-            </extension>
-        </complexContent>
-    </complexType>
 
     <complexType name="instructionIfType">
         <complexContent>
@@ -448,7 +449,7 @@
             </extension>
         </complexContent>
     </complexType>
-    
+
     <complexType name="instructionSetPropertyType">
         <complexContent>
             <extension base="ifml2:instructionType">
@@ -467,6 +468,16 @@
             </extension>
         </complexContent>
     </complexType>
+
+    <xs:complexType name="instructionShowPictureType">
+        <complexContent>
+            <extension base="ifml2:instructionType">
+                <xs:attribute name="filepath" type="xs:string" use="required"/>
+                <xs:attribute name="maxHeight" type="xs:int" use="optional"/>
+                <xs:attribute name="maxWidth" type="xs:int" use="optional"/>
+            </extension>
+        </complexContent>
+    </xs:complexType>
 
     <element name="library" type="ifml2:libraryType"/>
 
@@ -498,11 +509,11 @@
     </complexType>
 
     <complexType name="role-definitionType">
-        <sequence>
+        <all>
             <element name="attributes" type="ifml2:attributesType" minOccurs="0" maxOccurs="1"/>
             <element name="properties" type="ifml2:properties-definitionsType" minOccurs="0" maxOccurs="1"/>
             <element name="triggers" type="ifml2:triggersType" minOccurs="0" maxOccurs="1"/>
-        </sequence>
+        </all>
         <attribute name="name" type="string" use="required"/>
         <attribute name="description" type="string" use="optional"/>
     </complexType>
@@ -560,8 +571,15 @@
             <element name="startProcedureOption" type="ifml2:startProcedureOptionType"/>
             <element name="storyDescription" type="ifml2:storyDescriptionType"/>
             <element name="globalVars" type="ifml2:varsType" minOccurs="0"/>
+            <xs:element name="systemCommandsDisableOption" type="ifml2:systemCommandsDisableOptionType" minOccurs="0" maxOccurs="1"/>
         </all>
     </complexType>
+
+    <xs:complexType name="inheritedSystemProceduresType">
+        <all minOccurs="1" maxOccurs="1">
+            <xs:element name="parseErrorHandler" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        </all>
+    </xs:complexType>
 
     <complexType name="startLocationOptionType">
         <attribute name="location" type="string"/>
@@ -569,7 +587,7 @@
     </complexType>
 
     <complexType name="startProcedureOptionType">
-        <attribute name="procedure" type="IDREF"/>
+        <attribute name="procedure" type="string"/>
     </complexType>
 
     <complexType name="storyDescriptionType">
@@ -587,11 +605,20 @@
 
     <simpleType name="systemProcedureEnumType">
         <restriction base="string">
-            <enumeration value="showLocName">
+            <enumeration value="showLocation">
                 <annotation>
-                    <documentation>Системная процедур, выводящая описание текущей локации: её имя, описание и список предметов в ней. Параметров не принимает.</documentation>
+                    <documentation>Системная процедура, выводящая описание текущей локации: её имя, описание и список предметов в ней.
+                        Параметров не принимает.
+                    </documentation>
                 </annotation>
             </enumeration>
+            <xs:enumeration value="parseErrorHandler">
+                <xs:annotation>
+                    <xs:documentation>Системная процедура, обрабатывающая ошибки парсинга.
+                        Параметры: текст Фраза - фраза, введённая игроком; текст Ошибка - текст ошибки парсинга.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
         </restriction>
     </simpleType>
 
@@ -612,4 +639,35 @@
             <enumeration value="actions"/>
         </restriction>
     </simpleType>
+
+    <complexType name="instructionRollDiceType">
+        <complexContent>
+            <extension base="ifml2:instructionType">
+                <attribute name="from" type="integer" use="required"/>
+                <attribute name="to" type="integer" use="required"/>
+                <attribute name="var" type="string" use="required"/>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <xs:complexType name="instructionRunProcedureType">
+        <xs:complexContent>
+            <extension base="ifml2:instructionType">
+                <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                    <xs:element name="parameter" type="ifml2:procedureRunParameter"/>
+                </xs:sequence>
+                <xs:attribute name="procedure" type="xs:string" use="required"/>
+                <xs:attribute name="returnToVar" type="xs:string" use="optional"/>
+            </extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="procedureRunParameter">
+        <xs:attribute name="name" type="xs:string"/>
+        <xs:attribute name="value" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="systemCommandsDisableOptionType">
+        <xs:attribute type="xs:boolean" name="DisableHelp"/>
+        <xs:attribute type="xs:boolean" name="DisableDebug"/>
+    </xs:complexType>
 </schema>
