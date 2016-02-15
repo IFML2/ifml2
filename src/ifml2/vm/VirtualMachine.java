@@ -238,4 +238,8 @@ public class VirtualMachine
     {
         inheritedSystemProcedures.clear();
     }
+
+    public void outPicture(String filePath, int maxHeight, int maxWidth) {
+        engine.outIcon(filePath, maxHeight, maxWidth);
+    }
 }

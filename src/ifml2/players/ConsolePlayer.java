@@ -2,6 +2,7 @@ package ifml2.players;
 
 import ifml2.IFML2Exception;
 import ifml2.engine.Engine;
+import ifml2.engine.featureproviders.text.IOutputPlainTextProvider;
 
 import java.util.Scanner;
 
@@ -12,24 +13,9 @@ public class ConsolePlayer
      */
     public static void main(String[] args)
     {
-        GameInterface textInterface = new GameInterface()
-        {
-            private final Scanner scanner = new Scanner(System.in);
+        IOutputPlainTextProvider outputPlainTextProvider = System.out::print;
 
-            @Override
-            public void outputText(String text)
-            {
-                System.out.print(text);
-            }
-
-            @Override
-            public String inputText()
-            {
-                outputText("\n> ");
-                return scanner.nextLine();
-            }
-        };
-        Engine engine = new Engine(textInterface);
+        Engine engine = new Engine(outputPlainTextProvider);
 
         if (args.length < 1)
         {
@@ -48,10 +34,12 @@ public class ConsolePlayer
             return;
         }
 
+        Scanner scanner = new Scanner(System.in);
         String gamerCommand;
         do
         {
-            gamerCommand = textInterface.inputText();
+            System.out.print("\n> ");
+            gamerCommand = scanner.nextLine();
         }
         while (engine.executeGamerCommand(gamerCommand));
     }

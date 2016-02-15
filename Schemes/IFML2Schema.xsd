@@ -273,6 +273,7 @@
             <element name="moveItem" type="ifml2:instructionMoveItemType"/>
             <element name="rollDice" type="ifml2:instructionRollDiceType"/>
             <element name="runProcedure" type="ifml2:instructionRunProcedureType"/>
+            <xs:element name="showPicture" type="ifml2:instructionShowPictureType"/>
         </choice>
     </complexType>
 
@@ -466,6 +467,16 @@
             </extension>
         </complexContent>
     </complexType>
+    
+    <xs:complexType name="instructionShowPictureType">
+        <complexContent>
+            <extension base="ifml2:instructionType">
+                <xs:attribute name="filepath" type="xs:string" use="required"/>
+                <xs:attribute name="maxHeight" type="xs:int" use="optional"/>
+                <xs:attribute name="maxWidth" type="xs:int" use="optional"/>
+            </extension>
+        </complexContent>
+    </xs:complexType>
 
     <element name="library" type="ifml2:libraryType"/>
 

@@ -4,7 +4,6 @@ import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.event.ListEvent;
-import ca.odell.glazedlists.event.ListEventListener;
 import ifml2.CommonUtils;
 import ifml2.IFML2Exception;
 import ifml2.om.Location.ExitDirection;
@@ -44,7 +43,7 @@ public class Story
 
     @XmlElementWrapper(name = STORY_PROCEDURES_ELEMENT)
     @XmlElement(name = PROCEDURES_PROCEDURE_ELEMENT)
-    private final EventList<Procedure> procedures = new BasicEventList<Procedure>();
+    private final EventList<Procedure> procedures = new BasicEventList<>();
 
     private DataHelper dataHelper = new DataHelper();
     @SuppressWarnings("FieldCanBeLocal") // todo remove suppress after JAXB bug is fixed
@@ -53,26 +52,26 @@ public class Story
     private String id = "story";
 
     @XmlJavaTypeAdapter(value = UsedLibrariesAdapter.class)
-    private EventList<Library> libraries = new BasicEventList<Library>();
+    private EventList<Library> libraries = new BasicEventList<>();
 
     @XmlJavaTypeAdapter(value = DictionaryAdapter.class)
-    private HashMap<String, Word> dictionary = new HashMap<String, Word>();
+    private HashMap<String, Word> dictionary = new HashMap<>();
 
     @XmlElementWrapper(name = STORY_LOCATIONS_ELEMENT)
     @XmlElement(name = LOCATIONS_LOCATION_ELEMENT)
     @XmlJavaTypeAdapter(value = LocationAdapter.class)
-    private EventList<Location> locations = new BasicEventList<Location>();
+    private EventList<Location> locations = new BasicEventList<>();
     @XmlElementWrapper(name = STORY_ITEMS_ELEMENT)
     @XmlElement(name = ITEMS_ITEM_ELEMENT)
-    private EventList<Item> items = new BasicEventList<Item>();
+    private EventList<Item> items = new BasicEventList<>();
     /**
      * objectsHeap holds all game object - locations and items
      */
-    private HashMap<String, IFMLObject> objectsHeap = new HashMap<String, IFMLObject>(); // todo subscribe objectsHeap to locations and items updates
+    private HashMap<String, IFMLObject> objectsHeap = new HashMap<>(); // todo subscribe objectsHeap to locations and items updates
     // todo subscribe all objects to attributes change
     @XmlElementWrapper(name = "actions")
     @XmlElement(name = "action")
-    private EventList<Action> actions = new BasicEventList<Action>();
+    private EventList<Action> actions = new BasicEventList<>();
     @XmlTransient
     private EventList<Attribute> allAttributes = null;
     @XmlTransient
@@ -80,48 +79,42 @@ public class Story
 
     {
         // subscribe to locations changes for object tree update
-        locations.addListEventListener(new ListEventListener<Location>()
-        {
-            @Override
-            public void listChanged(ListEvent<Location> listChanges)
+        locations.addListEventListener(listChanges -> {
+            while (listChanges.next() && listChanges.getType() == ListEvent.DELETE)
             {
-                while (listChanges.next() && listChanges.getType() == ListEvent.DELETE)
+                EventList<Location> locList = listChanges.getSourceList();
+
+                // delete from items
+                for (Item item : items)
                 {
-                    EventList<Location> locList = listChanges.getSourceList();
+                    EventList<Location> startLocations = item.getStartingPosition().getLocations();
+                    startLocations.stream().filter(startLocation -> !locList.contains(startLocation)).forEach(startLocations::remove);
+                }
 
-                    // delete from items
-                    for (Item item : items)
+                // delete from locations
+                for (Location location : locList)
+                {
+                    for (ExitDirection direction : ExitDirection.values())
                     {
-                        EventList<Location> startLocations = item.getStartingPosition().getLocations();
-                        for (Location startLocation : startLocations)
+                        Location destination = location.getExit(direction);
+                        if (destination != null && !locList.contains(destination))
                         {
-                            if (!locList.contains(startLocation))
-                            {
-                                startLocations.remove(startLocation);
-                            }
+                            location.setExit(direction, null);
                         }
                     }
+                }
 
-                    // delete from locations
-                    for (Location location : locList)
+                // todo delete from instructions - procedures, hooks and so on...
+
+                // delete from heap
+                Iterator<IFMLObject> iterator = objectsHeap.values().iterator();
+                while (iterator.hasNext())
+                {
+                    IFMLObject object = iterator.next();
+                    if (object instanceof Location)
                     {
-                        for (ExitDirection direction : ExitDirection.values())
-                        {
-                            Location destination = location.getExit(direction);
-                            if (destination != null && !locList.contains(destination))
-                            {
-                                location.setExit(direction, null);
-                            }
-                        }
-                    }
-
-                    // todo delete from instructions - procedures, hooks and so on...
-
-                    // delete from heap
-                    for (Iterator<IFMLObject> iterator = objectsHeap.values().iterator(); iterator.hasNext(); )
-                    {
-                        IFMLObject object = iterator.next();
-                        if (object instanceof Location && !locList.contains(object))
+                        Location location = (Location) object;
+                        if (!locList.contains(location))
                         {
                             iterator.remove();
                         }
@@ -131,40 +124,35 @@ public class Story
         });
 
         // subscribe to procedures changes for object tree update
-        procedures.addListEventListener(new ListEventListener<Procedure>()
-        {
-            @Override
-            public void listChanged(ListEvent<Procedure> listChanges)
+        procedures.addListEventListener(listChanges -> {
+            while (listChanges.next() && listChanges.getType() == ListEvent.DELETE)
             {
-                while (listChanges.next() && listChanges.getType() == ListEvent.DELETE)
+                EventList<Procedure> proceduresList = listChanges.getSourceList();
+
+                // delete from actions
+                for (Action action : actions)
                 {
-                    EventList<Procedure> proceduresList = listChanges.getSourceList();
-
-                    // delete from actions
-                    for (Action action : actions)
-                    {
-                        Action.ProcedureCall procedureCall = action.getProcedureCall();
-                        Procedure procedure = procedureCall.getProcedure();
-                        if (procedure != null && !proceduresList.contains(procedure))
-                        {
-                            procedureCall.setProcedure(null);
-                        }
-                    }
-
-                    // delete from start procedure
-                    StoryOptions.StartProcedureOption startProcedureOption = storyOptions.getStartProcedureOption();
-                    Procedure procedure = startProcedureOption.getProcedure();
+                    Action.ProcedureCall procedureCall = action.getProcedureCall();
+                    Procedure procedure = procedureCall.getProcedure();
                     if (procedure != null && !proceduresList.contains(procedure))
                     {
-                        startProcedureOption.setProcedure(null);
+                        procedureCall.setProcedure(null);
                     }
+                }
 
-                    // -- delete from system inherited procedures --
-                    Procedure parseErrorHandler = inheritedSystemProcedures.getParseErrorHandler();
-                    if(parseErrorHandler != null && !proceduresList.contains(parseErrorHandler))
-                    {
-                        inheritedSystemProcedures.setParseErrorHandler(null);
-                    }
+                // delete from start procedure
+                StoryOptions.StartProcedureOption startProcedureOption = storyOptions.getStartProcedureOption();
+                Procedure procedure = startProcedureOption.getProcedure();
+                if (procedure != null && !proceduresList.contains(procedure))
+                {
+                    startProcedureOption.setProcedure(null);
+                }
+
+                // -- delete from system inherited procedures --
+                Procedure parseErrorHandler = inheritedSystemProcedures.getParseErrorHandler();
+                if(parseErrorHandler != null && !proceduresList.contains(parseErrorHandler))
+                {
+                    inheritedSystemProcedures.setParseErrorHandler(null);
                 }
             }
         });
@@ -235,7 +223,7 @@ public class Story
 
     public EventList<Action> getAllActions()
     {
-        EventList<Action> allActions = new BasicEventList<Action>();
+        EventList<Action> allActions = new BasicEventList<>();
         if (actions != null)
         {
             allActions.addAll(actions);
@@ -254,7 +242,7 @@ public class Story
     {
         if (allAttributes == null)
         {
-            allAttributes = new BasicEventList<Attribute>();
+            allAttributes = new BasicEventList<>();
             if (libraries != null)
             {
                 for (Library library : libraries)
@@ -270,7 +258,7 @@ public class Story
     {
         if (allRoleDefinitions == null)
         {
-            allRoleDefinitions = new BasicEventList<RoleDefinition>();
+            allRoleDefinitions = new BasicEventList<>();
             if (libraries != null)
             {
                 for (Library library : libraries)
@@ -557,7 +545,7 @@ public class Story
         @NotNull
         public ArrayList<Action> findActionsByProcedure(@NotNull Procedure procedure)
         {
-            ArrayList<Action> results = new ArrayList<Action>();
+            ArrayList<Action> results = new ArrayList<>();
 
             for (Action action : actions)
             {

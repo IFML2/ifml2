@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <story xmlns="http://toysoft.narod.ru/IFML2Schema" id="story">
+    <inheritedSystemProcedures/>
     <storyOptions>
-        <startLocationOption showStartLocDesc="true" location="ГардеробнаяЛок"/>
+        <startLocationOption location="ГардеробнаяЛок" showStartLocDesc="true"/>
         <startProcedureOption/>
-        <storyDescription version="0.2" name="Гардероб" description="Поиграйтесь с одеждой." author="realsonic"/>
+        <storyDescription name="Гардероб" description="Поиграйтесь с одеждой." version="0.2" author="realsonic"/>
         <globalVars/>
+        <systemCommandsDisableOption DisableHelp="false" DisableDebug="false"/>
     </storyOptions>
     <procedures/>
     <libraries>
@@ -29,19 +31,31 @@
         </word>
     </dictionary>
     <locations>
-        <location name="Гардеробная" id="ГардеробнаяЛок">
-            <hooks/>
-            <properties/>
+        <location id="ГардеробнаяЛок" name="Гардеробная">
+            <hooks>
+                <hook action="осмотреться" type="before">
+                    <instructions>
+                        <showPicture filepath="garderobe.jpg"/>
+                        <showMessage type="text" message="" carriageReturn="true"/>
+                    </instructions>
+                </hook>
+            </hooks>
             <roles/>
-            <attributes/>
-            <description>Маленькая гардеробная комната. Выходов нет.</description>
+            <properties/>
             <words/>
+            <description>Маленькая гардеробная комната. Выходов нет.</description>
+            <attributes/>
         </location>
     </locations>
     <items>
-        <item name="cтол" id="СтолПред">
-            <hooks/>
-            <properties/>
+        <item id="СтолПред" name="cтол">
+            <hooks>
+                <hook action="осмотреть" objectElement="предмет" type="after">
+                    <instructions>
+                        <showPicture filepath="table.png" maxHeight="150" maxWidth="150"/>
+                    </instructions>
+                </hook>
+            </hooks>
             <roles>
                 <role name="поверхность">
                     <properties>
@@ -51,38 +65,45 @@
                     </properties>
                 </role>
             </roles>
-            <attributes>
-                <attribute>тяжёлый</attribute>
-            </attributes>
-            <description>Старый дубовый стол.</description>
+            <properties/>
             <words mainWord="стол">
                 <word>стол</word>
             </words>
+            <description>Старый дубовый стол.</description>
+            <attributes>
+                <attribute>тяжёлый</attribute>
+            </attributes>
             <startingPosition>
+                <inventory>false</inventory>
                 <locations>
                     <location>ГардеробнаяЛок</location>
                 </locations>
-                <inventory>false</inventory>
             </startingPosition>
         </item>
-        <item name="шляпа" id="ШляпаПред">
-            <hooks/>
-            <properties/>
+        <item id="ШляпаПред" name="шляпа">
+            <hooks>
+                <hook action="осмотреть" objectElement="предмет" type="after">
+                    <instructions>
+                        <showPicture filepath="hat.png" maxHeight="0" maxWidth="0"/>
+                    </instructions>
+                </hook>
+            </hooks>
             <roles>
                 <role name="надеваемый">
                     <properties>
-                        <property value="нет" name="надет"/>
+                        <property name="надет" value="нет"/>
                     </properties>
                 </role>
             </roles>
-            <attributes/>
-            <description>Фетровая шляпа.</description>
+            <properties/>
             <words mainWord="шляпа">
                 <word>шляпа</word>
             </words>
+            <description>Фетровая шляпа.</description>
+            <attributes/>
             <startingPosition>
-                <locations/>
                 <inventory>false</inventory>
+                <locations/>
             </startingPosition>
         </item>
     </items>

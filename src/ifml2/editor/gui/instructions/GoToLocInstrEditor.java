@@ -10,11 +10,8 @@ import ifml2.vm.instructions.Instruction;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class GoToLocInstrEditor extends AbstractInstrEditor
 {
@@ -32,27 +29,17 @@ public class GoToLocInstrEditor extends AbstractInstrEditor
         initializeEditor(Instruction.getTitleFor(GoToLocInstruction.class), contentPane, buttonOK, buttonCancel);
 
         // set listeners
-        ChangeListener radioChangeListener = new ChangeListener()
-        {
-            @Override
-            public void stateChanged(ChangeEvent e)
-            {
-                locationsCombo.setEnabled(locRadio.isSelected());
-                locExprText.setEnabled(exprRadio.isSelected());
-            }
+        ChangeListener radioChangeListener = e -> {
+            locationsCombo.setEnabled(locRadio.isSelected());
+            locExprText.setEnabled(exprRadio.isSelected());
         };
         locRadio.addChangeListener(radioChangeListener);
         exprRadio.addChangeListener(radioChangeListener);
-        locationsCombo.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
+        locationsCombo.addActionListener(e -> {
+            Location location = (Location) locationsCombo.getSelectedItem();
+            if (location != null)
             {
-                Location location = (Location) locationsCombo.getSelectedItem();
-                if (location != null)
-                {
-                    locExprText.setText(location.getId());
-                }
+                locExprText.setText(location.getId());
             }
         });
 

@@ -17,8 +17,6 @@ import org.apache.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileView;
 import java.awt.*;
@@ -95,19 +93,14 @@ public class Editor extends JFrame
 
     public static void main(final String[] args)
     {
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                Editor editor = new Editor();
-                editor.setVisible(true);
+        SwingUtilities.invokeLater(() -> {
+            Editor editor = new Editor();
+            editor.setVisible(true);
 
-                if (args != null && args.length >= 1)
-                {
-                    // load story
-                    editor.loadStory(args[0]);
-                }
+            if (args != null && args.length >= 1)
+            {
+                // load story
+                editor.loadStory(args[0]);
             }
         });
     }
@@ -318,7 +311,7 @@ public class Editor extends JFrame
             public void actionPerformed(ActionEvent e)
             {
                 // choose cipher story file:
-                JFileChooser storyFileChooser = new JFileChooser(CommonUtils.getSamplesDirectory());
+                JFileChooser storyFileChooser = new JFileChooser(CommonUtils.getGamesDirectory());
                 storyFileChooser.removeChoosableFileFilter(storyFileChooser.getAcceptAllFileFilter()); // remove All files filter
                 storyFileChooser.setFileFilter(new FileFilter()
                 {
@@ -441,14 +434,7 @@ public class Editor extends JFrame
                     File tempFile = File.createTempFile("ifml2run_", ".xml");
                     fileName = tempFile.getAbsolutePath();
                     saveStory(fileName, false);
-                    SwingUtilities.invokeLater(new Runnable()
-                    {
-                        @Override
-                        public void run()
-                        {
-                            GUIPlayer.startFromFile(fileName, true);
-                        }
-                    });
+                    SwingUtilities.invokeLater(() -> GUIPlayer.startFromFile(fileName, true));
                 }
                 catch (Throwable ex)
                 {
@@ -473,7 +459,7 @@ public class Editor extends JFrame
     private String selectStoryFileForOpen()
     {
         // choose story file:
-        JFileChooser storyFileChooser = new JFileChooser(CommonUtils.getSamplesDirectory());
+        JFileChooser storyFileChooser = new JFileChooser(CommonUtils.getGamesDirectory());
         storyFileChooser.removeChoosableFileFilter(storyFileChooser.getAcceptAllFileFilter()); // remove All files filter
         storyFileChooser.setFileFilter(new FileFilter()
         {
@@ -547,7 +533,7 @@ public class Editor extends JFrame
     private String selectFileForStorySave()
     {
         // choose story file:
-        JFileChooser storyFileChooser = new JFileChooser(CommonUtils.getSamplesDirectory());
+        JFileChooser storyFileChooser = new JFileChooser(CommonUtils.getGamesDirectory());
         storyFileChooser.removeChoosableFileFilter(storyFileChooser.getAcceptAllFileFilter()); // remove All files filter
         storyFileChooser.setFileFilter(new FileFilter()
         {
@@ -619,14 +605,7 @@ public class Editor extends JFrame
         locationsListEditForm = new ListEditForm<Location>(this, "локацию", "локации", Word.Gender.FEMININE, Location.class)
         {
             {
-                addListChangeListener(new ChangeListener()
-                {
-                    @Override
-                    public void stateChanged(ChangeEvent e)
-                    {
-                        markStoryEdited();
-                    }
-                });
+                addListChangeListener(e -> markStoryEdited());
             }
 
             @Override
@@ -658,14 +637,7 @@ public class Editor extends JFrame
         itemsListEditForm = new ListEditForm<Item>(this, "предмет", "предмета", Word.Gender.MASCULINE, Item.class)
         {
             {
-                addListChangeListener(new ChangeListener()
-                {
-                    @Override
-                    public void stateChanged(ChangeEvent e)
-                    {
-                        markStoryEdited();
-                    }
-                });
+                addListChangeListener(e -> markStoryEdited());
             }
 
             @Override
@@ -696,14 +668,7 @@ public class Editor extends JFrame
         proceduresListEditForm = new ListEditForm<Procedure>(this, "процедуру", "процедуры", Word.Gender.FEMININE, Procedure.class)
         {
             {
-                addListChangeListener(new ChangeListener()
-                {
-                    @Override
-                    public void stateChanged(ChangeEvent e)
-                    {
-                        markStoryEdited();
-                    }
-                });
+                addListChangeListener(e -> markStoryEdited());
             }
 
             @Override
@@ -765,14 +730,7 @@ public class Editor extends JFrame
         actionsListEditForm = new ListEditForm<Action>(this, "действие", "действия", Word.Gender.NEUTER, Action.class)
         {
             {
-                addListChangeListener(new ChangeListener()
-                {
-                    @Override
-                    public void stateChanged(ChangeEvent e)
-                    {
-                        markStoryEdited();
-                    }
-                });
+                addListChangeListener(e -> markStoryEdited());
             }
 
             @Override

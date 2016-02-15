@@ -2,7 +2,7 @@ package ifml2.tests;
 
 import ifml2.IFML2Exception;
 import ifml2.engine.Engine;
-import ifml2.players.GameInterface;
+import ifml2.engine.featureproviders.text.IOutputPlainTextProvider;
 
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
@@ -16,7 +16,7 @@ import java.util.Date;
 
 public class TestManager
 {
-    private GameInterface uiInterface;
+    private IOutputPlainTextProvider outputPlainTextProvider;
 
     ArrayList<IFMLTestPlan> getTestPlans()
     {
@@ -81,27 +81,13 @@ public class TestManager
         testsListDataListeners.remove(listDataListener);
     }
 
-    public void run(GameInterface uiInterface)
+    public void run(IOutputPlainTextProvider outputPlainTextProvider)
     {
-        this.uiInterface = uiInterface;
+        this.outputPlainTextProvider = outputPlainTextProvider;
 
         log("=== Запуск тестов ===");
-        final String[] outText = {""};
-        Engine engine = new Engine(new GameInterface()
-        {
-            @Override
-            public void outputText(String text)
-            {
-                outText[0] += ((outText[0].length() > 0) ? '\n' : "") + text;
-                //log("Вывод движка >> " + text);
-            }
-
-            @Override
-            public String inputText()
-            {
-                return null;
-            }
-        });
+        String[] outText = {""};
+        Engine engine = new Engine((IOutputPlainTextProvider) text -> outText[0] += ((outText[0].length() > 0) ? '\n' : "") + text);
 
         int plansSuccess = 0;
         for (IFMLTestPlan testPlan : getTestPlans())
@@ -151,13 +137,9 @@ public class TestManager
         }
     }
 
-    private void log(String message, Object... argument)
+    private void log(String message, Object... arguments)
     {
-        log(MessageFormat.format(message, argument));
-    }
-
-    private void log(String message)
-    {
-        uiInterface.outputText(MessageFormat.format("[{0}] {1}\n", new Date(), message));
+        String formattedMessage = MessageFormat.format(message, arguments);
+        outputPlainTextProvider.outputPlainText(MessageFormat.format("[{0}] {1}\n", new Date(), formattedMessage));
     }
 }

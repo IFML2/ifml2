@@ -4,7 +4,6 @@ import ifml2.CommonConstants;
 import ifml2.CommonUtils;
 import ifml2.GUIUtils;
 import ifml2.engine.EngineVersion;
-import ifml2.players.GameInterface;
 import ifml2.tests.IFMLTestPlan;
 import ifml2.tests.TestManager;
 
@@ -21,7 +20,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 
 import static ifml2.CommonConstants.RUSSIAN_PRODUCT_NAME;
-import static java.lang.String.*;
+import static java.lang.String.format;
 
 public class TestRunner extends JFrame
 {
@@ -152,20 +151,7 @@ public class TestRunner extends JFrame
                     startButton.setEnabled(false);
                     try
                     {
-                        testManager.run(new GameInterface()
-                        {
-                            @Override
-                            public void outputText(String text)
-                            {
-                                logText.append(text);
-                            }
-
-                            @Override
-                            public String inputText()
-                            {
-                                return null;
-                            }
-                        });
+                        testManager.run(text -> logText.append(text));
                     }
                     finally
                     {

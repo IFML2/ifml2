@@ -5,19 +5,26 @@ import ifml2.CommonConstants;
 import ifml2.FormatLogger;
 import ifml2.IFML2Exception;
 import ifml2.SystemIdentifiers;
+import ifml2.engine.featureproviders.IPlayerFeatureProvider;
+import ifml2.engine.featureproviders.graphic.IOutputIconProvider;
+import ifml2.engine.featureproviders.text.IOutputPlainTextProvider;
 import ifml2.engine.saved.SavedGame;
+import ifml2.om.Action;
 import ifml2.om.*;
 import ifml2.parser.FormalElement;
 import ifml2.parser.IFML2ParseException;
 import ifml2.parser.Parser;
-import ifml2.players.GameInterface;
 import ifml2.vm.*;
 import ifml2.vm.instructions.SetVarInstruction;
 import ifml2.vm.values.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,76 +38,32 @@ public class Engine
 {
     public static final FormatLogger LOG = FormatLogger.getLogger(Engine.class);
     private static final String DEBUG_OUTPUT_PREFIX = "    [ОТЛАДКА] ";
-    private final HashMap<String, Value> globalVariables = new HashMap<String, Value>();
+    private final HashMap<String, Value> globalVariables = new HashMap<>();
     private final Parser parser = new Parser();
     private final VirtualMachine virtualMachine = new VirtualMachine();
-    private final HashMap<String, Value> systemVariables = new HashMap<String, Value>();
-    private GameInterface gameInterface = null;
+    private final HashMap<String, Value> systemVariables = new HashMap<>();
     private Story story = null;
-    private ArrayList<Item> inventory = new ArrayList<Item>();
-    private ArrayList<Item> abyss = new ArrayList<Item>();
+    private ArrayList<Item> inventory = new ArrayList<>();
+    private ArrayList<Item> abyss = new ArrayList<>();
     private HashMap<String, Callable<? extends Value>> ENGINE_SYMBOLS = new HashMap<String, Callable<? extends Value>>()
     {
         {
-            Callable<CollectionValue> returnInv = new Callable<CollectionValue>()
-            {
-                @Override
-                public CollectionValue call() throws Exception
-                {
-                    return new CollectionValue(inventory);
-                }
-            };
+            Callable<CollectionValue> returnInv = () -> new CollectionValue(inventory);
 
             put("инвентарий", returnInv);
             put("инвентарь", returnInv);
-            put("куча", new Callable<CollectionValue>()
-            {
-                @Override
-                public CollectionValue call() throws Exception
-                {
-                    return new CollectionValue(new ArrayList<IFMLObject>(story.getObjectsHeap().values()));
-                }
-            });
-            put("словарь", new Callable<CollectionValue>()
-            {
-                @Override
-                public CollectionValue call() throws Exception
-                {
-                    return new CollectionValue(new ArrayList<Word>(story.getDictionary().values()));
-                }
-            });
-            put("пустота", new Callable<CollectionValue>()
-            {
-                @Override
-                public CollectionValue call() throws Exception
-                {
-                    return new CollectionValue(abyss);
-                }
-            });
-            put("глобальные", new Callable<TextValue>()
-            {
-                @Override
-                public TextValue call() throws Exception
-                {
-                    return new TextValue(globalVariables.entrySet().toString());
-                }
-            });
-            put("локации", new Callable<TextValue>()
-            {
-                @Override
-                public TextValue call() throws Exception
-                {
-                    return new TextValue(story.getLocations().toString());
-                }
-            });
-            put("предметы", new Callable<TextValue>()
-            {
-                @Override
-                public TextValue call() throws Exception
-                {
-                    return new TextValue(story.getItems().toString());
-                }
-            });
+            put("куча",
+                    (Callable<CollectionValue>) () -> new CollectionValue(
+                            new ArrayList<>(story.getObjectsHeap().values())));
+            put("словарь",
+                    (Callable<CollectionValue>) () -> new CollectionValue(
+                            new ArrayList<>(story.getDictionary().values())));
+            put("пустота", (Callable<CollectionValue>) () -> new CollectionValue(abyss));
+            put("глобальные", (Callable<TextValue>) () -> new TextValue(globalVariables.entrySet().toString()));
+            put("локации",
+                    (Callable<TextValue>) () -> new TextValue(story.getLocations().toString()));
+            put("предметы",
+                    (Callable<TextValue>) () -> new TextValue(story.getItems().toString()));
             put("системные", new Callable<TextValue>()
             {
                 @Override
@@ -144,10 +107,11 @@ public class Engine
     private DataHelper dataHelper = new DataHelper();
     private String storyFileName;
     private boolean isDebugMode = false;
+    private IPlayerFeatureProvider playerFeatureProvider;
 
-    public Engine(GameInterface gameInterface)
+    public Engine(IPlayerFeatureProvider playerFeatureProvider)
     {
-        this.gameInterface = gameInterface;
+        this.playerFeatureProvider = playerFeatureProvider;
         virtualMachine.setEngine(this);
         LOG.info("Engine created.");
     }
@@ -174,15 +138,16 @@ public class Engine
     public void outText(String text, Object... args)
     {
         String resultText;
-        if(args.length > 0) // protection against {\d} in story
+        // protection against {\d} in story
+        resultText = args.length > 0 ? MessageFormat.format(text, args) : text;
+        outputPlainText(resultText);
+    }
+
+    private void outputPlainText(String text) {
+        if (playerFeatureProvider instanceof IOutputPlainTextProvider)
         {
-            resultText = MessageFormat.format(text, args);
+           ((IOutputPlainTextProvider) playerFeatureProvider).outputPlainText(text);
         }
-        else
-        {
-            resultText = text;
-        }
-        gameInterface.outputText(resultText);
     }
 
     public void outTextLn(String text, Object... args)
@@ -420,6 +385,27 @@ public class Engine
         return true;
     }
 
+    public void outIcon(String iconFilePath, int maxHeight, int maxWidth) {
+        if (playerFeatureProvider instanceof IOutputIconProvider)
+        {
+            // convert path relative to game to absolute path
+            Path storyFolder = Paths.get(storyFileName).normalize().getParent();
+            Path iconPath = Paths.get(iconFilePath);
+            Path iconFullPath = storyFolder.resolve(iconPath);
+
+            // load and resize icon
+            ImageIcon imageIcon = new ImageIcon(iconFullPath.toAbsolutePath().toString());
+            int needHeight = maxHeight > 0 ? Math.min(maxHeight, imageIcon.getIconHeight()) : imageIcon.getIconHeight();
+            int needWidth = maxWidth > 0 ? Math.min(maxWidth, imageIcon.getIconWidth()) : imageIcon.getIconWidth();
+            Image image = imageIcon.getImage() ;
+            Image resizedImage = image.getScaledInstance( needWidth, needHeight, java.awt.Image.SCALE_SMOOTH ) ;
+            Icon icon = new ImageIcon( resizedImage );
+
+            // output icon
+            ((IOutputIconProvider) playerFeatureProvider).outputIcon(icon);
+        }
+    }
+
     private void handleParseError(String trimmedCommand, IFML2ParseException parseException)
     {
         Procedure parseErrorHandler = dataHelper.getParseErrorHandler();
@@ -460,7 +446,7 @@ public class Engine
 
     private List<Variable> convertFormalElementsToParameters(@NotNull List<FormalElement> formalElements) throws IFML2Exception
     {
-        List<Variable> parameters = new ArrayList<Variable>(formalElements.size());
+        List<Variable> parameters = new ArrayList<>(formalElements.size());
         for (FormalElement formalElement : formalElements)
         {
             Value value;
@@ -564,9 +550,9 @@ public class Engine
         HashMap<Hook.Type, List<Hook>> locationHooks = new HashMap<Hook.Type, List<Hook>>()
         {
             {
-                put(Hook.Type.BEFORE, new ArrayList<Hook>());
-                put(Hook.Type.INSTEAD, new ArrayList<Hook>());
-                put(Hook.Type.AFTER, new ArrayList<Hook>());
+                put(Hook.Type.BEFORE, new ArrayList<>());
+                put(Hook.Type.INSTEAD, new ArrayList<>());
+                put(Hook.Type.AFTER, new ArrayList<>());
             }
         };
 
@@ -577,13 +563,8 @@ public class Engine
         }
 
         // collect current location hooks
-        for (Hook hook : currentLocation.getHooks())
-        {
-            if (action.equals(hook.getAction()))
-            {
-                locationHooks.get(hook.getType()).add(hook);
-            }
-        }
+        currentLocation.getHooks().stream().filter(hook -> action.equals(hook.getAction()))
+                       .forEach(hook -> locationHooks.get(hook.getType()).add(hook));
         return locationHooks;
     }
 
@@ -593,27 +574,23 @@ public class Engine
         HashMap<Hook.Type, List<Hook>> objectHooks = new HashMap<Hook.Type, List<Hook>>()
         {
             {
-                put(Hook.Type.BEFORE, new ArrayList<Hook>());
-                put(Hook.Type.INSTEAD, new ArrayList<Hook>());
-                put(Hook.Type.AFTER, new ArrayList<Hook>());
+                put(Hook.Type.BEFORE, new ArrayList<>());
+                put(Hook.Type.INSTEAD, new ArrayList<>());
+                put(Hook.Type.AFTER, new ArrayList<>());
             }
         };
 
         // collect all object hooks
-        for (FormalElement formalElement : formalElements)
-        {
-            if (FormalElement.Type.OBJECT.equals(formalElement.getType()) && formalElement.getObject() instanceof Item)
-            {
-                Item item = (Item) formalElement.getObject();
-                for (Hook hook : item.getHooks())
-                {
-                    if (action.equals(hook.getAction()) && formalElement.getParameterName().equalsIgnoreCase(hook.getObjectElement()))
-                    {
-                        objectHooks.get(hook.getType()).add(hook);
-                    }
-                }
-            }
-        }
+        formalElements.stream().filter(formalElement ->
+                FormalElement.Type.OBJECT.equals(formalElement.getType()) &&
+                formalElement.getObject() instanceof Item).forEach(formalElement -> {
+            Item item = (Item) formalElement.getObject();
+            item.getHooks().stream().filter(hook -> action.equals(hook.getAction()) &&
+                                                    formalElement.getParameterName()
+                                                                 .equalsIgnoreCase(
+                                                                         hook.getObjectElement()))
+                .forEach(hook -> objectHooks.get(hook.getType()).add(hook));
+        });
         return objectHooks;
     }
 
@@ -747,7 +724,7 @@ public class Engine
                 }
 
                 List itemContentsList = ((CollectionValue) itemContents).getValue();
-                List<Item> itemContentsItemList = new BasicEventList<Item>();
+                List<Item> itemContentsItemList = new BasicEventList<>();
                 for (Object object : itemContentsList)
                 {
                     if (!(object instanceof Item))
@@ -805,6 +782,7 @@ public class Engine
         }
     }
 
+    @SuppressWarnings("unused")
     public void outDebug(Class reporter, int level, String message, Object... args)
     {
         outDebug(level, genReporterName(reporter) + message, args);
