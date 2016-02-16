@@ -16,6 +16,8 @@ public class ExpressionCalculator
 {
     private static final char GET_PROPERTY_OPERATOR = '.';
     private static final char EQUALITY_OPERATOR = '=';
+    private static final char GREATER_OPERATOR = '>';
+    private static final char LESSER_OPERATOR = '<';
     private static final char ADD_OPERATOR = '+';
     private static final String NOT_OPERATOR = "не";
     private static final String AND_OPERATOR = "и";
@@ -158,6 +160,16 @@ public class ExpressionCalculator
                         context = OPERATOR;
                         break;
 
+                    case GREATER_OPERATOR:
+                        calculationStack.pushOperator(ExpressionOperator.COMPARE_GREATER);
+                        context = OPERATOR;
+                        break;
+
+                    case LESSER_OPERATOR:
+                        calculationStack.pushOperator(ExpressionOperator.COMPARE_LESSER);
+                        context = OPERATOR;
+                        break;
+
                     case ADD_OPERATOR:
                         calculationStack.pushOperator(ExpressionOperator.ADD);
                         context = OPERATOR;
@@ -217,9 +229,10 @@ public class ExpressionCalculator
         NOT(NOT_OPERATOR, OperatorType.UNARY_RIGHT, 40),
         ADD(ADD_OPERATOR, 30),
         COMPARE_EQUALITY(EQUALITY_OPERATOR, 20),
+        COMPARE_GREATER(GREATER_OPERATOR, 20),
+        COMPARE_LESSER(LESSER_OPERATOR, 20),
         AND(AND_OPERATOR, OperatorType.BINARY, 10),
         OR(OR_OPERATOR, OperatorType.BINARY, 5);
-
         public final char operatorCharacter;
         public final int priority;
         public String operatorString;
@@ -367,6 +380,57 @@ public class ExpressionCalculator
                     break;
                 }
 
+                case COMPARE_GREATER:
+                {
+                    Value resolvedLeftValue = ensureValueResolved(leftValue);
+                    Value resolvedRightValue = ensureValueResolved(rightValue);
+
+                    assert resolvedLeftValue != null;
+
+                    if (!(resolvedLeftValue instanceof NumberValue))
+                    {
+                        throw new IFML2VMException("Левая величина сравнения должна быть числом (а её тип {0}).",
+                                resolvedLeftValue.getTypeName());
+                    }
+
+                    if (!(resolvedRightValue instanceof NumberValue))
+                    {
+                        throw new IFML2VMException("Правая величина сравнения должна быть числом (а её тип {0}).",
+                                resolvedRightValue.getTypeName());
+                    }
+
+                    NumberValue leftNumber = (NumberValue) resolvedLeftValue;
+                    NumberValue rightNumber = (NumberValue) resolvedRightValue;
+                    result = new BooleanValue(leftNumber.getValue() > rightNumber.getValue());
+
+                    break;
+                }
+
+                case COMPARE_LESSER:
+                {
+                    Value resolvedLeftValue = ensureValueResolved(leftValue);
+                    Value resolvedRightValue = ensureValueResolved(rightValue);
+
+                    assert resolvedLeftValue != null;
+
+                    if (!(resolvedLeftValue instanceof NumberValue))
+                    {
+                        throw new IFML2VMException("Левая величина сравнения должна быть числом (а её тип {0}).",
+                                resolvedLeftValue.getTypeName());
+                    }
+
+                    if (!(resolvedRightValue instanceof NumberValue))
+                    {
+                        throw new IFML2VMException("Правая величина сравнения должна быть числом (а её тип {0}).",
+                                resolvedRightValue.getTypeName());
+                    }
+
+                    NumberValue leftNumber = (NumberValue) resolvedLeftValue;
+                    NumberValue rightNumber = (NumberValue) resolvedRightValue;
+                    result = new BooleanValue(leftNumber.getValue() < rightNumber.getValue());
+
+                    break;
+                }
                 case ADD:
                 {
                     Value resolvedLeftValue = ensureValueResolved(leftValue);

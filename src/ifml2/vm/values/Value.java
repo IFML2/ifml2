@@ -18,6 +18,10 @@ public abstract class Value<T> extends IFMLEntity implements Cloneable
     {
     }
 
+    /**
+     * Тип величины в понятном виде.
+     * @return название типа
+     */
     public abstract String getTypeName();
 
     public abstract String toLiteral();
