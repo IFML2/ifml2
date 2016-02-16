@@ -28,5 +28,6 @@
     <orderEntry type="library" name="log4j:log4j:Latest" level="project" />
     <orderEntry type="library" name="net.java.dev.glazedlists:glazedlists_java15:Latest" level="project" />
     <orderEntry type="library" name="org.mockito:mockito-core:Latest" level="project" />
+    <orderEntry type="library" name="annotations" level="application" />
   </component>
 </module>

@@ -16,11 +16,14 @@ public class ExpressionCalculator
 {
     private static final char GET_PROPERTY_OPERATOR = '.';
     private static final char EQUALITY_OPERATOR = '=';
+    private static final char GREATER_OPERATOR = '>';
+    private static final char LESSER_OPERATOR = '<';
     private static final char ADD_OPERATOR = '+';
     private static final String NOT_OPERATOR = "не";
     private static final String AND_OPERATOR = "и";
     private static final String OR_OPERATOR = "или";
     private static final String IN_OPERATOR = "в";
+    private static final String NOT_EQUAL_OPERATOR = "<>";
 
     private static final char QUOTE_CHAR = '"';
     private static final char SINGLE_QUOTE_CHAR = '\'';
@@ -158,6 +161,34 @@ public class ExpressionCalculator
                         context = OPERATOR;
                         break;
 
+                    case GREATER_OPERATOR:
+                        calculationStack.pushOperator(ExpressionOperator.COMPARE_GREATER);
+                        context = OPERATOR;
+                        break;
+
+                    case LESSER_OPERATOR:
+                        // check it's not not equal <>
+                        int nextToken = tokenizer.nextToken();
+                        if (nextToken == GREATER_OPERATOR) // is't <> !
+                        {
+                            switch (context)
+                            {
+                                case OPERAND:
+                                    calculationStack.pushOperator(ExpressionOperator.COMPARE_NOT_EQUALITY);
+                                    context = OPERATOR;
+                                    break;
+                                default:
+                                    throw new IFML2ExpressionException("Ошибка в выражении: {0} может следовать только за операндом",
+                                            NOT_EQUAL_OPERATOR);
+                            }
+                        }
+                        else {
+                            tokenizer.pushBack(); // it's not <> so process next
+                            calculationStack.pushOperator(ExpressionOperator.COMPARE_LESSER);
+                            context = OPERATOR;
+                        }
+                        break;
+
                     case ADD_OPERATOR:
                         calculationStack.pushOperator(ExpressionOperator.ADD);
                         context = OPERATOR;
@@ -217,6 +248,9 @@ public class ExpressionCalculator
         NOT(NOT_OPERATOR, OperatorType.UNARY_RIGHT, 40),
         ADD(ADD_OPERATOR, 30),
         COMPARE_EQUALITY(EQUALITY_OPERATOR, 20),
+        COMPARE_NOT_EQUALITY(NOT_EQUAL_OPERATOR, OperatorType.BINARY, 20),
+        COMPARE_GREATER(GREATER_OPERATOR, 20),
+        COMPARE_LESSER(LESSER_OPERATOR, 20),
         AND(AND_OPERATOR, OperatorType.BINARY, 10),
         OR(OR_OPERATOR, OperatorType.BINARY, 5);
 
@@ -367,6 +401,85 @@ public class ExpressionCalculator
                     break;
                 }
 
+                case COMPARE_NOT_EQUALITY:
+                {
+                    Value resolvedLeftValue = ensureValueResolved(leftValue);
+                    Value resolvedRightValue = ensureValueResolved(rightValue);
+
+                    assert resolvedLeftValue != null;
+
+                    Value.CompareResult compareResult = resolvedLeftValue.compareTo(resolvedRightValue);
+                    switch (compareResult)
+                    {
+                        case EQUAL:
+                            result = new BooleanValue(false);
+                            break;
+                        case UNEQUAL:
+                        case LEFT_BIGGER:
+                        case RIGHT_BIGGER:
+                            result = new BooleanValue(true);
+                            break;
+                        case NOT_APPLICABLE:
+                            throw new IFML2ExpressionException("Сравниваемые величины разного типа ({0} и {1})", leftValue, rightValue);
+
+                        default:
+                            throw new IFML2VMException("Неизвестный результат сравнения величин ({0})", compareResult);
+                    }
+
+                    break;
+                }
+
+                case COMPARE_GREATER:
+                {
+                    Value resolvedLeftValue = ensureValueResolved(leftValue);
+                    Value resolvedRightValue = ensureValueResolved(rightValue);
+
+                    assert resolvedLeftValue != null;
+
+                    if (!(resolvedLeftValue instanceof NumberValue))
+                    {
+                        throw new IFML2VMException("Левая величина сравнения должна быть числом (а её тип {0}).",
+                                resolvedLeftValue.getTypeName());
+                    }
+
+                    if (!(resolvedRightValue instanceof NumberValue))
+                    {
+                        throw new IFML2VMException("Правая величина сравнения должна быть числом (а её тип {0}).",
+                                resolvedRightValue.getTypeName());
+                    }
+
+                    NumberValue leftNumber = (NumberValue) resolvedLeftValue;
+                    NumberValue rightNumber = (NumberValue) resolvedRightValue;
+                    result = new BooleanValue(leftNumber.getValue() > rightNumber.getValue());
+
+                    break;
+                }
+
+                case COMPARE_LESSER:
+                {
+                    Value resolvedLeftValue = ensureValueResolved(leftValue);
+                    Value resolvedRightValue = ensureValueResolved(rightValue);
+
+                    assert resolvedLeftValue != null;
+
+                    if (!(resolvedLeftValue instanceof NumberValue))
+                    {
+                        throw new IFML2VMException("Левая величина сравнения должна быть числом (а её тип {0}).",
+                                resolvedLeftValue.getTypeName());
+                    }
+
+                    if (!(resolvedRightValue instanceof NumberValue))
+                    {
+                        throw new IFML2VMException("Правая величина сравнения должна быть числом (а её тип {0}).",
+                                resolvedRightValue.getTypeName());
+                    }
+
+                    NumberValue leftNumber = (NumberValue) resolvedLeftValue;
+                    NumberValue rightNumber = (NumberValue) resolvedRightValue;
+                    result = new BooleanValue(leftNumber.getValue() < rightNumber.getValue());
+
+                    break;
+                }
                 case ADD:
                 {
                     Value resolvedLeftValue = ensureValueResolved(leftValue);

@@ -26,9 +26,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -72,6 +70,20 @@ public class Engine
                     return new TextValue(String.format("Системные переменные: %s", ENGINE_SYMBOLS.keySet()));
                 }
             });
+            put("секунды", new Callable<NumberValue>() {
+                @Override
+                public NumberValue call() throws Exception {
+                    Date now = new Date();
+                    return new NumberValue((now.getTime() - starTime.getTime()) / 1000);
+                }
+            });
+            put("минуты", new Callable<NumberValue>() {
+                @Override
+                public NumberValue call() throws Exception {
+                    Date now = new Date();
+                    return new NumberValue((now.getTime() - starTime.getTime()) / 1000 / 60);
+                }
+            });
         }
     };
     private HashMap<String, SystemCommand> SYSTEM_COMMANDS = new HashMap<String, SystemCommand>()
@@ -108,6 +120,7 @@ public class Engine
     private String storyFileName;
     private boolean isDebugMode = false;
     private IPlayerFeatureProvider playerFeatureProvider;
+    private Date starTime = new Date();
 
     public Engine(IPlayerFeatureProvider playerFeatureProvider)
     {
@@ -173,6 +186,7 @@ public class Engine
         virtualMachine.init();
         systemVariables.clear();
         abyss.clear();
+        starTime = new Date(); // reset time counter to now
 
         // load global vars
         globalVariables.clear();
