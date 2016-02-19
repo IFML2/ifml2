@@ -1,38 +1,34 @@
 package ifml2.om;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 
-public class ObjectTemplateElement extends TemplateElement
-{
+@XmlAccessorType(XmlAccessType.NONE)
+public class ObjectTemplateElement extends TemplateElement {
+    @XmlAttribute(name = "case")
     private Word.GramCase gramCase = Word.GramCase.IP;
 
-    @XmlAttribute(name = "case")
-    public Word.GramCase getGramCase()
-    {
+    public Word.GramCase getGramCase() {
         return gramCase;
     }
 
-    public void setGramCase(Word.GramCase gramCase)
-    {
+    public void setGramCase(Word.GramCase gramCase) {
         this.gramCase = gramCase;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return getSimpleView() + (parameter != null ? " => " + parameter : "");
     }
 
     @Override
-    public ObjectTemplateElement clone() throws CloneNotSupportedException
-    {
-        // basic shallow copy
-        return (ObjectTemplateElement) super.clone();
+    public ObjectTemplateElement clone() throws CloneNotSupportedException {
+        return (ObjectTemplateElement) super.clone(); // just flat clone
     }
 
     @Override
-    public String getSimpleView()
-    {
+    public String getSimpleView() {
         return gramCase.getAbbreviation();
     }
 }

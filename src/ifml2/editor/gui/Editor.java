@@ -657,8 +657,6 @@ public class Editor extends JFrame
             {
                 return editItem(selectedElement);
             }
-
-
         };
 
         proceduresListEditForm = new ListEditForm<Procedure>(this, "процедуру", "процедуры", Word.Gender.FEMININE, Procedure.class)

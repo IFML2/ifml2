@@ -2,6 +2,7 @@ package ifml2.om;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
+import ifml2.IFMLEntity;
 import ifml2.vm.instructions.*;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -10,7 +11,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 
 @XmlAccessorType(XmlAccessType.NONE)
-public class InstructionList implements Cloneable {
+public class InstructionList extends IFMLEntity {
     @XmlElements({
             @XmlElement(name = "goToLoc", type = GoToLocInstruction.class),
             @XmlElement(name = "showMessage", type = ShowMessageInstr.class),
@@ -32,15 +33,15 @@ public class InstructionList implements Cloneable {
 
     @Override
     public InstructionList clone() throws CloneNotSupportedException {
-        InstructionList clone = (InstructionList) super.clone();
-        clone.instructions = new BasicEventList<>();
-        for (Instruction instruction : instructions) {
-            clone.instructions.add(instruction.clone());
-        }
+        InstructionList clone = (InstructionList) super.clone(); // flat clone
+
+        // deep clone
+        clone.instructions = deepCloneEventList(instructions, Instruction.class);
+
         return clone;
     }
 
-    public void replaceInstructions(InstructionList instructionList) {
+    public void replaceInstructions(InstructionList instructionList) { //todo change to copyTo from whole clone
         instructions.clear();
         instructions.addAll(instructionList.getInstructions());
     }

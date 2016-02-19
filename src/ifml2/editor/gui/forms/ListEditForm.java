@@ -11,8 +11,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
@@ -44,7 +42,7 @@ public abstract class ListEditForm<T> extends JInternalFrame
     private String objectNameRP;
     private Word.Gender gender;
     private JPopupMenu popupMenu;
-    private List<ChangeListener> listChangeListeners = new ArrayList<ChangeListener>();
+    private List<ChangeListener> listChangeListeners = new ArrayList<>();
     private Class<T> clazz;
 
     /**
@@ -202,14 +200,7 @@ public abstract class ListEditForm<T> extends JInternalFrame
             {
                 updateState();
 
-                elementsList.addListSelectionListener(new ListSelectionListener()
-                {
-                    @Override
-                    public void valueChanged(ListSelectionEvent e)
-                    {
-                        updateState();
-                    }
-                });
+                elementsList.addListSelectionListener(e -> updateState());
             }
 
             private void updateState()
@@ -237,14 +228,7 @@ public abstract class ListEditForm<T> extends JInternalFrame
             {
                 updateState();
 
-                elementsList.addListSelectionListener(new ListSelectionListener()
-                {
-                    @Override
-                    public void valueChanged(ListSelectionEvent e)
-                    {
-                        updateState();
-                    }
-                });
+                elementsList.addListSelectionListener(e -> updateState());
             }
 
             private void updateState()
@@ -355,7 +339,6 @@ public abstract class ListEditForm<T> extends JInternalFrame
      */
     protected T getSelectedElement()
     {
-
         final Object selectedValue = elementsList.getSelectedValue();
         return clazz.isInstance(selectedValue) ? clazz.cast(selectedValue) : null;
     }
@@ -368,7 +351,7 @@ public abstract class ListEditForm<T> extends JInternalFrame
     public void bindData(EventList<T> clonedList)
     {
         this.clonedList = clonedList;
-        elementsList.setModel(new DefaultEventListModel<T>(clonedList));
+        elementsList.setModel(new DefaultEventListModel<>(clonedList));
     }
 
 /*    public boolean isShowUpDownButtons()
@@ -378,13 +361,13 @@ public abstract class ListEditForm<T> extends JInternalFrame
 
     */
 
-    /**
-     * Flag to show or hide toolbar with up/down buttons. Set it to other value in static constructor to change behaviour.
-     *//*
-    public void setShowUpDownButtons(boolean showUpDownButtons)
-    {
-        upDownToolbar.setVisible(showUpDownButtons);
-    }*/
+//    /**
+//     * Flag to show or hide toolbar with up/down buttons. Set it to other value in static constructor to change behaviour.
+//     */
+//    public void setShowUpDownButtons(boolean showUpDownButtons)
+//    {
+//        upDownToolbar.setVisible(showUpDownButtons);
+//    }
     public boolean isShowEditButton()
     {
         return editElementButton.isVisible();

@@ -14,8 +14,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
@@ -146,21 +144,14 @@ public class ItemEditor extends AbstractEditor<Item>
         // set WordLinks and subscribe to its changes
         final WordLinks wordLinks = itemClone.getWordLinks();
         wordsLabel.setText(wordLinks.getAllWords());
-        wordLinks.addChangeListener(new ChangeListener()
-        {
-            @Override
-            public void stateChanged(ChangeEvent e)
-            {
-                wordsLabel.setText(((WordLinks) e.getSource()).getAllWords());
-            }
-        });
+        wordLinks.addChangeListener(e -> wordsLabel.setText(((WordLinks) e.getSource()).getAllWords()));
 
         // set item in inventory
         itemInInventoryCheck.setSelected(itemClone.getStartingPosition().getInventory());
 
         // set item in locations
-        itemInLocationsList.setModel(new DefaultEventListModel<Location>(storyDataHelper.getLocations()));
-        DefaultEventSelectionModel<Location> selectionModel = new DefaultEventSelectionModel<Location>(storyDataHelper.getLocations());
+        itemInLocationsList.setModel(new DefaultEventListModel<>(storyDataHelper.getLocations()));
+        DefaultEventSelectionModel<Location> selectionModel = new DefaultEventSelectionModel<>(storyDataHelper.getLocations());
         itemInLocationsList.setSelectionModel(selectionModel);
         selectionModel.setValueIsAdjusting(true);
         try
@@ -178,7 +169,7 @@ public class ItemEditor extends AbstractEditor<Item>
         itemInLocationsList.ensureIndexIsVisible(selectionModel.getAnchorSelectionIndex());
 
         // set attributes
-        attributesList.setModel(new DefaultEventListModel<Attribute>(itemClone.getAttributes()));
+        attributesList.setModel(new DefaultEventListModel<>(itemClone.getAttributes()));
 
         // set roles
         rolesListEditForm.bindData(itemClone.getRoles());
@@ -269,7 +260,7 @@ public class ItemEditor extends AbstractEditor<Item>
             itemClone.getStartingPosition().setInventory(itemInInventoryCheck.isSelected());
             EventList<Location> locations = itemClone.getStartingPosition().getLocations();
             locations.clear();
-            for (Object object : itemInLocationsList.getSelectedValues())
+            for (Object object : itemInLocationsList.getSelectedValuesList())
             {
                 locations.add((Location) object);
             }

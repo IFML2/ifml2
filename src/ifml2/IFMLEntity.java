@@ -10,7 +10,7 @@ public class IFMLEntity implements Cloneable
 {
     protected static <T extends IFMLEntity> EventList<T> deepCloneEventList(@NotNull EventList<T> eventList, @NotNull Class<T> clazz) throws CloneNotSupportedException
     {
-        EventList<T> cloneList = new BasicEventList<T>();
+        EventList<T> cloneList = new BasicEventList<>();
         for (T element : eventList)
         {
             IFMLEntity clone = element.clone();

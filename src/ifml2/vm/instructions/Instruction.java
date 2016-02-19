@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import java.text.MessageFormat;
 import java.util.List;
 
-public abstract class Instruction implements Cloneable
+public abstract class Instruction extends IFMLEntity
 {
     /*@XmlAttribute(name = "position")
     public int position;*/
@@ -62,9 +62,9 @@ public abstract class Instruction implements Cloneable
     }
 
     @Override
-    public Instruction clone() throws CloneNotSupportedException
+    public Instruction clone() throws CloneNotSupportedException  //todo check all descendant instruction for cloning
     {
-        return (Instruction) super.clone(); // all fields are copied by default
+        return (Instruction) super.clone(); // just one flat field title and reference to VirtualMachine
     }
 
     abstract public void run(RunningContext runningContext) throws IFML2Exception;

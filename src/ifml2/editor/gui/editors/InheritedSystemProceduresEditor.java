@@ -2,7 +2,6 @@ package ifml2.editor.gui.editors;
 
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
-import ca.odell.glazedlists.matchers.Matcher;
 import ifml2.CommonConstants;
 import ifml2.GUIUtils;
 import ifml2.GUIUtils.EventComboBoxModelWithNullElement;
@@ -19,7 +18,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.text.MessageFormat;
 
 public class InheritedSystemProceduresEditor extends AbstractEditor<InheritedSystemProcedures>
@@ -41,19 +39,14 @@ public class InheritedSystemProceduresEditor extends AbstractEditor<InheritedSys
         // -- init form --
 
         // create filtered list to avoid unfit procedures
-        FilterList<Procedure> filteredProcedures = new FilterList<Procedure>(storyDataHelper.getProcedures(), new Matcher<Procedure>()
-        {
-            @Override
-            public boolean matches(Procedure item)
-            {
-                Parameter phraseParam = item.getParameterByName(CommonConstants.PARSE_ERROR_HANDLER_PRM_PHRASE);
-                Parameter errorParam = item.getParameterByName(CommonConstants.PARSE_ERROR_HANDLER_PRM_ERROR);
-                return phraseParam != null && errorParam != null;
-            }
+        FilterList<Procedure> filteredProcedures = new FilterList<>(storyDataHelper.getProcedures(), item -> {
+            Parameter phraseParam = item.getParameterByName(CommonConstants.PARSE_ERROR_HANDLER_PRM_PHRASE);
+            Parameter errorParam = item.getParameterByName(CommonConstants.PARSE_ERROR_HANDLER_PRM_ERROR);
+            return phraseParam != null && errorParam != null;
         });
 
         parseErrorHandlerCombo.setModel(
-                new EventComboBoxModelWithNullElement<Procedure>(filteredProcedures, inheritedSystemProcedures.getParseErrorHandler()));
+                new EventComboBoxModelWithNullElement<>(filteredProcedures, inheritedSystemProcedures.getParseErrorHandler()));
 
         //  -- buttons --
 
@@ -63,14 +56,7 @@ public class InheritedSystemProceduresEditor extends AbstractEditor<InheritedSys
             public void init()
             {
                 // set start status depends on selection
-                parseErrorHandlerCombo.addActionListener(new ActionListener()
-                {
-                    @Override
-                    public void actionPerformed(ActionEvent e)
-                    {
-                        setEnabled(isParseErrorHandlerFilled());
-                    }
-                });
+                parseErrorHandlerCombo.addActionListener(e -> setEnabled(isParseErrorHandlerFilled()));
             }
 
             @Override

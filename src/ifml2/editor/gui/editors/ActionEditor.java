@@ -8,13 +8,12 @@ import ifml2.GUIUtils;
 import ifml2.editor.DataNotValidException;
 import ifml2.editor.IFML2EditorException;
 import ifml2.editor.gui.AbstractEditor;
+import ifml2.editor.gui.forms.ListEditForm;
 import ifml2.om.Action;
 import ifml2.om.*;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
@@ -23,24 +22,22 @@ import java.util.Collections;
 
 public class ActionEditor extends AbstractEditor<Action>
 {
-    private final EventList<Template> templatesClone;
+    /*private final EventList<Template> templatesClone;*/
     private final EventList<Restriction> restrictionsClone;
+    private Action actionClone;
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
     private JTextField nameText;
     private JTextField descriptionText;
     private JComboBox procedureCallCombo;
-    private JList templatesList;
-    private JButton addTemplateButton;
-    private JButton editTemplateButton;
-    private JButton delTemplateButton;
     private JList restrictionsList;
     private JButton upRestrictionButton;
     private JButton downRestrictionButton;
     private JButton addRestrictionButton;
     private JButton editRestrictionButton;
     private JButton delRestrictionButton;
+    private ListEditForm<Template> templatesListEditForm;
     private Story.DataHelper storyDataHelper;
 
     public ActionEditor(Window owner, @NotNull Action action, Story.DataHelper storyDataHelper)
@@ -49,7 +46,7 @@ public class ActionEditor extends AbstractEditor<Action>
         this.storyDataHelper = storyDataHelper;
         initializeEditor("Действие", contentPane, buttonOK, buttonCancel);
 
-        // init actions and listeners
+        /*// init actions and listeners
         addTemplateButton.setAction(new AbstractAction("Добавить...", GUIUtils.NEW_ELEMENT_ICON)
         {
             @Override
@@ -67,13 +64,8 @@ public class ActionEditor extends AbstractEditor<Action>
         {
             {
                 setEnabled(false); // disabled at start
-                templatesList.addListSelectionListener(new ListSelectionListener()
-                {
-                    @Override
-                    public void valueChanged(ListSelectionEvent e)
-                    {
-                        setEnabled(!templatesList.isSelectionEmpty()); // depends on selection
-                    }
+                templatesList.addListSelectionListener(e -> {
+                    setEnabled(!templatesList.isSelectionEmpty()); // depends on selection
                 });
             }
 
@@ -91,13 +83,8 @@ public class ActionEditor extends AbstractEditor<Action>
         {
             {
                 setEnabled(false); // disabled at start
-                templatesList.addListSelectionListener(new ListSelectionListener()
-                {
-                    @Override
-                    public void valueChanged(ListSelectionEvent e)
-                    {
-                        setEnabled(!templatesList.isSelectionEmpty()); // depends on selection
-                    }
+                templatesList.addListSelectionListener(e -> {
+                    setEnabled(!templatesList.isSelectionEmpty()); // depends on selection
                 });
             }
 
@@ -112,7 +99,7 @@ public class ActionEditor extends AbstractEditor<Action>
                     templatesClone.remove(selectedAction);
                 }
             }
-        });
+        });*/
         addRestrictionButton.setAction(new AbstractAction("Добавить...", GUIUtils.NEW_ELEMENT_ICON)
         {
             @Override
@@ -130,13 +117,8 @@ public class ActionEditor extends AbstractEditor<Action>
         {
             {
                 setEnabled(false); // disabled at start
-                restrictionsList.addListSelectionListener(new ListSelectionListener()
-                {
-                    @Override
-                    public void valueChanged(ListSelectionEvent e)
-                    {
-                        setEnabled(!restrictionsList.isSelectionEmpty()); // depends on selection
-                    }
+                restrictionsList.addListSelectionListener(e -> {
+                    setEnabled(!restrictionsList.isSelectionEmpty()); // depends on selection
                 });
             }
 
@@ -154,13 +136,8 @@ public class ActionEditor extends AbstractEditor<Action>
         {
             {
                 setEnabled(false); // disabled at start
-                restrictionsList.addListSelectionListener(new ListSelectionListener()
-                {
-                    @Override
-                    public void valueChanged(ListSelectionEvent e)
-                    {
-                        setEnabled(!restrictionsList.isSelectionEmpty()); // depends on selection
-                    }
+                restrictionsList.addListSelectionListener(e -> {
+                    setEnabled(!restrictionsList.isSelectionEmpty()); // depends on selection
                 });
             }
 
@@ -179,13 +156,8 @@ public class ActionEditor extends AbstractEditor<Action>
         {
             {
                 setEnabled(false); // disabled at start
-                restrictionsList.addListSelectionListener(new ListSelectionListener()
-                {
-                    @Override
-                    public void valueChanged(ListSelectionEvent e)
-                    {
-                        setEnabled(restrictionsList.getSelectedIndex() > 0); // depends on selection
-                    }
+                restrictionsList.addListSelectionListener(e -> {
+                    setEnabled(restrictionsList.getSelectedIndex() > 0); // depends on selection
                 });
             }
 
@@ -204,14 +176,9 @@ public class ActionEditor extends AbstractEditor<Action>
         {
             {
                 setEnabled(false); // disabled at start
-                restrictionsList.addListSelectionListener(new ListSelectionListener()
-                {
-                    @Override
-                    public void valueChanged(ListSelectionEvent e)
-                    {
-                        setEnabled(restrictionsList.getSelectedIndex() <
-                                   restrictionsList.getModel().getSize() - 1); // depends on selection and list length
-                    }
+                restrictionsList.addListSelectionListener(e -> {
+                    setEnabled(restrictionsList.getSelectedIndex() <
+                               restrictionsList.getModel().getSize() - 1); // depends on selection and list length
                 });
             }
 
@@ -228,7 +195,7 @@ public class ActionEditor extends AbstractEditor<Action>
         });
 
         // listeners
-        templatesList.addMouseListener(new MouseAdapter()
+        /*templatesList.addMouseListener(new MouseAdapter()
         {
             @Override
             public void mouseClicked(MouseEvent e)
@@ -242,7 +209,7 @@ public class ActionEditor extends AbstractEditor<Action>
                     }
                 }
             }
-        });
+        });*/
         restrictionsList.addMouseListener(new MouseAdapter()
         {
             @Override
@@ -259,17 +226,27 @@ public class ActionEditor extends AbstractEditor<Action>
             }
         });
 
+        // clone whole entity
+        try {
+            actionClone = action.clone();
+        } catch (CloneNotSupportedException e) {
+            GUIUtils.showErrorMessage(this, e);
+        }
+
         // clone data
-        templatesClone = GlazedLists.eventList(action.getTemplates()); //todo is that really clones members???
+        //templatesClone =  GlazedLists.eventList(action.getTemplates()); //todo is that really clones members???
         restrictionsClone = GlazedLists.eventList(action.getRestrictions()); //todo is that really clones members???
+
+        // bind data
+        templatesListEditForm.bindData(actionClone.getTemplates());
 
         // init form data
         nameText.setText(action.getName());
         descriptionText.setText(action.getDescription());
-        templatesList.setModel(new DefaultEventListModel<Template>(templatesClone));
-        procedureCallCombo.setModel(new DefaultEventComboBoxModel<Procedure>(storyDataHelper.getProcedures()));
+        //templatesList.setModel(new DefaultEventListModel<Template>(templatesClone));
+        procedureCallCombo.setModel(new DefaultEventComboBoxModel<>(storyDataHelper.getProcedures()));
         procedureCallCombo.setSelectedItem(action.getProcedureCall().getProcedure());
-        restrictionsList.setModel(new DefaultEventListModel<Restriction>(restrictionsClone));
+        restrictionsList.setModel(new DefaultEventListModel<>(restrictionsClone));
     }
 
     private boolean editRestriction(Restriction restriction)
@@ -312,12 +289,14 @@ public class ActionEditor extends AbstractEditor<Action>
     @Override
     public void updateData(@NotNull Action data) throws IFML2EditorException
     {
+        // TODO: 20.02.2016 copy data to clone then clone.copyTo(data)
+        
         data.setName(nameText.getText());
         data.setDescription(descriptionText.getText());
 
         EventList<Template> templates = data.getTemplates();
         templates.clear();
-        templates.addAll(templatesClone);
+        templates.addAll(/*templatesClone*/actionClone.getTemplates());
 
         data.getProcedureCall().setProcedure((Procedure) procedureCallCombo.getSelectedItem());
 
@@ -331,5 +310,20 @@ public class ActionEditor extends AbstractEditor<Action>
         {
             throw new DataNotValidException("У действия должно быть имя!", nameText);
         }
+    }
+
+    private void createUIComponents() {
+        templatesListEditForm = new ListEditForm<Template>(this, "шаблон", "шаблона", Word.Gender.MASCULINE, Template.class) {
+            @Override
+            protected Template createElement() throws Exception {
+                Template template = new Template();
+                return editElement(template) ? template : null;
+            }
+
+            @Override
+            protected boolean editElement(Template selectedElement) throws Exception {
+                return editTemplate(selectedElement);
+            }
+        };
     }
 }

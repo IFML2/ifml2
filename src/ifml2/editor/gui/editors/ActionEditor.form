@@ -125,74 +125,20 @@
                     </constraints>
                     <properties/>
                   </component>
-                  <grid id="9efc2" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-                    <margin top="0" left="0" bottom="0" right="0"/>
-                    <constraints>
-                      <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties/>
-                    <border type="etched"/>
-                    <children>
-                      <scrollpane id="d34e8">
-                        <constraints>
-                          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                            <preferred-size width="357" height="128"/>
-                          </grid>
-                        </constraints>
-                        <properties/>
-                        <border type="none"/>
-                        <children>
-                          <component id="6e81f" class="javax.swing.JList" binding="templatesList">
-                            <constraints/>
-                            <properties/>
-                          </component>
-                        </children>
-                      </scrollpane>
-                      <toolbar id="39762">
-                        <constraints>
-                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
-                            <preferred-size width="-1" height="20"/>
-                          </grid>
-                        </constraints>
-                        <properties>
-                          <floatable value="false"/>
-                          <opaque value="false"/>
-                        </properties>
-                        <clientProperties>
-                          <JToolBar.isRollover class="java.lang.Boolean" value="false"/>
-                        </clientProperties>
-                        <border type="none"/>
-                        <children>
-                          <component id="559a3" class="javax.swing.JButton" binding="addTemplateButton">
-                            <constraints/>
-                            <properties>
-                              <text value="Добавить..."/>
-                            </properties>
-                          </component>
-                          <component id="82316" class="javax.swing.JButton" binding="editTemplateButton">
-                            <constraints/>
-                            <properties>
-                              <text value="Изменить..."/>
-                            </properties>
-                          </component>
-                          <component id="9f20a" class="javax.swing.JButton" binding="delTemplateButton">
-                            <constraints/>
-                            <properties>
-                              <text value="Удалить"/>
-                            </properties>
-                          </component>
-                        </children>
-                      </toolbar>
-                    </children>
-                  </grid>
                   <component id="563f2" class="javax.swing.JLabel">
                     <constraints>
                       <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
+                      <labelFor value="84a9"/>
                       <text value="Шаблоны"/>
                     </properties>
                   </component>
+                  <nested-form id="84a9" form-file="ifml2/editor/gui/forms/ListEditForm.form" binding="templatesListEditForm" custom-create="true">
+                    <constraints>
+                      <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                  </nested-form>
                 </children>
               </grid>
               <grid id="68cc0" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
