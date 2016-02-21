@@ -16,100 +16,23 @@ import java.util.concurrent.Callable;
 @XmlTransient
 public class Location extends IFMLObject implements Cloneable
 {
-    protected HashMap<ExitDirection, Location> exits = new HashMap<ExitDirection, Location>();
-    protected List<Item> items = new ArrayList<Item>();
+    protected HashMap<ExitDirection, Location> exits = new HashMap<>();
+    protected List<Item> items = new ArrayList<>();
     private HashMap<String, Callable<? extends Value>> LOCATION_SYMBOLS = new HashMap<String, Callable<? extends Value>>()
     {
         {
-            put("север", new Callable<Value>()
-            {
-                @Override
-                public Value call() throws Exception
-                {
-                    return getObjectValue(ExitDirection.NORTH);
-                }
-            });
-            put("северовосток", new Callable<Value>()
-            {
-                @Override
-                public Value call() throws Exception
-                {
-                    return getObjectValue(ExitDirection.NORTH_EAST);
-                }
-            });
-            put("восток", new Callable<Value>()
-            {
-                @Override
-                public Value call() throws Exception
-                {
-                    return getObjectValue(ExitDirection.EAST);
-                }
-            });
-            put("юговосток", new Callable<Value>()
-            {
-                @Override
-                public Value call() throws Exception
-                {
-                    return getObjectValue(ExitDirection.SOUTH_EAST);
-                }
-            });
-            put("юг", new Callable<Value>()
-            {
-                @Override
-                public Value call() throws Exception
-                {
-                    return getObjectValue(ExitDirection.SOUTH);
-                }
-            });
-            put("югозапад", new Callable<Value>()
-            {
-                @Override
-                public Value call() throws Exception
-                {
-                    return getObjectValue(ExitDirection.SOUTH_WEST);
-                }
-            });
-            put("запад", new Callable<Value>()
-            {
-                @Override
-                public Value call() throws Exception
-                {
-                    return getObjectValue(ExitDirection.WEST);
-                }
-            });
-            put("северозапад", new Callable<Value>()
-            {
-                @Override
-                public Value call() throws Exception
-                {
-                    return getObjectValue(ExitDirection.NORTH_WEST);
-                }
-            });
-            put("верх", new Callable<Value>()
-            {
-                @Override
-                public Value call() throws Exception
-                {
-                    return getObjectValue(ExitDirection.UP);
-                }
-            });
-            put("низ", new Callable<Value>()
-            {
-                @Override
-                public Value call() throws Exception
-                {
-                    return getObjectValue(ExitDirection.DOWN);
-                }
-            });
+            put("север", (Callable<Value>) () -> getObjectValue(ExitDirection.NORTH));
+            put("северовосток", (Callable<Value>) () -> getObjectValue(ExitDirection.NORTH_EAST));
+            put("восток", (Callable<Value>) () -> getObjectValue(ExitDirection.EAST));
+            put("юговосток", (Callable<Value>) () -> getObjectValue(ExitDirection.SOUTH_EAST));
+            put("юг", (Callable<Value>) () -> getObjectValue(ExitDirection.SOUTH));
+            put("югозапад", (Callable<Value>) () -> getObjectValue(ExitDirection.SOUTH_WEST));
+            put("запад", (Callable<Value>) () -> getObjectValue(ExitDirection.WEST));
+            put("северозапад", (Callable<Value>) () -> getObjectValue(ExitDirection.NORTH_WEST));
+            put("верх", (Callable<Value>) () -> getObjectValue(ExitDirection.UP));
+            put("низ", (Callable<Value>) () -> getObjectValue(ExitDirection.DOWN));
 
-            put("предметы", new Callable<Value>()
-            {
-                @Override
-                public Value call() throws Exception
-                {
-                    return new CollectionValue(items);
-                }
-            });
+            put("предметы", (Callable<Value>) () -> new CollectionValue(items));
         }
 
         @NotNull
@@ -134,8 +57,8 @@ public class Location extends IFMLObject implements Cloneable
 
     private void copyFieldsTo(Location location)
     {
-        location.exits = new HashMap<ExitDirection, Location>(exits);
-        location.items = new ArrayList<Item>(items);
+        location.exits = new HashMap<>(exits);
+        location.items = new ArrayList<>(items);
     }
 
     public Location getExit(ExitDirection exitDirection)
