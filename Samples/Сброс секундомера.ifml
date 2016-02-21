@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<story xmlns="http://toysoft.narod.ru/IFML2Schema" id="story">
+    <inheritedSystemProcedures/>
+    <storyOptions>
+        <startLocationOption showStartLocDesc="false"/>
+        <startProcedureOption/>
+        <storyDescription name="" description="" version="" author=""/>
+        <globalVars>
+            <var name="СекундПрошло" value="0"/>
+        </globalVars>
+        <systemCommandsDisableOption DisableHelp="false" DisableDebug="false"/>
+    </storyOptions>
+    <procedures>
+        <procedure name="СброситьСекундомер">
+            <procedureVariables/>
+            <procedureBody>
+                <var name="СекундПрошло" value="секунды"/>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="СколькоСекунд">
+            <procedureVariables/>
+            <procedureBody>
+                <return value="секунды - СекундПрошло"/>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+    </procedures>
+    <libraries/>
+    <dictionary/>
+    <locations>
+        <location id="КомнатаЛок" name="Комната">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words/>
+            <description></description>
+            <attributes/>
+        </location>
+    </locations>
+    <items/>
+    <actions>
+        <action name="сколько" description="">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>сколько</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="СколькоСекунд"/>
+            <restrictions/>
+        </action>
+        <action name="сбросить" description="">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>сбросить</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="СброситьСекундомер"/>
+            <restrictions/>
+        </action>
+    </actions>
+</story>

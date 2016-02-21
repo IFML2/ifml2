@@ -11,13 +11,18 @@
       <root url="jar://$PROJECT_DIR$/lib/mockito-core-2.0.42-beta.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/byte-buddy-1.2.1.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/objenesis-2.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/mockito-core-2.0.42-beta.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/byte-buddy-1.2.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/objenesis-2.1.jar!/" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$PROJECT_DIR$/lib/mockito-core-2.0.41-beta-javadoc.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/mockito-core-2.0.42-beta-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/mockito-core-2.0.42-beta-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
       <root url="jar://$PROJECT_DIR$/lib/mockito-core-2.0.41-beta-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/mockito-core-2.0.42-beta-sources.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/mockito-core-2.0.42-beta-sources.jar!/" />
     </SOURCES>
   </library>
