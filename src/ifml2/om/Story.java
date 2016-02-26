@@ -165,21 +165,6 @@ public class Story
         return dataHelper;
     }
 
-    @Override
-    public Story clone() throws CloneNotSupportedException
-    {
-        //noinspection UnnecessaryLocalVariable
-        Story clone = (Story) super.clone(); // todo check subscriptions made in anonymous constructor
-       /* clone.actions = GlazedLists.eventList(actions);
-        clone.dictionary = new HashMap<String, Word>(dictionary);
-        clone.items = GlazedLists.eventList(items);
-        clone.libraries = GlazedLists.eventList(libraries);
-        clone.locations = GlazedLists.eventList(locations);
-        clone.objectsHeap = new HashMap<String, IFMLObject>(objectsHeap);*/
-        //todo FULL COPY of objects! they all are OWN! that's why they should be copied not just links
-        return clone;
-    }
-
     public StoryOptions getStoryOptions()
     {
         return storyOptions;
