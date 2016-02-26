@@ -20,14 +20,16 @@ public class ExpressionCalculator
     private static final char EQUALITY_OPERATOR = '=';
     private static final char GREATER_OPERATOR = '>';
     private static final char LESSER_OPERATOR = '<';
+    private static final String NOT_EQUAL_OPERATOR = "<>";
     private static final char ADD_OPERATOR = '+';
+    private static final char SUBTRACT_OPERATOR = '-';
     private static final String NOT_OPERATOR = "не";
     private static final String AND_OPERATOR = "и";
     private static final String OR_OPERATOR = "или";
     private static final String IN_OPERATOR = "в";
-    private static final String NOT_EQUAL_OPERATOR = "<>";
 
     private static final char QUOTE_CHAR = '"';
+
     private static final char SINGLE_QUOTE_CHAR = '\'';
 
     private SymbolResolver symbolResolver = null;
@@ -73,13 +75,15 @@ public class ExpressionCalculator
                     case StreamTokenizer.TT_WORD:
                         if (NOT_OPERATOR.equalsIgnoreCase(tokenizer.sval))
                         {
-                            if (OPERAND.equals(context))
-                            {
-                                // NOT can't follow operand!
-                                throw new IFML2ExpressionException("Ошибка в выражении: НЕ не может следовать за операндом");
+                            switch (context) {
+                                case OPERAND:
+                                    // NOT can't follow operand!
+                                    throw new IFML2ExpressionException("Ошибка в выражении: НЕ не может следовать за операндом");
+                                default:
+                                    calculationStack.pushOperator(ExpressionOperator.NOT);
+                                    context = OPERATOR;
+                                    break;
                             }
-                            calculationStack.pushOperator(Operation.NOT);
-                            context = OPERATOR;
                         }
                         else if (AND_OPERATOR.equalsIgnoreCase(tokenizer.sval))
                         {
@@ -89,7 +93,7 @@ public class ExpressionCalculator
                                     calculationStack.pushOperator(Operation.AND);
                                     context = OPERATOR;
                                     break;
-                                default:
+                                default: // consider it's just id
                                     calculationStack.pushSymbol(tokenizer.sval);
                                     context = OPERAND;
                             }
@@ -102,7 +106,7 @@ public class ExpressionCalculator
                                     calculationStack.pushOperator(Operation.OR);
                                     context = OPERATOR;
                                     break;
-                                default:
+                                default: // consider it's just id
                                     calculationStack.pushSymbol(tokenizer.sval);
                                     context = OPERAND;
                             }
@@ -115,42 +119,49 @@ public class ExpressionCalculator
                                     calculationStack.pushOperator(Operation.IN);
                                     context = OPERATOR;
                                     break;
-                                default:
+                                default: // consider it's just id
                                     calculationStack.pushSymbol(tokenizer.sval);
                                     context = OPERAND;
                             }
                         }
                         else
                         {
-                            if (OPERAND.equals(context))
-                            {
-                                throw new IFML2ExpressionException(
-                                        "Ошибка в выражении: идентификатор ({0}) не может следовать за другим операндом", tokenizer.sval);
+                            // consider it's just id
+                            switch (context) {
+                                case OPERAND:
+                                    throw new IFML2ExpressionException(
+                                            "Ошибка в выражении: идентификатор \"{0}\" не может следовать за другим операндом", tokenizer.sval);
+                                default:
+                                    calculationStack.pushSymbol(tokenizer.sval);
+                                    context = OPERAND;
+                                    break;
                             }
-                            calculationStack.pushSymbol(tokenizer.sval);
-                            context = OPERAND;
                         }
                         break;
 
                     case StreamTokenizer.TT_NUMBER:
-                        if (OPERAND.equals(context))
-                        {
-                            throw new IFML2ExpressionException("Ошибка в выражении: число ({0}) не может следовать за другим операндом",
-                                    tokenizer.nval);
+                        switch (context) {
+                            case OPERAND:
+                                throw new IFML2ExpressionException("Ошибка в выражении: число \"{0}\" не может следовать за другим операндом",
+                                        tokenizer.nval);
+                            default:
+                                calculationStack.pushNumericLiteral(tokenizer.nval);
+                                context = OPERAND;
+                                break;
                         }
-                        calculationStack.pushNumericLiteral(tokenizer.nval);
-                        context = OPERAND;
                         break;
 
                     case QUOTE_CHAR:
                     case SINGLE_QUOTE_CHAR:
-                        if (OPERAND.equals(context))
-                        {
-                            throw new IFML2ExpressionException("Ошибка в выражении: текст ({0}) не может следовать за другим операндом",
-                                    tokenizer.sval);
+                        switch (context) {
+                            case OPERAND:
+                                throw new IFML2ExpressionException("Ошибка в выражении: текст \"{0}\" не может следовать за другим операндом",
+                                        tokenizer.sval);
+                            default:
+                                calculationStack.pushTextLiteral(tokenizer.sval);
+                                context = OPERAND;
+                                break;
                         }
-                        calculationStack.pushTextLiteral(tokenizer.sval);
-                        context = OPERAND;
                         break;
 
                     case GET_PROPERTY_OPERATOR:
@@ -171,7 +182,7 @@ public class ExpressionCalculator
                     case LESSER_OPERATOR:
                         // check it's not not equal <>
                         int nextToken = tokenizer.nextToken();
-                        if (nextToken == GREATER_OPERATOR) // is't <> !
+                        if (nextToken == GREATER_OPERATOR) // it's <> !
                         {
                             switch (context)
                             {
@@ -185,8 +196,8 @@ public class ExpressionCalculator
                             }
                         }
                         else {
-                            tokenizer.pushBack(); // it's not <> so process next
-                            calculationStack.pushOperator(Operation.COMPARE_LESSER);
+                            tokenizer.pushBack(); // it's not <> so return consumed token and process it next
+                            calculationStack.pushOperator(ExpressionOperator.COMPARE_LESSER);
                             context = OPERATOR;
                         }
                         break;
@@ -196,8 +207,38 @@ public class ExpressionCalculator
                         context = OPERATOR;
                         break;
 
+                    case SUBTRACT_OPERATOR:
+                        // decide if it subtract or negative number
+                        switch (context)
+                        {
+                            case START:
+                            case OPERATOR:
+                                // it can be only negative number at start ow after operator (todo consider unary minus)
+                                nextToken = tokenizer.nextToken(); // check that next token is number
+                                if (nextToken == StreamTokenizer.TT_NUMBER)
+                                {
+                                    // consume it both as negative number
+                                    calculationStack.pushNumericLiteral(-tokenizer.nval);
+                                    context = OPERAND;
+                                }
+                                else
+                                {
+                                    tokenizer.pushBack(); // return token back
+                                    // fail
+                                    throw new IFML2ExpressionException("Ошибка в выражении: унарный минус \"{0}\" может быть только перед числом",
+                                            SUBTRACT_OPERATOR);
+                                }
+                                break;
+                            case OPERAND:
+                                // it can only be subtraction
+                                calculationStack.pushOperator(ExpressionOperator.SUBTRACT);
+                                context = OPERATOR;
+                                break;
+                        }
+                        break;
+
                     default:
-                        throw new IFML2ExpressionException("Ошибка в выражении ({0}) - неизвестный токен ({1})", expression, token);
+                        throw new IFML2ExpressionException("Ошибка в выражении \"{0}\" - неизвестный токен \"{1}\"", expression, token);
                 }
             }
         }
@@ -445,6 +486,30 @@ public class ExpressionCalculator
                     NumberValue leftNumber = (NumberValue) resolvedLeftValue;
                     NumberValue rightNumber = (NumberValue) resolvedRightValue;
                     result = new BooleanValue(leftNumber.getValue() < rightNumber.getValue());
+
+                    break;
+                }
+
+                case SUBTRACT:
+                {
+                    Value resolvedLeftValue = ensureValueResolved(leftValue);
+                    Value resolvedRightValue = ensureValueResolved(rightValue);
+
+                    assert resolvedLeftValue != null;
+
+                    if (!(resolvedLeftValue instanceof NumberValue))
+                    {
+                        throw new IFML2VMException("Левая величина сравнения должна быть числом (а её тип {0}).",
+                                resolvedLeftValue.getTypeName());
+                    }
+
+                    if (!(resolvedRightValue instanceof NumberValue))
+                    {
+                        throw new IFML2VMException("Правая величина сравнения должна быть числом (а её тип {0}).",
+                                resolvedRightValue.getTypeName());
+                    }
+
+                    result = new NumberValue(((NumberValue) resolvedLeftValue).getValue() - ((NumberValue) resolvedRightValue).getValue());
 
                     break;
                 }
