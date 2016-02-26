@@ -80,7 +80,7 @@ public class ExpressionCalculator
                                     // NOT can't follow operand!
                                     throw new IFML2ExpressionException("Ошибка в выражении: НЕ не может следовать за операндом");
                                 default:
-                                    calculationStack.pushOperator(ExpressionOperator.NOT);
+                                    calculationStack.pushOperator(Operation.NOT);
                                     context = OPERATOR;
                                     break;
                             }
@@ -197,7 +197,7 @@ public class ExpressionCalculator
                         }
                         else {
                             tokenizer.pushBack(); // it's not <> so return consumed token and process it next
-                            calculationStack.pushOperator(ExpressionOperator.COMPARE_LESSER);
+                            calculationStack.pushOperator(Operation.COMPARE_LESSER);
                             context = OPERATOR;
                         }
                         break;
@@ -231,7 +231,7 @@ public class ExpressionCalculator
                                 break;
                             case OPERAND:
                                 // it can only be subtraction
-                                calculationStack.pushOperator(ExpressionOperator.SUBTRACT);
+                                calculationStack.pushOperator(Operation.SUBTRACT);
                                 context = OPERATOR;
                                 break;
                         }
@@ -259,10 +259,14 @@ public class ExpressionCalculator
         OPERATOR,
         OPERAND
     }
+    /*
+    TODO: ??? 27.02.2016 переименовать в BINARY_OPERATOR, добавить UNARY_RIGHT_OPERATOR,
+    запретить после UNARY_RIGHT любой оператор ??? (он ждёт операнд справа), а после BINARY запретить только BINARY (следующий ждёт слева операнд...)
+    */
 
     private enum OperationType
     {
-        UNARY,
+        UNARY_RIGHT,
         BINARY
     }
 
@@ -270,8 +274,9 @@ public class ExpressionCalculator
     {
         GET_PROPERTY(GET_PROPERTY_OPERATOR, 100),
         IN(IN_OPERATOR, OperationType.BINARY, 50),
-        NOT(NOT_OPERATOR, OperationType.UNARY, 40),
+        NOT(NOT_OPERATOR, OperationType.UNARY_RIGHT, 40),
         ADD(ADD_OPERATOR, 30),
+        SUBTRACT(SUBTRACT_OPERATOR, 30),
         COMPARE_EQUALITY(EQUALITY_OPERATOR, 20),
         COMPARE_NOT_EQUALITY(NOT_EQUAL_OPERATOR, OperationType.BINARY, 20),
         COMPARE_GREATER(GREATER_OPERATOR, 20),
@@ -299,7 +304,11 @@ public class ExpressionCalculator
 
         @Contract(pure = true)
         public boolean canSqueeze(Operation operator) {
-            return priority <= operator.priority;
+            return priority <= operator.priority && OperationType.UNARY_RIGHT != operator.getOperationType();
+        }
+
+        public OperationType getOperationType() {
+            return operationType;
         }
     }
 
@@ -586,7 +595,7 @@ public class ExpressionCalculator
                     leftExpr = expressionStack.pop();
                     break;
 
-                case UNARY:
+                case UNARY_RIGHT:
                     rightExpr = expressionStack.pop();
                     break;
 
