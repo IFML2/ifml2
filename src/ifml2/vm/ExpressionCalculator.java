@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.io.StreamTokenizer;
 import java.io.StringReader;
+import java.lang.reflect.Type;
 import java.util.Stack;
 
 import static ifml2.vm.ExpressionCalculator.ExprContext.*;
@@ -689,18 +690,20 @@ public class ExpressionCalculator
                     assert leftExpr != null;
                     result = new AddExpression(leftExpr, rightExpr);
                     break;
-                case GET_PROPERTY:
-                case IN:
-                case NOT:
-                case COMPARE_EQUALITY:
-                case COMPARE_NOT_EQUALITY:
-                case COMPARE_GREATER:
-                case COMPARE_LESSER:
                 case AND:
-                case OR:
-                    throw new IFML2ExpressionException("Операция {0} пока не поддерживается в выражениях", operator.toString());
+                    assert leftExpr != null;
+                    result = new AndExpression(leftExpr, rightExpr);
+                    break;
+                case GET_PROPERTY: // TODO: 26.02.2016
+                case IN: // TODO: 26.02.2016
+                case NOT: // TODO: 26.02.2016
+                case COMPARE_EQUALITY: // TODO: 26.02.2016
+                case COMPARE_NOT_EQUALITY: // TODO: 26.02.2016
+                case COMPARE_GREATER: // TODO: 26.02.2016
+                case COMPARE_LESSER: // TODO: 26.02.2016
+                case OR: // TODO: 26.02.2016
                 default:
-                    throw new IFML2ExpressionException("Неизвестный оператор {0}", operator);
+                    throw new IFML2ExpressionException("Операция {0} пока не поддерживается в выражениях", operator.toString());
             }
 
             return result;
@@ -713,18 +716,21 @@ public class ExpressionCalculator
 
         private abstract class Expression {
             public abstract Value solve() throws IFML2VMException;
+
+            protected abstract String toStringRepresentation();
+
+            @Override
+            public String toString() {
+                return toStringRepresentation();
+            }
         }
 
         private class ValueExpression extends Expression {
             private final Value value;
 
             public ValueExpression(@NotNull Value value) {
+                super();
                 this.value = value;
-            }
-
-            @Override
-            public String toString() {
-                return format("Value[%s]", value.toLiteral());
             }
 
             @Override
@@ -735,6 +741,11 @@ public class ExpressionCalculator
                 }
                 return resultValue;
             }
+
+            @Override
+            protected String toStringRepresentation() {
+                return format("Value[%s]", value.toLiteral());
+            }
         }
 
         private class AddExpression extends Expression {
@@ -742,12 +753,13 @@ public class ExpressionCalculator
             private final Expression rightExpr;
 
             public AddExpression(@NotNull Expression leftExpr, @NotNull Expression rightExpr) {
+                super();
                 this.leftExpr = leftExpr;
                 this.rightExpr = rightExpr;
             }
 
             @Override
-            public String toString() {
+            protected String toStringRepresentation() {
                 return format("Add[%s,%s]", leftExpr, rightExpr);
             }
 
@@ -774,6 +786,45 @@ public class ExpressionCalculator
                             Value.Operation.ADD, leftValue.getTypeName(), leftValue.getTypeName());
                 }
                 return result;
+            }
+        }
+
+        private class AndExpression extends Expression {
+            private final Expression leftExpr;
+            private final Expression rightExpr;
+
+            public AndExpression(@NotNull Expression leftExpr, @NotNull Expression rightExpr) {
+                super();
+                this.leftExpr = leftExpr;
+                this.rightExpr = rightExpr;
+            }
+
+            @Override
+            public Value solve() throws IFML2VMException {
+                Value leftValue = leftExpr.solve();
+                if (!(leftValue instanceof BooleanValue)) {
+                    throw new IFML2ExpressionException("Величина не является логической ({0})", leftValue);
+                }
+
+                // incomplete boolean evaluation!
+                Boolean leftValueValue = ((BooleanValue) leftValue).getValue();
+                if (!leftValueValue) {
+                    return new BooleanValue(false);
+                }
+
+                Value rightValue = rightExpr.solve();
+                if (!(rightValue instanceof BooleanValue)) {
+                    throw new IFML2ExpressionException("Величина не является логической ({0})", rightValue);
+                }
+
+                Boolean rightValueValue = ((BooleanValue) rightValue).getValue();
+
+                return new BooleanValue(rightValueValue); // depends on right cause of incomplete evaluation
+            }
+
+            @Override
+            protected String toStringRepresentation() {
+                return format("And[%s,%s]", leftExpr, rightExpr);
             }
         }
     }
