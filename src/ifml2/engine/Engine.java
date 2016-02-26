@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import static ifml2.engine.Engine.SystemCommand.HELP;
+import static java.lang.String.format;
 
 public class Engine
 {
@@ -51,23 +52,23 @@ public class Engine
             put("инвентарий", returnInv);
             put("инвентарь", returnInv);
             put("куча",
-                    (Callable<CollectionValue>) () -> new CollectionValue(
-                            new ArrayList<>(story.getObjectsHeap().values())));
+                    (Callable<TextValue>) () -> new TextValue(new CollectionValue(
+                            new ArrayList<>(story.getObjectsHeap().values())).toString()));
             put("словарь",
-                    (Callable<CollectionValue>) () -> new CollectionValue(
-                            new ArrayList<>(story.getDictionary().values())));
+                    (Callable<TextValue>) () -> new TextValue(new CollectionValue(
+                            new ArrayList<>(story.getDictionary().values())).toString()));
             put("пустота", (Callable<CollectionValue>) () -> new CollectionValue(abyss));
             put("глобальные", (Callable<TextValue>) () -> new TextValue(globalVariables.entrySet().toString()));
             put("локации",
-                    (Callable<TextValue>) () -> new TextValue(story.getLocations().toString()));
+                    (Callable<TextValue>) () -> new TextValue(new CollectionValue(story.getLocations()).toString()));
             put("предметы",
-                    (Callable<TextValue>) () -> new TextValue(story.getItems().toString()));
+                    (Callable<TextValue>) () -> new TextValue(new CollectionValue(story.getItems()).toString()));
             put("системные", new Callable<TextValue>()
             {
                 @Override
                 public TextValue call() throws Exception
                 {
-                    return new TextValue(String.format("Системные переменные: %s", ENGINE_SYMBOLS.keySet()));
+                    return new TextValue(format("Системные переменные: %s", ENGINE_SYMBOLS.keySet()));
                 }
             });
             put("секунды", new Callable<NumberValue>() {
@@ -229,8 +230,8 @@ public class Engine
         outTextLn(storyDescription.getName() != null ? storyDescription.getName() : "<Без имени>");
         outTextLn("**********");
         outTextLn(storyDescription.getDescription() != null ? storyDescription.getDescription() : "<Без описания>");
-        outTextLn(String.format("ВЕРСИЯ: %s", storyDescription.getVersion() != null ? storyDescription.getVersion() : "<Без версии>"));
-        outTextLn(String.format("АВТОР: %s", storyDescription.getAuthor() != null ? storyDescription.getAuthor() : "<Без автора>"));
+        outTextLn(format("ВЕРСИЯ: %s", storyDescription.getVersion() != null ? storyDescription.getVersion() : "<Без версии>"));
+        outTextLn(format("АВТОР: %s", storyDescription.getAuthor() != null ? storyDescription.getAuthor() : "<Без автора>"));
         outTextLn("**********\n");
 
         Procedure startProcedure = story.getStartProcedure();

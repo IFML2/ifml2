@@ -1,6 +1,7 @@
 package ifml2.vm;
 
 import ifml2.IFML2Exception;
+import ifml2.om.IFMLObject;
 import ifml2.vm.values.*;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -8,10 +9,9 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.io.StreamTokenizer;
 import java.io.StringReader;
-import java.lang.reflect.Type;
 import java.util.Stack;
 
-import static ifml2.vm.ExpressionCalculator.ExprContext.*;
+import static ifml2.vm.ExpressionCalculator.Context.*;
 import static java.lang.String.format;
 
 public class ExpressionCalculator
@@ -52,18 +52,18 @@ public class ExpressionCalculator
         tokenizer.commentChar(0);
         tokenizer.quoteChar(QUOTE_CHAR);
         tokenizer.quoteChar(SINGLE_QUOTE_CHAR);
-        for (ExpressionOperator expressionOperator : ExpressionOperator.values())
+        for (Operation operation : Operation.values())
         {
-            if (expressionOperator.operatorCharacter != 0)
+            if (operation.operatorCharacter != 0)
             {
-                tokenizer.ordinaryChar(expressionOperator.operatorCharacter);
+                tokenizer.ordinaryChar(operation.operatorCharacter);
             }
         }
 
         CalculationStack calculationStack = new CalculationStack();
 
         int token;
-        ExprContext context = START;
+        Context context = START;
         try
         {
             while ((token = tokenizer.nextToken()) != StreamTokenizer.TT_EOF)
@@ -78,7 +78,7 @@ public class ExpressionCalculator
                                 // NOT can't follow operand!
                                 throw new IFML2ExpressionException("Ошибка в выражении: НЕ не может следовать за операндом");
                             }
-                            calculationStack.pushOperator(ExpressionOperator.NOT);
+                            calculationStack.pushOperator(Operation.NOT);
                             context = OPERATOR;
                         }
                         else if (AND_OPERATOR.equalsIgnoreCase(tokenizer.sval))
@@ -86,7 +86,7 @@ public class ExpressionCalculator
                             switch (context)
                             {
                                 case OPERAND:
-                                    calculationStack.pushOperator(ExpressionOperator.AND);
+                                    calculationStack.pushOperator(Operation.AND);
                                     context = OPERATOR;
                                     break;
                                 default:
@@ -99,7 +99,7 @@ public class ExpressionCalculator
                             switch (context)
                             {
                                 case OPERAND:
-                                    calculationStack.pushOperator(ExpressionOperator.OR);
+                                    calculationStack.pushOperator(Operation.OR);
                                     context = OPERATOR;
                                     break;
                                 default:
@@ -112,7 +112,7 @@ public class ExpressionCalculator
                             switch (context)
                             {
                                 case OPERAND:
-                                    calculationStack.pushOperator(ExpressionOperator.IN);
+                                    calculationStack.pushOperator(Operation.IN);
                                     context = OPERATOR;
                                     break;
                                 default:
@@ -154,17 +154,17 @@ public class ExpressionCalculator
                         break;
 
                     case GET_PROPERTY_OPERATOR:
-                        calculationStack.pushOperator(ExpressionOperator.GET_PROPERTY);
+                        calculationStack.pushOperator(Operation.GET_PROPERTY);
                         context = OPERATOR;
                         break;
 
                     case EQUALITY_OPERATOR:
-                        calculationStack.pushOperator(ExpressionOperator.COMPARE_EQUALITY);
+                        calculationStack.pushOperator(Operation.COMPARE_EQUALITY);
                         context = OPERATOR;
                         break;
 
                     case GREATER_OPERATOR:
-                        calculationStack.pushOperator(ExpressionOperator.COMPARE_GREATER);
+                        calculationStack.pushOperator(Operation.COMPARE_GREATER);
                         context = OPERATOR;
                         break;
 
@@ -176,7 +176,7 @@ public class ExpressionCalculator
                             switch (context)
                             {
                                 case OPERAND:
-                                    calculationStack.pushOperator(ExpressionOperator.COMPARE_NOT_EQUALITY);
+                                    calculationStack.pushOperator(Operation.COMPARE_NOT_EQUALITY);
                                     context = OPERATOR;
                                     break;
                                 default:
@@ -186,13 +186,13 @@ public class ExpressionCalculator
                         }
                         else {
                             tokenizer.pushBack(); // it's not <> so process next
-                            calculationStack.pushOperator(ExpressionOperator.COMPARE_LESSER);
+                            calculationStack.pushOperator(Operation.COMPARE_LESSER);
                             context = OPERATOR;
                         }
                         break;
 
                     case ADD_OPERATOR:
-                        calculationStack.pushOperator(ExpressionOperator.ADD);
+                        calculationStack.pushOperator(Operation.ADD);
                         context = OPERATOR;
                         break;
 
@@ -206,104 +206,83 @@ public class ExpressionCalculator
             throw new IFML2Exception(e);
         }
 
-        /*if (calculationStack.valueStack.size() == 0)
-        {
-            throw new IFML2VMException("Стек вычислений пуст!");
-        }
-
-        if (calculationStack.valueStack.size() > 1)
-        {
-            throw new IFML2VMException("В стеке вычислений больше одного значения ({0})!", calculationStack.valueStack);
-        }*/
-
-        //return calculationStack.valueStack.pop();
         return calculationStack.solve();
     }
-
-    /*private Value resolveSymbol(UnresolvedSymbolValue unresolvedSymbolValue) throws IFML2VMException
-    {
-        String symbol = unresolvedSymbolValue.getValue().trim();
-        return symbolResolver.resolveSymbol(symbol);
-    }*/
 
     /**
      * What is just happened
      */
-    enum ExprContext
+    enum Context
     {
         START,
         OPERATOR,
         OPERAND
     }
 
-    private enum OperatorType
+    private enum OperationType
     {
-        BINARY,
-        UNARY_RIGHT
+        UNARY,
+        BINARY
     }
 
-    private enum ExpressionOperator
+    private enum Operation
     {
         GET_PROPERTY(GET_PROPERTY_OPERATOR, 100),
-        IN(IN_OPERATOR, OperatorType.BINARY, 50),
-        NOT(NOT_OPERATOR, OperatorType.UNARY_RIGHT, 40),
+        IN(IN_OPERATOR, OperationType.BINARY, 50),
+        NOT(NOT_OPERATOR, OperationType.UNARY, 40),
         ADD(ADD_OPERATOR, 30),
         COMPARE_EQUALITY(EQUALITY_OPERATOR, 20),
-        COMPARE_NOT_EQUALITY(NOT_EQUAL_OPERATOR, OperatorType.BINARY, 20),
+        COMPARE_NOT_EQUALITY(NOT_EQUAL_OPERATOR, OperationType.BINARY, 20),
         COMPARE_GREATER(GREATER_OPERATOR, 20),
         COMPARE_LESSER(LESSER_OPERATOR, 20),
-        AND(AND_OPERATOR, OperatorType.BINARY, 10),
-        OR(OR_OPERATOR, OperatorType.BINARY, 5);
+        AND(AND_OPERATOR, OperationType.BINARY, 10),
+        OR(OR_OPERATOR, OperationType.BINARY, 5);
 
         public final char operatorCharacter;
         public final int priority;
         public String operatorString;
-        private OperatorType operatorType = OperatorType.BINARY;
+        private OperationType operationType = OperationType.BINARY;
 
-        ExpressionOperator(char operatorCharacter, int priority)
+        Operation(char operatorCharacter, int priority)
         {
             this.operatorCharacter = operatorCharacter;
             this.priority = priority;
         }
 
-        ExpressionOperator(String operatorString, OperatorType operatorType, int priority)
+        Operation(String operatorString, OperationType operationType, int priority)
         {
             this((char) 0, priority);
             this.operatorString = operatorString;
-            this.operatorType = operatorType;
+            this.operationType = operationType;
         }
 
         @Contract(pure = true)
-        public boolean canShrink(ExpressionOperator operator) {
+        public boolean canSqueeze(Operation operator) {
             return priority <= operator.priority;
         }
     }
 
     private class CalculationStack
     {
-        //private final Stack<Value> valueStack = new Stack<>();
-        private final Stack<ExpressionOperator> operatorStack = new Stack<>();
+        private final Stack<Operation> operatorStack = new Stack<>();
         private final Stack<Expression> expressionStack = new Stack<>();
 
         public void pushSymbol(String symbol)
         {
-            //valueStack.push(new UnresolvedSymbolValue(symbol));
-            expressionStack.push(new ValueExpression(new UnresolvedSymbolValue(symbol)));
+            expressionStack.push(new ValueExpression(new SymbolValue(symbol)));
         }
 
         public void pushTextLiteral(String text)
         {
-            //valueStack.push(new TextValue(text));
             expressionStack.push(new ValueExpression(new TextValue(text)));
         }
 
         public void pushNumericLiteral(double number)
         {
-            //valueStack.push(new NumberValue(number));
             expressionStack.push(new ValueExpression(new NumberValue(number)));
         }
 
-        public void pushOperator(ExpressionOperator operator) throws IFML2Exception
+        public void pushOperator(Operation operator) throws IFML2Exception
         {
             operatorStack.push(operator);
             shrink();
@@ -313,18 +292,13 @@ public class ExpressionCalculator
         {
             while (operatorStack.size() >= 2)
             {
-                ExpressionOperator lastOperator = operatorStack.pop();
-                ExpressionOperator prevOperator = operatorStack.pop();
+                Operation lastOperator = operatorStack.pop();
+                Operation prevOperator = operatorStack.pop();
 
-                //if (firstHasLessOrEqPriority(lastOperator, prevOperator))
-                if (lastOperator.canShrink(prevOperator))
+                if (lastOperator.canSqueeze(prevOperator))
                 {
-                    //Value operationResult = doOperation(prevOperator);
                     Expression expression = doExpression(prevOperator);
-
-                    //valueStack.push(operationResult);
                     expressionStack.push(expression);
-
                     operatorStack.push(lastOperator);
                 }
                 else
@@ -337,28 +311,8 @@ public class ExpressionCalculator
             }
         }
 
-        /*private Value doOperation(ExpressionOperator operator) throws IFML2Exception
+        /*private Value doOperation(Operation operator) throws IFML2Exception
         {
-            Value result;
-
-            Value rightValue;
-            Value leftValue = null;
-
-            switch (operator.operatorType)
-            {
-                case BINARY:
-                    rightValue = valueStack.pop();
-                    leftValue = valueStack.pop();
-                    break;
-
-                case UNARY_RIGHT:
-                    rightValue = valueStack.pop();
-                    break;
-
-                default:
-                    throw new IFML2ExpressionException("Неизвестный тип операции {0}", operator.operatorType);
-            }
-
             switch (operator)
             {
                 case GET_PROPERTY:
@@ -369,7 +323,7 @@ public class ExpressionCalculator
                         throw new IFML2ExpressionException("Величина не является объектом ({0})", leftValue);
                     }
 
-                    if (!(rightValue instanceof UnresolvedSymbolValue))
+                    if (!(rightValue instanceof SymbolValue))
                     {
                         throw new IFML2ExpressionException("Величина не является именем свойства ({0})", rightValue);
                     }
@@ -380,7 +334,7 @@ public class ExpressionCalculator
                         throw new IFML2ExpressionException("Объект {0} не задан (пуст)", leftValue);
                     }
 
-                    String propertyName = ((UnresolvedSymbolValue) rightValue).getValue();
+                    String propertyName = ((SymbolValue) rightValue).getValue();
                     Value propertyValue = object.getMemberValue(propertyName, symbolResolver);
                     result = propertyValue == null ? new EmptyValue() : propertyValue;
 
@@ -494,92 +448,6 @@ public class ExpressionCalculator
 
                     break;
                 }
-                case ADD:
-                {
-                    Value resolvedLeftValue = ensureValueResolved(leftValue);
-                    Value resolvedRightValue = ensureValueResolved(rightValue);
-
-                    assert resolvedLeftValue != null;
-
-                    if (resolvedLeftValue instanceof IAddableValue)
-                    {
-                        result = ((IAddableValue) resolvedLeftValue).add(resolvedRightValue);
-                    }
-                    else if (resolvedRightValue instanceof TextValue)
-                    {
-                        *//*
-                        если левый операнд не поддерживает сложение, но правый - текст, то всё превращаем в строку и клеим
-                         *//*
-                        result = new TextValue(resolvedLeftValue.toString() + ((TextValue) resolvedRightValue).getValue());
-                    }
-                    else
-                    {
-                        throw new IFML2ExpressionException("Не поддерживается операция \"{0}\" между типом \"{1}\" и \"{2}\"",
-                                Value.Operation.ADD, resolvedLeftValue.getTypeName(), resolvedLeftValue.getTypeName());
-                    }
-
-                    break;
-                }
-
-                case AND:
-                {
-                    Value resolvedLeftValue = ensureValueResolved(leftValue);
-                    Value resolvedRightValue = ensureValueResolved(rightValue);
-
-                    if (!(resolvedLeftValue instanceof BooleanValue))
-                    {
-                        throw new IFML2ExpressionException("Величина не является логической ({0})", leftValue);
-                    }
-                    if (!(resolvedRightValue instanceof BooleanValue))
-                    {
-                        throw new IFML2ExpressionException("Величина не является логической ({0})", rightValue);
-                    }
-
-                    boolean leftBoolValue = ((BooleanValue) resolvedLeftValue).getValue();
-                    boolean rightBoolValue = ((BooleanValue) resolvedRightValue).getValue();
-
-                    result = new BooleanValue(leftBoolValue && rightBoolValue);
-
-                    break;
-                }
-
-                case OR:
-                {
-                    Value resolvedLeftValue = ensureValueResolved(leftValue);
-                    Value resolvedRightValue = ensureValueResolved(rightValue);
-
-                    if (!(resolvedLeftValue instanceof BooleanValue))
-                    {
-                        throw new IFML2ExpressionException("Величина не является логической ({0})", leftValue);
-                    }
-                    if (!(resolvedRightValue instanceof BooleanValue))
-                    {
-                        throw new IFML2ExpressionException("Величина не является логической ({0})", rightValue);
-                    }
-
-                    boolean leftBoolValue = ((BooleanValue) resolvedLeftValue).getValue();
-                    boolean rightBoolValue = ((BooleanValue) resolvedRightValue).getValue();
-
-                    result = new BooleanValue(leftBoolValue || rightBoolValue);
-
-                    break;
-                }
-
-                case NOT:
-                {
-                    Value resolvedRightValue = ensureValueResolved(rightValue);
-
-                    if (!(resolvedRightValue instanceof BooleanValue))
-                    {
-                        throw new IFML2ExpressionException("Величина не является логической ({0})", rightValue);
-                    }
-
-                    boolean booleanValue = ((BooleanValue) resolvedRightValue).getValue();
-
-                    result = new BooleanValue(!booleanValue);
-
-                    break;
-                }
 
                 case IN:
                 {
@@ -612,41 +480,19 @@ public class ExpressionCalculator
             return result;
         }*/
 
-        /*private Value ensureValueResolved(Value unpreparedValue) throws IFML2VMException
-        {
-            Value preparedValue;
-
-            if (unpreparedValue instanceof UnresolvedSymbolValue)
-            {
-                preparedValue = resolveSymbol((UnresolvedSymbolValue) unpreparedValue);
-            }
-            else
-            {
-                preparedValue = unpreparedValue;
-            }
-
-            return preparedValue;
-        }*/
-
-        /*@Contract(pure = true)
-        private boolean firstHasLessOrEqPriority(ExpressionOperator firstOperator, ExpressionOperator secondOperator)
-        {
-            return firstOperator.priority <= secondOperator.priority;
-        }*/
-
         public Value solve() throws IFML2Exception
         {
             shrink();
 
             if (!operatorStack.isEmpty() && expressionStack.isEmpty())
             {
-                throw new IFML2ExpressionException("Системный сбой: стек операторов не пуст или недостаточно значений в стеке выражений!" +
+                throw new IFML2ExpressionException("Системный сбой: стек операторов не пуст, при этом нет значений в стеке выражений!" +
                         "\nСтек операторов: {0}\nСтек выражений: {1}", operatorStack, expressionStack);
             }
 
             while (!operatorStack.isEmpty())
             {
-                ExpressionOperator operator = operatorStack.pop();
+                Operation operator = operatorStack.pop();
                 Expression expression = doExpression(operator);
                 expressionStack.push(expression);
             }
@@ -664,23 +510,23 @@ public class ExpressionCalculator
             }
         }
 
-        private Expression doExpression(ExpressionOperator operator) throws IFML2ExpressionException {
+        private Expression doExpression(Operation operator) throws IFML2ExpressionException {
             Expression rightExpr;
             Expression leftExpr = null;
 
-            switch (operator.operatorType)
+            switch (operator.operationType)
             {
                 case BINARY:
                     rightExpr = expressionStack.pop();
                     leftExpr = expressionStack.pop();
                     break;
 
-                case UNARY_RIGHT:
+                case UNARY:
                     rightExpr = expressionStack.pop();
                     break;
 
                 default:
-                    throw new IFML2ExpressionException("Неизвестный тип операции {0}", operator.operatorType);
+                    throw new IFML2ExpressionException("Неизвестный тип операции {0}", operator.operationType);
             }
 
             switch (operator) {
@@ -690,14 +536,18 @@ public class ExpressionCalculator
                 case AND:
                     assert leftExpr != null;
                     return new AndExpression(leftExpr, rightExpr);
+                case OR:
+                    assert leftExpr != null;
+                    return new OrExpression(leftExpr, rightExpr);
+                case NOT:
+                    return new NotExpression(rightExpr);
                 case GET_PROPERTY: // TODO: 26.02.2016
+                    return new GetPropertyExpression(leftExpr, rightExpr);
                 case IN: // TODO: 26.02.2016
-                case NOT: // TODO: 26.02.2016
                 case COMPARE_EQUALITY: // TODO: 26.02.2016
                 case COMPARE_NOT_EQUALITY: // TODO: 26.02.2016
                 case COMPARE_GREATER: // TODO: 26.02.2016
                 case COMPARE_LESSER: // TODO: 26.02.2016
-                case OR: // TODO: 26.02.2016
                 default:
                     throw new IFML2ExpressionException("Операция {0} пока не поддерживается в выражениях", operator.toString());
             }
@@ -719,7 +569,7 @@ public class ExpressionCalculator
             }
         }
 
-        private class ValueExpression extends Expression {
+        private final class ValueExpression extends Expression {
             private final Value value;
 
             public ValueExpression(@NotNull Value value) {
@@ -729,27 +579,45 @@ public class ExpressionCalculator
 
             @Override
             public Value solve() throws IFML2VMException {
-                Value resultValue = value;
-                if (resultValue instanceof UnresolvedSymbolValue) {
-                    resultValue = ((UnresolvedSymbolValue) resultValue).resolve(symbolResolver);
+                if (value instanceof SymbolValue) {
+                    return ((SymbolValue) value).resolve(symbolResolver);
                 }
-                return resultValue;
+                return value;
             }
 
             @Override
             protected String toStringRepresentation() {
                 return format("Value[%s]", value.toLiteral());
             }
+
+            public Value getValue() {
+                return value;
+            }
         }
 
-        private class AddExpression extends Expression {
-            private final Expression leftExpr;
-            private final Expression rightExpr;
+        private abstract class UnaryExpression extends Expression {
+            protected final Expression operandExpr;
 
-            public AddExpression(@NotNull Expression leftExpr, @NotNull Expression rightExpr) {
+            protected UnaryExpression(Expression operandExpr) {
+                super();
+                this.operandExpr = operandExpr;
+            }
+        }
+
+        private abstract class BinaryExpression extends Expression {
+            protected final Expression leftExpr;
+            protected final Expression rightExpr;
+
+            public BinaryExpression(@NotNull Expression leftExpr, @NotNull Expression rightExpr) {
                 super();
                 this.leftExpr = leftExpr;
                 this.rightExpr = rightExpr;
+            }
+        }
+
+        private final class AddExpression extends BinaryExpression {
+            public AddExpression(@NotNull Expression leftExpr, @NotNull Expression rightExpr) {
+                super(leftExpr, rightExpr);
             }
 
             @Override
@@ -762,35 +630,26 @@ public class ExpressionCalculator
                 Value leftValue = leftExpr.solve();
                 Value rightValue = rightExpr.solve();
 
-                Value result;
                 if (leftValue instanceof IAddableValue)
                 {
-                    result = ((IAddableValue) leftValue).add(rightValue);
+                    return ((IAddableValue) leftValue).add(rightValue);
                 }
                 else if (rightValue instanceof TextValue)
                 {
-                    /*
-                    если левый операнд не поддерживает сложение, но правый - текст, то всё превращаем в строку и клеим
-                    */
-                    result = new TextValue(leftValue.toString() + ((TextValue) rightValue).getValue());
+                    // если левый операнд не поддерживает сложение, но правый - текст, то всё превращаем в строку и клеим
+                    return new TextValue(leftValue.toString() + ((TextValue) rightValue).getValue());
                 }
                 else
                 {
                     throw new IFML2ExpressionException("Не поддерживается операция \"{0}\" между типом \"{1}\" и \"{2}\"",
                             Value.Operation.ADD, leftValue.getTypeName(), leftValue.getTypeName());
                 }
-                return result;
             }
         }
 
-        private class AndExpression extends Expression {
-            private final Expression leftExpr;
-            private final Expression rightExpr;
-
+        private final class AndExpression extends BinaryExpression {
             public AndExpression(@NotNull Expression leftExpr, @NotNull Expression rightExpr) {
-                super();
-                this.leftExpr = leftExpr;
-                this.rightExpr = rightExpr;
+                super(leftExpr, rightExpr);
             }
 
             @Override
@@ -801,8 +660,8 @@ public class ExpressionCalculator
                 }
 
                 // incomplete boolean evaluation!
-                Boolean leftValueValue = ((BooleanValue) leftValue).getValue();
-                if (!leftValueValue) {
+                Boolean leftBoolValue = ((BooleanValue) leftValue).getValue();
+                if (!leftBoolValue) {
                     return new BooleanValue(false);
                 }
 
@@ -811,14 +670,114 @@ public class ExpressionCalculator
                     throw new IFML2ExpressionException("Величина не является логической ({0})", rightValue);
                 }
 
-                Boolean rightValueValue = ((BooleanValue) rightValue).getValue();
+                Boolean rightBoolValue = ((BooleanValue) rightValue).getValue();
 
-                return new BooleanValue(rightValueValue); // depends on right cause of incomplete evaluation
+                return new BooleanValue(rightBoolValue); // depends on right cause of incomplete evaluation
             }
 
             @Override
             protected String toStringRepresentation() {
                 return format("And[%s,%s]", leftExpr, rightExpr);
+            }
+        }
+
+        private final class OrExpression extends BinaryExpression {
+            public OrExpression(@NotNull Expression leftExpr, @NotNull Expression rightExpr) {
+                super(leftExpr, rightExpr);
+            }
+
+            @Override
+            public Value solve() throws IFML2VMException {
+                Value leftValue = leftExpr.solve();
+                if (!(leftValue instanceof BooleanValue)) {
+                    throw new IFML2ExpressionException("Величина не является логической ({0})", leftValue);
+                }
+
+                // incomplete boolean evaluation!
+                Boolean leftBoolValue = ((BooleanValue) leftValue).getValue();
+                if (leftBoolValue) {
+                    return new BooleanValue(true);
+                }
+
+                Value rightValue = rightExpr.solve();
+                if (!(rightValue instanceof BooleanValue)) {
+                    throw new IFML2ExpressionException("Величина не является логической ({0})", rightValue);
+                }
+
+                Boolean rightBoolValue = ((BooleanValue) rightValue).getValue();
+
+                return new BooleanValue(rightBoolValue); // depends on right cause of incomplete evaluation
+            }
+
+            @Override
+            protected String toStringRepresentation() {
+                return format("Or[%s,%s]", leftExpr, rightExpr);
+            }
+        }
+
+        private class NotExpression extends UnaryExpression {
+            public NotExpression(Expression expression) {
+                super(expression);
+            }
+
+            @Override
+            public Value solve() throws IFML2VMException {
+                Value value = operandExpr.solve();
+                if (!(value instanceof BooleanValue)) {
+                    throw new IFML2ExpressionException("Величина не является логической ({0})", value);
+                }
+
+                boolean boolValue = ((BooleanValue) value).getValue();
+
+                return new BooleanValue(!boolValue);
+            }
+
+            @Override
+            protected String toStringRepresentation() {
+                return format("Not[%s]", operandExpr);
+            }
+        }
+
+        private class GetPropertyExpression extends BinaryExpression {
+            public GetPropertyExpression(Expression leftExpr, Expression rightExpr) {
+                super(leftExpr, rightExpr);
+            }
+
+            @Override
+            public Value solve() throws IFML2VMException {
+                Value leftValue = leftExpr.solve();
+                if (!(leftValue instanceof ObjectValue)) {
+                    throw new IFML2ExpressionException("Величина не является объектом ({0})", leftValue);
+                }
+
+                IFMLObject object = ((ObjectValue) leftValue).getValue();
+                if (object == null) {
+                    throw new IFML2ExpressionException("Объект {0} не задан (пуст)", leftValue);
+                }
+
+                if (!(rightExpr instanceof ValueExpression)) {
+                    throw new IFML2ExpressionException("Выражение не является именем свойства ({0})", rightExpr);
+                }
+
+                ValueExpression valueExpression = (ValueExpression) rightExpr;
+                Value value = valueExpression.getValue();
+                if (!(value instanceof SymbolValue)) {
+                    throw new IFML2ExpressionException("Величина не является именем свойства ({0})", value);
+                }
+
+                String propertyName = ((SymbolValue) value).getValue();
+                Value propertyValue;
+                try {
+                    propertyValue = object.getMemberValue(propertyName, symbolResolver);
+                } catch (IFML2Exception e) {
+                    throw new IFML2VMException(e, "Ошибка во время получения свойства {0} у объекта {1}", propertyName, object);
+                }
+                return propertyValue == null ? new EmptyValue() : propertyValue;
+            }
+
+            @Override
+            protected String toStringRepresentation() {
+                return format("GetProperty[%s,%s]", leftExpr, rightExpr);
             }
         }
     }

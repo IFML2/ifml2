@@ -2,5 +2,5 @@ package ifml2.engine;
 
 public interface EngineVersion
 {
-    String VERSION = "Выпуск 2016/3";
+    String VERSION = "Выпуск 2016/x";
 }

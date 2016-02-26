@@ -19,22 +19,22 @@ import static ifml2.om.Word.GramCase;
 import static ifml2.om.xml.XmlSchemaConstants.*;
 
 @XmlAccessorType(XmlAccessType.NONE)
-public class IFMLObject extends IFMLEntity implements Cloneable
+public class IFMLObject extends IFMLEntity
 {
     private static final String NAME_PROPERTY_LITERAL = "имя";
     private static final String DESCRIPTION_PROPERTY_LITERAL = "описание";
 
     @XmlElementWrapper(name = ITEM_HOOKS_ELEMENT)
     @XmlElement(name = ITEM_HOOK_ELEMENT)
-    protected EventList<Hook> hooks = new BasicEventList<Hook>();
+    protected EventList<Hook> hooks = new BasicEventList<>();
 
     @XmlElementWrapper(name = IFML_OBJECT_ROLES_ELEMENT)
     @XmlElement(name = IFML_OBJECT_ROLE_ELEMENT)
-    protected EventList<Role> roles = new BasicEventList<Role>();
+    protected EventList<Role> roles = new BasicEventList<>();
 
     @XmlElementWrapper(name = OBJECT_PROPERTIES_ELEMENT)
     @XmlElement(name = OBJECT_PROPERTY_ELEMENT)
-    protected EventList<Property> properties = new BasicEventList<Property>();
+    protected EventList<Property> properties = new BasicEventList<>();
 
     @XmlAttribute(name = "id")
     @XmlID
@@ -52,7 +52,7 @@ public class IFMLObject extends IFMLEntity implements Cloneable
     @XmlElementWrapper(name = IFML_OBJECT_ATTRIBUTES_ELEMENT)
     @XmlElement(name = IFML_OBJECT_ATTRIBUTE_ELEMENT)
     @XmlIDREF
-    protected EventList<Attribute> attributes = new BasicEventList<Attribute>();
+    protected EventList<Attribute> attributes = new BasicEventList<>();
 
     @Override
     public IFMLObject clone() throws CloneNotSupportedException
