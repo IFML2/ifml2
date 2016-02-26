@@ -1,7 +1,7 @@
 package ifml2.om;
 
 import ifml2.IFML2Exception;
-import ifml2.vm.ISymbolResolver;
+import ifml2.vm.SymbolResolver;
 import ifml2.vm.values.CollectionValue;
 import ifml2.vm.values.ObjectValue;
 import ifml2.vm.values.Value;
@@ -212,7 +212,7 @@ public class Location extends IFMLObject implements Cloneable
     }
 
     @Override
-    public Value getMemberValue(@NotNull String propertyName, ISymbolResolver symbolResolver) throws IFML2Exception
+    public Value getMemberValue(@NotNull String propertyName, SymbolResolver symbolResolver) throws IFML2Exception
     {
         String loweredPropName = propertyName.toLowerCase();
 

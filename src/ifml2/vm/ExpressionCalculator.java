@@ -1,8 +1,8 @@
 package ifml2.vm;
 
 import ifml2.IFML2Exception;
-import ifml2.om.IFMLObject;
 import ifml2.vm.values.*;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -11,6 +11,7 @@ import java.io.StringReader;
 import java.util.Stack;
 
 import static ifml2.vm.ExpressionCalculator.ExprContext.*;
+import static java.lang.String.format;
 
 public class ExpressionCalculator
 {
@@ -28,14 +29,14 @@ public class ExpressionCalculator
     private static final char QUOTE_CHAR = '"';
     private static final char SINGLE_QUOTE_CHAR = '\'';
 
-    private ISymbolResolver symbolResolver = null;
+    private SymbolResolver symbolResolver = null;
 
-    private ExpressionCalculator(ISymbolResolver symbolResolver)
+    private ExpressionCalculator(SymbolResolver symbolResolver)
     {
         this.symbolResolver = symbolResolver;
     }
 
-    public static Value calculate(@NotNull ISymbolResolver symbolResolver, String expression) throws IFML2Exception
+    public static Value calculate(@NotNull SymbolResolver symbolResolver, String expression) throws IFML2Exception
     {
         ExpressionCalculator expressionCalculator = new ExpressionCalculator(symbolResolver);
         return expressionCalculator.calculate(expression);
@@ -204,9 +205,7 @@ public class ExpressionCalculator
             throw new IFML2Exception(e);
         }
 
-        calculationStack.solve();
-
-        if (calculationStack.valueStack.size() == 0)
+        /*if (calculationStack.valueStack.size() == 0)
         {
             throw new IFML2VMException("Стек вычислений пуст!");
         }
@@ -214,16 +213,17 @@ public class ExpressionCalculator
         if (calculationStack.valueStack.size() > 1)
         {
             throw new IFML2VMException("В стеке вычислений больше одного значения ({0})!", calculationStack.valueStack);
-        }
+        }*/
 
-        return calculationStack.valueStack.pop();
+        //return calculationStack.valueStack.pop();
+        return calculationStack.solve();
     }
 
-    private Value resolveSymbol(UnresolvedSymbolValue unresolvedSymbolValue) throws IFML2VMException
+    /*private Value resolveSymbol(UnresolvedSymbolValue unresolvedSymbolValue) throws IFML2VMException
     {
         String symbol = unresolvedSymbolValue.getValue().trim();
         return symbolResolver.resolveSymbol(symbol);
-    }
+    }*/
 
     /**
      * What is just happened
@@ -271,26 +271,35 @@ public class ExpressionCalculator
             this.operatorString = operatorString;
             this.operatorType = operatorType;
         }
+
+        @Contract(pure = true)
+        public boolean canShrink(ExpressionOperator operator) {
+            return priority <= operator.priority;
+        }
     }
 
     private class CalculationStack
     {
-        final Stack<Value> valueStack = new Stack<>();
-        final Stack<ExpressionOperator> operatorStack = new Stack<>();
+        //private final Stack<Value> valueStack = new Stack<>();
+        private final Stack<ExpressionOperator> operatorStack = new Stack<>();
+        private final Stack<Expression> expressionStack = new Stack<>();
 
         public void pushSymbol(String symbol)
         {
-            valueStack.push(new UnresolvedSymbolValue(symbol));
+            //valueStack.push(new UnresolvedSymbolValue(symbol));
+            expressionStack.push(new ValueExpression(new UnresolvedSymbolValue(symbol)));
         }
 
         public void pushTextLiteral(String text)
         {
-            valueStack.push(new TextValue(text));
+            //valueStack.push(new TextValue(text));
+            expressionStack.push(new ValueExpression(new TextValue(text)));
         }
 
         public void pushNumericLiteral(double number)
         {
-            valueStack.push(new NumberValue(number));
+            //valueStack.push(new NumberValue(number));
+            expressionStack.push(new ValueExpression(new NumberValue(number)));
         }
 
         public void pushOperator(ExpressionOperator operator) throws IFML2Exception
@@ -306,11 +315,15 @@ public class ExpressionCalculator
                 ExpressionOperator lastOperator = operatorStack.pop();
                 ExpressionOperator prevOperator = operatorStack.pop();
 
-                if (firstHasLessOrEqPriority(lastOperator, prevOperator))
+                //if (firstHasLessOrEqPriority(lastOperator, prevOperator))
+                if (lastOperator.canShrink(prevOperator))
                 {
-                    Value operationResult = doOperation(prevOperator);
+                    //Value operationResult = doOperation(prevOperator);
+                    Expression expression = doExpression(prevOperator);
 
-                    valueStack.push(operationResult);
+                    //valueStack.push(operationResult);
+                    expressionStack.push(expression);
+
                     operatorStack.push(lastOperator);
                 }
                 else
@@ -323,7 +336,7 @@ public class ExpressionCalculator
             }
         }
 
-        private Value doOperation(ExpressionOperator operator) throws IFML2Exception
+        /*private Value doOperation(ExpressionOperator operator) throws IFML2Exception
         {
             Value result;
 
@@ -493,9 +506,9 @@ public class ExpressionCalculator
                     }
                     else if (resolvedRightValue instanceof TextValue)
                     {
-                        /*
+                        *//*
                         если левый операнд не поддерживает сложение, но правый - текст, то всё превращаем в строку и клеим
-                         */
+                         *//*
                         result = new TextValue(resolvedLeftValue.toString() + ((TextValue) resolvedRightValue).getValue());
                     }
                     else
@@ -596,9 +609,9 @@ public class ExpressionCalculator
             }
 
             return result;
-        }
+        }*/
 
-        private Value ensureValueResolved(Value unpreparedValue) throws IFML2VMException
+        /*private Value ensureValueResolved(Value unpreparedValue) throws IFML2VMException
         {
             Value preparedValue;
 
@@ -612,51 +625,156 @@ public class ExpressionCalculator
             }
 
             return preparedValue;
-        }
+        }*/
 
+        /*@Contract(pure = true)
         private boolean firstHasLessOrEqPriority(ExpressionOperator firstOperator, ExpressionOperator secondOperator)
         {
             return firstOperator.priority <= secondOperator.priority;
-        }
+        }*/
 
-        public void solve() throws IFML2Exception
+        public Value solve() throws IFML2Exception
         {
             shrink();
 
-            if (!operatorStack.isEmpty() && valueStack.size() < 1)
+            if (!operatorStack.isEmpty() && expressionStack.isEmpty())
             {
-                throw new IFML2ExpressionException("Системный сбой: стек операторов не пуст или недостаточно значений в стеке значений!" +
-                                                   "\nСтек операторов: {0}\nСтек значений: {1}", operatorStack, valueStack);
+                throw new IFML2ExpressionException("Системный сбой: стек операторов не пуст или недостаточно значений в стеке выражений!" +
+                        "\nСтек операторов: {0}\nСтек выражений: {1}", operatorStack, expressionStack);
             }
 
             while (!operatorStack.isEmpty())
             {
                 ExpressionOperator operator = operatorStack.pop();
-
-                Value operationResult = doOperation(operator);
-
-                valueStack.push(operationResult);
+                Expression expression = doExpression(operator);
+                expressionStack.push(expression);
             }
 
-            if (valueStack.size() == 1)
+            if (expressionStack.size() == 1)
             {
-                Value lastValue = valueStack.pop();
-
-                lastValue = ensureValueResolved(lastValue);
-                valueStack.push(lastValue);
+                Expression lastExpression = expressionStack.pop();
+                return lastExpression.solve();
             }
             else
             {
-                throw new IFML2ExpressionException("Системный сбой: в стеке значений осталось не одно (а {2}) значение!" +
-                                                   "\nСтек операторов: {0}\nСтек значений: {1}", operatorStack, valueStack,
-                        valueStack.size());
+                throw new IFML2ExpressionException("Системный сбой: в стеке выражений осталось не одно (а {2}) значение!" +
+                        "\nСтек операторов: {0}\nСтек выражений: {1}", operatorStack, expressionStack,
+                        expressionStack.size());
             }
         }
 
+        private Expression doExpression(ExpressionOperator operator) throws IFML2ExpressionException {
+            Expression result;
+
+            Expression rightExpr;
+            Expression leftExpr = null;
+
+            switch (operator.operatorType)
+            {
+                case BINARY:
+                    rightExpr = expressionStack.pop();
+                    leftExpr = expressionStack.pop();
+                    break;
+
+                case UNARY_RIGHT:
+                    rightExpr = expressionStack.pop();
+                    break;
+
+                default:
+                    throw new IFML2ExpressionException("Неизвестный тип операции {0}", operator.operatorType);
+            }
+
+            switch (operator) {
+                case ADD:
+                    assert leftExpr != null;
+                    result = new AddExpression(leftExpr, rightExpr);
+                    break;
+                case GET_PROPERTY:
+                case IN:
+                case NOT:
+                case COMPARE_EQUALITY:
+                case COMPARE_NOT_EQUALITY:
+                case COMPARE_GREATER:
+                case COMPARE_LESSER:
+                case AND:
+                case OR:
+                    throw new IFML2ExpressionException("Операция {0} пока не поддерживается в выражениях", operator.toString());
+                default:
+                    throw new IFML2ExpressionException("Неизвестный оператор {0}", operator);
+            }
+
+            return result;
+        }
+
         @Override
-        public String toString()
-        {
-            return "OperatorStack: " + operatorStack.toString() + " ; ValueStack: " + valueStack;
+        public String toString() {
+            return format("OperatorStack: %s; ExpressionStack: %s", operatorStack, expressionStack);
+        }
+
+        private abstract class Expression {
+            public abstract Value solve() throws IFML2VMException;
+        }
+
+        private class ValueExpression extends Expression {
+            private final Value value;
+
+            public ValueExpression(@NotNull Value value) {
+                this.value = value;
+            }
+
+            @Override
+            public String toString() {
+                return format("Value[%s]", value.toLiteral());
+            }
+
+            @Override
+            public Value solve() throws IFML2VMException {
+                Value resultValue = value;
+                if (resultValue instanceof UnresolvedSymbolValue) {
+                    resultValue = ((UnresolvedSymbolValue) resultValue).resolve(symbolResolver);
+                }
+                return resultValue;
+            }
+        }
+
+        private class AddExpression extends Expression {
+            private final Expression leftExpr;
+            private final Expression rightExpr;
+
+            public AddExpression(@NotNull Expression leftExpr, @NotNull Expression rightExpr) {
+                this.leftExpr = leftExpr;
+                this.rightExpr = rightExpr;
+            }
+
+            @Override
+            public String toString() {
+                return format("Add[%s,%s]", leftExpr, rightExpr);
+            }
+
+            @Override
+            public Value solve() throws IFML2VMException {
+                Value leftValue = leftExpr.solve();
+                Value rightValue = rightExpr.solve();
+
+                Value result;
+                if (leftValue instanceof IAddableValue)
+                {
+                    result = ((IAddableValue) leftValue).add(rightValue);
+                }
+                else if (rightValue instanceof TextValue)
+                {
+                    /*
+                    если левый операнд не поддерживает сложение, но правый - текст, то всё превращаем в строку и клеим
+                    */
+                    result = new TextValue(leftValue.toString() + ((TextValue) rightValue).getValue());
+                }
+                else
+                {
+                    throw new IFML2ExpressionException("Не поддерживается операция \"{0}\" между типом \"{1}\" и \"{2}\"",
+                            Value.Operation.ADD, leftValue.getTypeName(), leftValue.getTypeName());
+                }
+                return result;
+            }
         }
     }
 }

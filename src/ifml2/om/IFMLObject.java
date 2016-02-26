@@ -6,7 +6,7 @@ import ca.odell.glazedlists.GlazedLists;
 import ifml2.IFML2Exception;
 import ifml2.IFMLEntity;
 import ifml2.vm.IFML2VMException;
-import ifml2.vm.ISymbolResolver;
+import ifml2.vm.SymbolResolver;
 import ifml2.vm.values.BooleanValue;
 import ifml2.vm.values.TextValue;
 import ifml2.vm.values.Value;
@@ -149,7 +149,7 @@ public class IFMLObject extends IFMLEntity implements Cloneable
         return wordLinks.getMainWord().getFormByGramCase(gramCase);
     }
 
-    public Value getMemberValue(String propertyName, ISymbolResolver symbolResolver) throws IFML2Exception
+    public Value getMemberValue(String propertyName, SymbolResolver symbolResolver) throws IFML2Exception
     {
         // test system properties
         if (NAME_PROPERTY_LITERAL.equalsIgnoreCase(propertyName))
@@ -229,7 +229,7 @@ public class IFMLObject extends IFMLEntity implements Cloneable
                 propertyName);
     }
 
-    public Value tryGetMemberValue(String symbol, ISymbolResolver symbolResolver)
+    public Value tryGetMemberValue(String symbol, SymbolResolver symbolResolver)
     {
         try
         {

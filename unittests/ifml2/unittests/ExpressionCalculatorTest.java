@@ -2,7 +2,7 @@ package ifml2.unittests;
 
 import ifml2.IFML2Exception;
 import ifml2.om.Location;
-import ifml2.vm.ISymbolResolver;
+import ifml2.vm.SymbolResolver;
 import ifml2.vm.values.*;
 import junit.framework.TestCase;
 import org.mockito.Matchers;
@@ -15,12 +15,12 @@ import static org.mockito.Mockito.when;
 public class ExpressionCalculatorTest extends TestCase
 {
 
-    private ISymbolResolver mockSymbolResolver;
+    private SymbolResolver mockSymbolResolver;
 
     public void setUp() throws Exception
     {
         super.setUp();
-        mockSymbolResolver = mock(ISymbolResolver.class);
+        mockSymbolResolver = mock(SymbolResolver.class);
     }
 
     // 1 + 1
@@ -56,7 +56,7 @@ public class ExpressionCalculatorTest extends TestCase
     {
         Location mockLocation = mock(Location.class);
         when(mockSymbolResolver.resolveSymbol("локация")).thenReturn(new ObjectValue(mockLocation));
-        when(mockLocation.getMemberValue(eq("свойство"), Matchers.<ISymbolResolver>any())).thenReturn(new TextValue("значение"));
+        when(mockLocation.getMemberValue(eq("свойство"), Matchers.<SymbolResolver>any())).thenReturn(new TextValue("значение"));
 
         Value result = calculate(mockSymbolResolver, "локация.свойство");
 

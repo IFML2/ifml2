@@ -1,6 +1,7 @@
 package ifml2.vm.values;
 
 import ifml2.IFMLEntity;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import static ifml2.vm.values.Value.CompareResult.*;
@@ -86,6 +87,7 @@ public abstract class Value<T> extends IFMLEntity implements Cloneable
             this.caption = caption;
         }
 
+        @Contract(pure = true)
         @Override
         public String toString()
         {
