@@ -9,13 +9,13 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.io.StreamTokenizer;
 import java.io.StringReader;
+import java.util.Collection;
 import java.util.Stack;
 
 import static ifml2.vm.ExpressionCalculator.Context.*;
 import static java.lang.String.format;
 
-public class ExpressionCalculator
-{
+public class ExpressionCalculator {
     private static final char GET_PROPERTY_OPERATOR = '.';
     private static final char EQUALITY_OPERATOR = '=';
     private static final char GREATER_OPERATOR = '>';
@@ -34,19 +34,16 @@ public class ExpressionCalculator
 
     private SymbolResolver symbolResolver = null;
 
-    private ExpressionCalculator(SymbolResolver symbolResolver)
-    {
+    private ExpressionCalculator(SymbolResolver symbolResolver) {
         this.symbolResolver = symbolResolver;
     }
 
-    public static Value calculate(@NotNull SymbolResolver symbolResolver, String expression) throws IFML2Exception
-    {
+    public static Value calculate(@NotNull SymbolResolver symbolResolver, String expression) throws IFML2Exception {
         ExpressionCalculator expressionCalculator = new ExpressionCalculator(symbolResolver);
         return expressionCalculator.calculate(expression);
     }
 
-    Value calculate(String expression) throws IFML2Exception
-    {
+    Value calculate(String expression) throws IFML2Exception {
         String exp = expression.trim();
 
         StreamTokenizer tokenizer = new StreamTokenizer(new StringReader(exp));
@@ -54,10 +51,8 @@ public class ExpressionCalculator
         tokenizer.commentChar(0);
         tokenizer.quoteChar(QUOTE_CHAR);
         tokenizer.quoteChar(SINGLE_QUOTE_CHAR);
-        for (Operation operation : Operation.values())
-        {
-            if (operation.operatorCharacter != 0)
-            {
+        for (Operation operation : Operation.values()) {
+            if (operation.operatorCharacter != 0) {
                 tokenizer.ordinaryChar(operation.operatorCharacter);
             }
         }
@@ -66,15 +61,11 @@ public class ExpressionCalculator
 
         int token;
         Context context = START;
-        try
-        {
-            while ((token = tokenizer.nextToken()) != StreamTokenizer.TT_EOF)
-            {
-                switch (token)
-                {
+        try {
+            while ((token = tokenizer.nextToken()) != StreamTokenizer.TT_EOF) {
+                switch (token) {
                     case StreamTokenizer.TT_WORD:
-                        if (NOT_OPERATOR.equalsIgnoreCase(tokenizer.sval))
-                        {
+                        if (NOT_OPERATOR.equalsIgnoreCase(tokenizer.sval)) {
                             switch (context) {
                                 case OPERAND:
                                     // NOT can't follow operand!
@@ -84,11 +75,8 @@ public class ExpressionCalculator
                                     context = OPERATOR;
                                     break;
                             }
-                        }
-                        else if (AND_OPERATOR.equalsIgnoreCase(tokenizer.sval))
-                        {
-                            switch (context)
-                            {
+                        } else if (AND_OPERATOR.equalsIgnoreCase(tokenizer.sval)) {
+                            switch (context) {
                                 case OPERAND:
                                     calculationStack.pushOperator(Operation.AND);
                                     context = OPERATOR;
@@ -97,11 +85,8 @@ public class ExpressionCalculator
                                     calculationStack.pushSymbol(tokenizer.sval);
                                     context = OPERAND;
                             }
-                        }
-                        else if (OR_OPERATOR.equalsIgnoreCase(tokenizer.sval))
-                        {
-                            switch (context)
-                            {
+                        } else if (OR_OPERATOR.equalsIgnoreCase(tokenizer.sval)) {
+                            switch (context) {
                                 case OPERAND:
                                     calculationStack.pushOperator(Operation.OR);
                                     context = OPERATOR;
@@ -110,11 +95,8 @@ public class ExpressionCalculator
                                     calculationStack.pushSymbol(tokenizer.sval);
                                     context = OPERAND;
                             }
-                        }
-                        else if (IN_OPERATOR.equalsIgnoreCase(tokenizer.sval))
-                        {
-                            switch (context)
-                            {
+                        } else if (IN_OPERATOR.equalsIgnoreCase(tokenizer.sval)) {
+                            switch (context) {
                                 case OPERAND:
                                     calculationStack.pushOperator(Operation.IN);
                                     context = OPERATOR;
@@ -123,9 +105,7 @@ public class ExpressionCalculator
                                     calculationStack.pushSymbol(tokenizer.sval);
                                     context = OPERAND;
                             }
-                        }
-                        else
-                        {
+                        } else {
                             // consider it's just id
                             switch (context) {
                                 case OPERAND:
@@ -184,8 +164,7 @@ public class ExpressionCalculator
                         int nextToken = tokenizer.nextToken();
                         if (nextToken == GREATER_OPERATOR) // it's <> !
                         {
-                            switch (context)
-                            {
+                            switch (context) {
                                 case OPERAND:
                                     calculationStack.pushOperator(Operation.COMPARE_NOT_EQUALITY);
                                     context = OPERATOR;
@@ -194,8 +173,7 @@ public class ExpressionCalculator
                                     throw new IFML2ExpressionException("Ошибка в выражении: {0} может следовать только за операндом",
                                             NOT_EQUAL_OPERATOR);
                             }
-                        }
-                        else {
+                        } else {
                             tokenizer.pushBack(); // it's not <> so return consumed token and process it next
                             calculationStack.pushOperator(Operation.COMPARE_LESSER);
                             context = OPERATOR;
@@ -209,20 +187,16 @@ public class ExpressionCalculator
 
                     case SUBTRACT_OPERATOR:
                         // decide if it subtract or negative number
-                        switch (context)
-                        {
+                        switch (context) {
                             case START:
                             case OPERATOR:
                                 // it can be only negative number at start ow after operator (todo consider unary minus)
                                 nextToken = tokenizer.nextToken(); // check that next token is number
-                                if (nextToken == StreamTokenizer.TT_NUMBER)
-                                {
+                                if (nextToken == StreamTokenizer.TT_NUMBER) {
                                     // consume it both as negative number
                                     calculationStack.pushNumericLiteral(-tokenizer.nval);
                                     context = OPERAND;
-                                }
-                                else
-                                {
+                                } else {
                                     tokenizer.pushBack(); // return token back
                                     // fail
                                     throw new IFML2ExpressionException("Ошибка в выражении: унарный минус \"{0}\" может быть только перед числом",
@@ -241,9 +215,7 @@ public class ExpressionCalculator
                         throw new IFML2ExpressionException("Ошибка в выражении \"{0}\" - неизвестный токен \"{1}\"", expression, token);
                 }
             }
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             throw new IFML2Exception(e);
         }
 
@@ -253,8 +225,7 @@ public class ExpressionCalculator
     /**
      * What is just happened
      */
-    enum Context
-    {
+    enum Context {
         START,
         OPERATOR,
         OPERAND
@@ -264,14 +235,12 @@ public class ExpressionCalculator
     запретить после UNARY_RIGHT любой оператор ??? (он ждёт операнд справа), а после BINARY запретить только BINARY (следующий ждёт слева операнд...)
     */
 
-    private enum OperationType
-    {
+    private enum OperationType {
         UNARY_RIGHT,
         BINARY
     }
 
-    private enum Operation
-    {
+    private enum Operation {
         GET_PROPERTY(GET_PROPERTY_OPERATOR, 100),
         IN(IN_OPERATOR, OperationType.BINARY, 50),
         NOT(NOT_OPERATOR, OperationType.UNARY_RIGHT, 40),
@@ -287,72 +256,60 @@ public class ExpressionCalculator
         public final char operatorCharacter;
         public final int priority;
         public String operatorString;
-        private OperationType operationType = OperationType.BINARY;
+        private OperationType type = OperationType.BINARY;
 
-        Operation(char operatorCharacter, int priority)
-        {
+        Operation(char operatorCharacter, int priority) {
             this.operatorCharacter = operatorCharacter;
             this.priority = priority;
         }
 
-        Operation(String operatorString, OperationType operationType, int priority)
-        {
+        Operation(String operatorString, OperationType type, int priority) {
             this((char) 0, priority);
             this.operatorString = operatorString;
-            this.operationType = operationType;
+            this.type = type;
         }
 
         @Contract(pure = true)
         public boolean canSqueeze(Operation operator) {
-            return priority <= operator.priority && OperationType.UNARY_RIGHT != operator.getOperationType();
+            return priority <= operator.priority && OperationType.UNARY_RIGHT != operator.getType();
         }
 
-        public OperationType getOperationType() {
-            return operationType;
+        public OperationType getType() {
+            return type;
         }
     }
 
-    private class CalculationStack
-    {
+    private class CalculationStack {
         private final Stack<Operation> operatorStack = new Stack<>();
         private final Stack<Expression> expressionStack = new Stack<>();
 
-        public void pushSymbol(String symbol)
-        {
+        public void pushSymbol(String symbol) {
             expressionStack.push(new ValueExpression(new SymbolValue(symbol)));
         }
 
-        public void pushTextLiteral(String text)
-        {
+        public void pushTextLiteral(String text) {
             expressionStack.push(new ValueExpression(new TextValue(text)));
         }
 
-        public void pushNumericLiteral(double number)
-        {
+        public void pushNumericLiteral(double number) {
             expressionStack.push(new ValueExpression(new NumberValue(number)));
         }
 
-        public void pushOperator(Operation operator) throws IFML2Exception
-        {
+        public void pushOperator(Operation operator) throws IFML2Exception {
             operatorStack.push(operator);
             shrink();
         }
 
-        private void shrink() throws IFML2Exception
-        {
-            while (operatorStack.size() >= 2)
-            {
+        private void shrink() throws IFML2Exception {
+            while (operatorStack.size() >= 2) {
                 Operation lastOperator = operatorStack.pop();
                 Operation prevOperator = operatorStack.pop();
 
-                if (lastOperator.canSqueeze(prevOperator))
-                {
+                if (lastOperator.canSqueeze(prevOperator)) {
                     Expression expression = doExpression(prevOperator);
                     expressionStack.push(expression);
                     operatorStack.push(lastOperator);
-                }
-                else
-                {
+                } else {
                     operatorStack.push(prevOperator);
                     operatorStack.push(lastOperator);
 
@@ -554,42 +511,35 @@ public class ExpressionCalculator
             return result;
         }*/
 
-        public Value solve() throws IFML2Exception
-        {
+        public Value solve() throws IFML2Exception {
             shrink();
 
-            if (!operatorStack.isEmpty() && expressionStack.isEmpty())
-            {
+            if (!operatorStack.isEmpty() && expressionStack.isEmpty()) {
                 throw new IFML2ExpressionException("Системный сбой: стек операторов не пуст, при этом нет значений в стеке выражений!" +
                         "\nСтек операторов: {0}\nСтек выражений: {1}", operatorStack, expressionStack);
             }
 
-            while (!operatorStack.isEmpty())
-            {
+            while (!operatorStack.isEmpty()) {
                 Operation operator = operatorStack.pop();
                 Expression expression = doExpression(operator);
                 expressionStack.push(expression);
             }
 
-            if (expressionStack.size() == 1)
-            {
+            if (expressionStack.size() == 1) {
                 Expression lastExpression = expressionStack.pop();
                 return lastExpression.solve();
-            }
-            else
-            {
+            } else {
                 throw new IFML2ExpressionException("Системный сбой: в стеке выражений осталось не одно (а {2}) значение!" +
                         "\nСтек операторов: {0}\nСтек выражений: {1}", operatorStack, expressionStack,
                         expressionStack.size());
             }
         }
 
-        private Expression doExpression(Operation operator) throws IFML2ExpressionException {
+        private Expression doExpression(Operation operation) throws IFML2ExpressionException {
             Expression rightExpr;
             Expression leftExpr = null;
 
-            switch (operator.operationType)
-            {
+            switch (operation.type) {
                 case BINARY:
                     rightExpr = expressionStack.pop();
                     leftExpr = expressionStack.pop();
@@ -600,30 +550,29 @@ public class ExpressionCalculator
                     break;
 
                 default:
-                    throw new IFML2ExpressionException("Неизвестный тип операции {0}", operator.operationType);
+                    throw new IFML2ExpressionException("Неизвестный тип операции {0}", operation.getType());
             }
 
-            switch (operator) {
+            switch (operation) {
                 case ADD:
-                    assert leftExpr != null;
                     return new AddExpression(leftExpr, rightExpr);
                 case AND:
-                    assert leftExpr != null;
                     return new AndExpression(leftExpr, rightExpr);
                 case OR:
-                    assert leftExpr != null;
                     return new OrExpression(leftExpr, rightExpr);
                 case NOT:
                     return new NotExpression(rightExpr);
-                case GET_PROPERTY: // TODO: 26.02.2016
-                    return new GetPropertyExpression(leftExpr, rightExpr);
+                case GET_PROPERTY:
+                    return new GetPropertyExpression(leftExpr, rightExpr, symbolResolver);
                 case IN: // TODO: 26.02.2016
+                    return new InExpression(leftExpr, rightExpr);
                 case COMPARE_EQUALITY: // TODO: 26.02.2016
                 case COMPARE_NOT_EQUALITY: // TODO: 26.02.2016
                 case COMPARE_GREATER: // TODO: 26.02.2016
                 case COMPARE_LESSER: // TODO: 26.02.2016
+                case SUBTRACT: // TODO: 27.02.2016
                 default:
-                    throw new IFML2ExpressionException("Операция {0} пока не поддерживается в выражениях", operator.toString());
+                    throw new IFML2ExpressionException("Операция {0} временно поддерживается в выражениях", operation.toString());
             }
         }
 
@@ -682,15 +631,18 @@ public class ExpressionCalculator
             protected final Expression leftExpr;
             protected final Expression rightExpr;
 
-            public BinaryExpression(@NotNull Expression leftExpr, @NotNull Expression rightExpr) {
+            public BinaryExpression(Expression leftExpr, @NotNull Expression rightExpr) throws IFML2ExpressionException {
                 super();
+                if (leftExpr == null) {
+                    throw new IFML2ExpressionException(format("Нет левого операнда для операции \"%s\"", this));
+                }
                 this.leftExpr = leftExpr;
                 this.rightExpr = rightExpr;
             }
         }
 
         private final class AddExpression extends BinaryExpression {
-            public AddExpression(@NotNull Expression leftExpr, @NotNull Expression rightExpr) {
+            public AddExpression(Expression leftExpr, @NotNull Expression rightExpr) throws IFML2ExpressionException {
                 super(leftExpr, rightExpr);
             }
 
@@ -704,17 +656,12 @@ public class ExpressionCalculator
                 Value leftValue = leftExpr.solve();
                 Value rightValue = rightExpr.solve();
 
-                if (leftValue instanceof IAddableValue)
-                {
+                if (leftValue instanceof IAddableValue) {
                     return ((IAddableValue) leftValue).add(rightValue);
-                }
-                else if (rightValue instanceof TextValue)
-                {
+                } else if (rightValue instanceof TextValue) {
                     // если левый операнд не поддерживает сложение, но правый - текст, то всё превращаем в строку и клеим
                     return new TextValue(leftValue.toString() + ((TextValue) rightValue).getValue());
-                }
-                else
-                {
+                } else {
                     throw new IFML2ExpressionException("Не поддерживается операция \"{0}\" между типом \"{1}\" и \"{2}\"",
                             Value.Operation.ADD, leftValue.getTypeName(), leftValue.getTypeName());
                 }
@@ -722,7 +669,7 @@ public class ExpressionCalculator
         }
 
         private final class AndExpression extends BinaryExpression {
-            public AndExpression(@NotNull Expression leftExpr, @NotNull Expression rightExpr) {
+            public AndExpression(Expression leftExpr, @NotNull Expression rightExpr) throws IFML2ExpressionException {
                 super(leftExpr, rightExpr);
             }
 
@@ -756,7 +703,7 @@ public class ExpressionCalculator
         }
 
         private final class OrExpression extends BinaryExpression {
-            public OrExpression(@NotNull Expression leftExpr, @NotNull Expression rightExpr) {
+            public OrExpression(Expression leftExpr, @NotNull Expression rightExpr) throws IFML2ExpressionException {
                 super(leftExpr, rightExpr);
             }
 
@@ -790,7 +737,7 @@ public class ExpressionCalculator
         }
 
         private class NotExpression extends UnaryExpression {
-            public NotExpression(Expression expression) {
+            public NotExpression(@NotNull Expression expression) {
                 super(expression);
             }
 
@@ -813,8 +760,11 @@ public class ExpressionCalculator
         }
 
         private class GetPropertyExpression extends BinaryExpression {
-            public GetPropertyExpression(Expression leftExpr, Expression rightExpr) {
+            private SymbolResolver symbolResolver;
+
+            public GetPropertyExpression(Expression leftExpr, @NotNull Expression rightExpr, SymbolResolver symbolResolver) throws IFML2ExpressionException {
                 super(leftExpr, rightExpr);
+                this.symbolResolver = symbolResolver;
             }
 
             @Override
@@ -824,8 +774,8 @@ public class ExpressionCalculator
                     throw new IFML2ExpressionException("Величина не является объектом ({0})", leftValue);
                 }
 
-                IFMLObject object = ((ObjectValue) leftValue).getValue();
-                if (object == null) {
+                IFMLObject ifmlObject = ((ObjectValue) leftValue).getValue();
+                if (ifmlObject == null) {
                     throw new IFML2ExpressionException("Объект {0} не задан (пуст)", leftValue);
                 }
 
@@ -842,9 +792,9 @@ public class ExpressionCalculator
                 String propertyName = ((SymbolValue) value).getValue();
                 Value propertyValue;
                 try {
-                    propertyValue = object.getMemberValue(propertyName, symbolResolver);
+                    propertyValue = ifmlObject.getMemberValue(propertyName, this.symbolResolver);
                 } catch (IFML2Exception e) {
-                    throw new IFML2VMException(e, "Ошибка во время получения свойства {0} у объекта {1}", propertyName, object);
+                    throw new IFML2VMException(e, "Ошибка во время получения свойства {0} у объекта {1}", propertyName, ifmlObject);
                 }
                 return propertyValue == null ? new EmptyValue() : propertyValue;
             }
@@ -852,6 +802,35 @@ public class ExpressionCalculator
             @Override
             protected String toStringRepresentation() {
                 return format("GetProperty[%s,%s]", leftExpr, rightExpr);
+            }
+        }
+
+        private class InExpression extends BinaryExpression {
+            public InExpression(Expression leftExpr, Expression rightExpr) throws IFML2ExpressionException {
+                super(leftExpr, rightExpr);
+            }
+
+            @Override
+            public Value solve() throws IFML2VMException {
+                Value leftValue = leftExpr.solve();
+                if (!(leftValue instanceof ObjectValue)) {
+                    throw new IFML2ExpressionException("Величина не является объектом ({0})", leftValue);
+                }
+
+                Value rightValue = rightExpr.solve();
+                if (!(rightValue instanceof CollectionValue)) {
+                    throw new IFML2ExpressionException("Величина не является коллекцией ({0})", rightValue);
+                }
+
+                IFMLObject leftObjectValue = ((ObjectValue) leftValue).getValue();
+                Collection rightCollectionValue = ((CollectionValue) rightValue).getValue();
+
+                return new BooleanValue(rightCollectionValue.contains(leftObjectValue));
+            }
+
+            @Override
+            protected String toStringRepresentation() {
+                return format("In[%s,%s]", leftExpr, rightExpr);
             }
         }
     }
