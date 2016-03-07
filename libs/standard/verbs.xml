@@ -262,15 +262,21 @@
                 </template>
             </templates>
             <restrictions>
-                <restriction condition="предмет.прикреплён">
+                <restriction condition="предмет.надеваемый и предмет.надет">
                     <reaction>
-                        <showMessage type="text" message="Прикреплено надёжно."/>
+                        <!-- todo анализировать пол предмета -->
+                        <showMessage type="expression" message="Уже надето.'" beginWithCap="true"/>
                     </reaction>
                 </restriction>
-                <restriction condition="предмет.недоступен">
+                <restriction condition="предмет в инвентарий">
                     <reaction>
-                        <showMessage type="expression"
-                                     message="'В этих условиях, либо из этого положения, либо в данный момент взять и что-либо сделать с(о) ' + предмет.тп + ' невозможно.'"/>
+                        <showMessage type="expression" message="предмет.имя + ' уже у Вас.'" beginWithCap="true"/>
+                    </reaction>
+                </restriction>
+                <restriction condition="предмет.прикреплён">
+                    <reaction>
+                        <!-- todo анализировать пол предмета -->
+                        <showMessage type="text" message="Прикреплено надёжно."/>
                     </reaction>
                 </restriction>
                 <restriction condition="предмет.частьПейзажа">
@@ -279,14 +285,17 @@
                                      message="предмет.вп + ' взять невозможно ни при каких условиях.'"/>
                     </reaction>
                 </restriction>
-                <restriction condition="предмет в инвентарий">
-                    <reaction>
-                        <showMessage type="expression" message="предмет.имя + ' уже у Вас.'" beginWithCap="true"/>
-                    </reaction>
-                </restriction>
                 <restriction condition="предмет.тяжёлый">
                     <reaction>
-                        <showMessage type="expression" message="предмет.имя + ' слишком тяжёлый.'" beginWithCap="true"/>
+                        <!-- todo анализировать пол предмета -->
+                        <showMessage type="expression" message="Слишком тяжёло.'" beginWithCap="true"/>
+                    </reaction>
+                </restriction>
+                <restriction condition="предмет.недоступен">
+                    <reaction>
+                        <!-- todo анализировать начало слова для корректного использования предлога с/со -->
+                        <showMessage type="expression"
+                                     message="'В этих условиях, либо из этого положения, либо в данный момент взять и что-либо сделать с(о) ' + предмет.тп + ' невозможно.'"/>
                     </reaction>
                 </restriction>
             </restrictions>
@@ -1109,16 +1118,20 @@
 
         <procedure name="ВзятьВсё">
             <procedureBody>
-                <!--todo не брать надетые предметы!-->
+                <!--todo не брать надетые предметы! - нужны скобки -->
                 <loop position="1" collection="ТекущаяЛокация.Предметы" element="предмет"
                       condition="не предмет.частьПейзажа и не предмет.недоступен и не предмет.прикреплён и не предмет.тяжёлый">
                     <empty>
                         <showMessage position="1" type="text" message="Тут нечего нельзя взять."/>
                     </empty>
                     <next>
-                        <!-- todo заменить на вызов проц-ы Взять-->
+                        <!-- todo заменить на вызов действия ВзятьПредмет - т.к. оно проверит на тяжесть и проч., а из условия убрать -->
+                        <runProcedure procedure="ВзятьПредмет">
+                            <parameter name="предмет" value="предмет"/>
+                        </runProcedure>
+                        <!--устарело:
                         <moveItem position="1" item="предмет" to="инвентарий"/>
-                        <showMessage position="2" type="expression" message="'Вы взяли ' + предмет.вп + '.'"/>
+                        <showMessage position="2" type="expression" message="'Вы взяли ' + предмет.вп + '.'"/>-->
                     </next>
                 </loop>
             </procedureBody>
