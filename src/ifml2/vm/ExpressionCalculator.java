@@ -480,28 +480,6 @@ public class ExpressionCalculator {
                     break;
                 }
 
-                case IN:
-                {
-                    Value preparedLeftValue = ensureValueResolved(leftValue);
-                    Value preparedRightValue = ensureValueResolved(rightValue);
-
-                    if (!(preparedLeftValue instanceof ObjectValue))
-                    {
-                        throw new IFML2ExpressionException("Величина не является объектом ({0})", leftValue);
-                    }
-
-                    if (!(preparedRightValue instanceof CollectionValue))
-                    {
-                        throw new IFML2ExpressionException("Величина не является коллекцией ({0})", rightValue);
-                    }
-
-                    ObjectValue objectValue = (ObjectValue) preparedLeftValue;
-                    CollectionValue collectionValue = (CollectionValue) preparedRightValue;
-                    result = new BooleanValue(collectionValue.getValue().contains(objectValue.getValue()));
-
-                    break;
-                }
-
                 default:
                 {
                     throw new IFML2ExpressionException("Неизвестный оператор {0}", operator);

@@ -11,6 +11,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Matchers;
 
+import java.util.Collections;
+
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -43,7 +45,7 @@ public class ExpressionCalculatorTest
         return ExpressionCalculator.calculate(mockSymbolResolver, expression);
     }
 
-    // 1 + 1
+    // 1 + 1 => 2
     @Test
     public void onePlusOne() throws IFML2Exception
     {
@@ -57,7 +59,7 @@ public class ExpressionCalculatorTest
         assertEquals(2., value, 0);
     }
 
-    // не да
+    // не да => нет
     @Test
     public void notYes() throws IFML2Exception
     {
@@ -65,7 +67,7 @@ public class ExpressionCalculatorTest
         assertFalse(extractBoolean(result));
     }
 
-    // не не да
+    // не не да => да
     @Test
     public void notNotYes() throws IFML2Exception
     {
@@ -73,7 +75,7 @@ public class ExpressionCalculatorTest
         assertTrue(extractBoolean(result));
     }
 
-    // да и не нет и да
+    // да и не нет и да => да
     @Test
     public void yesAndNotNoAndYes() throws IFML2Exception
     {
@@ -81,7 +83,7 @@ public class ExpressionCalculatorTest
         assertTrue(extractBoolean(result));
     }
 
-    // да и не да и да
+    // да и не да и да => нет
     @Test
     public void yesAndNotYesAndYes() throws IFML2Exception
     {
@@ -89,7 +91,7 @@ public class ExpressionCalculatorTest
         assertFalse(extractBoolean(result));
     }
 
-    // да и не да и не не не да
+    // да и не да и не не не да => нет
     @Test
     public void yesAndNotYesAndNotNotNotYes() throws IFML2Exception
     {
@@ -133,7 +135,7 @@ public class ExpressionCalculatorTest
         assertEquals("значение", value);
     }
 
-    // 1 = 1
+    // 1 = 1 => да
     @Test
     public void oneEqualsOne() throws IFML2Exception
     {
@@ -141,7 +143,7 @@ public class ExpressionCalculatorTest
         assertTrue(extractBoolean(result));
     }
 
-    // "Номер " + 1
+    // "Номер " + 1 => "Номер 1"
     @Test
     public void stringPlusOne() throws IFML2Exception
     {
@@ -155,7 +157,7 @@ public class ExpressionCalculatorTest
         assertEquals("Номер 1", value);
     }
 
-    // 1 < 2
+    // 1 < 2 => да
     @Test
     public void oneLesserThanTwo() throws IFML2Exception
     {
@@ -163,7 +165,7 @@ public class ExpressionCalculatorTest
         assertTrue(extractBoolean(result));
     }
 
-    // 1 > 2
+    // 1 > 2 => нет
     @Test
     public void oneGreaterThanTwo() throws IFML2Exception
     {
@@ -171,7 +173,7 @@ public class ExpressionCalculatorTest
         assertFalse(extractBoolean(result));
     }
 
-    // 1 <> 2
+    // 1 <> 2 => да
     @Test
     public void oneNotEqualsTwo() throws IFML2Exception
     {
@@ -179,7 +181,7 @@ public class ExpressionCalculatorTest
         assertTrue(extractBoolean(result));
     }
 
-    // 1 - 2
+    // 1 - 2 => -1
     @Test
     public void oneMinusTwo() throws IFML2Exception
     {
@@ -193,7 +195,7 @@ public class ExpressionCalculatorTest
         assertEquals(-1., value, 0);
     }
 
-    // -1
+    // -1 => -1
     @Test
     public void negativeOne() throws IFML2Exception
     {
@@ -207,7 +209,7 @@ public class ExpressionCalculatorTest
         assertEquals(-1., value, 0);
     }
 
-    // 2 + -1
+    // 2 + -1 => 1
     @Test
     public void twoMinusNegativeOne() throws IFML2Exception
     {
@@ -267,7 +269,7 @@ public class ExpressionCalculatorTest
         assertFalse(extractBoolean(result));
     }
 
-    // нет и НеизвестныйИд
+    // нет и НеизвестныйИд => нет // TODO: 07.03.2016 Нужно как-то проверять корректность выражений, например, все SymbolValue пытаться резолвить, если они не правая часть в DotExpression
     @Test
     public void noAndUnknownId() throws IFML2Exception
     {
@@ -276,10 +278,24 @@ public class ExpressionCalculatorTest
         assertFalse(extractBoolean(result));
     }
 
-    // муть должна падать
+    // чушь должна падать
     @Test(expected = IFML2ExpressionException.class)
     public void wrongExpression() throws IFML2Exception
     {
-        calculate("нет и gfdg fg9 gjdfg");
+        calculate("нет и bull3 fg9 blah4");
+    }
+
+    // элемент в коллекция => да
+    @Test
+    public void inExpression() throws IFML2Exception
+    {
+        IFMLObject ifmlObject = mock(IFMLObject.class);
+        CollectionValue collectionValue = new CollectionValue(Collections.singletonList(ifmlObject));
+        when(mockSymbolResolver.resolveSymbol("элемент")).thenReturn(new ObjectValue(ifmlObject));
+        when(mockSymbolResolver.resolveSymbol("коллекция")).thenReturn(collectionValue);
+
+        String expression = "элемент в коллекция";
+        Value result = calculate(expression);
+        assertTrue(extractBoolean(result));
     }
 }
