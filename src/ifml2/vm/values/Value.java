@@ -42,7 +42,7 @@ public abstract class Value<T> extends IFMLEntity implements Cloneable
         else if(rightValue instanceof EmptyValue)
         {
             // если правое значение - пустота, то возвращаем равенство, если this тоже пустота
-            return this instanceof EmptyValue ? EQUAL : UNEQUAL;
+            return this instanceof EmptyValue ? EQUAL : UNEQUAL; // irish principle (double check) - cause it's overridden in EmptyValue
         }
         return NOT_APPLICABLE;
     }

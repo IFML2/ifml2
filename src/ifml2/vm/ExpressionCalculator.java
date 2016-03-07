@@ -271,7 +271,7 @@ public class ExpressionCalculator {
 
         @Contract(pure = true)
         public boolean canSqueeze(Operation operator) {
-            return priority <= operator.priority && OperationType.UNARY_RIGHT != operator.getType();
+            return priority <= operator.priority && type != OperationType.UNARY_RIGHT;
         }
 
         public OperationType getType() {
@@ -284,15 +284,15 @@ public class ExpressionCalculator {
         private final Stack<Expression> expressionStack = new Stack<>();
 
         public void pushSymbol(String symbol) {
-            expressionStack.push(new ValueExpression(new SymbolValue(symbol)));
+            expressionStack.push(new ValueExpression(new SymbolValue(symbol), symbolResolver));
         }
 
         public void pushTextLiteral(String text) {
-            expressionStack.push(new ValueExpression(new TextValue(text)));
+            expressionStack.push(new ValueExpression(new TextValue(text), symbolResolver));
         }
 
         public void pushNumericLiteral(double number) {
-            expressionStack.push(new ValueExpression(new NumberValue(number)));
+            expressionStack.push(new ValueExpression(new NumberValue(number), symbolResolver));
         }
 
         public void pushOperator(Operation operator) throws IFML2Exception {
@@ -318,177 +318,6 @@ public class ExpressionCalculator {
             }
         }
 
-        /*private Value doOperation(Operation operator) throws IFML2Exception
-        {
-            switch (operator)
-            {
-                case GET_PROPERTY:
-                {
-                    Value resolvedLeftValue = ensureValueResolved(leftValue);
-                    if (!(resolvedLeftValue instanceof ObjectValue))
-                    {
-                        throw new IFML2ExpressionException("Величина не является объектом ({0})", leftValue);
-                    }
-
-                    if (!(rightValue instanceof SymbolValue))
-                    {
-                        throw new IFML2ExpressionException("Величина не является именем свойства ({0})", rightValue);
-                    }
-
-                    IFMLObject object = ((ObjectValue) resolvedLeftValue).getValue();
-                    if (object == null)
-                    {
-                        throw new IFML2ExpressionException("Объект {0} не задан (пуст)", leftValue);
-                    }
-
-                    String propertyName = ((SymbolValue) rightValue).getValue();
-                    Value propertyValue = object.getMemberValue(propertyName, symbolResolver);
-                    result = propertyValue == null ? new EmptyValue() : propertyValue;
-
-                    break;
-                }
-
-                case COMPARE_EQUALITY:
-                {
-                    Value resolvedLeftValue = ensureValueResolved(leftValue);
-                    Value resolvedRightValue = ensureValueResolved(rightValue);
-
-                    assert resolvedLeftValue != null;
-
-                    Value.CompareResult compareResult = resolvedLeftValue.compareTo(resolvedRightValue);
-                    switch (compareResult)
-                    {
-                        case EQUAL:
-                            result = new BooleanValue(true);
-                            break;
-                        case UNEQUAL:
-                        case LEFT_BIGGER:
-                        case RIGHT_BIGGER:
-                            result = new BooleanValue(false);
-                            break;
-                        case NOT_APPLICABLE:
-                            throw new IFML2ExpressionException("Сравниваемые величины разного типа ({0} и {1})", leftValue, rightValue);
-
-                        default:
-                            throw new IFML2VMException("Неизвестный результат сравнения величин ({0})", compareResult);
-                    }
-
-                    break;
-                }
-
-                case COMPARE_NOT_EQUALITY:
-                {
-                    Value resolvedLeftValue = ensureValueResolved(leftValue);
-                    Value resolvedRightValue = ensureValueResolved(rightValue);
-
-                    assert resolvedLeftValue != null;
-
-                    Value.CompareResult compareResult = resolvedLeftValue.compareTo(resolvedRightValue);
-                    switch (compareResult)
-                    {
-                        case EQUAL:
-                            result = new BooleanValue(false);
-                            break;
-                        case UNEQUAL:
-                        case LEFT_BIGGER:
-                        case RIGHT_BIGGER:
-                            result = new BooleanValue(true);
-                            break;
-                        case NOT_APPLICABLE:
-                            throw new IFML2ExpressionException("Сравниваемые величины разного типа ({0} и {1})", leftValue, rightValue);
-
-                        default:
-                            throw new IFML2VMException("Неизвестный результат сравнения величин ({0})", compareResult);
-                    }
-
-                    break;
-                }
-
-                case COMPARE_GREATER:
-                {
-                    Value resolvedLeftValue = ensureValueResolved(leftValue);
-                    Value resolvedRightValue = ensureValueResolved(rightValue);
-
-                    assert resolvedLeftValue != null;
-
-                    if (!(resolvedLeftValue instanceof NumberValue))
-                    {
-                        throw new IFML2VMException("Левая величина сравнения должна быть числом (а её тип {0}).",
-                                resolvedLeftValue.getTypeName());
-                    }
-
-                    if (!(resolvedRightValue instanceof NumberValue))
-                    {
-                        throw new IFML2VMException("Правая величина сравнения должна быть числом (а её тип {0}).",
-                                resolvedRightValue.getTypeName());
-                    }
-
-                    NumberValue leftNumber = (NumberValue) resolvedLeftValue;
-                    NumberValue rightNumber = (NumberValue) resolvedRightValue;
-                    result = new BooleanValue(leftNumber.getValue() > rightNumber.getValue());
-
-                    break;
-                }
-
-                case COMPARE_LESSER:
-                {
-                    Value resolvedLeftValue = ensureValueResolved(leftValue);
-                    Value resolvedRightValue = ensureValueResolved(rightValue);
-
-                    assert resolvedLeftValue != null;
-
-                    if (!(resolvedLeftValue instanceof NumberValue))
-                    {
-                        throw new IFML2VMException("Левая величина сравнения должна быть числом (а её тип {0}).",
-                                resolvedLeftValue.getTypeName());
-                    }
-
-                    if (!(resolvedRightValue instanceof NumberValue))
-                    {
-                        throw new IFML2VMException("Правая величина сравнения должна быть числом (а её тип {0}).",
-                                resolvedRightValue.getTypeName());
-                    }
-
-                    NumberValue leftNumber = (NumberValue) resolvedLeftValue;
-                    NumberValue rightNumber = (NumberValue) resolvedRightValue;
-                    result = new BooleanValue(leftNumber.getValue() < rightNumber.getValue());
-
-                    break;
-                }
-
-                case SUBTRACT:
-                {
-                    Value resolvedLeftValue = ensureValueResolved(leftValue);
-                    Value resolvedRightValue = ensureValueResolved(rightValue);
-
-                    assert resolvedLeftValue != null;
-
-                    if (!(resolvedLeftValue instanceof NumberValue))
-                    {
-                        throw new IFML2VMException("Левая величина сравнения должна быть числом (а её тип {0}).",
-                                resolvedLeftValue.getTypeName());
-                    }
-
-                    if (!(resolvedRightValue instanceof NumberValue))
-                    {
-                        throw new IFML2VMException("Правая величина сравнения должна быть числом (а её тип {0}).",
-                                resolvedRightValue.getTypeName());
-                    }
-
-                    result = new NumberValue(((NumberValue) resolvedLeftValue).getValue() - ((NumberValue) resolvedRightValue).getValue());
-
-                    break;
-                }
-
-                default:
-                {
-                    throw new IFML2ExpressionException("Неизвестный оператор {0}", operator);
-                }
-            }
-
-            return result;
-        }*/
-
         public Value solve() throws IFML2Exception {
             shrink();
 
@@ -505,7 +334,8 @@ public class ExpressionCalculator {
 
             if (expressionStack.size() == 1) {
                 Expression lastExpression = expressionStack.pop();
-                return lastExpression.solve();
+                final Value solutionResult = lastExpression.solve();
+                return solutionResult;
             } else {
                 throw new IFML2ExpressionException("Системный сбой: в стеке выражений осталось не одно (а {2}) значение!" +
                         "\nСтек операторов: {0}\nСтек выражений: {1}", operatorStack, expressionStack,
@@ -542,13 +372,18 @@ public class ExpressionCalculator {
                     return new NotExpression(rightExpr);
                 case GET_PROPERTY:
                     return new GetPropertyExpression(leftExpr, rightExpr, symbolResolver);
-                case IN: // TODO: 26.02.2016
+                case IN:
                     return new InExpression(leftExpr, rightExpr);
-                case COMPARE_EQUALITY: // TODO: 26.02.2016
-                case COMPARE_NOT_EQUALITY: // TODO: 26.02.2016
-                case COMPARE_GREATER: // TODO: 26.02.2016
-                case COMPARE_LESSER: // TODO: 26.02.2016
-                case SUBTRACT: // TODO: 27.02.2016
+                case COMPARE_EQUALITY:
+                    return new EqualsExpression(leftExpr, rightExpr, true);
+                case COMPARE_NOT_EQUALITY:
+                    return new EqualsExpression(leftExpr, rightExpr, false);
+                case COMPARE_GREATER:
+                    return new CompareGreaterExpression(leftExpr, rightExpr, true);
+                case COMPARE_LESSER:
+                    return new CompareGreaterExpression(leftExpr, rightExpr, false);
+                case SUBTRACT:
+                    return new SubtractExpression(leftExpr, rightExpr);
                 default:
                     throw new IFML2ExpressionException("Операция {0} временно поддерживается в выражениях", operation.toString());
             }
@@ -572,16 +407,18 @@ public class ExpressionCalculator {
 
         private final class ValueExpression extends Expression {
             private final Value value;
+            private SymbolResolver symbolResolver;
 
-            public ValueExpression(@NotNull Value value) {
+            public ValueExpression(@NotNull Value value, SymbolResolver symbolResolver) {
                 super();
                 this.value = value;
+                this.symbolResolver = symbolResolver;
             }
 
             @Override
             public Value solve() throws IFML2VMException {
                 if (value instanceof SymbolValue) {
-                    return ((SymbolValue) value).resolve(symbolResolver);
+                    return ((SymbolValue) value).resolve(this.symbolResolver);
                 }
                 return value;
             }
@@ -809,6 +646,108 @@ public class ExpressionCalculator {
             @Override
             protected String toStringRepresentation() {
                 return format("In[%s,%s]", leftExpr, rightExpr);
+            }
+        }
+
+        private class EqualsExpression extends BinaryExpression {
+            private final boolean isPositive;
+
+            public EqualsExpression(Expression leftExpr, Expression rightExpr, boolean isPositive) throws IFML2ExpressionException {
+                super(leftExpr, rightExpr);
+                this.isPositive = isPositive;
+            }
+
+            @Override
+            public Value solve() throws IFML2VMException {
+                Value leftValue = leftExpr.solve();
+                Value rightValue = rightExpr.solve();
+
+                Value.CompareResult compareResult = leftValue.compareTo(rightValue);
+                switch (compareResult)
+                {
+                    case EQUAL:
+                        return new BooleanValue(isPositive);
+                    case UNEQUAL:
+                    case LEFT_BIGGER:
+                    case RIGHT_BIGGER:
+                        return new BooleanValue(!isPositive);
+                    case NOT_APPLICABLE:
+                        throw new IFML2ExpressionException("Сравниваемые величины разного типа ({0} и {1})", leftValue, rightValue);
+
+                    default:
+                        throw new IFML2VMException("Неизвестный результат сравнения величин ({0})", compareResult);
+                }
+            }
+
+            @Override
+            protected String toStringRepresentation() {
+                final String operationName = isPositive ? "Equ" : "NotEqu";
+                return format("%s[%s,%s]", operationName, leftExpr, rightExpr);
+            }
+        }
+
+        private class CompareGreaterExpression extends BinaryExpression {
+            private final boolean isPositive;
+
+            public CompareGreaterExpression(Expression leftExpr, Expression rightExpr, boolean isPositive) throws IFML2ExpressionException {
+                super(leftExpr, rightExpr);
+                this.isPositive = isPositive;
+            }
+
+            @Override
+            public Value solve() throws IFML2VMException {
+                Value leftValue = leftExpr.solve();
+
+                Value rightValue = rightExpr.solve();
+
+                Value.CompareResult compareResult = leftValue.compareTo(rightValue);
+                switch (compareResult){
+                    case LEFT_BIGGER:
+                        return new BooleanValue(isPositive);
+                    case RIGHT_BIGGER:
+                        return new BooleanValue(!isPositive);
+                    case EQUAL:
+                        return new BooleanValue(false);
+                    default:
+                        throw new IFML2ExpressionException(format("Непринменимая операция \">\" для операндов типов %s и %s",
+                                leftValue.getTypeName(), rightValue.getTypeName()));
+                }
+            }
+
+            @Override
+            protected String toStringRepresentation() {
+                final String operationName = isPositive ? "Greater" : "Lesser";
+                return format("%s[%s,%s]", operationName, leftExpr, rightExpr);
+            }
+        }
+
+        private class SubtractExpression extends BinaryExpression {
+            public SubtractExpression(Expression leftExpr, Expression rightExpr) throws IFML2ExpressionException {
+                super(leftExpr, rightExpr);
+            }
+
+            @Override
+            public Value solve() throws IFML2VMException {
+                Value leftValue = leftExpr.solve();
+                if (!(leftValue instanceof NumberValue))
+                {
+                    throw new IFML2VMException("Левая величина сравнения должна быть числом (а её тип {0}).",
+                            leftValue.getTypeName());
+                }
+
+                Value rightValue = rightExpr.solve();
+                if (!(rightValue instanceof NumberValue))
+                {
+                    throw new IFML2VMException("Правая величина сравнения должна быть числом (а её тип {0}).",
+                            rightValue.getTypeName());
+                }
+
+                return new NumberValue(((NumberValue) leftValue).getValue() - ((NumberValue) rightValue).getValue());
+            }
+
+            @Override
+            protected String toStringRepresentation() {
+                return format("Subtract[%s,%s]", leftExpr, rightExpr);
             }
         }
     }
