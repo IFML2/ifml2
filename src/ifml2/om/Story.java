@@ -196,7 +196,7 @@ public class Story
     }
 
     @XmlTransient
-    public void setObjectsHeap(HashMap<String, IFMLObject> objectsHeap)
+    void setObjectsHeap(HashMap<String, IFMLObject> objectsHeap)
     {
         this.objectsHeap = objectsHeap;
     }

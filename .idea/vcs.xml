@@ -4,15 +4,7 @@
     <option name="links">
       <list>
         <IssueNavigationLink>
-          <option name="issueRegexp" value="#(\d+)" />
-          <option name="linkRegexp" value="http://www.hostedredmine.com/issues/$1" />
-        </IssueNavigationLink>
-        <IssueNavigationLink>
-          <option name="issueRegexp" value="ifml2-(\d+)" />
-          <option name="linkRegexp" value="http://www.hostedredmine.com/issues/$1" />
-        </IssueNavigationLink>
-        <IssueNavigationLink>
-          <option name="issueRegexp" value="[A-Z]+\-\d+" />
+          <option name="issueRegexp" value="[A-z]+[A-z\d]+\-\d+" />
           <option name="linkRegexp" value="http://ifml2.myjetbrains.com/youtrack/issue/$0" />
         </IssueNavigationLink>
       </list>

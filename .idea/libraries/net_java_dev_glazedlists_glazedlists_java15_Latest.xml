@@ -6,14 +6,17 @@
       <root url="jar://$PROJECT_DIR$/lib/glazedlists_java15-1.9.1.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/glazedlists_java15-1.9.1.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/glazedlists_java15-1.9.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/glazedlists_java15-1.9.1.jar!/" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$PROJECT_DIR$/lib/glazedlists_java15-1.9.1-javadoc.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/glazedlists_java15-1.9.1-javadoc.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/glazedlists_java15-1.9.1-javadoc.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/glazedlists_java15-1.9.1-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/glazedlists_java15-1.9.1-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
+      <root url="jar://$PROJECT_DIR$/lib/glazedlists_java15-1.9.1-sources.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/glazedlists_java15-1.9.1-sources.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/glazedlists_java15-1.9.1-sources.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/glazedlists_java15-1.9.1-sources.jar!/" />
