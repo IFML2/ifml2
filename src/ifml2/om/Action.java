@@ -6,14 +6,15 @@ import ifml2.IFMLEntity;
 
 import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class Action extends IFMLEntity {
+    @XmlElement(name = "procedureCall")
+    public ProcedureCall procedureCall = new ProcedureCall();
     @XmlElementWrapper(name = "templates")
     @XmlElement(name = "template")
     private EventList<Template> templates = new BasicEventList<>();
-    @XmlElement(name = "procedureCall")
-    public ProcedureCall procedureCall = new ProcedureCall();
     @XmlElementWrapper(name = "restrictions")
     @XmlElement(name = "restriction")
     private EventList<Restriction> restrictions = new BasicEventList<>();
@@ -60,15 +61,15 @@ public class Action extends IFMLEntity {
         return name;
     }
 
-    public Object[] getAllObjectParameters() {
+    public Object[] retrieveAllObjectParameters() {
         ArrayList<Object> parameters = new ArrayList<>();
 
         for (Template template : templates) {
-            for (TemplateElement element : template.getElements()) {
-                if (element instanceof ObjectTemplateElement && element.getParameter() != null) {
-                    parameters.add(element.getParameter());
-                }
-            }
+            parameters.addAll(
+                    template.getElements().stream().filter(
+                            element -> element instanceof ObjectTemplateElement && element.getParameter() != null
+                    ).map(TemplateElement::getParameter).collect(Collectors.toList())
+            );
         }
 
         return parameters.toArray();

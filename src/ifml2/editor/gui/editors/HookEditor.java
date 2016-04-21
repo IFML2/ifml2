@@ -1,7 +1,6 @@
 package ifml2.editor.gui.editors;
 
 import ca.odell.glazedlists.FilterList;
-import ca.odell.glazedlists.matchers.Matcher;
 import ca.odell.glazedlists.swing.DefaultEventComboBoxModel;
 import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ifml2.GUIUtils;
@@ -96,7 +95,7 @@ public class HookEditor extends AbstractEditor<Hook>
                     prevSelectedAction = selectedAction;
                     if (parameterCombo.isVisible())
                     {
-                        parameterCombo.setModel(new DefaultComboBoxModel(selectedAction.getAllObjectParameters()));
+                        parameterCombo.setModel(new DefaultComboBoxModel(selectedAction.retrieveAllObjectParameters()));
                         if (parameterCombo.getItemCount() > 0) // if there are elements ...
                         {
                             parameterCombo.setSelectedIndex(0); // ... select first element
@@ -107,14 +106,7 @@ public class HookEditor extends AbstractEditor<Hook>
         });
 
         // filter actions due to areObjectHooks
-        actionCombo.setModel(new DefaultEventComboBoxModel<Action>(new FilterList<Action>(storyDataHelper.getAllActions(), new Matcher<Action>()
-        {
-            @Override
-            public boolean matches(Action item)
-            {
-                return areObjectHooks && item.getAllObjectParameters().length > 0 || !areObjectHooks;
-            }
-        })));
+        actionCombo.setModel(new DefaultEventComboBoxModel<>(new FilterList<>(storyDataHelper.getAllActions(), item -> areObjectHooks && item.retrieveAllObjectParameters().length > 0 || !areObjectHooks)));
 
 
         if(hook.getAction() != null)
@@ -146,7 +138,7 @@ public class HookEditor extends AbstractEditor<Hook>
                 throw new IFML2EditorException(MessageFormat.format("Unknown hook type: {0}", hook.getType()));
         }
 
-        instructionsList.setModel(new DefaultEventListModel<Instruction>(instructionListClone.getInstructions()));
+        instructionsList.setModel(new DefaultEventListModel<>(instructionListClone.getInstructions()));
         instructionsList.addMouseListener(new MouseAdapter()
         {
             @Override
