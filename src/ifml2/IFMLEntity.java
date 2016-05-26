@@ -4,7 +4,7 @@ import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import org.jetbrains.annotations.NotNull;
 
-import java.text.MessageFormat;
+import static java.lang.String.format;
 
 public class IFMLEntity implements Cloneable
 {
@@ -20,7 +20,7 @@ public class IFMLEntity implements Cloneable
             }
             else
             {
-                throw new IllegalArgumentException(MessageFormat.format("EventList doesn't hold objects of {0} class", clazz.getSimpleName()));
+                throw new IllegalArgumentException(format("EventList doesn't hold objects of %s class", clazz.getSimpleName()));
             }
         }
         return cloneList;

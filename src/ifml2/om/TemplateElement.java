@@ -28,4 +28,8 @@ public abstract class TemplateElement extends IFMLEntity {
     }
 
     public abstract String getSimpleView();
+
+    boolean HasParameter() {
+        return parameter != null;
+    }
 }

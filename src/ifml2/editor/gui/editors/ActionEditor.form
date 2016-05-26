@@ -141,7 +141,7 @@
                   </nested-form>
                 </children>
               </grid>
-              <grid id="68cc0" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+              <grid id="68cc0" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                 <margin top="4" left="4" bottom="4" right="4"/>
                 <constraints>
                   <tabbedpane title="Ограничения"/>
@@ -149,83 +149,11 @@
                 <properties/>
                 <border type="none"/>
                 <children>
-                  <scrollpane id="27bdc">
+                  <nested-form id="463b3" form-file="ifml2/editor/gui/forms/ListEditForm.form" binding="restrictionsListEditForm" custom-create="true">
                     <constraints>
-                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                     </constraints>
-                    <properties/>
-                    <border type="none"/>
-                    <children>
-                      <component id="b228e" class="javax.swing.JList" binding="restrictionsList">
-                        <constraints/>
-                        <properties/>
-                      </component>
-                    </children>
-                  </scrollpane>
-                  <toolbar id="d3e26">
-                    <constraints>
-                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
-                        <preferred-size width="-1" height="20"/>
-                      </grid>
-                    </constraints>
-                    <properties>
-                      <floatable value="false"/>
-                      <opaque value="false"/>
-                    </properties>
-                    <clientProperties>
-                      <JToolBar.isRollover class="java.lang.Boolean" value="false"/>
-                    </clientProperties>
-                    <border type="none"/>
-                    <children>
-                      <component id="8a8ba" class="javax.swing.JButton" binding="addRestrictionButton">
-                        <constraints/>
-                        <properties>
-                          <text value="Добавить..."/>
-                        </properties>
-                      </component>
-                      <component id="f1b7a" class="javax.swing.JButton" binding="editRestrictionButton">
-                        <constraints/>
-                        <properties>
-                          <text value="Изменить..."/>
-                        </properties>
-                      </component>
-                      <component id="4a7a7" class="javax.swing.JButton" binding="delRestrictionButton">
-                        <constraints/>
-                        <properties>
-                          <text value="Удалить"/>
-                        </properties>
-                      </component>
-                    </children>
-                  </toolbar>
-                  <toolbar id="bd574">
-                    <constraints>
-                      <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="0" fill="0" indent="0" use-parent-layout="false">
-                        <preferred-size width="-1" height="20"/>
-                      </grid>
-                    </constraints>
-                    <properties>
-                      <floatable value="false"/>
-                      <orientation value="1"/>
-                    </properties>
-                    <clientProperties>
-                      <JToolBar.isRollover class="java.lang.Boolean" value="false"/>
-                    </clientProperties>
-                    <border type="none"/>
-                    <children>
-                      <component id="5af47" class="javax.swing.JButton" binding="upRestrictionButton">
-                        <constraints/>
-                        <properties>
-                          <text value="Button"/>
-                        </properties>
-                      </component>
-                      <component id="6896e" class="javax.swing.JButton" binding="downRestrictionButton">
-                        <constraints/>
-                        <properties>
-                          <text value="Button"/>
-                        </properties>
-                      </component>
-                    </children>
-                  </toolbar>
+                  </nested-form>
                 </children>
               </grid>
             </children>
@@ -234,4 +162,7 @@
       </grid>
     </children>
   </grid>
+  <inspectionSuppressions>
+    <suppress inspection="NoLabelFor" id="463b3"/>
+  </inspectionSuppressions>
 </form>
