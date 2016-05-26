@@ -3,9 +3,11 @@ package ifml2.om;
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ifml2.IFMLEntity;
+import org.jetbrains.annotations.NotNull;
 
 import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @XmlAccessorType(XmlAccessType.NONE)
@@ -64,13 +66,12 @@ public class Action extends IFMLEntity {
     public Object[] retrieveAllObjectParameters() {
         ArrayList<Object> parameters = new ArrayList<>();
 
-        for (Template template : templates) {
-            parameters.addAll(
-                    template.getElements().stream().filter(
-                            element -> element instanceof ObjectTemplateElement && element.getParameter() != null
-                    ).map(TemplateElement::getParameter).collect(Collectors.toList())
-            );
-        }
+        final List<String> allParams = templates.parallelStream()
+                .flatMap(template -> template.getElements().stream())
+                .filter(tempElem -> tempElem instanceof ObjectTemplateElement && tempElem.HasParameter())
+                .map(TemplateElement::getParameter)
+                .collect(Collectors.toList());
+        parameters.addAll(allParams);
 
         return parameters.toArray();
     }
@@ -85,6 +86,22 @@ public class Action extends IFMLEntity {
         clone.templates = deepCloneEventList(templates, Template.class);
 
         return clone;
+    }
+
+    public void copyTo(@NotNull Action action) throws CloneNotSupportedException {
+        action.name = name;
+        action.description = description;
+        action.procedureCall = procedureCall.clone();
+        action.restrictions = deepCloneEventList(restrictions, Restriction.class);
+        action.templates = deepCloneEventList(templates, Template.class);
+    }
+
+    public Procedure getProcedure() {
+        return procedureCall.getProcedure();
+    }
+
+    public void setProcedure(Procedure procedure) {
+        procedureCall.setProcedure(procedure);
     }
 
     @XmlAccessorType(XmlAccessType.NONE)
