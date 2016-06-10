@@ -141,12 +141,13 @@ public class IFMLObject extends IFMLEntity
         {
             throw new IFML2Exception(MessageFormat.format("Ссылка на словарь пустая у объекта {0}!", name));
         }
-        else if (wordLinks.getMainWord() == null)
+        final Word mainWord = wordLinks.getMainWord();
+        if (mainWord == null)
         {
             throw new IFML2Exception(MessageFormat.format("Ссылка на главное слово пустая у объекта {0}!", name));
         }
 
-        return wordLinks.getMainWord().getFormByGramCase(gramCase);
+        return mainWord.getFormByGramCase(gramCase);
     }
 
     public Value getMemberValue(String propertyName, SymbolResolver symbolResolver) throws IFML2Exception

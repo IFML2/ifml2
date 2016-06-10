@@ -5,6 +5,7 @@ import ifml2.vm.SymbolResolver;
 import ifml2.vm.values.CollectionValue;
 import ifml2.vm.values.ObjectValue;
 import ifml2.vm.values.Value;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import javax.xml.bind.annotation.XmlTransient;
@@ -42,6 +43,8 @@ public class Location extends IFMLObject
         }
     };
 
+    @NotNull
+    @Contract(pure = true)
     public static String getClassName()
     {
         return "Локация";

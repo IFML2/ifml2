@@ -7,8 +7,11 @@ import ifml2.FormatLogger;
 import ifml2.IFML2Exception;
 import ifml2.IFMLEntity;
 import ifml2.om.xml.XmlSchemaConstants;
+import ifml2.vm.SymbolResolver;
 import ifml2.vm.VirtualMachine;
+import ifml2.vm.values.CollectionValue;
 import ifml2.vm.values.Value;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import javax.xml.bind.annotation.*;
@@ -19,27 +22,26 @@ import static ifml2.om.xml.XmlSchemaConstants.ITEM_STARTING_POSITION_ELEMENT;
 import static ifml2.om.xml.XmlSchemaConstants.STARTING_POSITION_INVENTORY_ELEMENT;
 
 @XmlAccessorType(XmlAccessType.NONE)
-public class Item extends IFMLObject implements Cloneable
-{
+public class Item extends IFMLObject implements Cloneable {
     private static final FormatLogger LOG = FormatLogger.getLogger(Item.class);
+    private static final String CONTAINER_PROP_NAME = "СодержащаяКоллекция";
     @XmlElement(name = ITEM_STARTING_POSITION_ELEMENT)
     private ItemStartingPosition startingPosition = new ItemStartingPosition();
 
     @XmlTransient
     private List<? extends IFMLEntity> container;
 
-    public static String getClassName()
-    {
+    @NotNull
+    @Contract(pure = true)
+    static String getClassName() {
         return "Предмет";
     }
 
-    public ItemStartingPosition getStartingPosition()
-    {
+    public ItemStartingPosition getStartingPosition() {
         return startingPosition;
     }
 
-    public void setStartingPosition(ItemStartingPosition startingPosition)
-    {
+    public void setStartingPosition(ItemStartingPosition startingPosition) {
         this.startingPosition = startingPosition;
     }
 
@@ -49,15 +51,13 @@ public class Item extends IFMLObject implements Cloneable
      * @param item item to copy to
      * @throws CloneNotSupportedException
      */
-    public void copyTo(@NotNull Item item) throws CloneNotSupportedException
-    {
+    public void copyTo(@NotNull Item item) throws CloneNotSupportedException {
         super.copyTo(item);
         item.setStartingPosition(startingPosition.clone());
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return getName();
     }
 
@@ -67,16 +67,13 @@ public class Item extends IFMLObject implements Cloneable
      * @param virtualMachine Virtual Machine
      * @return Value returned by trigger
      */
-    public Value getAccessibleContent(VirtualMachine virtualMachine) throws IFML2Exception
-    {
+    public Value getAccessibleContent(VirtualMachine virtualMachine) throws IFML2Exception {
         //todo: run own triggers -- when they will exist
 
         // run roles' triggers
-        for (Role role : roles)
-        {
+        for (Role role : roles) {
             Trigger trigger = role.getRoleDefinition().getTrigger(GET_ACCESSIBLE_CONTENT);
-            if (trigger != null)
-            {
+            if (trigger != null) {
                 return virtualMachine.runTrigger(trigger, this);
             }
         }
@@ -84,24 +81,20 @@ public class Item extends IFMLObject implements Cloneable
         return null;
     }
 
-    public List<? extends IFMLEntity> getContainer()
-    {
+    public List<? extends IFMLEntity> getContainer() {
         return container;
     }
 
-    public void setContainer(List<? extends IFMLEntity> container)
-    {
+    public void setContainer(List<? extends IFMLEntity> container) {
         this.container = container;
     }
 
-    public void moveTo(@NotNull List<Item> collection)
-    {
+    public void moveTo(@NotNull List<Item> collection) {
         // contract
         assert container != null;
         //
 
-        if (!container.contains(this))
-        {
+        if (!container.contains(this)) {
             LOG.error("moveTo(): Item's container hasn't the item!");
         }
 
@@ -111,8 +104,7 @@ public class Item extends IFMLObject implements Cloneable
     }
 
     @Override
-    public Item clone() throws CloneNotSupportedException
-    {
+    public Item clone() throws CloneNotSupportedException {
         Item clone = (Item) super.clone(); // flat clone
 
         // deep clone
@@ -121,9 +113,15 @@ public class Item extends IFMLObject implements Cloneable
         return clone;
     }
 
+    @Override
+    public Value getMemberValue(@NotNull String propertyName, @NotNull SymbolResolver symbolResolver) throws IFML2Exception {
+        if (CONTAINER_PROP_NAME.equalsIgnoreCase(propertyName)) return new CollectionValue(container);
+        else
+            return super.getMemberValue(propertyName, symbolResolver);
+    }
+
     @XmlAccessorType(XmlAccessType.NONE)
-    public static class ItemStartingPosition implements Cloneable
-    {
+    public static class ItemStartingPosition implements Cloneable {
         @XmlElement(name = STARTING_POSITION_INVENTORY_ELEMENT)
         private boolean inventory = false;
 
@@ -133,8 +131,7 @@ public class Item extends IFMLObject implements Cloneable
         private EventList<Location> locations = new BasicEventList<Location>();
 
         @Override
-        public ItemStartingPosition clone() throws CloneNotSupportedException
-        {
+        public ItemStartingPosition clone() throws CloneNotSupportedException {
             ItemStartingPosition clone = (ItemStartingPosition) super.clone(); // flat clone
 
             // deep clone
@@ -143,18 +140,15 @@ public class Item extends IFMLObject implements Cloneable
             return clone;
         }
 
-        public boolean getInventory()
-        {
+        public boolean getInventory() {
             return inventory;
         }
 
-        public void setInventory(boolean inventory)
-        {
+        public void setInventory(boolean inventory) {
             this.inventory = inventory;
         }
 
-        public EventList<Location> getLocations()
-        {
+        public EventList<Location> getLocations() {
             return locations;
         }
     }

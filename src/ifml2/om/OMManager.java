@@ -57,16 +57,13 @@ public class OMManager
                         throw new IFML2Exception("В этом режиме нельзя открывать зашифрованные истории!");
                     }
 
-                    FileInputStream cipheredFile = new FileInputStream(storyFileName);
-                    try
-                    {
+                    try (FileInputStream cipheredFile = new FileInputStream(storyFileName)) {
                         // read key length
                         int keyLength = cipheredFile.read();
                         // read cipher key from file
                         byte[] keyBytes = new byte[keyLength];
                         int bytesRead = cipheredFile.read(keyBytes);
-                        if (bytesRead == -1)
-                        {
+                        if (bytesRead == -1) {
                             LOG.error("loadStoryFromFile :: file stream read() for  returned {0}", bytesRead);
                             throw new IFML2Exception("Неожиданно короткий файл {0}.", storyFileName);
                         }
@@ -87,10 +84,6 @@ public class OMManager
 
                         // write deciphered story to stream
                         inputStream = new ByteArrayInputStream(textDecrypted);
-                    }
-                    finally
-                    {
-                        cipheredFile.close();
                     }
                 }
                 else
