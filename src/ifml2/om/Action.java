@@ -2,6 +2,7 @@ package ifml2.om;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
+import ifml2.IFML2Exception;
 import ifml2.IFMLEntity;
 import org.jetbrains.annotations.NotNull;
 
@@ -88,12 +89,16 @@ public class Action extends IFMLEntity {
         return clone;
     }
 
-    public void copyTo(@NotNull Action action) throws CloneNotSupportedException {
+    public void copyTo(@NotNull Action action) throws IFML2Exception {
         action.name = name;
         action.description = description;
-        action.procedureCall = procedureCall.clone();
-        action.restrictions = deepCloneEventList(restrictions, Restriction.class);
-        action.templates = deepCloneEventList(templates, Template.class);
+        try {
+            action.procedureCall = procedureCall.clone();
+            action.restrictions = deepCloneEventList(restrictions, Restriction.class);
+            action.templates = deepCloneEventList(templates, Template.class);
+        } catch (CloneNotSupportedException e) {
+            throw new IFML2Exception("Системная ошибка: Клонирование не поддерживается: {0}", e.toString());
+        }
     }
 
     public Procedure getProcedure() {
