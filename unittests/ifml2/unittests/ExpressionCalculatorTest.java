@@ -1,79 +1,113 @@
 package ifml2.unittests;
 
 import ifml2.IFML2Exception;
+import ifml2.om.IFMLObject;
 import ifml2.om.Location;
-import ifml2.vm.ISymbolResolver;
+import ifml2.vm.ExpressionCalculator;
+import ifml2.vm.IFML2ExpressionException;
+import ifml2.vm.SymbolResolver;
 import ifml2.vm.values.*;
-import junit.framework.TestCase;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.mockito.Matchers;
 
-import static ifml2.vm.ExpressionCalculator.calculate;
+import java.util.Collections;
+
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ExpressionCalculatorTest extends TestCase
+public class ExpressionCalculatorTest
 {
+    private static SymbolResolver mockSymbolResolver;
 
-    private ISymbolResolver mockSymbolResolver;
-
-    public void setUp() throws Exception
+    @BeforeClass
+    public static void oneTimeSetUp() throws Exception
     {
-        super.setUp();
-        mockSymbolResolver = mock(ISymbolResolver.class);
+        mockSymbolResolver = mock(SymbolResolver.class);
+        when(mockSymbolResolver.resolveSymbol("да")).thenReturn(new BooleanValue(true));
+        when(mockSymbolResolver.resolveSymbol("нет")).thenReturn(new BooleanValue(false));
     }
 
-    // 1 + 1
-    public void testCalculateOnePlusOne() throws IFML2Exception
+    private static boolean extractBoolean(Value result) {
+        boolean resultIsBooleanValue;
+        BooleanValue booleanValue;
+        Boolean value;
+        resultIsBooleanValue = result instanceof BooleanValue;
+        assertTrue("Тип результата - не BooleanValue", resultIsBooleanValue);
+        booleanValue = (BooleanValue) result;
+        value = booleanValue.getValue();
+        return value;
+    }
+
+    private static Value calculate(String expression) throws IFML2Exception {
+        return ExpressionCalculator.calculate(mockSymbolResolver, expression);
+    }
+
+    // 1 + 1 => 2
+    @Test
+    public void onePlusOne() throws IFML2Exception
     {
-        Value result = calculate(mockSymbolResolver, "1 + 1");
+        Value result = calculate("1 + 1");
 
         boolean resultIsNumberValue = result instanceof NumberValue;
         assertTrue("Тип результата - не NumberValue", resultIsNumberValue);
 
         NumberValue numberValue = (NumberValue) result;
         Double value = numberValue.getValue();
-        assertEquals(2., value);
+        assertEquals(2., value, 0);
     }
 
-    // не да
-    public void testCalculateNotYes() throws IFML2Exception
+    // не да => нет
+    @Test
+    public void notYes() throws IFML2Exception
     {
-        when(mockSymbolResolver.resolveSymbol("да")).thenReturn(new BooleanValue(true));
-
-        Value result = calculate(mockSymbolResolver, "не да");
-
-        boolean resultIsBooleanValue = result instanceof BooleanValue;
-        assertTrue("Тип результата - не BooleanValue", resultIsBooleanValue);
-
-        BooleanValue booleanValue = (BooleanValue) result;
-        Boolean value = booleanValue.getValue();
-        assertFalse(value);
+        Value result = calculate("не да");
+        assertFalse(extractBoolean(result));
     }
 
-    // не не да
-    public void testCalculateNotNotYes() throws IFML2Exception
+    // не не да => да
+    @Test
+    public void notNotYes() throws IFML2Exception
     {
-        when(mockSymbolResolver.resolveSymbol("да")).thenReturn(new BooleanValue(true));
+        Value result = calculate("не не да");
+        assertTrue(extractBoolean(result));
+    }
 
-        Value result = calculate(mockSymbolResolver, "не не да");
+    // да и не нет и да => да
+    @Test
+    public void yesAndNotNoAndYes() throws IFML2Exception
+    {
+        Value result = calculate("да и не нет и да");
+        assertTrue(extractBoolean(result));
+    }
 
-        boolean resultIsBooleanValue = result instanceof BooleanValue;
-        assertTrue("Тип результата - не BooleanValue", resultIsBooleanValue);
+    // да и не да и да => нет
+    @Test
+    public void yesAndNotYesAndYes() throws IFML2Exception
+    {
+        Value result = calculate("да и не да и да");
+        assertFalse(extractBoolean(result));
+    }
 
-        BooleanValue booleanValue = (BooleanValue) result;
-        Boolean value = booleanValue.getValue();
-        assertTrue(value);
+    // да и не да и не не не да => нет
+    @Test
+    public void yesAndNotYesAndNotNotNotYes() throws IFML2Exception
+    {
+        Value result = calculate("да и не да и не не не да");
+        assertFalse(extractBoolean(result));
     }
 
     // локация.свойство
-    public void testCalculateLocationDotProperty() throws IFML2Exception
+    @Test
+    public void locationDotProperty() throws IFML2Exception
     {
-        Location mockLocation = mock(Location.class);
+        final Location mockLocation = mock(Location.class);
         when(mockSymbolResolver.resolveSymbol("локация")).thenReturn(new ObjectValue(mockLocation));
-        when(mockLocation.getMemberValue(eq("свойство"), Matchers.<ISymbolResolver>any())).thenReturn(new TextValue("значение"));
+        when(mockLocation.getMemberValue(eq("свойство"), Matchers.<SymbolResolver>any())).thenReturn(new TextValue("значение"));
 
-        Value result = calculate(mockSymbolResolver, "локация.свойство");
+        Value result = calculate("локация.свойство");
 
         boolean resultIsTextValue = result instanceof TextValue;
         assertTrue("Тип результата - не TextValue", resultIsTextValue);
@@ -83,23 +117,37 @@ public class ExpressionCalculatorTest extends TestCase
         assertEquals("значение", value);
     }
 
-    // 1 = 1
-    public void testCalculateOneEqualsOne() throws IFML2Exception
+    // объект.свойство
+    @Test
+    public void objectDotProperty() throws IFML2Exception
     {
-        Value result = calculate(mockSymbolResolver, "1 = 1");
+        final IFMLObject mockObject = mock(IFMLObject.class);
+        when(mockSymbolResolver.resolveSymbol("объект")).thenReturn(new ObjectValue(mockObject));
+        when(mockObject.getMemberValue(eq("свойство"), Matchers.<SymbolResolver>any())).thenReturn(new TextValue("значение"));
 
-        boolean resultIsBooleanValue = result instanceof BooleanValue;
-        assertTrue("Тип результата - не BooleanValue", resultIsBooleanValue);
+        Value result = calculate("объект.свойство");
 
-        BooleanValue booleanValue = (BooleanValue) result;
-        Boolean value = booleanValue.getValue();
-        assertTrue(value);
+        boolean resultIsTextValue = result instanceof TextValue;
+        assertTrue("Тип результата - не TextValue", resultIsTextValue);
+
+        TextValue textValue = (TextValue) result;
+        String value = textValue.getValue();
+        assertEquals("значение", value);
     }
 
-    // "Номер " + 1
-    public void testCalculateStringPlusOne() throws IFML2Exception
+    // 1 = 1 => да
+    @Test
+    public void oneEqualsOne() throws IFML2Exception
     {
-        Value result = calculate(mockSymbolResolver, "\"Номер \" + 1");
+        Value result = calculate("1 = 1");
+        assertTrue(extractBoolean(result));
+    }
+
+    // "Номер " + 1 => "Номер 1"
+    @Test
+    public void stringPlusOne() throws IFML2Exception
+    {
+        Value result = calculate("\"Номер \" + 1");
 
         boolean resultIsTextValue = result instanceof TextValue;
         assertTrue("Тип результата - не TextValue", resultIsTextValue);
@@ -109,81 +157,145 @@ public class ExpressionCalculatorTest extends TestCase
         assertEquals("Номер 1", value);
     }
 
-    // 1 < 2
-    public void testCalculateOneLesserThanTwo() throws IFML2Exception
+    // 1 < 2 => да
+    @Test
+    public void oneLesserThanTwo() throws IFML2Exception
     {
-        Value result = calculate(mockSymbolResolver, "1 < 2");
-
-        boolean resultIsBooleanValue = result instanceof BooleanValue;
-        assertTrue("Тип результата - не BooleanValue", resultIsBooleanValue);
-
-        BooleanValue booleanValue = (BooleanValue) result;
-        Boolean value = booleanValue.getValue();
-        assertTrue(value);
+        Value result = calculate("1 < 2");
+        assertTrue(extractBoolean(result));
     }
 
-    // 1 > 2
-    public void testCalculateOneGreaterThanTwo() throws IFML2Exception
+    // 1 > 2 => нет
+    @Test
+    public void oneGreaterThanTwo() throws IFML2Exception
     {
-        Value result = calculate(mockSymbolResolver, "1 > 2");
-
-        boolean resultIsBooleanValue = result instanceof BooleanValue;
-        assertTrue("Тип результата - не BooleanValue", resultIsBooleanValue);
-
-        BooleanValue booleanValue = (BooleanValue) result;
-        Boolean value = booleanValue.getValue();
-        assertFalse(value);
+        Value result = calculate("1 > 2");
+        assertFalse(extractBoolean(result));
     }
 
-    // 1 <> 2
-    public void testCalculateOneNotEqualsTwo() throws IFML2Exception
+    // 1 <> 2 => да
+    @Test
+    public void oneNotEqualsTwo() throws IFML2Exception
     {
-        Value result = calculate(mockSymbolResolver, "1 <> 2");
-
-        boolean resultIsBooleanValue = result instanceof BooleanValue;
-        assertTrue("Тип результата - не BooleanValue", resultIsBooleanValue);
-
-        BooleanValue booleanValue = (BooleanValue) result;
-        Boolean value = booleanValue.getValue();
-        assertTrue(value);
+        Value result = calculate("1 <> 2");
+        assertTrue(extractBoolean(result));
     }
 
-    // 1 - 2
-    public void testCalculateOneMinusTwo() throws IFML2Exception
+    // 1 - 2 => -1
+    @Test
+    public void oneMinusTwo() throws IFML2Exception
     {
-        Value result = calculate(mockSymbolResolver, "1 - 2");
+        Value result = calculate("1 - 2");
 
         boolean resultIsNumberValue = result instanceof NumberValue;
         assertTrue("Тип результата - не NumberValue", resultIsNumberValue);
 
         NumberValue numberValue = (NumberValue) result;
         Double value = numberValue.getValue();
-        assertEquals(-1., value);
+        assertEquals(-1., value, 0);
     }
 
-    // -1
-    public void testCalculateNegativeOne() throws IFML2Exception
+    // -1 => -1
+    @Test
+    public void negativeOne() throws IFML2Exception
     {
-        Value result = calculate(mockSymbolResolver, "-1");
+        Value result = calculate("-1");
 
         boolean resultIsNumberValue = result instanceof NumberValue;
         assertTrue("Тип результата - не NumberValue", resultIsNumberValue);
 
         NumberValue numberValue = (NumberValue) result;
         Double value = numberValue.getValue();
-        assertEquals(-1., value);
+        assertEquals(-1., value, 0);
     }
 
-    // 2 + -1
-    public void testCalculateTwoMinusNegativeOne() throws IFML2Exception
+    // 2 + -1 => 1
+    @Test
+    public void twoMinusNegativeOne() throws IFML2Exception
     {
-        Value result = calculate(mockSymbolResolver, "2 + -1");
+        Value result = calculate("2 + -1");
 
         boolean resultIsNumberValue = result instanceof NumberValue;
         assertTrue("Тип результата - не NumberValue", resultIsNumberValue);
 
         NumberValue numberValue = (NumberValue) result;
         Double value = numberValue.getValue();
-        assertEquals(1., value);
+        assertEquals(1., value, 0);
+    }
+
+    // операции с И
+    @Test
+    public void andOperations() throws IFML2Exception
+    {
+        Value result;
+
+        // да и да
+        result = calculate("да и да");
+        assertTrue(extractBoolean(result));
+
+        // да и нет
+        result = calculate("да и нет");
+        assertFalse(extractBoolean(result));
+
+        // нет и да
+        result = calculate("нет и да");
+        assertFalse(extractBoolean(result));
+
+        // нет и нет
+        result = calculate("нет и нет");
+        assertFalse(extractBoolean(result));
+    }
+
+    // операции с ИЛИ
+    @Test
+    public void orOperations() throws IFML2Exception
+    {
+        Value result;
+
+        // да или да
+        result = calculate("да или да");
+        assertTrue(extractBoolean(result));
+
+        // да или нет
+        result = calculate("да или нет");
+        assertTrue(extractBoolean(result));
+
+        // нет или да
+        result = calculate("нет или да");
+        assertTrue(extractBoolean(result));
+
+        // нет или нет
+        result = calculate("нет или нет");
+        assertFalse(extractBoolean(result));
+    }
+
+    // нет и НеизвестныйИд => нет // TODO: 07.03.2016 Нужно как-то проверять корректность выражений, например, все SymbolValue пытаться резолвить, если они не правая часть в DotExpression
+    @Test
+    public void noAndUnknownId() throws IFML2Exception
+    {
+        String expression = "нет и НеизвестныйИд";
+        Value result = calculate(expression);
+        assertFalse(extractBoolean(result));
+    }
+
+    // чушь должна падать
+    @Test(expected = IFML2ExpressionException.class)
+    public void wrongExpression() throws IFML2Exception
+    {
+        calculate("нет и bull3 fg9 blah4");
+    }
+
+    // элемент в коллекция => да
+    @Test
+    public void inExpression() throws IFML2Exception
+    {
+        IFMLObject ifmlObject = mock(IFMLObject.class);
+        CollectionValue collectionValue = new CollectionValue(Collections.singletonList(ifmlObject));
+        when(mockSymbolResolver.resolveSymbol("элемент")).thenReturn(new ObjectValue(ifmlObject));
+        when(mockSymbolResolver.resolveSymbol("коллекция")).thenReturn(collectionValue);
+
+        String expression = "элемент в коллекция";
+        Value result = calculate(expression);
+        assertTrue(extractBoolean(result));
     }
 }

@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
-public class RunningContext implements ISymbolResolver
+public class RunningContext implements SymbolResolver
 {
     private HashMap<String, Variable> loweredLocalVariablesMap = new HashMap<String, Variable>();
     private VirtualMachine virtualMachine = null;

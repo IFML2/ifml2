@@ -6,7 +6,7 @@ import ca.odell.glazedlists.GlazedLists;
 import ifml2.IFML2Exception;
 import ifml2.IFMLEntity;
 import ifml2.vm.IFML2VMException;
-import ifml2.vm.ISymbolResolver;
+import ifml2.vm.SymbolResolver;
 import ifml2.vm.values.BooleanValue;
 import ifml2.vm.values.TextValue;
 import ifml2.vm.values.Value;
@@ -19,22 +19,22 @@ import static ifml2.om.Word.GramCase;
 import static ifml2.om.xml.XmlSchemaConstants.*;
 
 @XmlAccessorType(XmlAccessType.NONE)
-public class IFMLObject extends IFMLEntity implements Cloneable
+public class IFMLObject extends IFMLEntity
 {
     private static final String NAME_PROPERTY_LITERAL = "имя";
     private static final String DESCRIPTION_PROPERTY_LITERAL = "описание";
 
     @XmlElementWrapper(name = ITEM_HOOKS_ELEMENT)
     @XmlElement(name = ITEM_HOOK_ELEMENT)
-    protected EventList<Hook> hooks = new BasicEventList<Hook>();
+    protected EventList<Hook> hooks = new BasicEventList<>();
 
     @XmlElementWrapper(name = IFML_OBJECT_ROLES_ELEMENT)
     @XmlElement(name = IFML_OBJECT_ROLE_ELEMENT)
-    protected EventList<Role> roles = new BasicEventList<Role>();
+    protected EventList<Role> roles = new BasicEventList<>();
 
     @XmlElementWrapper(name = OBJECT_PROPERTIES_ELEMENT)
     @XmlElement(name = OBJECT_PROPERTY_ELEMENT)
-    protected EventList<Property> properties = new BasicEventList<Property>();
+    protected EventList<Property> properties = new BasicEventList<>();
 
     @XmlAttribute(name = "id")
     @XmlID
@@ -52,7 +52,7 @@ public class IFMLObject extends IFMLEntity implements Cloneable
     @XmlElementWrapper(name = IFML_OBJECT_ATTRIBUTES_ELEMENT)
     @XmlElement(name = IFML_OBJECT_ATTRIBUTE_ELEMENT)
     @XmlIDREF
-    protected EventList<Attribute> attributes = new BasicEventList<Attribute>();
+    protected EventList<Attribute> attributes = new BasicEventList<>();
 
     @Override
     public IFMLObject clone() throws CloneNotSupportedException
@@ -141,15 +141,16 @@ public class IFMLObject extends IFMLEntity implements Cloneable
         {
             throw new IFML2Exception(MessageFormat.format("Ссылка на словарь пустая у объекта {0}!", name));
         }
-        else if (wordLinks.getMainWord() == null)
+        final Word mainWord = wordLinks.getMainWord();
+        if (mainWord == null)
         {
             throw new IFML2Exception(MessageFormat.format("Ссылка на главное слово пустая у объекта {0}!", name));
         }
 
-        return wordLinks.getMainWord().getFormByGramCase(gramCase);
+        return mainWord.getFormByGramCase(gramCase);
     }
 
-    public Value getMemberValue(String propertyName, ISymbolResolver symbolResolver) throws IFML2Exception
+    public Value getMemberValue(String propertyName, SymbolResolver symbolResolver) throws IFML2Exception
     {
         // test system properties
         if (NAME_PROPERTY_LITERAL.equalsIgnoreCase(propertyName))
@@ -229,7 +230,7 @@ public class IFMLObject extends IFMLEntity implements Cloneable
                 propertyName);
     }
 
-    public Value tryGetMemberValue(String symbol, ISymbolResolver symbolResolver)
+    public Value tryGetMemberValue(String symbol, SymbolResolver symbolResolver)
     {
         try
         {

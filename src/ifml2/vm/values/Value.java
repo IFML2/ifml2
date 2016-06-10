@@ -1,6 +1,7 @@
 package ifml2.vm.values;
 
 import ifml2.IFMLEntity;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import static ifml2.vm.values.Value.CompareResult.*;
@@ -41,7 +42,7 @@ public abstract class Value<T> extends IFMLEntity implements Cloneable
         else if(rightValue instanceof EmptyValue)
         {
             // если правое значение - пустота, то возвращаем равенство, если this тоже пустота
-            return this instanceof EmptyValue ? EQUAL : UNEQUAL;
+            return this instanceof EmptyValue ? EQUAL : UNEQUAL; // irish principle (double check) - cause it's overridden in EmptyValue
         }
         return NOT_APPLICABLE;
     }
@@ -86,6 +87,7 @@ public abstract class Value<T> extends IFMLEntity implements Cloneable
             this.caption = caption;
         }
 
+        @Contract(pure = true)
         @Override
         public String toString()
         {

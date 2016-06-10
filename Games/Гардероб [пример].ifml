@@ -8,11 +8,33 @@
         <globalVars/>
         <systemCommandsDisableOption DisableHelp="false" DisableDebug="false"/>
     </storyOptions>
-    <procedures/>
+    <procedures>
+        <procedure name="ПоменятьПредметы">
+            <procedureVariables/>
+            <procedureBody>
+                <var name="КоллОдного" value="ОдинПредмет.СодержащаяКоллекция"/>
+                <var name="КоллДругого" value="ДругойПредмет.СодержащаяКоллекция"/>
+                <moveItem item="ОдинПредмет" to="КоллДругого"/>
+                <moveItem item="ДругойПредмет" to="КоллОдного"/>
+            </procedureBody>
+            <parameters>
+                <parameter name="ОдинПредмет"/>
+                <parameter name="ДругойПредмет"/>
+            </parameters>
+        </procedure>
+    </procedures>
     <libraries>
         <library>standard/verbs.xml</library>
     </libraries>
     <dictionary>
+        <word>
+            <ip>пепел</ip>
+            <rp>пепла</rp>
+            <dp>пеплу</dp>
+            <vp>пепел</vp>
+            <tp>пеплом</tp>
+            <pp>пепле</pp>
+        </word>
         <word>
             <ip>стол</ip>
             <rp>стола</rp>
@@ -33,10 +55,10 @@
     <locations>
         <location id="ГардеробнаяЛок" name="Гардеробная">
             <hooks>
-                <hook action="осмотреться" type="before">
+                <hook action="осмотреться" objectElement="" type="before">
                     <instructions>
-                        <showPicture filepath="garderobe.jpg"/>
-                        <showMessage type="text" message="" carriageReturn="true"/>
+                        <showPicture filepath="garderobe.jpg" maxHeight="0" maxWidth="0"/>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="" type="text"/>
                     </instructions>
                 </hook>
             </hooks>
@@ -87,6 +109,15 @@
                         <showPicture filepath="hat.png" maxHeight="0" maxWidth="0"/>
                     </instructions>
                 </hook>
+                <hook action="зажечь [что]" objectElement="предмет" type="instead">
+                    <instructions>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="Вы подожгли шляпу, и она сгорела." type="text"/>
+                        <runProcedure procedure="ПоменятьПредметы" returnToVar="">
+                            <parameter name="ОдинПредмет" value="предмет"/>
+                            <parameter name="ДругойПредмет" value="ПепелПред"/>
+                        </runProcedure>
+                    </instructions>
+                </hook>
             </hooks>
             <roles>
                 <role name="надеваемый">
@@ -100,6 +131,20 @@
                 <word>шляпа</word>
             </words>
             <description>Фетровая шляпа.</description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations/>
+            </startingPosition>
+        </item>
+        <item id="ПепелПред" name="пепел">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="пепел">
+                <word>пепел</word>
+            </words>
+            <description>Серый бесформенный пепел.</description>
             <attributes/>
             <startingPosition>
                 <inventory>false</inventory>

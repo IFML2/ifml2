@@ -1,7 +1,9 @@
 <component name="libraryTable">
-  <library name="log4j:log4j:Latest" type="repository">
-    <properties maven-id="log4j:log4j:LATEST" />
+  <library name="log4j:log4j:Release" type="repository">
+    <properties maven-id="log4j:log4j:RELEASE" />
     <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/log4j/log4j/1.2.17/log4j-1.2.17.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/openejb/javaee-api/5.0-2/javaee-api-5.0-2.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/log4j/log4j/1.2.17/log4j-1.2.17.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/apache/openejb/javaee-api/5.0-2/javaee-api-5.0-2.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/log4j/log4j/1.2.17/log4j-1.2.17.jar!/" />
@@ -13,8 +15,10 @@
       <root url="jar://$MAVEN_REPOSITORY$/log4j/log4j/1.2.17/log4j-1.2.17-javadoc.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/log4j/log4j/1.2.17/log4j-1.2.17-javadoc.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/log4j/log4j/1.2.17/log4j-1.2.17-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/log4j/log4j/1.2.17/log4j-1.2.17-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/log4j/log4j/1.2.17/log4j-1.2.17-sources.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/log4j/log4j/1.2.17/log4j-1.2.17-sources.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/log4j/log4j/1.2.17/log4j-1.2.17-sources.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/log4j/log4j/1.2.17/log4j-1.2.17-sources.jar!/" />

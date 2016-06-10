@@ -1,8 +1,9 @@
 <project>
     <shortName>ifml2</shortName>
     <fullName>IFML</fullName>
-    <version>2016.4</version>
+    <version>2016.5</version>
     <readmeFile>../docs/notes.txt</readmeFile>
+    <splashImage>../ifmlicon.png</splashImage>
     <defaultLanguage>ru</defaultLanguage>
     <componentList>
         <component>

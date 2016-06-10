@@ -1,10 +1,11 @@
 package ifml2.om;
 
 import ifml2.IFML2Exception;
-import ifml2.vm.ISymbolResolver;
+import ifml2.vm.SymbolResolver;
 import ifml2.vm.values.CollectionValue;
 import ifml2.vm.values.ObjectValue;
 import ifml2.vm.values.Value;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import javax.xml.bind.annotation.XmlTransient;
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 @XmlTransient
-public class Location extends IFMLObject implements Cloneable
+public class Location extends IFMLObject
 {
     protected HashMap<ExitDirection, Location> exits = new HashMap<>();
     protected List<Item> items = new ArrayList<>();
@@ -42,6 +43,8 @@ public class Location extends IFMLObject implements Cloneable
         }
     };
 
+    @NotNull
+    @Contract(pure = true)
     public static String getClassName()
     {
         return "Локация";
@@ -135,7 +138,7 @@ public class Location extends IFMLObject implements Cloneable
     }
 
     @Override
-    public Value getMemberValue(@NotNull String propertyName, ISymbolResolver symbolResolver) throws IFML2Exception
+    public Value getMemberValue(@NotNull String propertyName, SymbolResolver symbolResolver) throws IFML2Exception
     {
         String loweredPropName = propertyName.toLowerCase();
 
