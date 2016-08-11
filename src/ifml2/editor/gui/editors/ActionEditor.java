@@ -1,7 +1,6 @@
 package ifml2.editor.gui.editors;
 
 import ca.odell.glazedlists.swing.DefaultEventComboBoxModel;
-import ifml2.IFML2Exception;
 import ifml2.editor.DataNotValidException;
 import ifml2.editor.IFML2EditorException;
 import ifml2.editor.gui.AbstractEditor;
@@ -27,7 +26,7 @@ public class ActionEditor extends AbstractEditor<Action> {
     private ListEditForm<Restriction> restrictionsListEditForm;
     private Story.DataHelper storyDataHelper;
 
-    public ActionEditor(Window owner, @NotNull Action action, Story.DataHelper storyDataHelper) {
+    public ActionEditor(Window owner, @NotNull Action action, Story.DataHelper storyDataHelper) throws IFML2EditorException {
         super(owner);
         this.storyDataHelper = storyDataHelper;
         initializeEditor("Действие", contentPane, buttonOK, buttonCancel);
@@ -36,8 +35,7 @@ public class ActionEditor extends AbstractEditor<Action> {
         try {
             actionClone = action.clone();
         } catch (CloneNotSupportedException e) {
-            //GUIUtils.showErrorMessage(this, e);
-            throw new RuntimeException(e);
+            throw new IFML2EditorException("Ошибка при клонировании действия: {0}", e.toString());
         }
 
         // bind data
@@ -85,8 +83,8 @@ public class ActionEditor extends AbstractEditor<Action> {
         actionClone.setProcedure((Procedure) procedureCallCombo.getSelectedItem());
         try {
             actionClone.copyTo(action);
-        } catch (IFML2Exception e) {
-            throw new IFML2EditorException("Ошибка при клонировании Действия: {0}", e.toString());
+        } catch (CloneNotSupportedException e) {
+            throw new IFML2EditorException("Ошибка при копировании действия: {0}", e.toString());
         }
     }
 

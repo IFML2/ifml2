@@ -1,0 +1,9 @@
+Editor
+    + ProcedureEditor
+        + EditorUtils.showAssociatedEditor
+    + ActionEditor
+    + StoryOptionsEditor
+    + InheritedSystemProceduresEditor
+    + UsedLibsEditor
+    + ItemEditor
+    + LocationEditor

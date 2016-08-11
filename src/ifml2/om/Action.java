@@ -2,7 +2,6 @@ package ifml2.om;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
-import ifml2.IFML2Exception;
 import ifml2.IFMLEntity;
 import org.jetbrains.annotations.NotNull;
 
@@ -68,8 +67,8 @@ public class Action extends IFMLEntity {
         ArrayList<Object> parameters = new ArrayList<>();
 
         final List<String> allParams = templates.parallelStream()
-                .flatMap(template -> template.getElements().stream())
-                .filter(tempElem -> tempElem instanceof ObjectTemplateElement && tempElem.HasParameter())
+                .flatMap(t -> t.getElements().stream())
+                .filter(te -> te instanceof ObjectTemplateElement && te.HasParameter())
                 .map(TemplateElement::getParameter)
                 .collect(Collectors.toList());
         parameters.addAll(allParams);
@@ -89,16 +88,12 @@ public class Action extends IFMLEntity {
         return clone;
     }
 
-    public void copyTo(@NotNull Action action) throws IFML2Exception {
+    public void copyTo(@NotNull Action action) throws CloneNotSupportedException {
         action.name = name;
         action.description = description;
-        try {
-            action.procedureCall = procedureCall.clone();
-            action.restrictions = deepCloneEventList(restrictions, Restriction.class);
-            action.templates = deepCloneEventList(templates, Template.class);
-        } catch (CloneNotSupportedException e) {
-            throw new IFML2Exception("Системная ошибка: Клонирование не поддерживается: {0}", e.toString());
-        }
+        action.procedureCall = procedureCall.clone();
+        action.restrictions = deepCloneEventList(restrictions, Restriction.class);
+        action.templates = deepCloneEventList(templates, Template.class);
     }
 
     public Procedure getProcedure() {
