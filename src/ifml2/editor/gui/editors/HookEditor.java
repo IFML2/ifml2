@@ -139,7 +139,7 @@ public class HookEditor extends AbstractEditor<Hook> {
     }
 
     private void createUIComponents() {
-        instructionsListEditForm = new ListEditForm<Instruction>(this, "инструкцию", "инструкции", Word.Gender.FEMININE, Instruction.class) {
+        instructionsListEditForm = new ListEditForm<Instruction>(this, "инструкцию", "инструкции", Word.Gender.FEMININE) {
             @Override
             protected Instruction createElement() throws Exception {
                 Instruction.Type instrType = EditorUtils.askInstructionType(HookEditor.this);

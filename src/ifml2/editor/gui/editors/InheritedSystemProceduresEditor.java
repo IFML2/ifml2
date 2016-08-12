@@ -123,7 +123,7 @@ public class InheritedSystemProceduresEditor extends AbstractEditor<InheritedSys
      */
     private class ParseErrorHandlerProcedureEditor extends ProcedureEditor
     {
-        public ParseErrorHandlerProcedureEditor(Procedure procedure, Story.DataHelper storyDataHelper)
+        ParseErrorHandlerProcedureEditor(Procedure procedure, Story.DataHelper storyDataHelper)
         {
             super(InheritedSystemProceduresEditor.this, procedure, storyDataHelper);
         }

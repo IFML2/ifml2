@@ -26,8 +26,7 @@ import java.util.List;
 import static ifml2.om.Word.Gender.FEMININE;
 import static ifml2.om.Word.Gender.MASCULINE;
 
-public class ItemEditor extends AbstractEditor<Item>
-{
+public class ItemEditor extends AbstractEditor<Item> {
     private static final String ITEM_EDITOR_TITLE = "Предмет";
     private JPanel contentPane;
     private JButton buttonOK;
@@ -48,8 +47,7 @@ public class ItemEditor extends AbstractEditor<Item>
     private Story.DataHelper storyDataHelper;
     private Item originalItem;
 
-    public ItemEditor(Window owner, @NotNull final Item item, final Story.DataHelper storyDataHelper)
-    {
+    public ItemEditor(Window owner, @NotNull final Item item, final Story.DataHelper storyDataHelper) {
         super(owner);
 
         this.originalItem = item;
@@ -58,12 +56,9 @@ public class ItemEditor extends AbstractEditor<Item>
         initializeEditor(ITEM_EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
 
         // clone data
-        try
-        {
+        try {
             this.itemClone = item.clone();
-        }
-        catch (CloneNotSupportedException e)
-        {
+        } catch (CloneNotSupportedException e) {
             GUIUtils.showErrorMessage(this, e);
         }
 
@@ -71,28 +66,22 @@ public class ItemEditor extends AbstractEditor<Item>
 
         // -- init form --
 
-        editAttributesButton.setAction(new ButtonAction(editAttributesButton)
-        {
+        editAttributesButton.setAction(new ButtonAction(editAttributesButton) {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 final EventList<Attribute> attributes = itemClone.getAttributes();
                 ObjectAttributesEditor objectAttributesEditor = new ObjectAttributesEditor(ItemEditor.this, attributes, storyDataHelper);
-                if (objectAttributesEditor.showDialog())
-                {
+                if (objectAttributesEditor.showDialog()) {
                     objectAttributesEditor.updateData(attributes);
                 }
             }
         });
-        editWordsButton.setAction(new ButtonAction(editWordsButton)
-        {
+        editWordsButton.setAction(new ButtonAction(editWordsButton) {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 final WordLinks wordLinks = itemClone.getWordLinks();
                 WordLinksEditor wordLinksEditor = new WordLinksEditor(ItemEditor.this, storyDataHelper.getDictionary(), wordLinks);
-                if (wordLinksEditor.showDialog())
-                {
+                if (wordLinksEditor.showDialog()) {
                     wordLinksEditor.updateData(wordLinks);
                 }
             }
@@ -103,39 +92,31 @@ public class ItemEditor extends AbstractEditor<Item>
         toGenerateId = id == null || "".equals(id);
 
         // name and id generation listeners
-        nameText.getDocument().addDocumentListener(new DocumentListener()
-        {
+        nameText.getDocument().addDocumentListener(new DocumentListener() {
             @Override
-            public void insertUpdate(DocumentEvent e)
-            {
+            public void insertUpdate(DocumentEvent e) {
                 updateId();
             }
 
             @Override
-            public void removeUpdate(DocumentEvent e)
-            {
+            public void removeUpdate(DocumentEvent e) {
                 updateId();
             }
 
             @Override
-            public void changedUpdate(DocumentEvent e)
-            { /* do nothing */ }
+            public void changedUpdate(DocumentEvent e) { /* do nothing */ }
         });
-        idText.addKeyListener(new KeyAdapter()
-        {
+        idText.addKeyListener(new KeyAdapter() {
             @Override
-            public void keyTyped(KeyEvent e)
-            {
-                if (e.getKeyChar() != '\0')
-                {
+            public void keyTyped(KeyEvent e) {
+                if (e.getKeyChar() != '\0') {
                     toGenerateId = false;
                 }
             }
         });
     }
 
-    private void bindData()
-    {
+    private void bindData() {
         // set id, name and description
         idText.setText(itemClone.getId());
         nameText.setText(itemClone.getName());
@@ -154,16 +135,12 @@ public class ItemEditor extends AbstractEditor<Item>
         DefaultEventSelectionModel<Location> selectionModel = new DefaultEventSelectionModel<>(storyDataHelper.getLocations());
         itemInLocationsList.setSelectionModel(selectionModel);
         selectionModel.setValueIsAdjusting(true);
-        try
-        {
-            for (Location startLocation : itemClone.getStartingPosition().getLocations())
-            {
+        try {
+            for (Location startLocation : itemClone.getStartingPosition().getLocations()) {
                 int index = storyDataHelper.getLocations().indexOf(startLocation);
                 selectionModel.addSelectionInterval(index, index);
             }
-        }
-        finally
-        {
+        } finally {
             selectionModel.setValueIsAdjusting(false);
         }
         itemInLocationsList.ensureIndexIsVisible(selectionModel.getAnchorSelectionIndex());
@@ -178,81 +155,63 @@ public class ItemEditor extends AbstractEditor<Item>
         hooksListEditForm.bindData(itemClone.getHooks());
     }
 
-    private boolean editHook(@Nullable Hook hook)
-    {
-        if (hook != null)
-        {
-            try
-            {
+    private boolean editHook(@Nullable Hook hook) {
+        if (hook != null) {
+            try {
                 HookEditor hookEditor = new HookEditor(ItemEditor.this, hook, true, storyDataHelper);
-                if (hookEditor.showDialog())
-                {
+                if (hookEditor.showDialog()) {
                     hookEditor.updateData(hook);
                     return true;
                 }
-            }
-            catch (IFML2Exception e)
-            {
+            } catch (IFML2Exception e) {
                 GUIUtils.showErrorMessage(this, e);
             }
         }
         return false;
     }
 
-    private void updateId()
-    {
-        if (toGenerateId)
-        {
+    private void updateId() {
+        if (toGenerateId) {
             idText.setText(storyDataHelper.generateIdByName(nameText.getText(), Item.class));
         }
     }
 
     @Override
-    protected void validateData() throws DataNotValidException
-    {
+    protected void validateData() throws DataNotValidException {
         //check name
-        if (nameText.getText().trim().length() == 0)
-        {
+        if (nameText.getText().trim().length() == 0) {
             throw new DataNotValidException("У предмета должно быть задано имя.", nameText);
         }
 
         // check dictionary
-        if (itemClone.getWordLinks().getWords().size() == 0)
-        {
+        if (itemClone.getWordLinks().getWords().size() == 0) {
             throw new DataNotValidException("У предмета не задан словарь.", editWordsButton);
         }
 
         // check id
         String id = idText.getText().trim();
-        if (id.length() == 0)
-        {
+        if (id.length() == 0) {
             throw new DataNotValidException("У предмета должен быть задан идентификатор.", idText);
         }
 
         Object object = storyDataHelper.findObjectById(id);
-        if (object != null && !object.equals(originalItem))
-        {
+        if (object != null && !object.equals(originalItem)) {
             String className = null;
-            try
-            {
+            try {
                 className = storyDataHelper.getObjectClassName(object);
-            }
-            catch (IFML2Exception e)
-            {
+            } catch (IFML2Exception e) {
                 GUIUtils.showErrorMessage(this, e);
             }
             throw new DataNotValidException(
                     "У предмета должен быть уникальный идентификатор - не пересекаться с другими локациями, предметами и словарём.\n" +
-                    MessageFormat.format("Найден другой объект с тем же идентификатором: \"{0}\" типа \"{1}\".", object, className),
+                            MessageFormat.format("Найден другой объект с тем же идентификатором: \"{0}\" типа \"{1}\".", object, className),
                     idText);
         }
     }
 
     @Override
-    public void updateData(@NotNull Item item)
-    {
-        try
-        {
+    public void updateData(@NotNull Item item) {
+        try {
             // update clone's local data
             itemClone.setId(idText.getText().trim());
             itemClone.setName(nameText.getText().trim());
@@ -260,37 +219,29 @@ public class ItemEditor extends AbstractEditor<Item>
             itemClone.getStartingPosition().setInventory(itemInInventoryCheck.isSelected());
             EventList<Location> locations = itemClone.getStartingPosition().getLocations();
             locations.clear();
-            for (Object object : itemInLocationsList.getSelectedValuesList())
-            {
+            for (Object object : itemInLocationsList.getSelectedValuesList()) {
                 locations.add((Location) object);
             }
 
             // copy clone to orig obj
             itemClone.copyTo(item);
-        }
-        catch (CloneNotSupportedException e)
-        {
+        } catch (CloneNotSupportedException e) {
             GUIUtils.showErrorMessage(this, e);
         }
     }
 
-    private void createUIComponents()
-    {
-        rolesListEditForm = new ListEditForm<Role>(this, "роль", "роли", FEMININE, Role.class)
-        {
+    private void createUIComponents() {
+        rolesListEditForm = new ListEditForm<Role>(this, "роль", "роли", FEMININE) {
             @Override
-            protected Role createElement() throws Exception
-            {
+            protected Role createElement() throws Exception {
                 final List<RoleDefinition> allRoleDefinitions = storyDataHelper.getCopyOfAllRoleDefinitions();
 
                 // remove all definitions that already used
-                for (Role role : itemClone.getRoles())
-                {
+                for (Role role : itemClone.getRoles()) {
                     allRoleDefinitions.remove(role.getRoleDefinition());
                 }
 
-                if (allRoleDefinitions.size() == 0)
-                {
+                if (allRoleDefinitions.size() == 0) {
                     JOptionPane.showMessageDialog(ItemEditor.this, "Уже добавлены все возможные роли", "Нет больше ролей",
                             JOptionPane.INFORMATION_MESSAGE);
                     return null;
@@ -300,8 +251,7 @@ public class ItemEditor extends AbstractEditor<Item>
                         .showInputDialog(ItemEditor.this, "Выберите роль", "Добавление роли", JOptionPane.QUESTION_MESSAGE, null,
                                 allRoleDefinitions.toArray(), null);
 
-                if (roleDefinition != null)
-                {
+                if (roleDefinition != null) {
                     Role role = new Role(roleDefinition);
                     return editRole(role) ? role : null;
                 }
@@ -310,44 +260,34 @@ public class ItemEditor extends AbstractEditor<Item>
             }
 
             @Override
-            protected boolean editElement(Role selectedElement) throws Exception
-            {
+            protected boolean editElement(Role selectedElement) throws Exception {
                 return editRole(selectedElement);
             }
         };
 
-        hooksListEditForm = new ListEditForm<Hook>(this, "перехват", "перехвата", MASCULINE, Hook.class)
-        {
+        hooksListEditForm = new ListEditForm<Hook>(this, "перехват", "перехвата", MASCULINE) {
             @Override
-            protected Hook createElement() throws Exception
-            {
+            protected Hook createElement() throws Exception {
                 Hook hook = new Hook();
                 return editHook(hook) ? hook : null;
             }
 
             @Override
-            protected boolean editElement(Hook selectedElement) throws Exception
-            {
+            protected boolean editElement(Hook selectedElement) throws Exception {
                 return editHook(selectedElement);
             }
         };
     }
 
-    private boolean editRole(@Nullable Role role)
-    {
-        if (role != null)
-        {
-            try
-            {
+    private boolean editRole(@Nullable Role role) {
+        if (role != null) {
+            try {
                 RoleEditor roleEditor = new RoleEditor(ItemEditor.this, role, originalItem, storyDataHelper);
-                if (roleEditor.showDialog())
-                {
+                if (roleEditor.showDialog()) {
                     roleEditor.updateData(role);
                     return true;
                 }
-            }
-            catch (IFML2Exception e)
-            {
+            } catch (IFML2Exception e) {
                 GUIUtils.showErrorMessage(this, e);
             }
         }

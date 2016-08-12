@@ -598,7 +598,7 @@ public class Editor extends JFrame
 
     private void createUIComponents()
     {
-        locationsListEditForm = new ListEditForm<Location>(this, "локацию", "локации", Word.Gender.FEMININE, Location.class)
+        locationsListEditForm = new ListEditForm<Location>(this, "локацию", "локации", Word.Gender.FEMININE)
         {
             {
                 addListChangeListener(e -> markStoryEdited());
@@ -630,7 +630,7 @@ public class Editor extends JFrame
             //todo warn that location will be deleted from items
         };
 
-        itemsListEditForm = new ListEditForm<Item>(this, "предмет", "предмета", Word.Gender.MASCULINE, Item.class)
+        itemsListEditForm = new ListEditForm<Item>(this, "предмет", "предмета", Word.Gender.MASCULINE)
         {
             {
                 addListChangeListener(e -> markStoryEdited());
@@ -659,7 +659,7 @@ public class Editor extends JFrame
             }
         };
 
-        proceduresListEditForm = new ListEditForm<Procedure>(this, "процедуру", "процедуры", Word.Gender.FEMININE, Procedure.class)
+        proceduresListEditForm = new ListEditForm<Procedure>(this, "процедуру", "процедуры", Word.Gender.FEMININE)
         {
             {
                 addListChangeListener(e -> markStoryEdited());
@@ -721,7 +721,7 @@ public class Editor extends JFrame
             }
         };
 
-        actionsListEditForm = new ListEditForm<Action>(this, "действие", "действия", Word.Gender.NEUTER, Action.class)
+        actionsListEditForm = new ListEditForm<Action>(this, "действие", "действия", Word.Gender.NEUTER)
         {
             {
                 addListChangeListener(e -> markStoryEdited());

@@ -86,7 +86,7 @@ public class ActionEditor extends AbstractEditor<Action> {
     }
 
     private void createUIComponents() {
-        templatesListEditForm = new ListEditForm<Template>(this, "шаблон", "шаблона", Word.Gender.MASCULINE, Template.class) {
+        templatesListEditForm = new ListEditForm<Template>(this, "шаблон", "шаблона", Word.Gender.MASCULINE) {
             @Override
             protected Template createElement() throws Exception {
                 Template template = new Template();
@@ -99,7 +99,7 @@ public class ActionEditor extends AbstractEditor<Action> {
             }
         };
 
-        restrictionsListEditForm = new ListEditForm<Restriction>(this, "ограничение", "ограничения", Word.Gender.NEUTER, Restriction.class) {
+        restrictionsListEditForm = new ListEditForm<Restriction>(this, "ограничение", "ограничения", Word.Gender.NEUTER) {
             @Override
             protected Restriction createElement() throws Exception {
                 Restriction restriction = new Restriction();

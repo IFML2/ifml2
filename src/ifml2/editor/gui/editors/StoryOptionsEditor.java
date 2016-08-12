@@ -96,8 +96,8 @@ public class StoryOptionsEditor extends AbstractEditor<StoryOptions>
 
     private void createUIComponents()
     {
-        globalVarListEditForm = new ListEditForm<SetVarInstruction>(this, "глобальную переменную", "глобальной переменной", FEMININE,
-                SetVarInstruction.class)
+        globalVarListEditForm = new ListEditForm<SetVarInstruction>(this, "глобальную переменную", "глобальной переменной", FEMININE
+        )
         {
             @Override
             protected SetVarInstruction createElement() throws Exception

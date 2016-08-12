@@ -99,7 +99,7 @@ public class ProcedureEditor extends AbstractEditor<Procedure>
 
     private void createUIComponents()
     {
-        paramsEditForm = new ListEditForm<Parameter>(this, "параметр", "параметра", MASCULINE, Parameter.class)
+        paramsEditForm = new ListEditForm<Parameter>(this, "параметр", "параметра", MASCULINE)
         {
             @Override
             protected Parameter createElement() throws Exception
@@ -126,7 +126,7 @@ public class ProcedureEditor extends AbstractEditor<Procedure>
             }
         };
 
-        instructionsEditForm = new ListEditForm<Instruction>(this, "инструкцию", "инструкции", FEMININE, Instruction.class)
+        instructionsEditForm = new ListEditForm<Instruction>(this, "инструкцию", "инструкции", FEMININE)
         {
             @Override
             protected Instruction createElement() throws Exception
