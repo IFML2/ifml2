@@ -49,29 +49,21 @@ public class ActionEditor extends AbstractEditor<Action> {
         procedureCallCombo.setSelectedItem(action.getProcedure());
     }
 
-    private boolean editRestriction(Restriction restriction) {
+    private boolean editRestriction(Restriction restriction) throws IFML2EditorException {
         RestrictionEditor restrictionEditor = new RestrictionEditor(this, restriction, storyDataHelper);
         if (restrictionEditor.showDialog()) {
-            try {
-                restrictionEditor.updateData(restriction);
-                return true;
-            } catch (IFML2EditorException e) {
-                showErrorMessage(this, e);
-            }
+            restrictionEditor.updateData(restriction);
+            return true;
         }
         return false;
     }
 
-    private boolean editTemplate(@NotNull Template template) {
+    private boolean editTemplate(@NotNull Template template) throws IFML2EditorException {
         Procedure selectedProcedure = (Procedure) procedureCallCombo.getSelectedItem();
         TemplateEditor templateEditor = new TemplateEditor(this, template, selectedProcedure);
         if (templateEditor.showDialog()) {
-            try {
-                templateEditor.updateData(template);
-                return true;
-            } catch (IFML2EditorException e) {
-                showErrorMessage(this, e);
-            }
+            templateEditor.updateData(template);
+            return true;
         }
         return false;
     }
