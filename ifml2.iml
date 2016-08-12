@@ -12,7 +12,7 @@
       <excludeFolder url="file://$MODULE_DIR$/lib" />
       <excludeFolder url="file://$MODULE_DIR$/portable" />
     </content>
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="forms_rt" level="project" />
     <orderEntry type="module-library">
@@ -27,7 +27,6 @@
     <orderEntry type="library" scope="TEST" name="junit:junit:Latest" level="project" />
     <orderEntry type="library" name="log4j:log4j:Latest" level="project" />
     <orderEntry type="library" name="net.java.dev.glazedlists:glazedlists_java15:Latest" level="project" />
-    <orderEntry type="library" name="org.mockito:mockito-core:Latest" level="project" />
-    <orderEntry type="library" name="annotations" level="application" />
+    <orderEntry type="library" name="org.mockito:mockito-core:Release" level="project" />
   </component>
 </module>

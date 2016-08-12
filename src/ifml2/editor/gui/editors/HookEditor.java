@@ -3,16 +3,14 @@ package ifml2.editor.gui.editors;
 import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.swing.DefaultEventComboBoxModel;
-import ca.odell.glazedlists.swing.DefaultEventListModel;
-import ifml2.GUIUtils;
 import ifml2.editor.IFML2EditorException;
 import ifml2.editor.gui.AbstractEditor;
-import ifml2.editor.gui.ButtonAction;
 import ifml2.editor.gui.EditorUtils;
+import ifml2.editor.gui.forms.ListEditForm;
 import ifml2.om.Action;
 import ifml2.om.Hook;
-import ifml2.om.InstructionList;
 import ifml2.om.Story;
+import ifml2.om.Word;
 import ifml2.vm.instructions.Instruction;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,8 +18,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.text.MessageFormat;
 import java.util.Objects;
 
@@ -29,42 +25,32 @@ import static ifml2.om.Hook.Type.*;
 
 public class HookEditor extends AbstractEditor<Hook> {
     private static final String HOOK_EDITOR_TITLE = "Перехват";
+    private final Hook hookClone;
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
-    private JComboBox actionCombo;
-    private JComboBox parameterCombo;
+    private JComboBox<Action> actionCombo;
+    private JComboBox<Object> parameterCombo;
     private JRadioButton beforeRadio;
     private JRadioButton insteadRadio;
     private JRadioButton afterRadio;
-    private JButton editInstructionsButton;
-    private JList instructionsList;
-    // data to edit
-    private InstructionList instructionListClone; // no need to clone - InstructionList isn't modified here
+    private ListEditForm<Instruction> instructionsListEditForm;
+    private Story.DataHelper storyDataHelper;
 
     HookEditor(Window owner, @NotNull Hook hook, final boolean areObjectHooks, final Story.DataHelper storyDataHelper) throws IFML2EditorException {
         super(owner);
+        this.storyDataHelper = storyDataHelper;
         initializeEditor(HOOK_EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
 
-        // -- form actions init --
-
-        editInstructionsButton.setAction(new ButtonAction(editInstructionsButton) {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                InstructionsEditor instructionsEditor = new InstructionsEditor(HookEditor.this, instructionListClone,
-                        storyDataHelper);
-                if (instructionsEditor.showDialog()) {
-                    instructionsEditor.updateData(instructionListClone);
-                }
-            }
-        });
-
-        // -- data init --
+        // clone whole entity
         try {
-            instructionListClone = hook.getInstructionList().clone();
+            hookClone = hook.clone();
         } catch (CloneNotSupportedException e) {
-            GUIUtils.showErrorMessage(this, e);
+            throw new IFML2EditorException("Ошибка при клонировании перехвата: {0}", e.toString());
         }
+
+        // bind data
+        bindData();
 
         //  -- form init --
 
@@ -83,7 +69,7 @@ public class HookEditor extends AbstractEditor<Hook> {
                 if (prevSelectedAction != selectedAction) {
                     prevSelectedAction = selectedAction;
                     if (parameterCombo.isVisible()) {
-                        parameterCombo.setModel(new DefaultComboBoxModel(selectedAction.retrieveAllObjectParameters()));
+                        parameterCombo.setModel(new DefaultComboBoxModel<>(selectedAction.retrieveAllObjectParameters()));
                         if (parameterCombo.getItemCount() > 0) // if there are elements ...
                         {
                             parameterCombo.setSelectedIndex(0); // ... select first element
@@ -100,8 +86,9 @@ public class HookEditor extends AbstractEditor<Hook> {
                 (o1, o2) -> Objects.compare(o1.getName(), o2.getName(), String::compareToIgnoreCase));
         actionCombo.setModel(new DefaultEventComboBoxModel<>(sortedList));
 
-        if (hook.getAction() != null) {
-            actionCombo.setSelectedItem(hook.getAction()); // select hook's action
+        final Action action = hook.getAction();
+        if (action != null) {
+            actionCombo.setSelectedItem(action); // select hook's action
             if (hook.getObjectElement() != null) // if hook has assigned objectElement
             {
                 parameterCombo.setSelectedItem(hook.getObjectElement());
@@ -125,35 +112,50 @@ public class HookEditor extends AbstractEditor<Hook> {
             default:
                 throw new IFML2EditorException(MessageFormat.format("Unknown hook type: {0}", hook.getType()));
         }
+    }
 
-        instructionsList.setModel(new DefaultEventListModel<>(instructionListClone.getInstructions()));
-        instructionsList.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
-                    Instruction instruction = (Instruction) instructionsList.getSelectedValue();
-                    if (instruction != null) {
-                        EditorUtils.showAssociatedEditor(HookEditor.this, instruction, storyDataHelper);
-                    }
-                }
-            }
-        });
+    private void bindData() {
+        instructionsListEditForm.bindData(hookClone.getInstructionList().getInstructions());
     }
 
     @Override
     public void updateData(@NotNull Hook hook) throws IFML2EditorException {
-        hook.setAction((Action) actionCombo.getSelectedItem());
-        hook.setObjectElement((String) parameterCombo.getSelectedItem());
+        hookClone.setAction((Action) actionCombo.getSelectedItem());
+        hookClone.setObjectElement((String) parameterCombo.getSelectedItem());
         if (beforeRadio.isSelected()) {
-            hook.setType(BEFORE);
+            hookClone.setType(BEFORE);
         } else if (afterRadio.isSelected()) {
-            hook.setType(AFTER);
+            hookClone.setType(AFTER);
         } else if (insteadRadio.isSelected()) {
-            hook.setType(INSTEAD);
+            hookClone.setType(INSTEAD);
         } else {
             throw new IFML2EditorException("No hook type selected!");
         }
+        try {
+            hookClone.copyTo(hook);
+        } catch (CloneNotSupportedException e) {
+            throw new IFML2EditorException("Ошибка при копировании перехвата: {0}", e.toString());
+        }
+    }
 
-        hook.getInstructionList().replaceInstructions(instructionListClone);
+    private void createUIComponents() {
+        instructionsListEditForm = new ListEditForm<Instruction>(this, "инструкцию", "инструкции", Word.Gender.FEMININE, Instruction.class) {
+            @Override
+            protected Instruction createElement() throws Exception {
+                Instruction.Type instrType = EditorUtils.askInstructionType(HookEditor.this);
+                if (instrType != null) {
+                    Instruction instruction = instrType.createInstrInstance();
+                    if (EditorUtils.showAssociatedEditor(owner, instruction, storyDataHelper)) {
+                        return instruction;
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            protected boolean editElement(Instruction selectedElement) throws Exception {
+                return selectedElement != null && EditorUtils.showAssociatedEditor(owner, selectedElement, storyDataHelper);
+            }
+        };
     }
 }

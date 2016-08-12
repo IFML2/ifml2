@@ -4,28 +4,27 @@ import ifml2.IFML2Exception;
 import ifml2.om.Location;
 import ifml2.vm.ISymbolResolver;
 import ifml2.vm.values.*;
-import junit.framework.TestCase;
-import org.mockito.Matchers;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentMatchers;
 
 import static ifml2.vm.ExpressionCalculator.calculate;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ExpressionCalculatorTest extends TestCase
-{
-
+public class ExpressionCalculatorTest {
     private ISymbolResolver mockSymbolResolver;
 
-    public void setUp() throws Exception
-    {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         mockSymbolResolver = mock(ISymbolResolver.class);
     }
 
     // 1 + 1
-    public void testCalculateOnePlusOne() throws IFML2Exception
-    {
+    @Test
+    public void testCalculateOnePlusOne() throws IFML2Exception {
         Value result = calculate(mockSymbolResolver, "1 + 1");
 
         boolean resultIsNumberValue = result instanceof NumberValue;
@@ -33,12 +32,12 @@ public class ExpressionCalculatorTest extends TestCase
 
         NumberValue numberValue = (NumberValue) result;
         Double value = numberValue.getValue();
-        assertEquals(2., value);
+        assertEquals(new Double(2.), value);
     }
 
     // не да
-    public void testCalculateNotYes() throws IFML2Exception
-    {
+    @Test
+    public void testCalculateNotYes() throws IFML2Exception {
         when(mockSymbolResolver.resolveSymbol("да")).thenReturn(new BooleanValue(true));
 
         Value result = calculate(mockSymbolResolver, "не да");
@@ -52,8 +51,8 @@ public class ExpressionCalculatorTest extends TestCase
     }
 
     // не не да
-    public void testCalculateNotNotYes() throws IFML2Exception
-    {
+    @Test
+    public void testCalculateNotNotYes() throws IFML2Exception {
         when(mockSymbolResolver.resolveSymbol("да")).thenReturn(new BooleanValue(true));
 
         Value result = calculate(mockSymbolResolver, "не не да");
@@ -67,11 +66,11 @@ public class ExpressionCalculatorTest extends TestCase
     }
 
     // локация.свойство
-    public void testCalculateLocationDotProperty() throws IFML2Exception
-    {
+    @Test
+    public void testCalculateLocationDotProperty() throws IFML2Exception {
         Location mockLocation = mock(Location.class);
         when(mockSymbolResolver.resolveSymbol("локация")).thenReturn(new ObjectValue(mockLocation));
-        when(mockLocation.getMemberValue(eq("свойство"), Matchers.<ISymbolResolver>any())).thenReturn(new TextValue("значение"));
+        when(mockLocation.getMemberValue(eq("свойство"), ArgumentMatchers.any())).thenReturn(new TextValue("значение"));
 
         Value result = calculate(mockSymbolResolver, "локация.свойство");
 
@@ -84,8 +83,8 @@ public class ExpressionCalculatorTest extends TestCase
     }
 
     // 1 = 1
-    public void testCalculateOneEqualsOne() throws IFML2Exception
-    {
+    @Test
+    public void testCalculateOneEqualsOne() throws IFML2Exception {
         Value result = calculate(mockSymbolResolver, "1 = 1");
 
         boolean resultIsBooleanValue = result instanceof BooleanValue;
@@ -97,8 +96,8 @@ public class ExpressionCalculatorTest extends TestCase
     }
 
     // "Номер " + 1
-    public void testCalculateStringPlusOne() throws IFML2Exception
-    {
+    @Test
+    public void testCalculateStringPlusOne() throws IFML2Exception {
         Value result = calculate(mockSymbolResolver, "\"Номер \" + 1");
 
         boolean resultIsTextValue = result instanceof TextValue;
@@ -110,8 +109,8 @@ public class ExpressionCalculatorTest extends TestCase
     }
 
     // 1 < 2
-    public void testCalculateOneLesserThanTwo() throws IFML2Exception
-    {
+    @Test
+    public void testCalculateOneLesserThanTwo() throws IFML2Exception {
         Value result = calculate(mockSymbolResolver, "1 < 2");
 
         boolean resultIsBooleanValue = result instanceof BooleanValue;
@@ -123,8 +122,8 @@ public class ExpressionCalculatorTest extends TestCase
     }
 
     // 1 > 2
-    public void testCalculateOneGreaterThanTwo() throws IFML2Exception
-    {
+    @Test
+    public void testCalculateOneGreaterThanTwo() throws IFML2Exception {
         Value result = calculate(mockSymbolResolver, "1 > 2");
 
         boolean resultIsBooleanValue = result instanceof BooleanValue;
@@ -136,8 +135,8 @@ public class ExpressionCalculatorTest extends TestCase
     }
 
     // 1 <> 2
-    public void testCalculateOneNotEqualsTwo() throws IFML2Exception
-    {
+    @Test
+    public void testCalculateOneNotEqualsTwo() throws IFML2Exception {
         Value result = calculate(mockSymbolResolver, "1 <> 2");
 
         boolean resultIsBooleanValue = result instanceof BooleanValue;
@@ -149,8 +148,8 @@ public class ExpressionCalculatorTest extends TestCase
     }
 
     // 1 - 2
-    public void testCalculateOneMinusTwo() throws IFML2Exception
-    {
+    @Test
+    public void testCalculateOneMinusTwo() throws IFML2Exception {
         Value result = calculate(mockSymbolResolver, "1 - 2");
 
         boolean resultIsNumberValue = result instanceof NumberValue;
@@ -158,12 +157,12 @@ public class ExpressionCalculatorTest extends TestCase
 
         NumberValue numberValue = (NumberValue) result;
         Double value = numberValue.getValue();
-        assertEquals(-1., value);
+        assertEquals(new Double(-1.), value);
     }
 
     // -1
-    public void testCalculateNegativeOne() throws IFML2Exception
-    {
+    @Test
+    public void testCalculateNegativeOne() throws IFML2Exception {
         Value result = calculate(mockSymbolResolver, "-1");
 
         boolean resultIsNumberValue = result instanceof NumberValue;
@@ -171,12 +170,12 @@ public class ExpressionCalculatorTest extends TestCase
 
         NumberValue numberValue = (NumberValue) result;
         Double value = numberValue.getValue();
-        assertEquals(-1., value);
+        assertEquals(new Double(-1.), value);
     }
 
     // 2 + -1
-    public void testCalculateTwoMinusNegativeOne() throws IFML2Exception
-    {
+    @Test
+    public void testCalculateTwoMinusNegativeOne() throws IFML2Exception {
         Value result = calculate(mockSymbolResolver, "2 + -1");
 
         boolean resultIsNumberValue = result instanceof NumberValue;
@@ -184,6 +183,6 @@ public class ExpressionCalculatorTest extends TestCase
 
         NumberValue numberValue = (NumberValue) result;
         Double value = numberValue.getValue();
-        assertEquals(1., value);
+        assertEquals(new Double(1.), value);
     }
 }

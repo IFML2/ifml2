@@ -5,10 +5,9 @@ import ifml2.IFMLEntity;
 import javax.xml.bind.annotation.*;
 
 @XmlAccessorType(XmlAccessType.NONE)
-public class Hook extends IFMLEntity
-{
+public class Hook extends IFMLEntity {
     @XmlElement(name = "instructions")
-    public InstructionList instructionList = new InstructionList();
+    private InstructionList instructionList = new InstructionList();
 
     @XmlAttribute(name = "action")
     @XmlIDREF
@@ -21,8 +20,7 @@ public class Hook extends IFMLEntity
     private Type type = Type.INSTEAD; // default value for new hook in editors
 
     @Override
-    protected Hook clone() throws CloneNotSupportedException
-    {
+    public Hook clone() throws CloneNotSupportedException {
         final Hook clone = (Hook) super.clone(); // clone flat
 
         // clone deep
@@ -32,51 +30,49 @@ public class Hook extends IFMLEntity
         return clone;
     }
 
-    public Action getAction()
-    {
+    public Action getAction() {
         return action;
     }
 
-    public void setAction(Action action)
-    {
+    public void setAction(Action action) {
         this.action = action;
     }
 
-    public String getObjectElement()
-    {
+    public String getObjectElement() {
         return objectElement;
     }
 
-    public void setObjectElement(String objectElement)
-    {
+    public void setObjectElement(String objectElement) {
         this.objectElement = objectElement;
     }
 
-    public Type getType()
-    {
+    public Type getType() {
         return type;
     }
 
-    public void setType(Type type)
-    {
+    public void setType(Type type) {
         this.type = type;
     }
 
-    public InstructionList getInstructionList()
-    {
+    public InstructionList getInstructionList() {
         return instructionList;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return String.format("%s: %s (%s)", action, objectElement != null ? objectElement : "", type.getRuName());
+    }
+
+    public void copyTo(Hook hook) throws CloneNotSupportedException {
+        hook.action = action; // ref
+        hook.objectElement = objectElement;
+        hook.type = type;
+        hook.instructionList = instructionList.clone();
     }
 
     @XmlEnum
     @XmlType(namespace = "Hook")
-    public enum Type
-    {
+    public enum Type {
         @XmlEnumValue(value = "before")
         BEFORE(0, "до"),
         @XmlEnumValue(value = "after")
@@ -86,14 +82,12 @@ public class Hook extends IFMLEntity
         public final int sortValue;
         private String ruName;
 
-        Type(int sortValue, String ruName)
-        {
+        Type(int sortValue, String ruName) {
             this.sortValue = sortValue;
             this.ruName = ruName;
         }
 
-        public String getRuName()
-        {
+        public String getRuName() {
             return ruName;
         }
     }
