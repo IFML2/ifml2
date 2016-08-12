@@ -7,6 +7,7 @@ import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ifml2.GUIUtils;
 import ifml2.editor.IFML2EditorException;
 import ifml2.editor.gui.AbstractEditor;
+import ifml2.editor.gui.ButtonAction;
 import ifml2.editor.gui.EditorUtils;
 import ifml2.om.Action;
 import ifml2.om.Hook;
@@ -41,13 +42,13 @@ public class HookEditor extends AbstractEditor<Hook> {
     // data to edit
     private InstructionList instructionListClone; // no need to clone - InstructionList isn't modified here
 
-    public HookEditor(Window owner, @NotNull Hook hook, final boolean areObjectHooks, final Story.DataHelper storyDataHelper) throws IFML2EditorException {
+    HookEditor(Window owner, @NotNull Hook hook, final boolean areObjectHooks, final Story.DataHelper storyDataHelper) throws IFML2EditorException {
         super(owner);
         initializeEditor(HOOK_EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
 
         // -- form actions init --
 
-        editInstructionsButton.setAction(new AbstractAction("Редактировать инструкции...", GUIUtils.EDIT_ELEMENT_ICON) {
+        editInstructionsButton.setAction(new ButtonAction(editInstructionsButton) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 InstructionsEditor instructionsEditor = new InstructionsEditor(HookEditor.this, instructionListClone,

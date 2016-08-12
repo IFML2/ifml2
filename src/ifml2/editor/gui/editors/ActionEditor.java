@@ -12,8 +12,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 
-import static ifml2.GUIUtils.showErrorMessage;
-
 public class ActionEditor extends AbstractEditor<Action> {
     private Action actionClone;
     private JPanel contentPane;
