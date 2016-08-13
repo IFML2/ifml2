@@ -18,6 +18,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * JInternalFrame with JList and buttons <b>Add</b>, <b>Edit</b> (optional), <b>Delete</b> and optional <b>Up</b> and <b>Down</b> arrows.<br/>
@@ -27,7 +28,7 @@ import java.util.List;
  *
  * @param <T> Edited type.
  * @see #createElement()
- * @see #editElement(T)
+ * @see #editElement(Object, Consumer)
  * @see #beforeDelete(T)
  * @see #bindData(EventList)
  * @see #setShowEditButton(boolean)
@@ -196,7 +197,6 @@ public abstract class ListEditForm<T> extends JInternalFrame {
             @Override
             public void init() {
                 updateState();
-
                 elementsList.addListSelectionListener(e -> updateState());
             }
 
@@ -229,15 +229,18 @@ public abstract class ListEditForm<T> extends JInternalFrame {
 
     /**
      * Edits element. You should override this method to implement element edition logic.
-     * If you return true, list will be updated and events fired.
-     * Don't override if you have set <i>showEditButton = false</i>.
+     * If you return <code>true</code>, list will be updated and events fired.
+     * If element type is primitive (not object) you should call provided lambda <code>elementUpdater</code> with edited
+     * element to replace it in list.
+     * Don't override if you have called <code>setShowEditButton(false)</code>.
      *
      * @param selectedElement currently selected element.
-     * @return true if edit was made and false vise versa.
+     * @param elementUpdater  replaces element in list, should be called for primitive typed updates.
+     * @return <code>true</code> if edit was made and <code>false</code> vise versa.
      * @throws Exception will be shown.
      * @see #setShowEditButton(boolean)
      */
-    protected boolean editElement(T selectedElement) throws Exception {
+    protected boolean editElement(T selectedElement, Consumer<T> elementUpdater) throws Exception {
         return false;
     }
 
@@ -278,7 +281,8 @@ public abstract class ListEditForm<T> extends JInternalFrame {
     private void doEditElement(@Nullable T selectedElement) {
         try {
             if (selectedElement != null) {
-                Boolean isEdited = editElement(selectedElement);
+                final int index = clonedList.indexOf(selectedElement);
+                Boolean isEdited = editElement(selectedElement, newElement -> clonedList.set(index, newElement));
                 if (isEdited) {
                     elementsList.setSelectedValue(selectedElement, true);
                     fireListChangeListeners();
@@ -304,7 +308,7 @@ public abstract class ListEditForm<T> extends JInternalFrame {
      *
      * @param clonedList Already cloned list. All changes are made with him.
      */
-    public void bindData(EventList<T> clonedList) {
+    public void bindData(@NotNull EventList<T> clonedList) {
         this.clonedList = clonedList;
         elementsList.setModel(new DefaultEventListModel<>(clonedList));
     }

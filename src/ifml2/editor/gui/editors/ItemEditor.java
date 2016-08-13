@@ -22,6 +22,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static ifml2.om.Word.Gender.FEMININE;
 import static ifml2.om.Word.Gender.MASCULINE;
@@ -260,7 +261,7 @@ public class ItemEditor extends AbstractEditor<Item> {
             }
 
             @Override
-            protected boolean editElement(Role selectedElement) throws Exception {
+            protected boolean editElement(Role selectedElement, Consumer<Role> elementUpdater) throws Exception {
                 return editRole(selectedElement);
             }
         };
@@ -273,7 +274,7 @@ public class ItemEditor extends AbstractEditor<Item> {
             }
 
             @Override
-            protected boolean editElement(Hook selectedElement) throws Exception {
+            protected boolean editElement(Hook selectedElement, Consumer<Hook> elementUpdater) throws Exception {
                 return editHook(selectedElement);
             }
         };

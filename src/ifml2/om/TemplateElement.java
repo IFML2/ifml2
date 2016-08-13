@@ -27,9 +27,13 @@ public abstract class TemplateElement extends IFMLEntity {
         return (TemplateElement) super.clone(); // just falt clone
     }
 
-    public abstract String getSimpleView();
+    public abstract String toSimpleView();
 
     boolean HasParameter() {
         return parameter != null;
+    }
+
+    public void copyTo(TemplateElement element) {
+        element.parameter = parameter;
     }
 }

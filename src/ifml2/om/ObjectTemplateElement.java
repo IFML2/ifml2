@@ -19,7 +19,7 @@ public class ObjectTemplateElement extends TemplateElement {
 
     @Override
     public String toString() {
-        return getSimpleView() + (parameter != null ? " => " + parameter : "");
+        return toSimpleView() + (parameter != null ? " => " + parameter : "");
     }
 
     @Override
@@ -28,7 +28,7 @@ public class ObjectTemplateElement extends TemplateElement {
     }
 
     @Override
-    public String getSimpleView() {
+    public String toSimpleView() {
         return gramCase.getAbbreviation();
     }
 }

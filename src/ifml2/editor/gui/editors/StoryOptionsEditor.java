@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.function.Consumer;
 
 import static ifml2.om.Word.Gender.FEMININE;
 
@@ -109,7 +110,7 @@ public class StoryOptionsEditor extends AbstractEditor<StoryOptions>
             }
 
             @Override
-            protected boolean editElement(SetVarInstruction selectedElement) throws Exception
+            protected boolean editElement(SetVarInstruction selectedElement, Consumer<SetVarInstruction> elementUpdater) throws Exception
             {
                 return EditorUtils.showAssociatedEditor(StoryOptionsEditor.this, selectedElement, storyDataHelper);
             }

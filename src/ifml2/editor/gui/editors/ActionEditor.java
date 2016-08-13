@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.function.Consumer;
 
 public class ActionEditor extends AbstractEditor<Action> {
     private Action actionClone;
@@ -90,11 +91,11 @@ public class ActionEditor extends AbstractEditor<Action> {
             @Override
             protected Template createElement() throws Exception {
                 Template template = new Template();
-                return editElement(template) ? template : null;
+                return editTemplate(template) ? template : null;
             }
 
             @Override
-            protected boolean editElement(Template selectedElement) throws Exception {
+            protected boolean editElement(Template selectedElement, Consumer<Template> elementUpdater) throws Exception {
                 return editTemplate(selectedElement);
             }
         };
@@ -107,7 +108,7 @@ public class ActionEditor extends AbstractEditor<Action> {
             }
 
             @Override
-            protected boolean editElement(Restriction selectedElement) throws Exception {
+            protected boolean editElement(Restriction selectedElement, Consumer<Restriction> elementUpdater) throws Exception {
                 return editRestriction(selectedElement);
             }
         };

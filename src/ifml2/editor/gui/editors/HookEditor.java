@@ -20,6 +20,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.MessageFormat;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 import static ifml2.om.Hook.Type.*;
 
@@ -153,7 +154,7 @@ public class HookEditor extends AbstractEditor<Hook> {
             }
 
             @Override
-            protected boolean editElement(Instruction selectedElement) throws Exception {
+            protected boolean editElement(Instruction selectedElement, Consumer<Instruction> elementUpdater) throws Exception {
                 return selectedElement != null && EditorUtils.showAssociatedEditor(owner, selectedElement, storyDataHelper);
             }
         };

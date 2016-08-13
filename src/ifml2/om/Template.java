@@ -51,7 +51,7 @@ public class Template extends IFMLEntity {
                 result += " + ";
             }
 
-            result += element.getSimpleView();
+            result += element.toSimpleView();
         }
 
         return result;

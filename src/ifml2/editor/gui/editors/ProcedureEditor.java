@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.function.Consumer;
 
 import static ifml2.om.Word.Gender.FEMININE;
 import static ifml2.om.Word.Gender.MASCULINE;
@@ -110,7 +111,7 @@ public class ProcedureEditor extends AbstractEditor<Procedure>
             }
 
             @Override
-            protected boolean editElement(Parameter selectedElement) throws Exception
+            protected boolean editElement(Parameter selectedElement, Consumer<Parameter> elementUpdater) throws Exception
             {
                 if (selectedElement != null)
                 {
@@ -144,7 +145,7 @@ public class ProcedureEditor extends AbstractEditor<Procedure>
             }
 
             @Override
-            protected boolean editElement(Instruction selectedElement) throws Exception
+            protected boolean editElement(Instruction selectedElement, Consumer<Instruction> elementUpdater) throws Exception
             {
                 return selectedElement != null && EditorUtils.showAssociatedEditor(owner, selectedElement, storyDataHelper);
             }

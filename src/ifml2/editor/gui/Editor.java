@@ -27,6 +27,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.function.Consumer;
 
 import static ifml2.CommonConstants.RUSSIAN_PRODUCT_NAME;
 import static ifml2.GUIUtils.DIRECTORY_ICON;
@@ -621,7 +622,7 @@ public class Editor extends JFrame
             }
 
             @Override
-            protected boolean editElement(Location selectedElement)
+            protected boolean editElement(Location selectedElement, Consumer<Location> elementUpdater)
             {
                 return editLocation(selectedElement);
             }
@@ -653,7 +654,7 @@ public class Editor extends JFrame
             }
 
             @Override
-            protected boolean editElement(Item selectedElement)
+            protected boolean editElement(Item selectedElement, Consumer<Item> elementUpdater)
             {
                 return editItem(selectedElement);
             }
@@ -673,7 +674,7 @@ public class Editor extends JFrame
             }
 
             @Override
-            protected boolean editElement(Procedure selectedElement)
+            protected boolean editElement(Procedure selectedElement, Consumer<Procedure> elementUpdater)
             {
                 return editProcedure(selectedElement);
             }
@@ -735,7 +736,7 @@ public class Editor extends JFrame
             }
 
             @Override
-            protected boolean editElement(Action selectedElement) throws Exception
+            protected boolean editElement(Action selectedElement, Consumer<Action> elementUpdater) throws Exception
             {
                 return editAction(selectedElement);
             }
