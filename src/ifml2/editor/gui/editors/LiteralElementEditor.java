@@ -1,5 +1,6 @@
 package ifml2.editor.gui.editors;
 
+import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.swing.DefaultEventComboBoxModel;
 import ifml2.editor.DataNotValidException;
 import ifml2.editor.IFML2EditorException;
@@ -20,7 +21,7 @@ import static ifml2.om.Word.Gender.MASCULINE;
 public class LiteralElementEditor extends AbstractEditor<LiteralTemplateElement> {
     private static final String EDITOR_TITLE = "Литерал";
     private static final String PARAMETER_MUST_BE_SET_ERROR_MESSAGE_DIALOG = "Если выставлена галочка передачи параметра, то параметр должен быть выбран.";
-    private final LiteralTemplateElement elementClone;
+    private final LiteralTemplateElement templateElementClone;
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
@@ -37,7 +38,7 @@ public class LiteralElementEditor extends AbstractEditor<LiteralTemplateElement>
 
         // clone whole entity
         try {
-            elementClone = element.clone();
+            templateElementClone = element.clone();
         } catch (CloneNotSupportedException e) {
             throw new IFML2EditorException("Ошибка при клонировании литерального элемента: {0}", e.toString());
         }
@@ -59,7 +60,7 @@ public class LiteralElementEditor extends AbstractEditor<LiteralTemplateElement>
     }
 
     private void bindData() {
-        synonymsListEditForm.bindData(elementClone.getSynonyms());
+        synonymsListEditForm.bindData(templateElementClone.getSynonyms());
     }
 
     @Override
@@ -73,17 +74,23 @@ public class LiteralElementEditor extends AbstractEditor<LiteralTemplateElement>
     @Override
     public void updateData(@NotNull LiteralTemplateElement element) throws IFML2EditorException {
         Parameter selectedItem = (Parameter) comboParameter.getSelectedItem();
-        elementClone.setParameter(checkUseParameter.isSelected() && selectedItem != null ? selectedItem.toString() : null);
-        elementClone.copyTo(element);
+        templateElementClone.setParameter(checkUseParameter.isSelected() && selectedItem != null ? selectedItem.toString() : null);
+        templateElementClone.copyTo(element);
     }
 
     private void createUIComponents() {
         synonymsListEditForm = new ListEditForm<String>(this, "синоним", "синонима", MASCULINE) {
             @Override
             protected String createElement() throws Exception {
-                String synonym = JOptionPane.showInputDialog(LiteralElementEditor.this, "Введите синоним:");
+                String synonym = JOptionPane.showInputDialog(LiteralElementEditor.this, "Введите синоним:",
+                        "Новый синоним", JOptionPane.QUESTION_MESSAGE);
                 if (synonym != null && !"".equals(synonym)) {
-                    // TODO: 13.08.2016 forbid add doubles
+                    // check doubles
+                    if (templateElementClone.getSynonyms().contains(synonym)) {
+                        JOptionPane.showMessageDialog(LiteralElementEditor.this, "Такой синоним уже есть.", "Повтор",
+                                JOptionPane.WARNING_MESSAGE);
+                        return null;
+                    }
                     return synonym;
                 }
                 return null;
@@ -94,7 +101,14 @@ public class LiteralElementEditor extends AbstractEditor<LiteralTemplateElement>
                 if (selectedElement != null) {
                     String editedSynonym = JOptionPane.showInputDialog(this, "Исправьте синоним:", selectedElement);
                     if (editedSynonym != null && !"".equals(editedSynonym)) {
-                        // TODO: 13.08.2016 forbid change to doubles
+                        final EventList<String> synonyms = templateElementClone.getSynonyms();
+                        final int index = synonyms.indexOf(editedSynonym);
+                        // check doubles
+                        if (index >= 0 && !editedSynonym.equals(selectedElement)) {
+                            JOptionPane.showMessageDialog(LiteralElementEditor.this, "Такой синоним уже есть.", "Повтор",
+                                    JOptionPane.WARNING_MESSAGE);
+                            return false;
+                        }
                         elementUpdater.accept(editedSynonym);
                         return true;
                     }
