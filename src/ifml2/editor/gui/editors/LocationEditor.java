@@ -5,6 +5,7 @@ import ifml2.IFML2Exception;
 import ifml2.editor.DataNotValidException;
 import ifml2.editor.IFML2EditorException;
 import ifml2.editor.gui.AbstractEditor;
+import ifml2.editor.gui.ButtonAction;
 import ifml2.editor.gui.forms.ListEditForm;
 import ifml2.om.Hook;
 import ifml2.om.Location;
@@ -16,8 +17,7 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.event.ActionEvent;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,6 +46,7 @@ public class LocationEditor extends AbstractEditor<Location> {
     private JComboBox<Location> southWestCombo;
     private JComboBox<Location> northWestCombo;
     private ListEditForm<Hook> hooksListEditForm;
+    private JButton enableIdButton;
     private Map<Location.ExitDirection, JComboBox<Location>> exitCombosMap = new HashMap<Location.ExitDirection, JComboBox<Location>>() {
         {
             put(NORTH, northCombo);
@@ -72,7 +73,7 @@ public class LocationEditor extends AbstractEditor<Location> {
 
         // clone
         try {
-            locationClone = location.clone();  // FIXME: 14.08.2016 check!
+            locationClone = location.clone();
         } catch (CloneNotSupportedException e) {
             throw new IFML2EditorException("Ошибка при клонировании локации: {0}", e.getMessage());
         }
@@ -96,14 +97,16 @@ public class LocationEditor extends AbstractEditor<Location> {
                 //do nothing
             }
         });
-        locationIDText.addKeyListener(new KeyAdapter() {
+
+        enableIdButton.setAction(new ButtonAction(enableIdButton) {
             @Override
-            public void keyTyped(KeyEvent e) {
-                if (e.getKeyChar() != '\0') {
-                    toGenerateId = false;
-                }
+            public void actionPerformed(ActionEvent e) {
+                locationIDText.setEditable(true); // enable edit
+                toGenerateId = false;
+                setEnabled(false); // disable button
+                locationIDText.requestFocusInWindow();
             }
-        }); // TODO: 14.08.2016 replace by button that shows hided id
+        });
 
         for (ExitDirection exitDirection : ExitDirection.values()) {
             JComboBox<Location> comboBox = exitCombosMap.get(exitDirection);
@@ -117,6 +120,8 @@ public class LocationEditor extends AbstractEditor<Location> {
 
         String id = locationClone.getId();
         toGenerateId = id == null || "".equals(id);
+
+        locationNameText.requestFocusInWindow();
     }
 
     private void bindData() {

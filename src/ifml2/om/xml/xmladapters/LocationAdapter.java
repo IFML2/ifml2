@@ -19,6 +19,7 @@ public class LocationAdapter extends XmlAdapter<LocationAdapter.AdaptedLocation,
         return location instanceof AdaptedLocation ? (AdaptedLocation) location : new AdaptedLocation(location);
     }
 
+    @SuppressWarnings("unused")
     @XmlAccessorType(XmlAccessType.NONE)
     @XmlType(name = "location")
     public static class AdaptedLocation extends Location implements Cloneable {
