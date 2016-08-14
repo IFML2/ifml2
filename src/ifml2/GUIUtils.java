@@ -5,11 +5,10 @@ import ca.odell.glazedlists.swing.DefaultEventComboBoxModel;
 import ifml2.editor.gui.ShowMemoDialog;
 import ifml2.om.IFML2LoadXmlException;
 import ifml2.om.Word;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.xml.bind.ValidationEvent;
 import java.awt.*;
 import java.io.PrintWriter;
@@ -27,8 +26,8 @@ public class GUIUtils
     public static final Icon SAVE_ICON = getEditorIcon("Save24.gif");
     public static final Icon PREFERENCES_ICON = getEditorIcon("Preferences24.gif");
     public static final Icon PLAY_ICON = getEditorIcon("Play24.gif");
-    public static final Icon MOVE_LEFT_ICON = getEditorIcon("Back24.gif");
-    public static final Icon MOVE_RIGHT_ICON = getEditorIcon("Forward24.gif");
+//    public static final Icon MOVE_LEFT_ICON = getEditorIcon("Back24.gif");
+//    public static final Icon MOVE_RIGHT_ICON = getEditorIcon("Forward24.gif");
     public static final Icon UP_ICON = getEditorIcon("Up24.gif");
     public static final Icon DOWN_ICON = getEditorIcon("Down24.gif");
     public static final Icon DIRECTORY_ICON = getEditorIcon("Open24.gif");
@@ -63,8 +62,8 @@ public class GUIUtils
      * Shows delete confirmation dialog.
      *
      * @param owner        Owner window for dialog.
-     * @param objectNameVP Object name being deleted in "Vinitelniy" (Accusative) case. Answers the question: "Delete what?".
-     * @param objectNameRP Object name being deleted in "Roditelniy" (Genitive) case. Answers the question: "Deletion of what?".
+     * @param objectNameVP Object name being deleted in "Виниельный" (Accusative) case. Answers the question: "Delete what?".
+     * @param objectNameRP Object name being deleted in "Родительный" (Genitive) case. Answers the question: "Deletion of what?".
      * @param gender       Gender of word.
      * @return true if user pressed YES.
      */
@@ -103,22 +102,16 @@ public class GUIUtils
         action.setEnabled(!list.isSelectionEmpty());
 
         // add listener
-        list.addListSelectionListener(new ListSelectionListener()
-        {
-            @Override
-            public void valueChanged(ListSelectionEvent e)
-            {
-                action.setEnabled(!list.isSelectionEmpty());
-            }
-        });
+        list.addListSelectionListener(e -> action.setEnabled(!list.isSelectionEmpty()));
     }
 
+    @Contract("_ -> !null")
     private static ImageIcon getEditorIcon(String fileName)
     {
         return new ImageIcon(GUIUtils.class.getResource(IFML2_EDITOR_GUI_IMAGES + fileName));
     }
 
-    public static void showMemoDialog(Window owner, String title, String message)
+    private static void showMemoDialog(Window owner, String title, String message)
     {
         new ShowMemoDialog(owner, title, message);
     }
