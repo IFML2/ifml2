@@ -26,22 +26,22 @@ public class IFMLObject extends IFMLEntity implements Cloneable
 
     @XmlElementWrapper(name = ITEM_HOOKS_ELEMENT)
     @XmlElement(name = ITEM_HOOK_ELEMENT)
-    protected EventList<Hook> hooks = new BasicEventList<Hook>();
+    protected EventList<Hook> hooks = new BasicEventList<>();
 
     @XmlElementWrapper(name = IFML_OBJECT_ROLES_ELEMENT)
     @XmlElement(name = IFML_OBJECT_ROLE_ELEMENT)
-    protected EventList<Role> roles = new BasicEventList<Role>();
+    protected EventList<Role> roles = new BasicEventList<>();
 
     @XmlElementWrapper(name = OBJECT_PROPERTIES_ELEMENT)
     @XmlElement(name = OBJECT_PROPERTY_ELEMENT)
-    protected EventList<Property> properties = new BasicEventList<Property>();
+    protected EventList<Property> properties = new BasicEventList<>();
 
     @XmlAttribute(name = "id")
     @XmlID
     protected String id;
 
     @XmlElement(name = OBJECT_WORDS_TAG)
-    protected WordLinks wordLinks = new WordLinks();
+    private WordLinks wordLinks = new WordLinks();
 
     @XmlAttribute(name = "name")
     protected String name;
@@ -52,7 +52,7 @@ public class IFMLObject extends IFMLEntity implements Cloneable
     @XmlElementWrapper(name = IFML_OBJECT_ATTRIBUTES_ELEMENT)
     @XmlElement(name = IFML_OBJECT_ATTRIBUTE_ELEMENT)
     @XmlIDREF
-    protected EventList<Attribute> attributes = new BasicEventList<Attribute>();
+    protected EventList<Attribute> attributes = new BasicEventList<>();
 
     @Override
     public IFMLObject clone() throws CloneNotSupportedException
@@ -280,14 +280,14 @@ public class IFMLObject extends IFMLEntity implements Cloneable
 
     public void copyTo(IFMLObject ifmlObject) throws CloneNotSupportedException
     {
-        ifmlObject.setId(id);
-        ifmlObject.setName(name);
-        ifmlObject.setDescription(description);
-        ifmlObject.setWordLinks(wordLinks.clone());
-        ifmlObject.setAttributes(GlazedLists.eventList(attributes)); // copy refs
-        ifmlObject.setProperties(deepCloneEventList(properties, Property.class));
-        ifmlObject.setHooks(deepCloneEventList(hooks, Hook.class));
-        ifmlObject.setRoles(deepCloneEventList(roles, Role.class));
+        ifmlObject.id = id;
+        ifmlObject.name = name;
+        ifmlObject.description = description;
+        ifmlObject.wordLinks = wordLinks.clone();
+        ifmlObject.attributes = GlazedLists.eventList(attributes); // copy refs
+        ifmlObject.properties = deepCloneEventList(properties, Property.class);
+        ifmlObject.hooks = deepCloneEventList(hooks, Hook.class);
+        ifmlObject.roles = deepCloneEventList(roles, Role.class);
     }
 
     public void setProperties(EventList<Property> properties)

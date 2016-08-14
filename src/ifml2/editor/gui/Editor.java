@@ -14,6 +14,7 @@ import ifml2.om.*;
 import ifml2.players.guiplayer.GUIPlayer;
 import ifml2.tests.gui.TestRunner;
 import org.apache.log4j.Logger;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -494,8 +495,8 @@ public class Editor extends JFrame
         return null;
     }
 
-    private boolean editLocation(@Nullable Location location)
-    {
+    @Contract("null -> false")
+    private boolean editLocation(@Nullable Location location) throws IFML2EditorException {
         if (location != null)
         {
             LocationEditor locationEditor = new LocationEditor(this, location, story.getDataHelper());
@@ -591,7 +592,7 @@ public class Editor extends JFrame
         return false;
     }
 
-    public void setStoryFile(String storyFileName)
+    private void setStoryFile(String storyFileName)
     {
         this.storyFile = new File(storyFileName);
         updateTitle();
@@ -606,6 +607,13 @@ public class Editor extends JFrame
             }
 
             @Override
+            protected Location createElement() throws Exception
+            {
+                Location location = new Location();
+                return editLocation(location) ? location : null;
+            }
+
+            @Override
             protected void addElementToList(Location location)
             {
                 if (location != null)
@@ -615,18 +623,9 @@ public class Editor extends JFrame
             }
 
             @Override
-            protected Location createElement() throws Exception
-            {
-                Location location = new Location();
-                return editLocation(location) ? location : null;
-            }
-
-            @Override
-            protected boolean editElement(Location selectedElement, Consumer<Location> elementUpdater)
-            {
+            protected boolean editElement(Location selectedElement, Consumer<Location> elementUpdater) throws IFML2EditorException {
                 return editLocation(selectedElement);
             }
-
 
             //todo warn that location will be deleted from items
         };
@@ -638,19 +637,19 @@ public class Editor extends JFrame
             }
 
             @Override
+            protected Item createElement() throws Exception
+            {
+                Item item = new Item();
+                return editItem(item) ? item : null;
+            }
+
+            @Override
             protected void addElementToList(Item item)
             {
                 if (item != null)
                 {
                     story.addItem(item);
                 }
-            }
-
-            @Override
-            protected Item createElement() throws Exception
-            {
-                Item item = new Item();
-                return editItem(item) ? item : null;
             }
 
             @Override

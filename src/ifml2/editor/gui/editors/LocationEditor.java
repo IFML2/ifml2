@@ -1,62 +1,52 @@
 package ifml2.editor.gui.editors;
 
-import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.GlazedLists;
-import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ifml2.GUIUtils;
 import ifml2.IFML2Exception;
 import ifml2.editor.DataNotValidException;
+import ifml2.editor.IFML2EditorException;
 import ifml2.editor.gui.AbstractEditor;
-import ifml2.om.*;
+import ifml2.editor.gui.forms.ListEditForm;
+import ifml2.om.Hook;
+import ifml2.om.Location;
+import ifml2.om.Story;
+import ifml2.om.Word;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import static ifml2.om.Location.ExitDirection;
 import static ifml2.om.Location.ExitDirection.*;
 
-public class LocationEditor extends AbstractEditor<Location>
-{
+public class LocationEditor extends AbstractEditor<Location> {
     private static final String LOCATION_EDITOR_TITLE = "Локация";
+    private final Location locationClone;
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
     private JTextField locationIDText;
     private JTextField locationNameText;
     private JTextArea descriptionText;
-    private JComboBox dictWordCombo;
-    private JComboBox northCombo;
-    private JComboBox eastCombo;
-    private JComboBox southCombo;
-    private JComboBox westCombo;
-    private JList itemsList;
-    private JButton addItemButton;
-    private JButton delItemButton;
-    private JButton editItemButton;
-    private JButton editAttributesButton;
-    private JList attributesList;
-    private JButton addHookButton;
-    private JButton editHookButton;
-    private JButton deleteHookButton;
-    private JList hooksList;
-    private JComboBox upCombo;
-    private JComboBox downCombo;
-    private JComboBox northEastCombo;
-    private JComboBox southEastCombo;
-    private JComboBox southWestCombo;
-    private JComboBox northWestCombo;
-    private Map<Location.ExitDirection, JComboBox> exitCombosMap = new HashMap<Location.ExitDirection, JComboBox>()
-    {
+    private JComboBox<Location> northCombo;
+    private JComboBox<Location> eastCombo;
+    private JComboBox<Location> southCombo;
+    private JComboBox<Location> westCombo;
+    private JComboBox<Location> upCombo;
+    private JComboBox<Location> downCombo;
+    private JComboBox<Location> northEastCombo;
+    private JComboBox<Location> southEastCombo;
+    private JComboBox<Location> southWestCombo;
+    private JComboBox<Location> northWestCombo;
+    private ListEditForm<Hook> hooksListEditForm;
+    private Map<Location.ExitDirection, JComboBox<Location>> exitCombosMap = new HashMap<Location.ExitDirection, JComboBox<Location>>() {
         {
             put(NORTH, northCombo);
             put(NORTH_EAST, northEastCombo);
@@ -71,423 +61,142 @@ public class LocationEditor extends AbstractEditor<Location>
         }
     };
     private boolean toGenerateId = false;
-    private ArrayList<Item> itemsClone = null;
-    private EventList<Attribute> attributesClone = null;
-    private EventList<Hook> hooksClone = null;
-    private Location location;
     private Story.DataHelper storyDataHelper;
+    private Location originalLocation;
 
-    public LocationEditor(Window owner, Location location, final Story.DataHelper storyDataHelper)
-    {
+    public LocationEditor(Window owner, Location location, final Story.DataHelper storyDataHelper) throws IFML2EditorException {
         super(owner);
+        this.originalLocation = location;
         this.storyDataHelper = storyDataHelper;
         initializeEditor(LOCATION_EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
 
-        this.location = location;
+        // clone
+        try {
+            locationClone = location.clone();  // FIXME: 14.08.2016 check!
+        } catch (CloneNotSupportedException e) {
+            throw new IFML2EditorException("Ошибка при клонировании локации: {0}", e.getMessage());
+        }
 
-        addItemButton.setAction(new AbstractAction("Добавить...", GUIUtils.NEW_ELEMENT_ICON)
-        {
+        // bind
+        bindData();
+
+        locationNameText.getDocument().addDocumentListener(new DocumentListener() {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                Item item = new Item();
-                if (editItem(item))
-                {
-                    itemsClone.add(item);
-                    updateItems();
-                    itemsList.setSelectedValue(item, true);
-                }
-            }
-        });
-        editItemButton.setAction(new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON)
-        {
-            {
-                setEnabled(false); // disabled at start
-                itemsList.addListSelectionListener(new ListSelectionListener()
-                {
-                    @Override
-                    public void valueChanged(ListSelectionEvent e)
-                    {
-                        setEnabled(!itemsList.isSelectionEmpty()); // depends on selection
-                    }
-                });
-            }
-
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                editItem((Item) itemsList.getSelectedValue());
-            }
-
-
-        });
-        delItemButton.setAction(new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
-        {
-            {
-                setEnabled(false); // disabled at start
-                itemsList.addListSelectionListener(new ListSelectionListener()
-                {
-                    @Override
-                    public void valueChanged(ListSelectionEvent e)
-                    {
-                        setEnabled(!itemsList.isSelectionEmpty()); // depends on selection
-                    }
-                });
-            }
-
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                Item item = (Item) itemsList.getSelectedValue();
-                if (item != null)
-                {
-                    int answer = JOptionPane.showConfirmDialog(LocationEditor.this, "Вы уверены, что хотите удалить этот предмет?");
-                    if (answer == 0)
-                    {
-                        itemsClone.remove(item);
-                        updateItems();
-                    }
-                }
-            }
-
-
-        });
-        editAttributesButton.setAction(new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON)
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                ObjectAttributesEditor objectAttributesEditor = new ObjectAttributesEditor(LocationEditor.this, attributesClone,
-                        storyDataHelper);
-                if (objectAttributesEditor.showDialog())
-                {
-                    updateAttributes();
-                }
-            }
-        });
-
-        // hooks
-        addHookButton.setAction(new AbstractAction("Добавить...", GUIUtils.ADD_ELEMENT_ICON)
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                Hook hook = new Hook();
-                if (editHook(hook))
-                {
-                    hooksClone.add(hook);
-                }
-            }
-        });
-        editHookButton.setAction(new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON)
-        {
-            {
-                setEnabled(false); // initially disabled
-                hooksList.addListSelectionListener(new ListSelectionListener()
-                {
-                    @Override
-                    public void valueChanged(ListSelectionEvent e)
-                    {
-                        setEnabled(!hooksList.isSelectionEmpty()); // dependent from selection
-                    }
-                });
-            }
-
-            @Override()
-            public void actionPerformed(ActionEvent e)
-            {
-                Hook selectedHook = (Hook) hooksList.getSelectedValue();
-                if (selectedHook != null)
-                {
-                    editHook(selectedHook);
-                }
-            }
-
-
-        });
-        deleteHookButton.setAction(new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
-        {
-            {
-                setEnabled(false); // initially disabled
-                hooksList.addListSelectionListener(new ListSelectionListener()
-                {
-                    @Override
-                    public void valueChanged(ListSelectionEvent e)
-                    {
-                        setEnabled(!hooksList.isSelectionEmpty()); // dependent from selection
-                    }
-                });
-            }
-
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                Hook selectedHook = (Hook) hooksList.getSelectedValue();
-                if (selectedHook != null &&              JOptionPane.showConfirmDialog(LocationEditor.this,
-                        "Вы действительно хотите удалить выбранный перехват?", "Удаление перехвата", JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
-                {
-                    hooksClone.remove(selectedHook);
-                }
-            }
-
-
-        });
-
-        itemsList.addMouseListener(new MouseAdapter()
-        {
-            @Override
-            public void mouseClicked(MouseEvent e)
-            {
-                if (e.getClickCount() == 2)
-                {
-                    Item item = (Item) itemsList.getSelectedValue();
-                    if (item != null)
-                    {
-                        editItem(item);
-                    }
-                }
-            }
-        });
-
-        locationNameText.getDocument().addDocumentListener(new DocumentListener()
-        {
-            @Override
-            public void insertUpdate(DocumentEvent e)
-            {
+            public void insertUpdate(DocumentEvent e) {
                 updateId();
             }
 
             @Override
-            public void removeUpdate(DocumentEvent e)
-            {
+            public void removeUpdate(DocumentEvent e) {
                 updateId();
             }
 
             @Override
-            public void changedUpdate(DocumentEvent e)
-            {
+            public void changedUpdate(DocumentEvent e) {
                 //do nothing
             }
         });
-
-        locationIDText.addKeyListener(new KeyAdapter()
-        {
+        locationIDText.addKeyListener(new KeyAdapter() {
             @Override
-            public void keyTyped(KeyEvent e)
-            {
-                if (e.getKeyChar() != '\0')
-                {
+            public void keyTyped(KeyEvent e) {
+                if (e.getKeyChar() != '\0') {
                     toGenerateId = false;
                 }
             }
-        });
+        }); // TODO: 14.08.2016 replace by button that shows hided id
 
-        updateDictionaryLinks(storyDataHelper.getDictionary());
-        //TODO:dictWordCombo.setSelectedItem(location.getWord());
-
-        for (ExitDirection exitDirection : ExitDirection.values())
-        {
-            JComboBox comboBox = exitCombosMap.get(exitDirection);
-            comboBox.setModel(new GUIUtils.EventComboBoxModelWithNullElement<Location>(storyDataHelper.getLocations(),
-                    location.getExit(exitDirection)));
+        for (ExitDirection exitDirection : ExitDirection.values()) {
+            JComboBox<Location> comboBox = exitCombosMap.get(exitDirection);
+            comboBox.setModel(new GUIUtils.EventComboBoxModelWithNullElement<>(storyDataHelper.getLocations(),
+                    locationClone.getExit(exitDirection)));
         }
 
-        itemsClone = new ArrayList<Item>(location.getItems());
-        updateItems();
+        locationNameText.setText(locationClone.getName());
+        locationIDText.setText(locationClone.getId());
+        descriptionText.setText(locationClone.getDescription());
 
-        attributesClone = GlazedLists.eventList(location.getAttributes());
-        updateAttributes();
-
-        locationNameText.setText(location.getName());
-        locationIDText.setText(location.getId());
-        descriptionText.setText(location.getDescription());
-
-        String id = location.getId();
+        String id = locationClone.getId();
         toGenerateId = id == null || "".equals(id);
-
-        // set hooks
-        hooksClone = GlazedLists.eventList(location.getHooks());
-        hooksList.addMouseListener(new MouseAdapter()
-        {
-            @Override
-            public void mouseClicked(MouseEvent e)
-            {
-                if (e.getClickCount() == 2)
-                {
-                    Hook selectedHook = (Hook) hooksList.getSelectedValue();
-                    if (selectedHook != null)
-                    {
-                        editHook(selectedHook);
-                    }
-                }
-            }
-        });
-        hooksList.setModel(new DefaultEventListModel<Hook>(hooksClone));
     }
 
-    private boolean editHook(Hook hook)
-    {
-        try
-        {
-            HookEditor hookEditor = new HookEditor(LocationEditor.this, hook, false, storyDataHelper);
-            if (hookEditor.showDialog())
-            {
-                hookEditor.updateData(hook);
-                return true;
-            }
-        }
-        catch (IFML2Exception e)
-        {
-            GUIUtils.showErrorMessage(this, e);
+    private void bindData() {
+        hooksListEditForm.bindData(locationClone.getHooks());
+    }
+
+    private boolean editHook(Hook hook) throws IFML2EditorException {
+        HookEditor hookEditor = new HookEditor(LocationEditor.this, hook, false, storyDataHelper);
+        if (hookEditor.showDialog()) {
+            hookEditor.updateData(hook);
+            return true;
         }
         return false;
     }
 
-    private void updateId()
-    {
-        if (toGenerateId)
-        {
+    private void updateId() {
+        if (toGenerateId) {
             locationIDText.setText(storyDataHelper.generateIdByName(locationNameText.getText(), Location.class));
         }
     }
 
-    private void updateAttributes()
-    {
-        attributesList.setListData(attributesClone.toArray());
-    }
-
-    private void updateItems()
-    {
-        DefaultListModel itemsListModel = new DefaultListModel();
-        for (Item item : itemsClone)
-        {
-            itemsListModel.addElement(item);
-        }
-        itemsList.setModel(itemsListModel);
-    }
-
-    private void updateDictionaryLinks(HashMap<String, Word> dictionary)
-    {
-        dictWordCombo.setModel(new DefaultComboBoxModel(dictionary.values().toArray()));
-        dictWordCombo.insertItemAt(null, 0);
-    }
-
-    private boolean editItem(Item item)
-    {
-        if (item != null)
-        {
-            ItemEditor itemEditor = new ItemEditor(LocationEditor.this, item, storyDataHelper);
-            if (itemEditor.showDialog())
-            {
-                itemEditor.updateData(item);
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     @Override
-    protected void validateData() throws DataNotValidException
-    {
+    protected void validateData() throws DataNotValidException {
         // check name
-        if (locationNameText.getText().trim().length() == 0)
-        {
+        if (locationNameText.getText().trim().length() == 0) {
             throw new DataNotValidException("У локации должно быть задано имя.", locationNameText);
         }
 
         // check id
         String id = locationIDText.getText().trim();
-        if (id.length() == 0)
-        {
+        if (id.length() == 0) {
             throw new DataNotValidException("У локации должен быть задан идентификатор.", locationIDText);
         }
 
         Object object = storyDataHelper.findObjectById(id);
-        if (object != null && !object.equals(location))
-        {
+        if (object != null && !object.equals(originalLocation)) {
             String className = null;
-            try
-            {
+            try {
                 className = storyDataHelper.getObjectClassName(object);
-            }
-            catch (IFML2Exception e)
-            {
+            } catch (IFML2Exception e) {
                 GUIUtils.showErrorMessage(this, e);
             }
             throw new DataNotValidException(
                     "У локации должен быть уникальный идентификатор - не пересекаться с другими локациями, предметами и словарём.\n" +
-                    MessageFormat.format("Найден другой объект с тем же идентификатором: \"{0}\" типа \"{1}\".", object, className),
+                            MessageFormat.format("Найден другой объект с тем же идентификатором: \"{0}\" типа \"{1}\".", object, className),
                     locationIDText);
         }
     }
 
     @Override
-    public void updateData(@NotNull Location location)
-    {
-        for (ExitDirection exitDirection : ExitDirection.values())
-        {
-            JComboBox combo = exitCombosMap.get(exitDirection);
-            location.setExit(exitDirection, (Location) combo.getSelectedItem());
+    public void updateData(@NotNull Location location) throws IFML2EditorException {
+        locationClone.setName(locationNameText.getText().trim());
+        locationClone.setId(locationIDText.getText().trim());
+        locationClone.setDescription(descriptionText.getText());
+        for (ExitDirection exitDirection : ExitDirection.values()) {
+            JComboBox<Location> combo = exitCombosMap.get(exitDirection);
+            locationClone.setExit(exitDirection, (Location) combo.getSelectedItem());
         }
-
-        location.setItems(itemsClone);
-        location.setAttributes(attributesClone);
-
-        location.setName(locationNameText.getText().trim());
-        location.setId(locationIDText.getText().trim());
-        location.setDescription(descriptionText.getText());
-        location.setHooks(GlazedLists.eventList(hooksClone)); // rewrite data in EventList
-    }
-
-
-    //region Item in location actions
-    /*
-    private class AddItemAction extends AbstractAction
-    {
-        private AddItemAction()
-        {
-            super("Добавить...");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            Item item = (Item) JOptionPane.showInputDialog(dialog, "Выберите добавляемый предмет", "Добавить предмет",
-                    JOptionPane.QUESTION_MESSAGE, null, story.items.values().toArray(), null);
-
-            if(item != null)
-            {
-                itemsClone.add(item);
-                updateItems();
-                itemsList.setSelectedValue(item, true);
-            }
+        try {
+            locationClone.copyTo(location);
+        } catch (CloneNotSupportedException e) {
+            throw new IFML2EditorException("Ошибка при копировании локации: {0}", e.toString());
         }
     }
 
-    private class DelItemAction extends AbstractAction
-    {
-        private DelItemAction()
-        {
-            super("Удалить");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            Item item = (Item) itemsList.getSelectedValue();
-            if(item != null)
-            {
-                int answer = JOptionPane.showConfirmDialog(dialog, "Вы уверены, что хотите удалить этот предмет из локации?");
-                if(answer == 0)
-                {
-                    itemsClone.remove(item);
-                    updateItems();
+    private void createUIComponents() {
+        hooksListEditForm = new ListEditForm<Hook>(LocationEditor.this, "перехват", "перехвата", Word.Gender.MASCULINE) {
+            @Override
+            protected Hook createElement() throws Exception {
+                Hook hook = new Hook();
+                if (editHook(hook)) {
+                    return hook;
                 }
+                return null;
             }
-        }
+
+            @Override
+            protected boolean editElement(Hook selectedElement, Consumer<Hook> elementUpdater) throws Exception {
+                return editHook(selectedElement);
+            }
+        };
     }
-    */
-    //endregion
 }

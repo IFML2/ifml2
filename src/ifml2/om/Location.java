@@ -1,38 +1,32 @@
 package ifml2.om;
 
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.GlazedLists;
 import ifml2.IFML2Exception;
 import ifml2.vm.ISymbolResolver;
 import ifml2.vm.values.CollectionValue;
 import ifml2.vm.values.ObjectValue;
 import ifml2.vm.values.Value;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import javax.xml.bind.annotation.XmlTransient;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.Callable;
+import java.util.function.Supplier;
 
 @XmlTransient
 public class Location extends IFMLObject implements Cloneable
 {
-    protected HashMap<ExitDirection, Location> exits = new HashMap<>();
-    protected List<Item> items = new ArrayList<>();
-    private HashMap<String, Callable<? extends Value>> LOCATION_SYMBOLS = new HashMap<String, Callable<? extends Value>>()
+    private HashMap<ExitDirection, Location> exits = new HashMap<>();
+    protected EventList<Item> items = new BasicEventList<>(); // refs
+    private HashMap<String, Supplier<? extends Value>> LOCATION_SYMBOLS = new HashMap<String, Supplier<? extends Value>>()
     {
         {
-            put("север", (Callable<Value>) () -> getObjectValue(ExitDirection.NORTH));
-            put("северовосток", (Callable<Value>) () -> getObjectValue(ExitDirection.NORTH_EAST));
-            put("восток", (Callable<Value>) () -> getObjectValue(ExitDirection.EAST));
-            put("юговосток", (Callable<Value>) () -> getObjectValue(ExitDirection.SOUTH_EAST));
-            put("юг", (Callable<Value>) () -> getObjectValue(ExitDirection.SOUTH));
-            put("югозапад", (Callable<Value>) () -> getObjectValue(ExitDirection.SOUTH_WEST));
-            put("запад", (Callable<Value>) () -> getObjectValue(ExitDirection.WEST));
-            put("северозапад", (Callable<Value>) () -> getObjectValue(ExitDirection.NORTH_WEST));
-            put("верх", (Callable<Value>) () -> getObjectValue(ExitDirection.UP));
-            put("низ", (Callable<Value>) () -> getObjectValue(ExitDirection.DOWN));
-
-            put("предметы", (Callable<Value>) () -> new CollectionValue(items));
+            for (ExitDirection exitDir : ExitDirection.values()) {
+                put(exitDir.getName(), () -> getObjectValue(exitDir));
+            }
+            put("предметы", () -> new CollectionValue(items));
         }
 
         @NotNull
@@ -42,7 +36,9 @@ public class Location extends IFMLObject implements Cloneable
         }
     };
 
-    public static String getClassName()
+    @NotNull
+    @Contract(pure = true)
+    static String getClassName()
     {
         return "Локация";
     }
@@ -50,15 +46,10 @@ public class Location extends IFMLObject implements Cloneable
     @Override
     public Location clone() throws CloneNotSupportedException
     {
-        Location location = (Location) super.clone();
-        copyFieldsTo(location);
+        Location location = (Location) super.clone(); // flat clone
+        location.exits = new HashMap<>(exits); //copy refs
+        location.items = GlazedLists.eventList(items); // copy refs
         return location;
-    }
-
-    private void copyFieldsTo(Location location)
-    {
-        location.exits = new HashMap<>(exits);
-        location.items = new ArrayList<>(items);
     }
 
     public Location getExit(ExitDirection exitDirection)
@@ -71,53 +62,13 @@ public class Location extends IFMLObject implements Cloneable
         exits.put(exitDirection, location);
     }
 
-    public Location getNorth()
-    {
-        return getExit(ExitDirection.NORTH);
-    }
-
-    public void setNorth(Location north)
-    {
-        setExit(ExitDirection.NORTH, north);
-    }
-
-    public Location getEast()
-    {
-        return getExit(ExitDirection.EAST);
-    }
-
-    public void setEast(Location east)
-    {
-        setExit(ExitDirection.EAST, east);
-    }
-
-    public Location getSouth()
-    {
-        return getExit(ExitDirection.SOUTH);
-    }
-
-    public void setSouth(Location south)
-    {
-        setExit(ExitDirection.SOUTH, south);
-    }
-
-    public Location getWest()
-    {
-        return getExit(ExitDirection.WEST);
-    }
-
-    public void setWest(Location west)
-    {
-        setExit(ExitDirection.WEST, west);
-    }
-
-    public List<Item> getItems()
+    public EventList<Item> getItems()
     {
         return items;
     }
 
-    //@XmlTransient // is loaded in OMManager through item.location
-    public void setItems(List<Item> items)
+    // is loaded in OMManager through item.location
+    public void setItems(EventList<Item> items)
     {
         this.items = items;
     }
@@ -143,7 +94,7 @@ public class Location extends IFMLObject implements Cloneable
         {
             try
             {
-                return LOCATION_SYMBOLS.get(loweredPropName).call();
+                return LOCATION_SYMBOLS.get(loweredPropName).get();
             }
             catch (Exception e)
             {
@@ -156,30 +107,11 @@ public class Location extends IFMLObject implements Cloneable
         }
     }
 
-    public Location getDown()
-    {
-        return getExit(ExitDirection.DOWN);
-    }
-
-    public void setDown(Location down)
-    {
-        setExit(ExitDirection.DOWN, down);
-    }
-
-    public Location getUp()
-    {
-        return getExit(ExitDirection.UP);
-    }
-
-    public void setUp(Location up)
-    {
-        setExit(ExitDirection.UP, up);
-    }
-
     public void copyTo(@NotNull Location location) throws CloneNotSupportedException
     {
         super.copyTo(location);
-        copyFieldsTo(location);
+        location.exits = new HashMap<>(exits); // copy refs
+        location.items = GlazedLists.eventList(items); // copy refs
     }
 
     /**
@@ -202,6 +134,10 @@ public class Location extends IFMLObject implements Cloneable
         ExitDirection(String name)
         {
             this.name = name;
+        }
+
+        public String getName() {
+            return name;
         }
     }
 }

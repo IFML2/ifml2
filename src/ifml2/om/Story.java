@@ -68,7 +68,7 @@ public class Story
      * objectsHeap holds all game object - locations and items
      */
     private HashMap<String, IFMLObject> objectsHeap = new HashMap<>(); // todo subscribe objectsHeap to locations and items updates
-    // todo subscribe all objects to attributes change
+    // todo subscribe all objects to attributes change  // TODO: 14.08.2016 MAKE objectsHeap VIRTUAL!
     @XmlElementWrapper(name = "actions")
     @XmlElement(name = "action")
     private EventList<Action> actions = new BasicEventList<>();
