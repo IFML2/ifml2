@@ -1,0 +1,1347 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<story xmlns="http://toysoft.narod.ru/IFML2Schema" id="story">
+    <inheritedSystemProcedures/>
+    <storyOptions>
+        <startLocationOption showStartLocDesc="true"/>
+        <startProcedureOption procedure="стартовая"/>
+        <storyDescription name="Тайна затерянного храма" description="Игра портирована из платформы Адрифт." version="1.1" author="Андрей Репин"/>
+        <globalVars>
+            <var name="алтарь" value="1"/>
+            <var name="броситьКувшин" value="нет"/>
+        </globalVars>
+        <systemCommandsDisableOption DisableHelp="false" DisableDebug="false"/>
+    </storyOptions>
+    <procedures>
+        <procedure name="стартовая">
+            <procedureVariables/>
+            <procedureBody>
+                <showMessage beginWithCap="false" carriageReturn="true" message="Ужасно болит голова. Эта боль и заставляет тебя очнуться от забытья. Ты лежишь на чем-то жестком и холодном. Стараясь что-то вспомнить, ты открываешь глаза. &quot;Где я?&quot;&#xA;&#xA;&#xA;Ты лежишь на полу в незнакомом месте." type="text"/>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="осмотреть себя">
+            <procedureVariables/>
+            <procedureBody>
+                <showMessage beginWithCap="false" carriageReturn="true" message="Ты осмотрел себя. Видимых повреждений нет. Но как ты здесь очутился, не помнишь." type="text"/>
+                <if condition="шарфПред.надет  = да">
+                    <else/>
+                    <then>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="На шее шарф." type="text"/>
+                        <if condition="шарфПред в инвентарий">
+                            <else>
+<moveItem item="ШарфПред" to="инвентарий"/>
+                            </else>
+                            <then/>
+                        </if>
+                    </then>
+                </if>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="положить кувшин">
+            <procedureVariables/>
+            <procedureBody>
+                <showMessage beginWithCap="false" carriageReturn="true" message="Ты поставил кувшин на пол." type="text"/>
+                <moveItem item="КувшинПред" to="ТекущаяЛокация.предметы"/>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="сделать факел">
+            <procedureVariables/>
+            <procedureBody>
+                <showMessage beginWithCap="false" carriageReturn="true" message="Ты обмазал шарф смолой и намотал его на палку. Получился факел." type="text"/>
+                <moveItem item="ПалкаПред" to="ПрикупЛок.предметы"/>
+                <moveItem item="ШарфПред" to="ПрикупЛок.предметы"/>
+                <moveItem item="СмолаПред" to="ПрикупЛок.предметы"/>
+                <moveItem item="СделанныйТобоюФакелПред" to="инвентарий"/>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="потушить свечу">
+            <procedureVariables/>
+            <procedureBody>
+                <showMessage beginWithCap="false" carriageReturn="true" message="Ну, вот, ты потушил свечу." type="text"/>
+                <goToLoc location="ТемнаяЛок"/>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+    </procedures>
+    <libraries>
+        <library>standard/verbs.xml</library>
+    </libraries>
+    <dictionary>
+        <word>
+            <ip>пепел</ip>
+            <rp>пепла</rp>
+            <dp>пеплу</dp>
+            <vp>пепел</vp>
+            <tp>пепло</tp>
+            <pp>пепле</pp>
+        </word>
+        <word>
+            <ip>деревянная</ip>
+            <rp>деревянной</rp>
+            <dp>деревянной</dp>
+            <vp>деревянную</vp>
+            <tp>деревянной</tp>
+            <pp>деревянной</pp>
+        </word>
+        <word>
+            <ip>каменный</ip>
+            <rp>каменного</rp>
+            <dp>каменному</dp>
+            <vp>каменный</vp>
+            <tp>каменным</tp>
+            <pp>каменном</pp>
+        </word>
+        <word>
+            <ip>кувшин</ip>
+            <rp>кувшина</rp>
+            <dp>кувшину</dp>
+            <vp>кувшин</vp>
+            <tp>кувшином</tp>
+            <pp>кувшине</pp>
+        </word>
+        <word>
+            <ip>большая</ip>
+            <rp>большой</rp>
+            <dp>большой</dp>
+            <vp>большую</vp>
+            <tp>большой</tp>
+            <pp>большой</pp>
+        </word>
+        <word>
+            <ip>зола</ip>
+            <rp>золы</rp>
+            <dp>золе</dp>
+            <vp>золу</vp>
+            <tp>золой</tp>
+            <pp>золе</pp>
+        </word>
+        <word>
+            <ip>дрова</ip>
+            <rp>дров</rp>
+            <dp>дровам</dp>
+            <vp>дрова</vp>
+            <tp>дровами</tp>
+            <pp>дровах</pp>
+        </word>
+        <word>
+            <ip>палка</ip>
+            <rp>палки</rp>
+            <dp>палке</dp>
+            <vp>палку</vp>
+            <tp>палкой</tp>
+            <pp>палке</pp>
+        </word>
+        <word>
+            <ip>кольцо</ip>
+            <rp>кольца</rp>
+            <dp>кольцу</dp>
+            <vp>кольцо</vp>
+            <tp>кольцом</tp>
+            <pp>кольце</pp>
+        </word>
+        <word>
+            <ip>колокольная</ip>
+            <rp>колокольной</rp>
+            <dp>колокольной</dp>
+            <vp>колокольную</vp>
+            <tp>колокольной</tp>
+            <pp>колокольной</pp>
+        </word>
+        <word>
+            <ip>мягкий</ip>
+            <rp>мягкого</rp>
+            <dp>мягкому</dp>
+            <vp>мягкий</vp>
+            <tp>мягким</tp>
+            <pp>мягком</pp>
+        </word>
+        <word>
+            <ip>колокол</ip>
+            <rp>колокола</rp>
+            <dp>колоколу</dp>
+            <vp>колокол</vp>
+            <tp>колоколом</tp>
+            <pp>колоколе</pp>
+        </word>
+        <word>
+            <ip>язык</ip>
+            <rp>языка</rp>
+            <dp>языку</dp>
+            <vp>язык</vp>
+            <tp>языком</tp>
+            <pp>языке</pp>
+        </word>
+        <word>
+            <ip>стены</ip>
+            <rp>стен</rp>
+            <dp>стенам</dp>
+            <vp>стены</vp>
+            <tp>стенами</tp>
+            <pp>стенах</pp>
+        </word>
+        <word>
+            <ip>сводчатый</ip>
+            <rp>сводчатого</rp>
+            <dp>сводчатому</dp>
+            <vp>сводчатый</vp>
+            <tp>сводчатым</tp>
+            <pp>сводчатом</pp>
+        </word>
+        <word>
+            <ip>яблоко</ip>
+            <rp>яблока</rp>
+            <dp>яблоку</dp>
+            <vp>яблоко</vp>
+            <tp>яблоком</tp>
+            <pp>яблоке</pp>
+        </word>
+        <word>
+            <ip>медный</ip>
+            <rp>медного</rp>
+            <dp>медному</dp>
+            <vp>медный</vp>
+            <tp>медным</tp>
+            <pp>медном</pp>
+        </word>
+        <word>
+            <ip>канат</ip>
+            <rp>каната</rp>
+            <dp>канату</dp>
+            <vp>канат</vp>
+            <tp>канатом</tp>
+            <pp>канате</pp>
+        </word>
+        <word>
+            <ip>глубокий</ip>
+            <rp>глубокого</rp>
+            <dp>глубокому</dp>
+            <vp>глубокий</vp>
+            <tp>глубоким</tp>
+            <pp>глубоком</pp>
+        </word>
+        <word>
+            <ip>длинная</ip>
+            <rp>длинной</rp>
+            <dp>длинной</dp>
+            <vp>длинную</vp>
+            <tp>длинной</tp>
+            <pp>длинной</pp>
+        </word>
+        <word>
+            <ip>веревка</ip>
+            <rp>веревки</rp>
+            <dp>веревке</dp>
+            <vp>веревку</vp>
+            <tp>веревкой</tp>
+            <pp>веревке</pp>
+        </word>
+        <word>
+            <ip>буксировочный</ip>
+            <rp>буксировочного</rp>
+            <dp>буксировочному</dp>
+            <vp>буксировочный</vp>
+            <tp>буксировочным</tp>
+            <pp>буксировочном</pp>
+        </word>
+        <word>
+            <ip>факел</ip>
+            <rp>факела</rp>
+            <dp>факелу</dp>
+            <vp>факел</vp>
+            <tp>факелом</tp>
+            <pp>факеле</pp>
+        </word>
+        <word>
+            <ip>свеча</ip>
+            <rp>свечи</rp>
+            <dp>свече</dp>
+            <vp>свечу</vp>
+            <tp>свечой</tp>
+            <pp>свече</pp>
+        </word>
+        <word>
+            <ip>железное</ip>
+            <rp>железного</rp>
+            <dp>железному</dp>
+            <vp>железное</vp>
+            <tp>железным</tp>
+            <pp>железном</pp>
+        </word>
+        <word>
+            <ip>сделанный тобою</ip>
+            <rp>сделанного тобою</rp>
+            <dp>сделанному тобою</dp>
+            <vp>сделанный тобою</vp>
+            <tp>сделанным тобою</tp>
+            <pp>сделанном тобою</pp>
+        </word>
+        <word>
+            <ip>пол</ip>
+            <rp>пола</rp>
+            <dp>полу</dp>
+            <vp>пол</vp>
+            <tp>полом</tp>
+            <pp>полу</pp>
+        </word>
+        <word>
+            <ip>с веревкой</ip>
+            <rp>с веревкой</rp>
+            <dp>с веревкой</dp>
+            <vp>с веревкой</vp>
+            <tp>с веревкой</tp>
+            <pp>с веревкой</pp>
+        </word>
+        <word>
+            <ip>алтарь</ip>
+            <rp>алтаря</rp>
+            <dp>алтарю</dp>
+            <vp>алтарь</vp>
+            <tp>алтарем</tp>
+            <pp>алтаре</pp>
+        </word>
+        <word>
+            <ip>шарф</ip>
+            <rp>шарфа</rp>
+            <dp>шарфу</dp>
+            <vp>шарф</vp>
+            <tp>шарфом</tp>
+            <pp>шарфе</pp>
+        </word>
+        <word>
+            <ip>дверь</ip>
+            <rp>двери</rp>
+            <dp>двери</dp>
+            <vp>дверь</vp>
+            <tp>дверью</tp>
+            <pp>двери</pp>
+        </word>
+        <word>
+            <ip>зеленое</ip>
+            <rp>зеленого</rp>
+            <dp>зеленому</dp>
+            <vp>зеленое</vp>
+            <tp>зеленым</tp>
+            <pp>зеленом</pp>
+        </word>
+        <word>
+            <ip>горящий</ip>
+            <rp>горящего</rp>
+            <dp>горящему</dp>
+            <vp>горящий</vp>
+            <tp>горящим</tp>
+            <pp>горящем</pp>
+        </word>
+        <word>
+            <ip>глиняный</ip>
+            <rp>глиняного</rp>
+            <dp>глиняному</dp>
+            <vp>глиняный</vp>
+            <tp>глиняным</tp>
+            <pp>глиняном</pp>
+        </word>
+        <word>
+            <ip>каменная</ip>
+            <rp>каменной</rp>
+            <dp>каменной</dp>
+            <vp>каменную</vp>
+            <tp>каменной</tp>
+            <pp>каменной</pp>
+        </word>
+        <word>
+            <ip>стена</ip>
+            <rp>стены</rp>
+            <dp>стене</dp>
+            <vp>стену</vp>
+            <tp>стеной</tp>
+            <pp>стене</pp>
+        </word>
+        <word>
+            <ip>смола</ip>
+            <rp>смолы</rp>
+            <dp>смоле</dp>
+            <vp>смолу</vp>
+            <tp>смолой</tp>
+            <pp>смоле</pp>
+        </word>
+        <word>
+            <ip>вязкая</ip>
+            <rp>вязкой</rp>
+            <dp>вязкой</dp>
+            <vp>вязкую</vp>
+            <tp>вязкой</tp>
+            <pp>вязкой</pp>
+        </word>
+        <word>
+            <ip>закрытая</ip>
+            <rp>закрытой</rp>
+            <dp>закрытой</dp>
+            <vp>закрытую</vp>
+            <tp>закрытой</tp>
+            <pp>закрытой</pp>
+        </word>
+        <word>
+            <ip>балка</ip>
+            <rp>балки</rp>
+            <dp>балке</dp>
+            <vp>балку</vp>
+            <tp>балкой</tp>
+            <pp>балке</pp>
+        </word>
+        <word>
+            <ip>разбитый</ip>
+            <rp>разбитого</rp>
+            <dp>разбитому</dp>
+            <vp>разбитый</vp>
+            <tp>разбитым</tp>
+            <pp>разбитом</pp>
+        </word>
+        <word>
+            <ip>колодец</ip>
+            <rp>колодца</rp>
+            <dp>колодцу</dp>
+            <vp>колодец</vp>
+            <tp>колодцем</tp>
+            <pp>колодце</pp>
+        </word>
+        <word>
+            <ip>потолок</ip>
+            <rp>потолка</rp>
+            <dp>потолку</dp>
+            <vp>потолок</vp>
+            <tp>потолком</tp>
+            <pp>потолке</pp>
+        </word>
+    </dictionary>
+    <locations>
+        <location id="ЦентрЛок" name="Центральная часть храма">
+            <hooks>
+                <hook action="осмотреться" objectElement="" type="before">
+                    <instructions>
+                        <showPicture filepath="Картинки\Центр.jpg" maxHeight="0" maxWidth="0"/>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="" type="text"/>
+                    </instructions>
+                </hook>
+                <hook action="идти на север" objectElement="" type="instead">
+                    <instructions>
+                        <if condition="факелПред в инвентарий">
+                            <else>
+<showMessage beginWithCap="false" carriageReturn="true" message="Слишком темно, ничего не видно." type="text"/>
+                            </else>
+                            <then>
+<showMessage beginWithCap="false" carriageReturn="true" message="Ты пошел на север." type="text"/>
+<goToLoc location="СеверЛок"/>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+                <hook action="идти на восток" objectElement="" type="instead">
+                    <instructions>
+                        <if condition="факелПред в инвентарий">
+                            <else>
+<showMessage beginWithCap="false" carriageReturn="true" message="Слишком темно, ничего не видно." type="text"/>
+                            </else>
+                            <then>
+<showMessage beginWithCap="false" carriageReturn="true" message="Ты пошел на восток." type="text"/>
+<goToLoc location="ВостокЛок"/>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+                <hook action="идти на юг" objectElement="" type="instead">
+                    <instructions>
+                        <if condition="факелПред в инвентарий">
+                            <else>
+<showMessage beginWithCap="false" carriageReturn="true" message="Слишком темно, ничего не видно." type="text"/>
+                            </else>
+                            <then>
+<showMessage beginWithCap="false" carriageReturn="true" message="Ты пошел на юг." type="text"/>
+<goToLoc location="ЮгЛок"/>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+                <hook action="идти на запад" objectElement="" type="instead">
+                    <instructions>
+                        <if condition="факелПред в инвентарий">
+                            <else>
+<showMessage beginWithCap="false" carriageReturn="true" message="Слишком темно, ничего не видно." type="text"/>
+                            </else>
+                            <then>
+<showMessage beginWithCap="false" carriageReturn="true" message="Ты пошел на юг." type="text"/>
+<goToLoc location="ЮгЛок"/>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words/>
+            <description>Ты находишься в полумрачном помещении. Над тобой нависающий свод потолка со следами копоти. Рядом расположен высеченный из цельного камня алтарь. Широкие, темные коридоры, свет в которые попадает лишь от большой свечи, установленой высоко на стене, ведут на север, восток, юг и запад.</description>
+            <attributes/>
+            <north>СеверЛок</north>
+            <east>ВостокЛок</east>
+            <south>ЮгЛок</south>
+            <west>ЗападЛок</west>
+        </location>
+        <location id="СеверЛок" name="Северная часть храма">
+            <hooks>
+                <hook action="осмотреться" objectElement="" type="before">
+                    <instructions>
+                        <showPicture filepath="Картинки\Тупик.jpg" maxHeight="0" maxWidth="0"/>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="" type="text"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words/>
+            <description>Ты находишься в северной части храма. На север дальше хода нет. Проход преграждает каменная кладка. Тупик. Вверху на балке висит колокол. На юг ведёт проход, в конце которого виден мерцающий свет.</description>
+            <attributes/>
+            <south>ЦентрЛок</south>
+        </location>
+        <location id="ЮгЛок" name="Южная часть храма">
+            <hooks>
+                <hook action="осмотреться" objectElement="" type="before">
+                    <instructions>
+                        <showPicture filepath="Картинки\Тупик2.jpg" maxHeight="0" maxWidth="0"/>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="" type="text"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words/>
+            <description>Ты находишься в южной части  храма. На север ведёт проход, в конце которого виден мерцающий свет. На юг дальше хода нет. Проход преграждает каменная кладка. Тупик. В полу помещения имеется отверстие глубокого колодца.</description>
+            <attributes/>
+            <north>ЦентрЛок</north>
+        </location>
+        <location id="ЗападЛок" name="Западная часть храма">
+            <hooks>
+                <hook action="осмотреться" objectElement="" type="before">
+                    <instructions>
+                        <showPicture filepath="Картинки\Храм запад.jpg" maxHeight="0" maxWidth="0"/>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="" type="text"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words/>
+            <description>Ты находишься перед дверью в западной части храма. На восток ведёт проход, в конце которого виден мерцающий свет.</description>
+            <attributes/>
+            <east>ЦентрЛок</east>
+        </location>
+        <location id="ВостокЛок" name="Восточная часть храма">
+            <hooks>
+                <hook action="осмотреться" objectElement="" type="before">
+                    <instructions>
+                        <showPicture filepath="Картинки\Восточная часть.jpg" maxHeight="0" maxWidth="0"/>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="" type="text"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words/>
+            <description>Ты находишься в восточной части храма. На запад ведёт проход, в конце которого виден мерцающий свет. На восток дальше хода нет. Проход преграждает решетка. Тупик.</description>
+            <attributes/>
+            <west>ЦентрЛок</west>
+        </location>
+        <location id="КолоколЛок" name="Колокол">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words/>
+            <description>Ты наверху возле колокола.</description>
+            <attributes/>
+        </location>
+        <location id="КолодецЛок" name="Колодец">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words/>
+            <description>Ты находишься внутри колодца.</description>
+            <attributes/>
+        </location>
+        <location id="ПроходЛок" name="Проход">
+            <hooks>
+                <hook action="осмотреться" objectElement="" type="before">
+                    <instructions>
+                        <showPicture filepath="Картинки\Проходы 6.jpg" maxHeight="0" maxWidth="0"/>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="" type="text"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words/>
+            <description>Ты находишься в проходе, который начинается от колодца.</description>
+            <attributes/>
+        </location>
+        <location id="ВыходЛок" name="Выход">
+            <hooks>
+                <hook action="осмотреться" objectElement="" type="before">
+                    <instructions>
+                        <showPicture filepath="Картинки\Выход из храма.jpg" maxHeight="0" maxWidth="0"/>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="" type="text"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words/>
+            <description>Ты вышел наружу. Все опасности остались позади.
+
+Game over. You won.</description>
+            <attributes/>
+        </location>
+        <location id="ПрикупЛок" name="Прикуп">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words/>
+            <description>Здесь храняться временно невостребованные предметы.</description>
+            <attributes/>
+        </location>
+        <location id="ТемнаяЛок" name="Темная комната">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words/>
+            <description>Совершенно темно, ничего не видно.</description>
+            <attributes/>
+        </location>
+    </locations>
+    <items>
+        <item id="ЯблокоПред" name="зеленое яблоко">
+            <hooks>
+                <hook action="осмотреть" objectElement="предмет" type="before">
+                    <instructions>
+                        <showPicture filepath="Картинки\зеленое яблоко.png" maxHeight="100" maxWidth="100"/>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="" type="text"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words mainWord="яблоко">
+                <word>яблоко</word>
+                <word>зеленое</word>
+            </words>
+            <description>Обыкновенное яблоко, только надкушенное. По отсутствию коричневого цвета надкушенной части яблока, можно предположить, что надкушено оно было совсем недавно.</description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations/>
+            </startingPosition>
+        </item>
+        <item id="ФакелПред" name="горящий факел">
+            <hooks>
+                <hook action="осмотреть" objectElement="предмет" type="before">
+                    <instructions>
+                        <showPicture filepath="Картинки\Горящий факел 2.jpg" maxHeight="0" maxWidth="0"/>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="" type="text"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words mainWord="факел">
+                <word>факел</word>
+                <word>горящий</word>
+            </words>
+            <description>Факел горит довольно ярко, освешая все вокруг.</description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>ПрикупЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="СделанныйТобоюФакелПред" name="сделанный тобою факел">
+            <hooks>
+                <hook action="осмотреть" objectElement="предмет" type="before">
+                    <instructions>
+                        <showPicture filepath="Картинки\готовый факел.png" maxHeight="0" maxWidth="0"/>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="" type="text"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words mainWord="факел">
+                <word>факел</word>
+                <word>сделанный тобою</word>
+            </words>
+            <description>Крепкая, достоточно длинная палка, с намотанным на ней шарфом, обмазанным смолой.</description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>ПрикупЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="КолокольнаяВеревкаПред" name="колокольная веревка">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="веревка">
+                <word>веревка</word>
+                <word>колокольная</word>
+            </words>
+            <description>Достаточно крепкая веревка.</description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>КолоколЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="КолодецПред" name="глубокий колодец">
+            <hooks>
+                <hook action="осмотреть" objectElement="предмет" type="before">
+                    <instructions>
+                        <showPicture filepath="Картинки\Колодец 5.jpg" maxHeight="0" maxWidth="0"/>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="" type="text"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words mainWord="колодец">
+                <word>колодец</word>
+                <word>глубокий</word>
+            </words>
+            <description>В полу, около края колодца в пол вмонтировано железное кольцо. Осветив факелом колодец, ты замечаешь выше поверхности воды в стенке колодца какой-то ход. </description>
+            <attributes>
+                <attribute>частьПейзажа</attribute>
+            </attributes>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>ЮгЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="КолоколПред" name="медный колокол">
+            <hooks>
+                <hook action="осмотреть" objectElement="предмет" type="before">
+                    <instructions>
+                        <showPicture filepath="Картинки\Колокол.jpg" maxHeight="0" maxWidth="0"/>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="" type="text"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words mainWord="колокол">
+                <word>колокол</word>
+                <word>медный</word>
+            </words>
+            <description>Колокол подвешен на деревянной балке. \n Веревка от языка колокола опускается до самого пола.</description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>КолоколЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="ДверьПред" name="закрытая дверь">
+            <hooks>
+                <hook action="осмотреть" objectElement="предмет" type="before">
+                    <instructions>
+                        <showPicture filepath="Картинки\Дверь 1.jpg" maxHeight="0" maxWidth="0"/>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="" type="text"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words mainWord="дверь">
+                <word>дверь</word>
+                <word>закрытая</word>
+            </words>
+            <description></description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>ЗападЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="ПолПред" name="каменный пол">
+            <hooks>
+                <hook action="осмотреть" objectElement="предмет" type="before">
+                    <instructions>
+                        <showPicture filepath="Картинки\Пол.jpg" maxHeight="0" maxWidth="0"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words mainWord="пол">
+                <word>пол</word>
+                <word>каменный</word>
+            </words>
+            <description>Пол состоит из больших каменных плит.</description>
+            <attributes>
+                <attribute>частьПейзажа</attribute>
+            </attributes>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>ЦентрЛок</location>
+                    <location>СеверЛок</location>
+                    <location>ЮгЛок</location>
+                    <location>ЗападЛок</location>
+                    <location>ВостокЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="КувшинПред" name="глиняный кувшин">
+            <hooks>
+                <hook action="осмотреть" objectElement="предмет" type="before">
+                    <instructions>
+                        <showPicture filepath="Картинки\Глиняный кувшин.png" maxHeight="0" maxWidth="0"/>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="" type="text"/>
+                    </instructions>
+                </hook>
+                <hook action="выбросить" objectElement="предмет" type="instead">
+                    <instructions>
+                        <if condition="КувшинПред в инвентарий">
+                            <else>
+<showMessage beginWithCap="false" carriageReturn="true" message="У тебя нет никакого кувшина." type="text"/>
+                            </else>
+                            <then>
+<if condition="БроситьКувшин = да">
+    <else>
+        <showMessage beginWithCap="false" carriageReturn="true" message="Предупреждение&#xA;Кувшин глиняный, вещь хрупкая.&#xA;Если бросить кувшин на пол, то он, скорее всего, разобьется. Если требуется просто поставить кувшин, то его нужно именно поставить или положить.&#xA;Что сделать?" type="text"/>
+        <var name="БроситьКувшин" value="да"/>
+    </else>
+    <then>
+        <showMessage beginWithCap="false" carriageReturn="true" message="Ты бросил кувшин на пол, и он разбился." type="text"/>
+        <moveItem item="КувшинПред" to="ПрикупЛок.предметы"/>
+        <moveItem item="ОсколокПред" to="ТекущаяЛокация.предметы"/>
+        <moveItem item="СмолаПред" to="ТекущаяЛокация.предметы"/>
+    </then>
+</if>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+                <hook action="положить" objectElement="кудаПоложить" type="instead">
+                    <instructions>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="Горлышко у кувшина слишком узкое, чтобы запихать туда что-либо." type="text"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles>
+                <role name="контейнер">
+                    <properties>
+                        <property name="предметыВнутри"/>
+                    </properties>
+                </role>
+            </roles>
+            <properties/>
+            <words mainWord="кувшин">
+                <word>кувшин</word>
+                <word>глиняный</word>
+            </words>
+            <description>Обыкновенный глиняный кувшин с узким горлом. Ты заглянул в горлышко, но ничего там не увидел, потряс и наклонил кувшин, но ничего из кувшина не вылилось и не высыпалось.</description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>ЦентрЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="ПотолокПред" name="сводчатый потолок">
+            <hooks>
+                <hook action="осмотреть" objectElement="предмет" type="before">
+                    <instructions>
+                        <showPicture filepath="Картинки\Потолок.jpg" maxHeight="0" maxWidth="0"/>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="" type="text"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words mainWord="потолок">
+                <word>потолок</word>
+                <word>сводчатый</word>
+            </words>
+            <description>Высокий сводчатый потолок со следами копоти.</description>
+            <attributes>
+                <attribute>частьПейзажа</attribute>
+            </attributes>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>ЦентрЛок</location>
+                    <location>СеверЛок</location>
+                    <location>ЮгЛок</location>
+                    <location>ЗападЛок</location>
+                    <location>ВостокЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="СвечаПред" name="большая свеча">
+            <hooks>
+                <hook action="осмотреть" objectElement="предмет" type="before">
+                    <instructions>
+                        <showPicture filepath="Картинки\Свеча.jpg" maxHeight="0" maxWidth="0"/>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="" type="text"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words mainWord="свеча">
+                <word>свеча</word>
+                <word>большая</word>
+            </words>
+            <description>Обыкновенная свеча установленная в нише высоко на стене.</description>
+            <attributes>
+                <attribute>частьПейзажа</attribute>
+            </attributes>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>ЦентрЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="СтенаПред" name="каменная стена">
+            <hooks>
+                <hook action="осмотреть" objectElement="предмет" type="before">
+                    <instructions>
+                        <showPicture filepath="Картинки\Стена.jpg" maxHeight="0" maxWidth="0"/>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="" type="text"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words mainWord="стена">
+                <word>стена</word>
+                <word>каменная</word>
+                <word>стены</word>
+            </words>
+            <description>Холодная каменная стена безо всяких росписей и орнамента.</description>
+            <attributes>
+                <attribute>частьПейзажа</attribute>
+            </attributes>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>ЦентрЛок</location>
+                    <location>СеверЛок</location>
+                    <location>ЮгЛок</location>
+                    <location>ЗападЛок</location>
+                    <location>ВостокЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="АлтарьПред" name="каменный алтарь">
+            <hooks>
+                <hook action="осмотреть" objectElement="предмет" type="before">
+                    <instructions>
+                        <showPicture filepath="Картинки\Алтарь.jpg" maxHeight="0" maxWidth="0"/>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="" type="text"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles>
+                <role name="поверхность">
+                    <properties>
+                        <property name="предметыСверху">
+                            <collectionItem>ЯблокоПред</collectionItem>
+                        </property>
+                    </properties>
+                </role>
+            </roles>
+            <properties/>
+            <words mainWord="алтарь">
+                <word>алтарь</word>
+                <word>каменный</word>
+            </words>
+            <description>Место, предназначенное для жертвоприношения.</description>
+            <attributes>
+                <attribute>частьПейзажа</attribute>
+            </attributes>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>ЦентрЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="ДроваПред" name="дрова">
+            <hooks>
+                <hook action="осмотреть" objectElement="предмет" type="before">
+                    <instructions>
+                        <showPicture filepath="Картинки\дрова2.png" maxHeight="0" maxWidth="0"/>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="" type="text"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles>
+                <role name="поверхность">
+                    <properties>
+                        <property name="предметыСверху">
+                            <collectionItem>ПалкаПред</collectionItem>
+                        </property>
+                    </properties>
+                </role>
+            </roles>
+            <properties/>
+            <words mainWord="дрова">
+                <word>дрова</word>
+            </words>
+            <description>Палки большие и маленькие.</description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>ЦентрЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="ШарфПред" name="мягкий шарф">
+            <hooks>
+                <hook action="осмотреть" objectElement="предмет" type="before">
+                    <instructions>
+                        <showPicture filepath="Картинки\шарф.png" maxHeight="200" maxWidth="200"/>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="" type="text"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles>
+                <role name="надеваемый">
+                    <properties>
+                        <property name="надет" value="да"/>
+                    </properties>
+                </role>
+            </roles>
+            <properties/>
+            <words mainWord="шарф">
+                <word>шарф</word>
+                <word>мягкий</word>
+            </words>
+            <description>Это твой любимый шарф. Но для своего спасения тебе его жалеть незачем. Тряпка она и есть тряпка, не горит, а только тлеет.</description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>ПрикупЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="ПалкаПред" name="большая и длинная палка">
+            <hooks>
+                <hook action="осмотреть" objectElement="предмет" type="before">
+                    <instructions>
+                        <showPicture filepath="Картинки\палка.png" maxHeight="0" maxWidth="0"/>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="" type="text"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words mainWord="палка">
+                <word>палка</word>
+                <word>большая</word>
+                <word>длинная</word>
+            </words>
+            <description>Палка достаточно длинная и крепкая. Наверное, она может приготится.</description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations/>
+            </startingPosition>
+        </item>
+        <item id="КанатПред" name="буксировочный канат">
+            <hooks>
+                <hook action="осмотреть" objectElement="предмет" type="before">
+                    <instructions>
+                        <showPicture filepath="Картинки\Буксировочный канат.jpg" maxHeight="0" maxWidth="0"/>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="" type="text"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words mainWord="канат">
+                <word>канат</word>
+                <word>буксировочный</word>
+            </words>
+            <description>Очень прочная веревка.</description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>ЗападЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="ПепелПред" name="пепел">
+            <hooks>
+                <hook action="осмотреть" objectElement="предмет" type="before">
+                    <instructions>
+                        <showPicture filepath="Картинки\пепел.png" maxHeight="0" maxWidth="0"/>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="" type="text"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words mainWord="пепел">
+                <word>пепел</word>
+                <word>зола</word>
+            </words>
+            <description></description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>ПрикупЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="КольцоПред" name="железное кольцо">
+            <hooks>
+                <hook action="осмотреть" objectElement="предмет" type="before">
+                    <instructions>
+                        <showPicture filepath="Картинки\Кольцо.jpg" maxHeight="0" maxWidth="0"/>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="" type="text"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words mainWord="кольцо">
+                <word>кольцо</word>
+                <word>железное</word>
+            </words>
+            <description></description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>ПрикупЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="БалкаПред" name="деревянная балка">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="балка">
+                <word>балка</word>
+                <word>деревянная</word>
+            </words>
+            <description></description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>КолоколЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="ЯзыкПред" name="колокольный язык">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="язык">
+                <word>язык</word>
+            </words>
+            <description></description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>КолоколЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="Кольцо1Пред" name="кольцо с веревкой">
+            <hooks>
+                <hook action="осмотреть" objectElement="предмет" type="before">
+                    <instructions>
+                        <showPicture filepath="Картинки\Кольцо с веревкой.jpg" maxHeight="0" maxWidth="0"/>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="" type="text"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words mainWord="кольцо">
+                <word>кольцо</word>
+                <word>с веревкой</word>
+            </words>
+            <description>К кольцу привязана веревка.</description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>ПрикупЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="ОсколокПред" name="разбитый кувшин">
+            <hooks>
+                <hook action="осмотреть" objectElement="предмет" type="before">
+                    <instructions>
+                        <showPicture filepath="Картинки\разбитый кувшин.jpeg" maxHeight="0" maxWidth="0"/>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="" type="text"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words mainWord="кувшин">
+                <word>кувшин</word>
+                <word>разбитый</word>
+            </words>
+            <description>Полость кувшина была заполнена какой-то вязкой смолой.</description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>ПрикупЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="СмолаПред" name="вязкая смола">
+            <hooks>
+                <hook action="осмотреть" objectElement="предмет" type="before">
+                    <instructions>
+                        <showPicture filepath="Картинки\смола.png" maxHeight="0" maxWidth="0"/>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="" type="text"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words mainWord="смола">
+                <word>смола</word>
+                <word>вязкая</word>
+            </words>
+            <description>По всей видимости это было когда-то каким-то маслом, которое со временем превратилось в смолистую субстанцию.</description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>ПрикупЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+    </items>
+    <actions>
+        <action name="осмотреть себя" description="">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>осмотреть себя</synonym>
+                        <synonym>посмотреть на себя</synonym>
+                        <synonym>оглядеть себя</synonym>
+                        <synonym>осм себя</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="осмотреть себя"/>
+            <restrictions/>
+        </action>
+        <action name="положить кувшин" description="">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>положить кувшин</synonym>
+                        <synonym>поставить кувшин</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="положить кувшин"/>
+            <restrictions>
+                <restriction condition="не КувшинПред в инвентарий">
+                    <reaction>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="У тебя нет никакого кувшина." type="text"/>
+                    </reaction>
+                </restriction>
+            </restrictions>
+        </action>
+        <action name="сделать факел" description="">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>сделать факел</synonym>
+                        <synonym>смастерить факел</synonym>
+                    </literalElement>
+                </template>
+                <template>
+                    <literalElement>
+                        <synonym>намазать шарф смолой</synonym>
+                        <synonym>обмазать шарф смолой</synonym>
+                        <synonym>намазать смолой шарф</synonym>
+                        <synonym>обмазать смолой шарф</synonym>
+                    </literalElement>
+                </template>
+                <template>
+                    <literalElement>
+                        <synonym>намотать шарф на палку</synonym>
+                        <synonym>намотать на палку шарф</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="сделать факел"/>
+            <restrictions>
+                <restriction condition="не палкаПред в инвентарий">
+                    <reaction>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="Нужно взять палку." type="text"/>
+                    </reaction>
+                </restriction>
+                <restriction condition="не осколокПред в ТекущаяЛокация.предметы">
+                    <reaction>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="Не хватает всех компонентов." type="text"/>
+                    </reaction>
+                </restriction>
+                <restriction condition="не шарфПред в инвентарий">
+                    <reaction>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="Не хватает всех компонентов." type="text"/>
+                    </reaction>
+                </restriction>
+            </restrictions>
+        </action>
+        <action name="потушить свечу" description="">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>потушить свечу</synonym>
+                        <synonym>погасить свечу</synonym>
+                        <synonym>затушить свечу</synonym>
+                        <synonym>загасить свечу</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="потушить свечу"/>
+            <restrictions>
+                <restriction condition="факелПред в инвентарий">
+                    <reaction>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="Ты потушил свечу." type="text"/>
+                    </reaction>
+                </restriction>
+            </restrictions>
+        </action>
+    </actions>
+</story>
