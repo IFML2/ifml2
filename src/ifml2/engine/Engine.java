@@ -1,6 +1,7 @@
 package ifml2.engine;
 
 import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
 import ifml2.CommonConstants;
 import ifml2.FormatLogger;
 import ifml2.IFML2Exception;
@@ -29,6 +30,7 @@ import java.text.MessageFormat;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 import static ifml2.engine.Engine.SystemCommand.HELP;
 import static java.lang.String.format;
@@ -92,25 +94,14 @@ public class Engine {
                     (Callable<TextValue>) () -> new TextValue(new CollectionValue(story.getLocations()).toString()));
             put("предметы",
                     (Callable<TextValue>) () -> new TextValue(new CollectionValue(story.getItems()).toString()));
-            put("системные", new Callable<TextValue>() {
-                @Override
-                public TextValue call() throws Exception {
-                    return new TextValue(format("Системные переменные: %s", ENGINE_SYMBOLS.keySet()));
-                }
+            put("системные", (Callable<TextValue>) () -> new TextValue(format("Системные переменные: %s", ENGINE_SYMBOLS.keySet())));
+            put("секунды", (Callable<NumberValue>) () -> {
+                Date now = new Date();
+                return new NumberValue((now.getTime() - starTime.getTime()) / 1000);
             });
-            put("секунды", new Callable<NumberValue>() {
-                @Override
-                public NumberValue call() throws Exception {
-                    Date now = new Date();
-                    return new NumberValue((now.getTime() - starTime.getTime()) / 1000);
-                }
-            });
-            put("минуты", new Callable<NumberValue>() {
-                @Override
-                public NumberValue call() throws Exception {
-                    Date now = new Date();
-                    return new NumberValue((now.getTime() - starTime.getTime()) / 1000 / 60);
-                }
+            put("минуты", (Callable<NumberValue>) () -> {
+                Date now = new Date();
+                return new NumberValue((now.getTime() - starTime.getTime()) / 1000 / 60);
             });
         }
     };
@@ -302,7 +293,7 @@ public class Engine {
             //outEngDebug("Кол-во найденных перехватов в локации - {0}.", locationHooks.size()); // нужно выводить не кол-во списков перехватов,
             // а само кол-во перехватов
 
-            List<Variable> parameters = convertFormalElementsToParameters(formalElements);
+            List<Variable> arguments = convertFormalElementsToArguments(formalElements);
 
             // if there are INSTEAD hooks then fire them and finish
             int itemInsteadHooksQty = objectHooks.get(Hook.Type.INSTEAD).size();
@@ -313,13 +304,13 @@ public class Engine {
                 // fire object hooks
                 for (Hook hook : objectHooks.get(Hook.Type.INSTEAD)) {
                     outEngDebug("Запуск перехвата \"{0}\" на предмете...", hook);
-                    virtualMachine.runHook(hook, parameters);
+                    virtualMachine.runHook(hook, arguments);
                     outEngDebug("Перехват выполнен.");
                 }
                 // fire location hooks
                 for (Hook hook : locationHooks.get(Hook.Type.INSTEAD)) {
                     outEngDebug("Запуск перехвата \"{0}\" в локации...", hook);
-                    virtualMachine.runHook(hook, parameters);
+                    virtualMachine.runHook(hook, arguments);
                     outEngDebug("Перехват выполнен.");
                 }
 
@@ -330,23 +321,23 @@ public class Engine {
 
             // check restrictions
             outEngDebug("Проверка ограничений действия...");
-            if (checkActionRestrictions(action, parameters)) {
+            if (checkActionRestrictions(action, arguments)) {
                 outEngDebug("Сработало ограничение, команда завершается.");
                 return true;
             }
 
             // fire BEFORE hooks
             outEngDebug("Выполнение перехватов \"ДО\"...");
-            fireBeforeHooks(parameters, objectHooks, locationHooks);
+            fireBeforeHooks(arguments, objectHooks, locationHooks);
 
 
             // fire action
             outEngDebug("Выполнение самого действия \"{0}\"...", action);
-            virtualMachine.runAction(action, parameters);
+            virtualMachine.runAction(action, arguments);
 
             // fire AFTER hooks
             outEngDebug("Выполнение перехватов \"ПОСЛЕ\"...");
-            fireAfterHooks(parameters, objectHooks, locationHooks);
+            fireAfterHooks(arguments, objectHooks, locationHooks);
         } catch (IFML2ParseException e) {
             handleParseError(trimmedCommand, e);
         } catch (IFML2VMException e) {
@@ -408,28 +399,46 @@ public class Engine {
         }
     }
 
-    private List<Variable> convertFormalElementsToParameters(@NotNull List<FormalElement> formalElements) throws IFML2Exception {
+    private List<Variable> convertFormalElementsToArguments(@NotNull List<FormalElement> formalElements) throws IFML2Exception {
+        /*todo rewrite to streams...
+        Stream<Value<?>> argToValues = formalElements.stream()
+                .filter(formalElement -> "".equals(formalElement.getParameterName()))
+                .map(formalElement -> {
+                    switch (formalElement.type) {
+                        case LITERAL:
+                            return new TextValue(formalElement.getLiteral());
+                        case OBJECT:
+                            return new ObjectValue(formalElement.getObject());
+                        default:
+                            return (Value)null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .collect();*/
+
         List<Variable> parameters = new ArrayList<>(formalElements.size());
         for (FormalElement formalElement : formalElements) {
-            Value value;
-            FormalElement.Type formalElementType = formalElement.getType();
-            switch (formalElementType) {
-                case LITERAL:
-                    value = new TextValue(formalElement.getLiteral());
-                    break;
-                case OBJECT:
-                    value = new ObjectValue(formalElement.getObject());
-                    break;
-                default:
-                    throw new IFML2Exception("Внутренняя ошибка: Неизвестный тип формального элемента: {0}", formalElementType);
+            if (formalElement.getParameterName() != null) {
+                Value value;
+                FormalElement.Type formalElementType = formalElement.getType();
+                switch (formalElementType) {
+                    case LITERAL:
+                        value = new TextValue(formalElement.getLiteral());
+                        break;
+                    case OBJECT:
+                        value = new ObjectValue(formalElement.getObject());
+                        break;
+                    default:
+                        throw new IFML2Exception("Внутренняя ошибка: Неизвестный тип формального элемента: {0}", formalElementType);
+                }
+                parameters.add(new Variable(formalElement.getParameterName(), value));
             }
-            parameters.add(new Variable(formalElement.getParameterName(), value));
         }
 
         return parameters;
     }
 
-    private void outEngDebug(String message, Object... args) {
+    public void outEngDebug(String message, Object... args) {
         outDebug(this.getClass(), message, args);
     }
 
@@ -458,33 +467,33 @@ public class Engine {
      * @param message Debug message.
      * @param args    Arguments for message formatting.
      */
-    public void outDebug(String message, Object... args) {
+    private void outDebug(String message, Object... args) {
         if (isDebugMode) {
             outTextLn(DEBUG_OUTPUT_PREFIX + message, args);
         }
     }
 
-    private void fireAfterHooks(List<Variable> parameters, HashMap<Hook.Type, List<Hook>> objectHooks,
+    private void fireAfterHooks(List<Variable> arguments, HashMap<Hook.Type, List<Hook>> objectHooks,
                                 HashMap<Hook.Type, List<Hook>> locationHooks) throws IFML2Exception {
         // ... object hooks
         for (Hook hook : objectHooks.get(Hook.Type.AFTER)) {
-            virtualMachine.runHook(hook, parameters);
+            virtualMachine.runHook(hook, arguments);
         }
         // ... and location hooks
         for (Hook hook : locationHooks.get(Hook.Type.AFTER)) {
-            virtualMachine.runHook(hook, parameters);
+            virtualMachine.runHook(hook, arguments);
         }
     }
 
-    private void fireBeforeHooks(List<Variable> parameters, HashMap<Hook.Type, List<Hook>> objectHooks,
+    private void fireBeforeHooks(List<Variable> arguments, HashMap<Hook.Type, List<Hook>> objectHooks,
                                  HashMap<Hook.Type, List<Hook>> locationHooks) throws IFML2Exception {
         // ... object hooks
         for (Hook hook : objectHooks.get(Hook.Type.BEFORE)) {
-            virtualMachine.runHook(hook, parameters);
+            virtualMachine.runHook(hook, arguments);
         }
         // ... and location hooks
         for (Hook hook : locationHooks.get(Hook.Type.BEFORE)) {
-            virtualMachine.runHook(hook, parameters);
+            virtualMachine.runHook(hook, arguments);
         }
     }
 
@@ -533,11 +542,27 @@ public class Engine {
         return objectHooks;
     }
 
-    private boolean checkActionRestrictions(Action action, List<Variable> parameters) throws IFML2Exception {
-        for (Restriction restriction : action.getRestrictions()) {
+    private boolean checkActionRestrictions(Action action, List<Variable> arguments) throws IFML2Exception {
+        for (Restriction restriction : action.getRestrictions())
             try {
                 RunningContext runningContext = RunningContext.CreateNewContext(virtualMachine);
-                runningContext.populateParameters(parameters);
+                runningContext.populateParameters(arguments);
+
+                List<String> lowParNames = arguments.stream()
+                        .map(v -> v.getName().toLowerCase())
+                        .collect(Collectors.toList());
+
+                EventList<Parameter> procParams = action.procedureCall.getProcedure().getParameters();
+                List<String> emptyArgs = procParams.stream()
+                        .filter(p -> !lowParNames.contains(p.getName().toLowerCase()))
+                        .map(Parameter::getName)
+                        .collect(Collectors.toList());
+
+                // fill not set arguments as EmptyValue
+                for (String argName : emptyArgs) {
+                    runningContext.writeVariable(argName, new EmptyValue());
+                }
+
                 Value isRestricted = ExpressionCalculator.calculate(runningContext, restriction.getCondition());
                 if (!(isRestricted instanceof BooleanValue)) {
                     throw new IFML2Exception("Выражение (%s) условия ограничения действия \"%s\" не логического типа.",
@@ -552,7 +577,6 @@ public class Engine {
                 throw new IFML2Exception(e, "{0}\n  при вычислении ограничения \"{1}\" действия \"{2}\"", e.getMessage(),
                         restriction.getCondition(), action);
             }
-        }
         return false;
     }
 
@@ -561,7 +585,7 @@ public class Engine {
     }
 
     @Nullable
-    public Location getCurrentLocation() {
+    private Location getCurrentLocation() {
         ObjectValue object = (ObjectValue) systemVariables.get(SystemIdentifiers.CURRENT_LOCATION_SYSTEM_VARIABLE.toLowerCase());
         return object != null ? (Location) object.getValue() : null;
     }

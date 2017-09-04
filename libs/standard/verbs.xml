@@ -318,6 +318,7 @@
                         <synonym>бросить</synonym>
                         <synonym>выбросить</synonym>
                         <synonym>кинуть</synonym>
+                        <synonym>выкинуть</synonym>
                     </literalElement>
                     <objectElement position="2" case="vp" parameter="предмет"/>
                 </template>
@@ -690,8 +691,18 @@
         </action>
 
         <!-- Положить -->
-        <action name="положить" description="положить/поставить/поместить/водрузить/сунуть/засунуть/запихать ([ВП] на/в/в(о) [ВП] / на/в/в(о) [ВП] [ВП])">
+        <action name="положить" description="положить на пол / положить/поставить/поместить/водрузить/сунуть/засунуть/запихать ([что, ВП] на/в/в(о) [что, ВП] / на/в/в(о) [что, ВП] [что, ВП])">
             <templates>
+                <template>
+                    <!-- положить на пол -->
+                    <literalElement position="1">
+                        <synonym>положить</synonym>
+                    </literalElement>
+                    <objectElement position="2" case="vp" parameter="чтоПоложить"/>
+                    <literalElement position="3" parameter="наПол">
+                        <synonym>на пол</synonym>
+                    </literalElement>
+                </template>
                 <template>
                     <!-- положить/поставить/поместить/сунуть/засунуть/запихать что-то в/во что-то -->
                     <literalElement position="1">
@@ -767,23 +778,23 @@
                         <!-- todo: после ввода рода и числа заменить "надет(а,о)" на нормальное окончание по полу -->
                     </reaction>
                 </restriction>
-                <restriction condition="предлог = 'на' и не кудаПоложить.поверхность">
+                <restriction condition="предлог = 'на' и не кудаПоложить = ПУСТО и не кудаПоложить.поверхность">
                     <reaction>
                         <showMessage position="1" type="expression"
                                      message="'На ' + кудаПоложить.ВП + ' нельзя ничего класть.'"/>
                     </reaction>
                 </restriction>
                 <!-- todo переписать, когда будет ИЛИ и скобки или литералы массивов (для проверки вхождения) -->
-                <restriction condition="предлог = 'в' и не кудаПоложить.контейнер">
+                <restriction condition="предлог = 'в' и не кудаПоложить = ПУСТО и не кудаПоложить.контейнер">
                     <reaction>
                         <showMessage position="1" type="expression"
                                      message="'В ' + кудаПоложить.ВП + ' нельзя ничего класть.'"/>
                     </reaction>
                 </restriction>
-                <restriction condition="предлог = 'во' и не кудаПоложить.контейнер">
+                <restriction condition="предлог = 'во' и не кудаПоложить = ПУСТО и не кудаПоложить.контейнер">
                     <reaction>
                         <showMessage position="1" type="expression"
-                                     message="'В ' + кудаПоложить.ВП + ' нельзя ничего класть.'"/>
+                                     message="'Во ' + кудаПоложить.ВП + ' нельзя ничего класть.'"/>
                     </reaction>
                 </restriction>
             </restrictions>
@@ -1412,12 +1423,21 @@
                 <parameter name="кудаПоложить"/>
             </parameters>
             <procedureBody>
-                <if condition="предлог = 'на'">
+                <if condition="наПол = ПУСТО">
                     <then>
-                        <moveItem item="чтоПоложить" to="кудаПоложить.предметыСверху"/>
-                        <showMessage type="expression"
-                                     message="'Вы положили ' + чтоПоложить.вп + ' ' + предлог + ' ' + кудаПоложить.вп + '.'"/>
+                        <if condition="предлог = 'на'">
+                            <then>
+                                <moveItem item="чтоПоложить" to="кудаПоложить.предметыСверху"/>
+                                <showMessage type="expression"
+                                             message="'Вы положили ' + чтоПоложить.вп + ' ' + предлог + ' ' + кудаПоложить.вп + '.'"/>
+                            </then>
+                        </if>
                     </then>
+                    <else>
+                        <moveItem item="чтоПоложить" to="ТекущаяЛокация.предметы"/>
+                        <showMessage type="expression"
+                                     message="'Вы положили ' + чтоПоложить.вп + ' на пол.'"/>
+                    </else>
                 </if>
                 <if condition="предлог = 'в' или предлог = 'во'">
                     <then>

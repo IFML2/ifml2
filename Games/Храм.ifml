@@ -29,7 +29,7 @@
                         <showMessage beginWithCap="false" carriageReturn="true" message="На шее шарф." type="text"/>
                         <if condition="шарфПред в инвентарий">
                             <else>
-<moveItem item="ШарфПред" to="инвентарий"/>
+                                <moveItem item="ШарфПред" to="инвентарий"/>
                             </else>
                             <then/>
                         </if>
@@ -205,6 +205,14 @@
             <vp>медный</vp>
             <tp>медным</tp>
             <pp>медном</pp>
+        </word>
+        <word>
+            <ip>шляпа</ip>
+            <rp>шляпы</rp>
+            <dp>шляпе</dp>
+            <vp>шляпу</vp>
+            <tp>шляпой</tp>
+            <pp>шляпе</pp>
         </word>
         <word>
             <ip>канат</ip>
@@ -428,11 +436,11 @@
                     <instructions>
                         <if condition="факелПред в инвентарий">
                             <else>
-<showMessage beginWithCap="false" carriageReturn="true" message="Слишком темно, ничего не видно." type="text"/>
+                                <showMessage beginWithCap="false" carriageReturn="true" message="Слишком темно, ничего не видно." type="text"/>
                             </else>
                             <then>
-<showMessage beginWithCap="false" carriageReturn="true" message="Ты пошел на север." type="text"/>
-<goToLoc location="СеверЛок"/>
+                                <showMessage beginWithCap="false" carriageReturn="true" message="Ты пошел на север." type="text"/>
+                                <goToLoc location="СеверЛок"/>
                             </then>
                         </if>
                     </instructions>
@@ -441,11 +449,11 @@
                     <instructions>
                         <if condition="факелПред в инвентарий">
                             <else>
-<showMessage beginWithCap="false" carriageReturn="true" message="Слишком темно, ничего не видно." type="text"/>
+                                <showMessage beginWithCap="false" carriageReturn="true" message="Слишком темно, ничего не видно." type="text"/>
                             </else>
                             <then>
-<showMessage beginWithCap="false" carriageReturn="true" message="Ты пошел на восток." type="text"/>
-<goToLoc location="ВостокЛок"/>
+                                <showMessage beginWithCap="false" carriageReturn="true" message="Ты пошел на восток." type="text"/>
+                                <goToLoc location="ВостокЛок"/>
                             </then>
                         </if>
                     </instructions>
@@ -454,11 +462,11 @@
                     <instructions>
                         <if condition="факелПред в инвентарий">
                             <else>
-<showMessage beginWithCap="false" carriageReturn="true" message="Слишком темно, ничего не видно." type="text"/>
+                                <showMessage beginWithCap="false" carriageReturn="true" message="Слишком темно, ничего не видно." type="text"/>
                             </else>
                             <then>
-<showMessage beginWithCap="false" carriageReturn="true" message="Ты пошел на юг." type="text"/>
-<goToLoc location="ЮгЛок"/>
+                                <showMessage beginWithCap="false" carriageReturn="true" message="Ты пошел на юг." type="text"/>
+                                <goToLoc location="ЮгЛок"/>
                             </then>
                         </if>
                     </instructions>
@@ -467,11 +475,11 @@
                     <instructions>
                         <if condition="факелПред в инвентарий">
                             <else>
-<showMessage beginWithCap="false" carriageReturn="true" message="Слишком темно, ничего не видно." type="text"/>
+                                <showMessage beginWithCap="false" carriageReturn="true" message="Слишком темно, ничего не видно." type="text"/>
                             </else>
                             <then>
-<showMessage beginWithCap="false" carriageReturn="true" message="Ты пошел на юг." type="text"/>
-<goToLoc location="ЮгЛок"/>
+                                <showMessage beginWithCap="false" carriageReturn="true" message="Ты пошел на юг." type="text"/>
+                                <goToLoc location="ЮгЛок"/>
                             </then>
                         </if>
                     </instructions>
@@ -596,7 +604,7 @@
             <words/>
             <description>Ты вышел наружу. Все опасности остались позади.
 
-Game over. You won.</description>
+                Game over. You won.</description>
             <attributes/>
         </location>
         <location id="ПрикупЛок" name="Прикуп">
@@ -783,6 +791,7 @@ Game over. You won.</description>
                 <hook action="осмотреть" objectElement="предмет" type="before">
                     <instructions>
                         <showPicture filepath="Картинки\Пол.jpg" maxHeight="0" maxWidth="0"/>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="" type="text"/>
                     </instructions>
                 </hook>
             </hooks>
@@ -819,21 +828,44 @@ Game over. You won.</description>
                     <instructions>
                         <if condition="КувшинПред в инвентарий">
                             <else>
-<showMessage beginWithCap="false" carriageReturn="true" message="У тебя нет никакого кувшина." type="text"/>
+                                <showMessage beginWithCap="false" carriageReturn="true" message="У тебя нет никакого кувшина." type="text"/>
                             </else>
                             <then>
-<if condition="БроситьКувшин = да">
-    <else>
-        <showMessage beginWithCap="false" carriageReturn="true" message="Предупреждение&#xA;Кувшин глиняный, вещь хрупкая.&#xA;Если бросить кувшин на пол, то он, скорее всего, разобьется. Если требуется просто поставить кувшин, то его нужно именно поставить или положить.&#xA;Что сделать?" type="text"/>
-        <var name="БроситьКувшин" value="да"/>
-    </else>
-    <then>
-        <showMessage beginWithCap="false" carriageReturn="true" message="Ты бросил кувшин на пол, и он разбился." type="text"/>
-        <moveItem item="КувшинПред" to="ПрикупЛок.предметы"/>
-        <moveItem item="ОсколокПред" to="ТекущаяЛокация.предметы"/>
-        <moveItem item="СмолаПред" to="ТекущаяЛокация.предметы"/>
-    </then>
-</if>
+                                <if condition="БроситьКувшин = да">
+                                    <else>
+                                        <showMessage beginWithCap="false" carriageReturn="true" message="Предупреждение&#xA;Кувшин глиняный, вещь хрупкая.&#xA;Если бросить кувшин на пол, то он, скорее всего, разобьется. Если требуется просто поставить кувшин, то его нужно именно поставить или положить.&#xA;Что сделать?" type="text"/>
+                                        <var name="БроситьКувшин" value="да"/>
+                                    </else>
+                                    <then>
+                                        <showMessage beginWithCap="false" carriageReturn="true" message="Ты бросил кувшин на пол, и он разбился." type="text"/>
+                                        <moveItem item="КувшинПред" to="ПрикупЛок.предметы"/>
+                                        <moveItem item="ОсколокПред" to="ТекущаяЛокация.предметы"/>
+                                        <moveItem item="СмолаПред" to="ТекущаяЛокация.предметы"/>
+                                    </then>
+                                </if>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+                <hook action="сломать [что]" objectElement="предмет" type="instead">
+                    <instructions>
+                        <if condition="КувшинПред в инвентарий">
+                            <else>
+                                <showMessage beginWithCap="false" carriageReturn="true" message="У тебя нет никакого кувшина." type="text"/>
+                            </else>
+                            <then>
+                                <if condition="БроситьКувшин = да">
+                                    <else>
+                                        <showMessage beginWithCap="false" carriageReturn="true" message="Предупреждение&#xA;Кувшин глиняный, вещь хрупкая.&#xA;Если бросить кувшин на пол, то он, скорее всего, разобьется. Если требуется просто поставить кувшин, то его нужно именно поставить или положить.&#xA;Что сделать?" type="text"/>
+                                        <var name="БроситьКувшин" value="да"/>
+                                    </else>
+                                    <then>
+                                        <showMessage beginWithCap="false" carriageReturn="true" message="Ты бросил кувшин на пол, и он разбился." type="text"/>
+                                        <moveItem item="КувшинПред" to="ПрикупЛок.предметы"/>
+                                        <moveItem item="ОсколокПред" to="ТекущаяЛокация.предметы"/>
+                                        <moveItem item="СмолаПред" to="ТекущаяЛокация.предметы"/>
+                                    </then>
+                                </if>
                             </then>
                         </if>
                     </instructions>
@@ -860,9 +892,7 @@ Game over. You won.</description>
             <attributes/>
             <startingPosition>
                 <inventory>false</inventory>
-                <locations>
-                    <location>ЦентрЛок</location>
-                </locations>
+                <locations/>
             </startingPosition>
         </item>
         <item id="ПотолокПред" name="сводчатый потолок">
@@ -966,6 +996,7 @@ Game over. You won.</description>
                     <properties>
                         <property name="предметыСверху">
                             <collectionItem>ЯблокоПред</collectionItem>
+                            <collectionItem>КувшинПред</collectionItem>
                         </property>
                     </properties>
                 </role>
@@ -994,6 +1025,15 @@ Game over. You won.</description>
                         <showMessage beginWithCap="false" carriageReturn="true" message="" type="text"/>
                     </instructions>
                 </hook>
+                <hook action="зажечь [что]" objectElement="предмет" type="instead">
+                    <instructions>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="Вы подожгли дрова, и они сгорели." type="text"/>
+                        <runProcedure procedure="ПоменятьПредметы" returnToVar="">
+                            <parameter name="ОдинПредмет" value="предмет"/>
+                            <parameter name="ДругойПредмет" value="ПепелПред"/>
+                        </runProcedure>
+                    </instructions>
+                </hook>
             </hooks>
             <roles>
                 <role name="поверхность">
@@ -1009,7 +1049,9 @@ Game over. You won.</description>
                 <word>дрова</word>
             </words>
             <description>Палки большие и маленькие.</description>
-            <attributes/>
+            <attributes>
+                <attribute>горючий</attribute>
+            </attributes>
             <startingPosition>
                 <inventory>false</inventory>
                 <locations>

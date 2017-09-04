@@ -49,7 +49,7 @@ public class Editor extends JFrame
     private boolean isStoryEdited = false;
     private File storyFile = null; // TODO: 07.02.2016 перейти везде на File, а не на String
 
-    public Editor()
+    private Editor()
     {
         updateTitle();
         setContentPane(mainPanel);
@@ -137,7 +137,7 @@ public class Editor extends JFrame
      * @param story история
      * @param filePath путь к файлу истории
      */
-    public void setStory(@NotNull Story story, String filePath)
+    private void setStory(@NotNull Story story, String filePath)
     {
         this.story = story;
         this.storyFile = filePath != null ? new File(filePath) : null;
@@ -146,7 +146,7 @@ public class Editor extends JFrame
         bindData();
     }
 
-    public void setStoryEdited(boolean storyEdited)
+    private void setStoryEdited(boolean storyEdited)
     {
         isStoryEdited = storyEdited;
         updateTitle();
@@ -185,34 +185,30 @@ public class Editor extends JFrame
 
     private void loadStory(final String storyFilePath)
     {
-        new Thread() // todo remake to SwingWorker
-        {
-            @Override
-            public void run()
-            { //todo rewrite using SwingWorker
-                Cursor previousCursor = mainPanel.getCursor();
-                mainPanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                //getContentPane().setEnabled(false);
-                try
-                {
-                    progressBar.setVisible(true);
-                    Story story = OMManager.loadStoryFromFile(storyFilePath, false, false).getStory();
-                    Editor.this.setStory(story, storyFilePath);
-                }
-                catch (Throwable e)
-                {
-                    LOG.error("Error while loading story!", e);
-                    GUIUtils.ReportError(Editor.this, e);
-                    //GUIUtils.showErrorMessage(Editor.this, e);
-                }
-                finally
-                {
-                    //getContentPane().setEnabled(true); // todo try SwingUtilities.invokeLater
-                    progressBar.setVisible(false);
-                    mainPanel.setCursor(previousCursor);
-                }
+        // todo remake to SwingWorker
+        new Thread(() -> { //todo rewrite using SwingWorker
+            Cursor previousCursor = mainPanel.getCursor();
+            mainPanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            //getContentPane().setEnabled(false);
+            try
+            {
+                progressBar.setVisible(true);
+                Story story = OMManager.loadStoryFromFile(storyFilePath, false, false).getStory();
+                Editor.this.setStory(story, storyFilePath);
             }
-        }.start();
+            catch (Throwable e)
+            {
+                LOG.error("Error while loading story!", e);
+                GUIUtils.ReportError(Editor.this, e);
+                //GUIUtils.showErrorMessage(Editor.this, e);
+            }
+            finally
+            {
+                //getContentPane().setEnabled(true); // todo try SwingUtilities.invokeLater
+                progressBar.setVisible(false);
+                mainPanel.setCursor(previousCursor);
+            }
+        }).start();
     }
 
     private JMenuBar createMainMenu()
@@ -590,7 +586,7 @@ public class Editor extends JFrame
         return false;
     }
 
-    public void setStoryFile(String storyFileName)
+    private void setStoryFile(String storyFileName)
     {
         this.storyFile = new File(storyFileName);
         updateTitle();
