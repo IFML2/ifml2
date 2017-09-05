@@ -691,10 +691,10 @@
         </action>
 
         <!-- Положить -->
-        <action name="положить" description="положить на пол / положить/поставить/поместить/водрузить/сунуть/засунуть/запихать ([что, ВП] на/в/в(о) [что, ВП] / на/в/в(о) [что, ВП] [что, ВП])">
+        <action name="положить" description="положить/поставить [что, ВП] (на пол)/(на землю) / положить/поставить/поместить/водрузить/сунуть/засунуть/запихать ([что, ВП] на/в/в(о) [что, ВП] / на/в/в(о) [что, ВП] [что, ВП])">
             <templates>
                 <template>
-                    <!-- положить на пол -->
+                    <!-- положить/поставить [что, ВП] (на пол)/(на землю) -->
                     <literalElement position="1">
                         <synonym>положить</synonym>
                         <synonym>поставить</synonym>
@@ -769,6 +769,11 @@
                 </template>
             </templates>
             <restrictions>
+                <restriction condition="не чтоПоложить в инвентарь">
+                    <reaction>
+                        <showMessage position="1" type="expression" message="'У Вас нет ' + чтоПоложить.рп + '.'"/>
+                    </reaction>
+                </restriction>
                 <restriction condition="чтоПоложить.недоступен">
                     <reaction>
                         <showMessage position="1" type="text" message="Это невозможно. Предмет недоступен."/>
