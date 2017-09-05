@@ -697,10 +697,12 @@
                     <!-- положить на пол -->
                     <literalElement position="1">
                         <synonym>положить</synonym>
+                        <synonym>поставить</synonym>
                     </literalElement>
                     <objectElement position="2" case="vp" parameter="чтоПоложить"/>
                     <literalElement position="3" parameter="наПол">
                         <synonym>на пол</synonym>
+                        <synonym>на землю</synonym>
                     </literalElement>
                 </template>
                 <template>
