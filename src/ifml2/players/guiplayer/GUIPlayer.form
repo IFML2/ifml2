@@ -38,10 +38,9 @@
           <component id="26eea" class="javax.swing.JTextPane" binding="logTextPane">
             <constraints/>
             <properties>
-              <background awt-color="black"/>
+              <contentType value="text/html"/>
               <editable value="false"/>
               <font name="Segoe UI" size="16"/>
-              <foreground awt-color="green"/>
               <margin top="4" left="4" bottom="4" right="4"/>
             </properties>
           </component>
