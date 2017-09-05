@@ -6,4 +6,4 @@ Russian [Interactive Fiction](http://ifwiki.org/index.php/Interactive_fiction) P
 
 ## Supported by
 * Cross-platform installer  
-[![BitRock Logo](https://dl.dropboxusercontent.com/u/87862945/IFML2/installersby_tiny.png)](http://bitrock.com)
+[![BitRock Logo](http://b8.icdn.ru/r/realsonic/2/55934082EhG.jpg)](http://bitrock.com)
