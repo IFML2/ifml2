@@ -65,6 +65,19 @@
             </procedureBody>
             <parameters/>
         </procedure>
+        <procedure name="ПоменятьПредметы">
+            <procedureVariables/>
+            <procedureBody>
+                <var name="КоллОдного" value="ОдинПредмет.СодержащаяКоллекция"/>
+                <var name="КоллДругого" value="ДругойПредмет.СодержащаяКоллекция"/>
+                <moveItem item="ОдинПредмет" to="КоллДругого"/>
+                <moveItem item="ДругойПредмет" to="КоллОдного"/>
+            </procedureBody>
+            <parameters>
+                <parameter name="ОдинПредмет"/>
+                <parameter name="ДругойПредмет"/>
+            </parameters>
+        </procedure>
     </procedures>
     <libraries>
         <library>standard/verbs.xml</library>
