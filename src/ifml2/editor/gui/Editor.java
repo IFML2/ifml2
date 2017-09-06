@@ -29,8 +29,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 
 import static ifml2.CommonConstants.RUSSIAN_PRODUCT_NAME;
-import static ifml2.GUIUtils.DIRECTORY_ICON;
-import static ifml2.GUIUtils.STORY_FILE_ICON;
+import static ifml2.GUIUtils.*;
 import static java.lang.String.format;
 
 public class Editor extends JFrame
@@ -598,6 +597,29 @@ public class Editor extends JFrame
         {
             {
                 addListChangeListener(e -> markStoryEdited());
+                this.elementsList.setCellRenderer(new DefaultListCellRenderer() {
+                    public Component getListCellRendererComponent(JList list, Object value,
+                                                                  int index, boolean isSelected,
+                                                                  boolean cellHasFocus) {
+                        setText(value.toString());
+                        setIcon(ROOM_ICON);
+
+                        if (isSelected) {
+                            setBackground(list.getSelectionBackground());
+                            setForeground(list.getSelectionForeground());
+                        }
+                        else {
+                            setBackground(list.getBackground());
+                            setForeground(list.getForeground());
+                        }
+
+                        setEnabled(list.isEnabled());
+                        setFont(list.getFont());
+                        setOpaque(true);
+
+                        return this;
+                    }
+                });
             }
 
             @Override
@@ -630,6 +652,29 @@ public class Editor extends JFrame
         {
             {
                 addListChangeListener(e -> markStoryEdited());
+                this.elementsList.setCellRenderer(new DefaultListCellRenderer() {
+                    public Component getListCellRendererComponent(JList list, Object value,
+                                                                  int index, boolean isSelected,
+                                                                  boolean cellHasFocus) {
+                        setText(value.toString());
+                        setIcon(ITEM_ICON);
+
+                        if (isSelected) {
+                            setBackground(list.getSelectionBackground());
+                            setForeground(list.getSelectionForeground());
+                        }
+                        else {
+                            setBackground(list.getBackground());
+                            setForeground(list.getForeground());
+                        }
+
+                        setEnabled(list.isEnabled());
+                        setFont(list.getFont());
+                        setOpaque(true);
+
+                        return this;
+                    }
+                });
             }
 
             @Override

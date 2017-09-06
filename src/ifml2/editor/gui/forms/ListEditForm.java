@@ -34,7 +34,7 @@ public abstract class ListEditForm<T> extends JInternalFrame
     protected Window owner;
     private EventList<T> clonedList;
     private JPanel contentPane;
-    private JList elementsList;
+    protected JList elementsList;
     private JButton upButton;
     private JButton downButton;
     private JButton addElementButton;

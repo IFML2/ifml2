@@ -34,6 +34,8 @@ public class GUIUtils
     public static final Icon DIRECTORY_ICON = getEditorIcon("Open24.gif");
     public static final Icon SAVE_FILE_ICON = getEditorIcon("Save24.gif");
     public static final Icon STORY_FILE_ICON = getEditorIcon("Edit24.gif");
+    public static final Icon ROOM_ICON = getEditorIcon("icons8_Room_24px.png");
+    public static final Icon ITEM_ICON = getEditorIcon("icons8_Orthogonal_View_24px.png");
     public static final Icon CIPHERED_STORY_FILE_ICON = STORY_FILE_ICON;
     public static final Icon LIBRARY_FILE_ICON = STORY_FILE_ICON;
 

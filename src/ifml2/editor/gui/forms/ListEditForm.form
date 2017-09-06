@@ -46,14 +46,14 @@
               <component id="3cd5c" class="javax.swing.JButton" binding="upButton">
                 <constraints/>
                 <properties>
-                  <icon value="icons8-Up.png"/>
+                  <icon value="icons8_Sort_Up_24px.png"/>
                   <text value=""/>
                 </properties>
               </component>
               <component id="f4a9e" class="javax.swing.JButton" binding="downButton">
                 <constraints/>
                 <properties>
-                  <icon value="icons8-Down Arrow.png"/>
+                  <icon value="icons8_Sort_Down_24px.png"/>
                   <text value=""/>
                 </properties>
               </component>
@@ -75,21 +75,21 @@
           <component id="2c11e" class="javax.swing.JButton" binding="addElementButton">
             <constraints/>
             <properties>
-              <icon value="icons8-Create.png"/>
+              <icon value="icons8_Add_File_24px.png"/>
               <text value="&amp;Добавить..."/>
             </properties>
           </component>
           <component id="7b4e9" class="javax.swing.JButton" binding="editElementButton">
             <constraints/>
             <properties>
-              <icon value="icons8-Edit.png"/>
+              <icon value="icons8_Edit_File_24px.png"/>
               <text value="&amp;Изменить..."/>
             </properties>
           </component>
           <component id="eb4fb" class="javax.swing.JButton" binding="delElementButton">
             <constraints/>
             <properties>
-              <icon value="icons8-Trash Can.png"/>
+              <icon value="icons8_Delete_File_24px.png"/>
               <text value="&amp;Удалить..."/>
             </properties>
           </component>
