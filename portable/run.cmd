@@ -1,3 +1,0 @@
-@echo off
-title Starting IFML2...
-start "IFML2" javaw -classpath .;ifml2.jar;glazedlists_java15-1.9.0.jar;log4j-1.2.17.jar -Dlog4j.configuration=file:log4j.xml ifml2.Launcher
