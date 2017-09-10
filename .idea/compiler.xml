@@ -6,11 +6,20 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="ifml2" />
+        <module name="core" />
+        <module name="editor" />
+        <module name="ifml2 (1)" />
+        <module name="player" />
+        <module name="tests" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="ifml2" target="1.8" />
+      <module name="core" target="1.8" />
+      <module name="editor" target="1.8" />
+      <module name="ifml2" target="1.5" />
+      <module name="ifml2 (1)" target="1.8" />
+      <module name="player" target="1.8" />
+      <module name="tests" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
