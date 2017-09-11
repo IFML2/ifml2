@@ -1,4 +1,9 @@
+# Idea files
 .idea/
 *.iml
+# Eclipse files
+.settings/
+.classpath
+.project
+# Common files
 target/
-_other/

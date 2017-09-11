@@ -1,0 +1,458 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<story xmlns="http://toysoft.narod.ru/IFML2Schema" id="spel">
+    <!-- todo Добавить в игру
+        + "выдернуть лиану"
+    -->
+    <storyOptions>
+        <startLocationOption showStartLocDesc="false" location="Зал"/>
+        <startProcedureOption procedure="ПоказатьПредысторию"/>
+        <storyDescription author="realsonic" version="0.1 альфа от 05.11.2012" description="Приключения спелеолога в пещере (порт standalone-игры)." name="Спелеолог"/>
+        <globalVars>
+            <var value="нет" name="СрубилЛиану" position="1"/>
+        </globalVars>
+    </storyOptions>
+    <procedures>
+        <procedure name="ПоказатьПредысторию">
+            <procedureVariables/>
+            <procedureBody>
+                <showMessage type="text" message="Вы - спелеолог, и Вы отправились в экспедицию в пещеру. Когда Вы отошли достаточно далеко, то услышали шум: выход завалило камнями!" carriageReturn="true" beginWithCap="false" position="1"/>
+                <showMessage type="text" message="Упоминайте предметы одним основным словом." carriageReturn="true" beginWithCap="false" position="2"/>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="отл">
+            <procedureVariables/>
+            <procedureBody>
+                <if condition="ком = 'го'" position="1">
+                    <else>
+                        <showMessage type="text" message="Не знаю такой отладочной команды." carriageReturn="true" beginWithCap="false" position="1"/>
+                    </else>
+                    <then>
+                        <goToLoc location="Растительность" position="1"/>
+                        <moveItem to="инвентарий" item="КиркаПред" position="2"/>
+                    </then>
+                </if>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="срубить">
+            <procedureVariables/>
+            <procedureBody>
+                <showMessage type="expression" message="'Я не знаю, как ' + глагол + ' ' + что.вп + ' ' + чем.тп + '.'" carriageReturn="true" beginWithCap="false" position="1"/>
+            </procedureBody>
+            <parameters>
+                <parameter name="глагол"/>
+                <parameter name="что"/>
+                <parameter name="чем"/>
+            </parameters>
+        </procedure>
+    </procedures>
+    <libraries>
+        <library>standard/verbs.xml</library>
+    </libraries>
+    <dictionary>
+        <word>
+            <ip>камень</ip>
+            <vp>камень</vp>
+            <tp>камнем</tp>
+        </word>
+        <word>
+            <ip>кусок</ip>
+            <rp>куска</rp>
+            <dp>куску</dp>
+            <vp>кусок</vp>
+            <tp>куском</tp>
+            <pp>куске</pp>
+        </word>
+        <word>
+            <ip>верёвка</ip>
+            <vp>верёвку</vp>
+            <tp>верёвкой</tp>
+        </word>
+        <word>
+            <ip>нож</ip>
+            <vp>нож</vp>
+            <tp>ножом</tp>
+        </word>
+        <word>
+            <ip>лиана</ip>
+            <vp>лиану</vp>
+            <tp>лианой</tp>
+        </word>
+        <word>
+            <ip>старая</ip>
+            <vp>старую</vp>
+            <tp>старой</tp>
+        </word>
+        <word>
+            <ip>спички</ip>
+            <vp>спички</vp>
+            <tp>спичками</tp>
+        </word>
+        <word>
+            <ip>карманный</ip>
+            <vp>карманный</vp>
+            <tp>карманным</tp>
+        </word>
+        <word>
+            <ip>фонарик</ip>
+            <vp>фонарик</vp>
+            <tp>фонариком</tp>
+        </word>
+        <word>
+            <ip>камни</ip>
+            <vp>камни</vp>
+            <tp>камнями</tp>
+        </word>
+        <word>
+            <ip>динамит</ip>
+            <vp>динамит</vp>
+            <tp>динамитом</tp>
+        </word>
+        <word>
+            <ip>завал</ip>
+            <vp>завал</vp>
+            <tp>завалом</tp>
+        </word>
+        <word>
+            <ip>ствол</ip>
+            <vp>ствол</vp>
+            <tp>стволом</tp>
+        </word>
+        <word>
+            <ip>кирка</ip>
+            <vp>кирку</vp>
+            <tp>киркой</tp>
+        </word>
+    </dictionary>
+    <locations>
+        <location name="Зал" id="Зал">
+            <hooks/>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>Узкий луч света прорывается сквозь щель в камнях. Можно видеть только каменое дно и три выхода: на восток, юг и запад.</description>
+            <words/>
+            <east>ЗавалЛок</east>
+            <south>ЮжныйЗал</south>
+            <west>ЗападныйЗал</west>
+        </location>
+        <location name="Западный зал" id="ЗападныйЗал">
+            <hooks/>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>Одна из многочисленных пещерных комнат в этом районе. Проходы на восток и запад.</description>
+            <words/>
+            <east>Зал</east>
+            <west>ШумВоды</west>
+        </location>
+        <location name="Завал" id="ЗавалЛок">
+            <hooks/>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>Ход, заваленый камнем. Отсюда Вы пришли! Пройти можно только на запад.</description>
+            <words/>
+            <west>Зал</west>
+        </location>
+        <location name="Южный зал" id="ЮжныйЗал">
+            <hooks/>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>Круглый каменый свод нависает над небольшим отверстием, уходящим вниз. Также можно пройти на север.</description>
+            <words/>
+            <down>СтараяШахта</down>
+            <north>Зал</north>
+        </location>
+        <location name="Старая шахта" id="СтараяШахта">
+            <hooks/>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>Перед Вами открывается вид старой и заброшенной шахты. После небольших поисков, полных надежды, обнаруживается, что выход из неё отрезан. На полу и по углам лежат различные старые вещи. Проходы ведут наверх и на юг.</description>
+            <words/>
+            <south>Штольня</south>
+            <up>ЮжныйЗал</up>
+        </location>
+        <location name="Штольня" id="Штольня">
+            <hooks/>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>Старая заброшенная штольня. Среди обломков камней и деревянных креплений стен Вы замечаете и другие вещи. Вернуться можно только на север.</description>
+            <words/>
+            <north>СтараяШахта</north>
+        </location>
+        <location name="Шум воды" id="ШумВоды">
+            <hooks/>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>Шум воды доносится из соседней комнаты, а в воздухе витают небольшие капли росы.</description>
+            <words/>
+            <east>ЗападныйЗал</east>
+            <west>ПодземнаяРека</west>
+        </location>
+        <location name="Подземная река" id="ПодземнаяРека">
+            <hooks/>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>Здесь течёт подземная река. Она истекает из-под каменной стены и уходит дальше на юг. Нырнуть невозможно: слишком холодно, притом она может не иметь выхода на поверхность.</description>
+            <words/>
+            <east>ШумВоды</east>
+            <south>ПодземноеОзеро</south>
+        </location>
+        <location name="Подземное озеро" id="ПодземноеОзеро">
+            <hooks/>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>Подземная река впадает в подземное озеро. Похоже, оно просачивается снизу под камнями. В одной из стен зияет небольшой проход.</description>
+            <words/>
+            <east>Растительность</east>
+            <north>ПодземнаяРека</north>
+        </location>
+        <location name="Растительность" id="Растительность">
+            <hooks/>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>Пол здесь составляет обычная почва! В потолке виднеется отверстие, из которого падает на пол луч света. По некоторым обстоятельствам видно, что здесь был выход наверх, и солнце было ярче здесь. На земле видны засохшие старые стволы какой-то лианы!</description>
+            <words/>
+            <west>ПодземноеОзеро</west>
+        </location>
+    </locations>
+    <items>
+        <item name="карманный фонарик спелеолога" id="ФонарикПред">
+            <hooks/>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>Обычный фонарик.</description>
+            <words mainWord="фонарик">
+                <word>фонарик</word>
+            </words>
+            <startingPosition>
+                <locations/>
+                <inventory>true</inventory>
+            </startingPosition>
+        </item>
+        <item name="спички" id="СпичкиПред">
+            <hooks/>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>Обычные спички.</description>
+            <words mainWord="спички">
+                <word>спички</word>
+            </words>
+            <startingPosition>
+                <locations/>
+                <inventory>true</inventory>
+            </startingPosition>
+        </item>
+        <item name="моток верёвки" id="ВеревкаПред">
+            <hooks/>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>Обычная верёвка.</description>
+            <words mainWord="верёвка">
+                <word>верёвка</word>
+            </words>
+            <startingPosition>
+                <locations/>
+                <inventory>true</inventory>
+            </startingPosition>
+        </item>
+        <item name="карманный нож" id="НожПред">
+            <hooks/>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>Обычный нож.</description>
+            <words mainWord="нож">
+                <word>нож</word>
+            </words>
+            <startingPosition>
+                <locations/>
+                <inventory>true</inventory>
+            </startingPosition>
+        </item>
+        <item name="кусок скальной породы" id="КаменьПред">
+            <hooks/>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>Этот булыжник валяется здесь повсюду. Он такой же, как и все остальные.</description>
+            <words mainWord="кусок">
+                <word>кусок</word>
+            </words>
+            <startingPosition>
+                <locations>
+                    <location>ЗападныйЗал</location>
+                </locations>
+                <inventory>false</inventory>
+            </startingPosition>
+        </item>
+        <item name="завал камней" id="ЗавалПред">
+            <hooks/>
+            <properties/>
+            <roles/>
+            <attributes>
+                <attribute>частьПейзажа</attribute>
+            </attributes>
+            <description>Камни слишком тяжелы и их слишком много, чтобы разобрать руками. Небольшой взрыв очень помог бы делу.</description>
+            <words mainWord="завал">
+                <word>завал</word>
+            </words>
+            <startingPosition>
+                <locations>
+                    <location>ЗавалЛок</location>
+                </locations>
+                <inventory>false</inventory>
+            </startingPosition>
+        </item>
+        <item name="старая шахтёрская кирка" id="КиркаПред">
+            <hooks/>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>Старая, но ещё крепкая шахтёрская кирка.</description>
+            <words mainWord="кирка">
+                <word>кирка</word>
+            </words>
+            <startingPosition>
+                <locations>
+                    <location>СтараяШахта</location>
+                </locations>
+                <inventory>false</inventory>
+            </startingPosition>
+        </item>
+        <item name="динамит" id="ДинамитПред">
+            <hooks/>
+            <properties/>
+            <roles/>
+            <attributes/>
+            <description>Небольшая связка динамита с коротким шнуром. Таким опасно пользоваться!</description>
+            <words mainWord="динамит">
+                <word>динамит</word>
+            </words>
+            <startingPosition>
+                <locations>
+                    <location>Штольня</location>
+                </locations>
+                <inventory>false</inventory>
+            </startingPosition>
+        </item>
+        <item name="cтвол засохшей лианы" id="CтволЗасохшейЛианы">
+            <hooks>
+                <hook type="instead" objectElement="что" action="срубить">
+                    <instructions>
+                        <if condition="СрубилЛиану" position="1">
+                            <else>
+<if condition="чем = КиркаПред" position="2">
+    <else>
+        <showMessage type="expression" message="глагол + ' лиану ' + чем.тп + ' не получилось.'" carriageReturn="true" beginWithCap="true" position="1"/>
+    </else>
+    <then>
+        <showMessage type="text" message="Вы срубили одну лиану киркой!" carriageReturn="true" beginWithCap="false" position="1"/>
+        <moveItem to="инвентарий" item="CтволЗасохшейЛианы" position="2"/>
+        <var value="да" name="СрубилЛиану" position="3"/>
+    </then>
+</if>
+                            </else>
+                            <then>
+<showMessage type="text" message="Вы уже срубили лиану." carriageReturn="true" beginWithCap="false" position="1"/>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+                <hook type="instead" objectElement="предмет" action="осмотреть">
+                    <instructions>
+                        <if condition="СрубилЛиану" position="1">
+                            <else>
+<showMessage type="expression" message="предмет.описание" carriageReturn="true" beginWithCap="false" position="1"/>
+                            </else>
+                            <then>
+<showMessage type="text" message="Твёрдая сухая лиана." carriageReturn="true" beginWithCap="false" position="1"/>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+                <hook type="instead" objectElement="предмет" action="взять">
+                    <instructions>
+                        <if condition="СрубилЛиану" position="1">
+                            <else>
+<showMessage type="text" message="Вы попытались выдернуть лиану голыми руками, но ничего не вышло." carriageReturn="true" beginWithCap="false" position="1"/>
+                            </else>
+                            <then>
+<showMessage type="text" message="Вы уже срубили и взяли лиану." carriageReturn="true" beginWithCap="false" position="1"/>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+            </hooks>
+            <properties/>
+            <roles/>
+            <attributes>
+                <attribute>частьПейзажа</attribute>
+                <attribute>прикреплён</attribute>
+            </attributes>
+            <description>Старая засохшая лиана растёт из земли.</description>
+            <words mainWord="лиана">
+                <word>лиана</word>
+            </words>
+            <startingPosition>
+                <locations>
+                    <location>Растительность</location>
+                </locations>
+                <inventory>false</inventory>
+            </startingPosition>
+        </item>
+    </items>
+    <actions>
+        <action name="срубить" description="срубить|срезать [что] [чем]">
+            <templates>
+                <template>
+                    <literalElement parameter="глагол" position="1">
+                        <synonym>срубить</synonym>
+                        <synonym>срезать</synonym>
+                    </literalElement>
+                    <objectElement case="vp" parameter="что" position="2"/>
+                    <objectElement case="tp" parameter="чем" position="3"/>
+                </template>
+                <template>
+                    <literalElement parameter="глагол" position="1">
+                        <synonym>срубить</synonym>
+                        <synonym>срезать</synonym>
+                    </literalElement>
+                    <objectElement case="tp" parameter="чем" position="2"/>
+                    <objectElement case="vp" parameter="что" position="3"/>
+                </template>
+            </templates>
+            <procedureCall procedure="срубить"/>
+            <restrictions>
+                <restriction condition="не что.прикреплён">
+                    <reaction>
+                        <showMessage type="expression" message="'Разве ' + что + ' к чему-то прикреплен(а), чтобы ' + глагол + '?'" carriageReturn="true" beginWithCap="false" position="1"/>
+                    </reaction>
+                </restriction>
+            </restrictions>
+        </action>
+        <action name="отл">
+            <templates>
+                <template>
+                    <literalElement parameter="ком" position="1">
+                        <synonym>го</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="отл"/>
+            <restrictions/>
+        </action>
+    </actions>
+</story>
