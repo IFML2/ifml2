@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<story xmlns="http://toysoft.narod.ru/IFML2Schema" id="story">
+    <inheritedSystemProcedures/>
+    <storyOptions>
+        <startLocationOption location="ГардеробнаяЛок" showStartLocDesc="true"/>
+        <startProcedureOption/>
+        <storyDescription name="Гардероб" description="Поиграйтесь с одеждой." version="0.2" author="realsonic"/>
+        <globalVars/>
+        <systemCommandsDisableOption DisableHelp="false" DisableDebug="false"/>
+    </storyOptions>
+    <procedures>
+        <procedure name="ПоменятьПредметы">
+            <procedureVariables/>
+            <procedureBody>
+                <var name="КоллОдного" value="ОдинПредмет.СодержащаяКоллекция"/>
+                <var name="КоллДругого" value="ДругойПредмет.СодержащаяКоллекция"/>
+                <moveItem item="ОдинПредмет" to="КоллДругого"/>
+                <moveItem item="ДругойПредмет" to="КоллОдного"/>
+            </procedureBody>
+            <parameters>
+                <parameter name="ОдинПредмет"/>
+                <parameter name="ДругойПредмет"/>
+            </parameters>
+        </procedure>
+    </procedures>
+    <libraries>
+        <library>standard/verbs.xml</library>
+    </libraries>
+    <dictionary>
+        <word>
+            <ip>пепел</ip>
+            <rp>пепла</rp>
+            <dp>пеплу</dp>
+            <vp>пепел</vp>
+            <tp>пеплом</tp>
+            <pp>пепле</pp>
+        </word>
+        <word>
+            <ip>стол</ip>
+            <rp>стола</rp>
+            <dp>столу</dp>
+            <vp>стол</vp>
+            <tp>столом</tp>
+            <pp>столе</pp>
+        </word>
+        <word>
+            <ip>шляпа</ip>
+            <rp>шляпы</rp>
+            <dp>шляпе</dp>
+            <vp>шляпу</vp>
+            <tp>шляпой</tp>
+            <pp>шляпе</pp>
+        </word>
+    </dictionary>
+    <locations>
+        <location id="ГардеробнаяЛок" name="Гардеробная">
+            <hooks>
+                <hook action="осмотреться" objectElement="" type="before">
+                    <instructions>
+                        <showPicture filepath="garderobe.jpg" maxHeight="0" maxWidth="0"/>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="" type="text"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words/>
+            <description>Маленькая гардеробная комната. Выходов нет.</description>
+            <attributes/>
+        </location>
+    </locations>
+    <items>
+        <item id="СтолПред" name="cтол">
+            <hooks>
+                <hook action="осмотреть" objectElement="предмет" type="after">
+                    <instructions>
+                        <showPicture filepath="table.png" maxHeight="150" maxWidth="150"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles>
+                <role name="поверхность">
+                    <properties>
+                        <property name="предметыСверху">
+                            <collectionItem>ШляпаПред</collectionItem>
+                        </property>
+                    </properties>
+                </role>
+            </roles>
+            <properties/>
+            <words mainWord="стол">
+                <word>стол</word>
+            </words>
+            <description>Старый дубовый стол.</description>
+            <attributes>
+                <attribute>тяжёлый</attribute>
+            </attributes>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>ГардеробнаяЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="ШляпаПред" name="шляпа">
+            <hooks>
+                <hook action="осмотреть" objectElement="предмет" type="after">
+                    <instructions>
+                        <showPicture filepath="hat.png" maxHeight="0" maxWidth="0"/>
+                    </instructions>
+                </hook>
+                <hook action="зажечь [что]" objectElement="предмет" type="instead">
+                    <instructions>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="Вы подожгли шляпу, и она сгорела." type="text"/>
+                        <runProcedure procedure="ПоменятьПредметы" returnToVar="">
+                            <parameter name="ОдинПредмет" value="предмет"/>
+                            <parameter name="ДругойПредмет" value="ПепелПред"/>
+                        </runProcedure>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles>
+                <role name="надеваемый">
+                    <properties>
+                        <property name="надет" value="нет"/>
+                    </properties>
+                </role>
+            </roles>
+            <properties/>
+            <words mainWord="шляпа">
+                <word>шляпа</word>
+            </words>
+            <description>Фетровая шляпа.</description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations/>
+            </startingPosition>
+        </item>
+        <item id="ПепелПред" name="пепел">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="пепел">
+                <word>пепел</word>
+            </words>
+            <description>Серый бесформенный пепел.</description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations/>
+            </startingPosition>
+        </item>
+    </items>
+    <actions/>
+</story>

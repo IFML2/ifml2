@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<schema xmlns:ifml2test="http://toysoft.narod.ru/IFML2Test" elementFormDefault="qualified"
+        targetNamespace="http://toysoft.narod.ru/IFML2Test" xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <complexType name="testPlan">
+        <all minOccurs="1" maxOccurs="1">
+            <element name="storyLink" type="xs:string"/>
+            <element name="test" type="ifml2test:test"/>
+        </all>
+        <attribute name="name" type="xs:string"/>
+    </complexType>
+
+    <element name="testPlan" type="ifml2test:testPlan"/>
+
+    <complexType name="test">
+        <sequence maxOccurs="unbounded">
+            <element name="testIteration" type="ifml2test:testIteration"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="testIteration">
+        <sequence minOccurs="1" maxOccurs="1">
+            <element name="command" type="xs:string"/>
+            <element name="answer" type="xs:string"/>
+        </sequence>
+    </complexType>
+</schema>

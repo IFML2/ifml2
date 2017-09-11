@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<story xmlns="http://toysoft.narod.ru/IFML2Schema" id="story">
+    <inheritedSystemProcedures/>
+    <storyOptions>
+        <startLocationOption location="Лок1" showStartLocDesc="true"/>
+        <startProcedureOption/>
+        <storyDescription name="" description="" version="" author=""/>
+        <globalVars>
+            <var name="АлтарьИзменился" value="нет"/>
+        </globalVars>
+        <systemCommandsDisableOption DisableHelp="false" DisableDebug="false"/>
+    </storyOptions>
+    <procedures>
+        <procedure name="ИзменитьАлтарь">
+            <procedureVariables/>
+            <procedureBody>
+                <var name="АлтарьИзменился" value="да"/>
+                <showMessage beginWithCap="false" carriageReturn="true" message="Алтарь изменился." type="text"/>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+    </procedures>
+    <libraries>
+        <library>standard/verbs.xml</library>
+    </libraries>
+    <dictionary>
+        <word>
+            <ip>яблоко</ip>
+            <rp>яблока</rp>
+            <dp>яблоку</dp>
+            <vp>яблоко</vp>
+            <tp>яблоком</tp>
+            <pp>яблоке</pp>
+        </word>
+        <word>
+            <ip>алтарь</ip>
+            <rp>алтарь</rp>
+            <dp>алтарю</dp>
+            <vp>алтарь</vp>
+            <tp>алтарём</tp>
+            <pp>алтаре</pp>
+        </word>
+    </dictionary>
+    <locations>
+        <location id="Лок1" name="Комната">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words/>
+            <description>Осмотрите алтарь, потом введите "изменить", затем снова осмотрите.</description>
+            <attributes/>
+        </location>
+    </locations>
+    <items>
+        <item id="АлтарьПред" name="алтарь">
+            <hooks>
+                <hook action="осмотреть" objectElement="предмет" type="before">
+                    <instructions>
+                        <if condition="АлтарьИзменился = да">
+                            <else>
+<showMessage beginWithCap="false" carriageReturn="false" message="Старый алтарь." type="text"/>
+                            </else>
+                            <then>
+<showMessage beginWithCap="false" carriageReturn="false" message="Новый алтарь." type="text"/>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles>
+                <role name="поверхность">
+                    <properties>
+                        <property name="предметыСверху">
+                            <collectionItem>ЯблокоПред</collectionItem>
+                        </property>
+                    </properties>
+                </role>
+            </roles>
+            <properties/>
+            <words mainWord="алтарь">
+                <word>алтарь</word>
+            </words>
+            <description> </description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>Лок1</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="ЯблокоПред" name="яблоко">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="яблоко">
+                <word>яблоко</word>
+            </words>
+            <description>Зелёное яблоко.</description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations/>
+            </startingPosition>
+        </item>
+    </items>
+    <actions>
+        <action name="изменить" description="">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>изменить</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="ИзменитьАлтарь"/>
+            <restrictions/>
+        </action>
+    </actions>
+</story>
