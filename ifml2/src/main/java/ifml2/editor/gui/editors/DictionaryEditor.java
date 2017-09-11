@@ -11,11 +11,21 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.Document;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.HashMap;
 
-public class DictionaryEditor extends JDialog
-{
+public class DictionaryEditor extends JDialog {
+    private static final String DICTIONARY_EDITOR_TITLE = "Словарь";
+    private static final String CASE_DOC_PROPERTY = "case";
+    private static final String WORD_IP_QUERY_PROMPT = "Именительный падеж:";
+    private static final String DUPLICATED_WORD_ERROR_MESSAGE = "Такое слово уже есть в словаре!";
+    private static final String DUPLICATED_WORD_ERROR_DIALOG_TITLE = "Дубликат";
+    private static final String WORD_DELETION_QUERY_PROMPT = "Вы уверены, что хотите удалить это слово из словаря?";
+    private static final String WRONG_DOC_PROP_SYSTEM_ERROR = "Системная ошибка: неверное свойство case у DocumentEvent.getDocument() в wordDocListener";
     private JPanel contentPane;
     private JButton buttonOK;
     private JList dictList;
@@ -27,20 +37,10 @@ public class DictionaryEditor extends JDialog
     private JTextField ppText;
     private JButton newWordButton;
     private JButton delWordButton;
-
-    private static final String DICTIONARY_EDITOR_TITLE = "Словарь";
-    private static final String CASE_DOC_PROPERTY = "case";
-    private static final String WORD_IP_QUERY_PROMPT = "Именительный падеж:";
-    private static final String DUPLICATED_WORD_ERROR_MESSAGE = "Такое слово уже есть в словаре!";
-    private static final String DUPLICATED_WORD_ERROR_DIALOG_TITLE = "Дубликат";
-    private static final String WORD_DELETION_QUERY_PROMPT = "Вы уверены, что хотите удалить это слово из словаря?";
-    private static final String WRONG_DOC_PROP_SYSTEM_ERROR = "Системная ошибка: неверное свойство case у DocumentEvent.getDocument() в wordDocListener";
-
     private boolean isUpdatingText = false;
     private HashMap<String, Word> dictionary = null;
 
-    public DictionaryEditor(Frame owner)
-    {
+    public DictionaryEditor(Frame owner) {
         super(owner, DICTIONARY_EDITOR_TITLE, ModalityType.DOCUMENT_MODAL);
 
         setContentPane(contentPane);
@@ -48,74 +48,56 @@ public class DictionaryEditor extends JDialog
 
         GUIUtils.packAndCenterWindow(this);
 
-        buttonOK.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
+        buttonOK.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 onOK();
             }
         });
 
         // call onCancel() when cross is clicked
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        addWindowListener(new WindowAdapter()
-        {
-            public void windowClosing(WindowEvent e)
-            {
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
                 onCancel();
             }
         });
 
         // call onCancel() on ESCAPE
-        contentPane.registerKeyboardAction(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
+        contentPane.registerKeyboardAction(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 onCancel();
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
 
-        dictList.addListSelectionListener(new ListSelectionListener()
-        {
+        dictList.addListSelectionListener(new ListSelectionListener() {
             @Override
-            public void valueChanged(ListSelectionEvent e)
-            {
+            public void valueChanged(ListSelectionEvent e) {
                 repaintCurrentWord((Word) dictList.getSelectedValue());
             }
         });
 
-        DocumentListener wordDocListener = new DocumentListener()
-        {
+        DocumentListener wordDocListener = new DocumentListener() {
             @Override
-            public void insertUpdate(DocumentEvent e)
-            {
-                try
-                {
+            public void insertUpdate(DocumentEvent e) {
+                try {
                     updateCurrentWord(e.getDocument());
-                }
-                catch (IFML2EditorException ex)
-                {
+                } catch (IFML2EditorException ex) {
                     GUIUtils.showErrorMessage(DictionaryEditor.this, ex);
                 }
             }
 
             @Override
-            public void removeUpdate(DocumentEvent e)
-            {
-                try
-                {
+            public void removeUpdate(DocumentEvent e) {
+                try {
                     updateCurrentWord(e.getDocument());
-                }
-                catch (IFML2EditorException ex)
-                {
+                } catch (IFML2EditorException ex) {
                     GUIUtils.showErrorMessage(DictionaryEditor.this, ex);
                 }
             }
 
             @Override
-            public void changedUpdate(DocumentEvent e)
-            {
+            public void changedUpdate(DocumentEvent e) {
                 //do nothing
             }
         };
@@ -138,17 +120,13 @@ public class DictionaryEditor extends JDialog
         ppText.getDocument().putProperty(CASE_DOC_PROPERTY, Word.GramCase.PP);
         ppText.getDocument().addDocumentListener(wordDocListener);
 
-        newWordButton.setAction(new AbstractAction("Новое...", GUIUtils.ADD_ELEMENT_ICON)
-        {
+        newWordButton.setAction(new AbstractAction("Новое...", GUIUtils.ADD_ELEMENT_ICON) {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 String newWordIp = JOptionPane.showInputDialog(WORD_IP_QUERY_PROMPT);
-                if (newWordIp != null && !"".equals(newWordIp))
-                {
+                if (newWordIp != null && !"".equals(newWordIp)) {
                     Word word = new Word(newWordIp);
-                    if (dictionary.containsKey(newWordIp))
-                    {
+                    if (dictionary.containsKey(newWordIp)) {
                         JOptionPane.showMessageDialog(DictionaryEditor.this, DUPLICATED_WORD_ERROR_MESSAGE, DUPLICATED_WORD_ERROR_DIALOG_TITLE,
                                 JOptionPane.ERROR_MESSAGE);
                         dictList.setSelectedValue(dictionary.get(newWordIp), true);
@@ -161,17 +139,13 @@ public class DictionaryEditor extends JDialog
             }
         });
 
-        delWordButton.setAction(new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
-        {
+        delWordButton.setAction(new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON) {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 Word word = (Word) dictList.getSelectedValue();
-                if (word != null)
-                {
+                if (word != null) {
                     int answer = JOptionPane.showConfirmDialog(getContentPane(), WORD_DELETION_QUERY_PROMPT);
-                    if (answer == JOptionPane.YES_OPTION)
-                    {
+                    if (answer == JOptionPane.YES_OPTION) {
                         dictionary.values().remove(word);
                         setAllData(dictionary);
                         dictList.setSelectedValue(word, true);
@@ -181,19 +155,15 @@ public class DictionaryEditor extends JDialog
         });
     }
 
-    private void updateCurrentWord(Document document) throws IFML2EditorException
-    {
+    private void updateCurrentWord(Document document) throws IFML2EditorException {
         Word word = (Word) dictList.getSelectedValue();
-        if(word != null)
-        {
-            if(isUpdatingText)
-            {
+        if (word != null) {
+            if (isUpdatingText) {
                 return;
             }
 
             Word.GramCase gramCase = (Word.GramCase) document.getProperty(CASE_DOC_PROPERTY);
-            switch (gramCase)
-            {
+            switch (gramCase) {
                 case IP:
                     word.ip = ipText.getText();
                     break;
@@ -218,10 +188,8 @@ public class DictionaryEditor extends JDialog
         }
     }
 
-    private void repaintCurrentWord(Word word)
-    {
-        try
-        {
+    private void repaintCurrentWord(Word word) {
+        try {
             isUpdatingText = true;
             ipText.setText(word != null ? word.ip : "");
             rpText.setText(word != null ? word.rp : "");
@@ -229,29 +197,23 @@ public class DictionaryEditor extends JDialog
             vpText.setText(word != null ? word.vp : "");
             tpText.setText(word != null ? word.tp : "");
             ppText.setText(word != null ? word.pp : "");
-        }
-        finally
-        {
+        } finally {
             isUpdatingText = false;
         }
     }
 
-    private void onOK()
-    {
+    private void onOK() {
         dispose();
     }
 
-    private void onCancel()
-    {
+    private void onCancel() {
         dispose();
     }
 
-    void setAllData(HashMap<String, Word> dictionary)
-    {
+    void setAllData(HashMap<String, Word> dictionary) {
         this.dictionary = dictionary;
         DefaultListModel dictListModel = new DefaultListModel();
-        for(Word word : dictionary.values())
-        {
+        for (Word word : dictionary.values()) {
             dictListModel.addElement(word);
         }
         dictList.setModel(dictListModel);

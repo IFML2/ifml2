@@ -2,7 +2,18 @@ package ifml2.om;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
-import ifml2.vm.instructions.*;
+import ifml2.vm.instructions.GoToLocInstruction;
+import ifml2.vm.instructions.IfInstruction;
+import ifml2.vm.instructions.Instruction;
+import ifml2.vm.instructions.LoopInstruction;
+import ifml2.vm.instructions.MoveItemInstruction;
+import ifml2.vm.instructions.ReturnInstruction;
+import ifml2.vm.instructions.RollDiceInstruction;
+import ifml2.vm.instructions.RunProcedureInstruction;
+import ifml2.vm.instructions.SetPropertyInstruction;
+import ifml2.vm.instructions.SetVarInstruction;
+import ifml2.vm.instructions.ShowMessageInstr;
+import ifml2.vm.instructions.ShowPictureInstruction;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

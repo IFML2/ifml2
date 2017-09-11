@@ -16,8 +16,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class MoveItemInstrEditor extends AbstractInstrEditor
-{
+public class MoveItemInstrEditor extends AbstractInstrEditor {
     private static final String MOVE_ITEM_EDITOR_TITLE = Instruction.getTitleFor(MoveItemInstruction.class);
     private JPanel contentPane;
     private JButton buttonOK;
@@ -28,31 +27,25 @@ public class MoveItemInstrEditor extends AbstractInstrEditor
     private JRadioButton itemExprRadio;
     private JComboBox itemCombo;
 
-    public MoveItemInstrEditor(Window owner, MoveItemInstruction instruction, Story.DataHelper storyDataHelper)
-    {
+    public MoveItemInstrEditor(Window owner, MoveItemInstruction instruction, Story.DataHelper storyDataHelper) {
         super(owner);
         initializeEditor(MOVE_ITEM_EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
 
         // set listeners
-        ChangeListener radioChangeListener = new ChangeListener()
-        {
+        ChangeListener radioChangeListener = new ChangeListener() {
             @Override
-            public void stateChanged(ChangeEvent e)
-            {
+            public void stateChanged(ChangeEvent e) {
                 itemCombo.setEnabled(itemRadio.isSelected());
                 itemExprText.setEnabled(itemExprRadio.isSelected());
             }
         };
         itemRadio.addChangeListener(radioChangeListener);
         itemExprRadio.addChangeListener(radioChangeListener);
-        itemCombo.addActionListener(new ActionListener()
-        {
+        itemCombo.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 Item item = (Item) itemCombo.getSelectedItem();
-                if(item != null)
-                {
+                if (item != null) {
                     itemExprText.setText(item.getId());
                 }
             }
@@ -64,13 +57,11 @@ public class MoveItemInstrEditor extends AbstractInstrEditor
         itemExprText.setText(instruction.getItemExpr());
         // detect if item expression is item id
         Item item = storyDataHelper.findItemById(itemExpr);
-        if(item != null || "".equals(itemExpr)) // item by id is found or expression is empty (for new instruction)
+        if (item != null || "".equals(itemExpr)) // item by id is found or expression is empty (for new instruction)
         {
             itemRadio.setSelected(true);
             itemCombo.setSelectedItem(item);
-        }
-        else
-        {
+        } else {
             itemExprRadio.setSelected(true);
         }
         itemExprText.setText(itemExpr);
@@ -79,26 +70,21 @@ public class MoveItemInstrEditor extends AbstractInstrEditor
     }
 
     @Override
-    protected Class<? extends Instruction> getInstrClass()
-    {
+    protected Class<? extends Instruction> getInstrClass() {
         return MoveItemInstruction.class;
     }
 
     @Override
-    public void getInstruction(@NotNull Instruction instruction) throws IFML2EditorException
-    {
+    public void getInstruction(@NotNull Instruction instruction) throws IFML2EditorException {
         updateData(instruction);
 
         MoveItemInstruction moveItemInstruction = (MoveItemInstruction) instruction;
 
         // set item expr
-        if (itemRadio.isSelected())
-        {
+        if (itemRadio.isSelected()) {
             Item item = (Item) itemCombo.getSelectedItem();
             moveItemInstruction.setItemExpr(item.getId());
-        }
-        else
-        {
+        } else {
             moveItemInstruction.setItemExpr(itemExprText.getText());
         }
 
@@ -108,18 +94,14 @@ public class MoveItemInstrEditor extends AbstractInstrEditor
     }
 
     @Override
-    protected void validateData() throws DataNotValidException
-    {
-        if(itemRadio.isSelected() && itemCombo.getSelectedItem() == null)
-        {
+    protected void validateData() throws DataNotValidException {
+        if (itemRadio.isSelected() && itemCombo.getSelectedItem() == null) {
             throw new DataNotValidException("Не выбран предмет.", itemCombo);
         }
-        if(itemExprRadio.isSelected() && "".equals(itemExprText.getText().trim()))
-        {
+        if (itemExprRadio.isSelected() && "".equals(itemExprText.getText().trim())) {
             throw new DataNotValidException("Не введено выражение для предмета.", itemExprText);
         }
-        if("".equals(toCollectionExprText.getText().trim()))
-        {
+        if ("".equals(toCollectionExprText.getText().trim())) {
             throw new DataNotValidException("Не введено выражение для коллекции.", toCollectionExprText);
         }
     }

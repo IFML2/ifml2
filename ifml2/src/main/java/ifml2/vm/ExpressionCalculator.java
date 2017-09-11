@@ -2,7 +2,15 @@ package ifml2.vm;
 
 import ifml2.IFML2Exception;
 import ifml2.om.IFMLObject;
-import ifml2.vm.values.*;
+import ifml2.vm.values.BooleanValue;
+import ifml2.vm.values.CollectionValue;
+import ifml2.vm.values.EmptyValue;
+import ifml2.vm.values.IAddableValue;
+import ifml2.vm.values.NumberValue;
+import ifml2.vm.values.ObjectValue;
+import ifml2.vm.values.SymbolValue;
+import ifml2.vm.values.TextValue;
+import ifml2.vm.values.Value;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,7 +20,9 @@ import java.io.StringReader;
 import java.util.Collection;
 import java.util.Stack;
 
-import static ifml2.vm.ExpressionCalculator.Context.*;
+import static ifml2.vm.ExpressionCalculator.Context.OPERAND;
+import static ifml2.vm.ExpressionCalculator.Context.OPERATOR;
+import static ifml2.vm.ExpressionCalculator.Context.START;
 import static java.lang.String.format;
 
 public class ExpressionCalculator {
@@ -663,8 +673,7 @@ public class ExpressionCalculator {
                 Value rightValue = rightExpr.solve();
 
                 Value.CompareResult compareResult = leftValue.compareTo(rightValue);
-                switch (compareResult)
-                {
+                switch (compareResult) {
                     case EQUAL:
                         return new BooleanValue(isPositive);
                     case UNEQUAL:
@@ -701,7 +710,7 @@ public class ExpressionCalculator {
                 Value rightValue = rightExpr.solve();
 
                 Value.CompareResult compareResult = leftValue.compareTo(rightValue);
-                switch (compareResult){
+                switch (compareResult) {
                     case LEFT_BIGGER:
                         return new BooleanValue(isPositive);
                     case RIGHT_BIGGER:
@@ -729,15 +738,13 @@ public class ExpressionCalculator {
             @Override
             public Value solve() throws IFML2VMException {
                 Value leftValue = leftExpr.solve();
-                if (!(leftValue instanceof NumberValue))
-                {
+                if (!(leftValue instanceof NumberValue)) {
                     throw new IFML2VMException("Левая величина сравнения должна быть числом (а её тип {0}).",
                             leftValue.getTypeName());
                 }
 
                 Value rightValue = rightExpr.solve();
-                if (!(rightValue instanceof NumberValue))
-                {
+                if (!(rightValue instanceof NumberValue)) {
                     throw new IFML2VMException("Правая величина сравнения должна быть числом (а её тип {0}).",
                             rightValue.getTypeName());
                 }

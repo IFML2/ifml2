@@ -13,10 +13,8 @@ import java.text.MessageFormat;
  * Auto reacts to OK, Cancel and X buttons clicks.
  * To use it implement get methods to tune editor and call super() and init() in constructor.
  */
-public abstract class AbstractInstrEditor extends AbstractEditor<Instruction>
-{
-    public AbstractInstrEditor(Window owner)
-    {
+public abstract class AbstractInstrEditor extends AbstractEditor<Instruction> {
+    public AbstractInstrEditor(Window owner) {
         super(owner);
     }
 
@@ -25,10 +23,8 @@ public abstract class AbstractInstrEditor extends AbstractEditor<Instruction>
     public abstract void getInstruction(@NotNull Instruction instruction) throws IFML2EditorException;
 
     @Override
-    public void updateData(@NotNull Instruction data) throws IFML2EditorException
-    {
-        if (!data.getClass().equals(getInstrClass()))
-        {
+    public void updateData(@NotNull Instruction data) throws IFML2EditorException {
+        if (!data.getClass().equals(getInstrClass())) {
             throw new IFML2EditorException(MessageFormat.format("Instruction should be of class {0}", getInstrClass()));
         }
     }

@@ -4,14 +4,17 @@ import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ifml2.FormatLogger;
 
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import static ifml2.om.xml.XmlSchemaConstants.LIBRARY_PROCEDURES_ELEMENT;
 import static ifml2.om.xml.XmlSchemaConstants.PROCEDURES_PROCEDURE_ELEMENT;
 
 @XmlRootElement(name = "library")
-public class Library
-{
+public class Library {
     public static final FormatLogger LOG = FormatLogger.getLogger(Library.class);
 
     @XmlElementWrapper(name = "attribute-definitions")
@@ -32,59 +35,47 @@ public class Library
     private String path;
     private String name;
 
-    public Library()
-    {
+    public Library() {
         LOG.trace("Library() :: path = \"{0}\", name = \"{0}\"", path, name);
     }
 
     @XmlTransient
-    public String getPath()
-    {
+    public String getPath() {
         return path;
     }
 
-    public void setPath(String path)
-    {
+    public void setPath(String path) {
         LOG.trace("setPath(path = \"{0}\")", path);
         this.path = path;
     }
 
     @XmlAttribute(name = "name")
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public void setName(String name)
-    {
+    public void setName(String name) {
         LOG.trace("setName(name = \"{0}\")", name);
         this.name = name;
     }
 
-    public EventList<Attribute> getAttributes()
-    {
+    public EventList<Attribute> getAttributes() {
         return attributes;
     }
 
-    public EventList<RoleDefinition> getRoleDefinitions()
-    {
+    public EventList<RoleDefinition> getRoleDefinitions() {
         return roleDefinitions;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return name;
     }
 
-    public Attribute getAttributeByName(String name)
-    {
-        if (name != null)
-        {
-            for (Attribute attribute : attributes)
-            {
-                if (name.equalsIgnoreCase(attribute.getName()))
-                {
+    public Attribute getAttributeByName(String name) {
+        if (name != null) {
+            for (Attribute attribute : attributes) {
+                if (name.equalsIgnoreCase(attribute.getName())) {
                     return attribute;
                 }
             }
@@ -92,14 +83,10 @@ public class Library
         return null;
     }
 
-    public Action getActionByName(String name)
-    {
-        if (name != null)
-        {
-            for (Action action : actions)
-            {
-                if (name.equalsIgnoreCase(action.getName()))
-                {
+    public Action getActionByName(String name) {
+        if (name != null) {
+            for (Action action : actions) {
+                if (name.equalsIgnoreCase(action.getName())) {
                     return action;
                 }
             }
@@ -107,14 +94,10 @@ public class Library
         return null;
     }
 
-    public RoleDefinition getRoleDefinitionByName(String name)
-    {
-        if (name != null)
-        {
-            for (RoleDefinition roleDefinition : roleDefinitions)
-            {
-                if (name.equalsIgnoreCase(roleDefinition.getName()))
-                {
+    public RoleDefinition getRoleDefinitionByName(String name) {
+        if (name != null) {
+            for (RoleDefinition roleDefinition : roleDefinitions) {
+                if (name.equalsIgnoreCase(roleDefinition.getName())) {
                     return roleDefinition;
                 }
             }

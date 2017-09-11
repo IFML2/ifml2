@@ -22,8 +22,7 @@ import java.util.ArrayList;
 import static ifml2.CommonConstants.RUSSIAN_PRODUCT_NAME;
 import static java.lang.String.format;
 
-public class TestRunner extends JFrame
-{
+public class TestRunner extends JFrame {
     private final TestManager testManager = new TestManager();
     private final ArrayList<ListDataListener> commandsListDataListeners = new ArrayList<>();
     private JList<IFMLTestPlan> testsList;
@@ -33,194 +32,148 @@ public class TestRunner extends JFrame
     private JButton startButton;
     private JPanel mainPanel;
 
-    public TestRunner()
-    {
+    public TestRunner() {
         super(format("%s Тестер %s", RUSSIAN_PRODUCT_NAME, EngineVersion.VERSION));
         setContentPane(mainPanel);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         GUIUtils.packAndCenterWindow(this);
 
-        testsList.setModel(new ListModel<IFMLTestPlan>()
-        {
+        testsList.setModel(new ListModel<IFMLTestPlan>() {
             @Override
-            public int getSize()
-            {
+            public int getSize() {
                 return testManager.getTestsListSize();
             }
 
             @Override
-            public IFMLTestPlan getElementAt(int index)
-            {
+            public IFMLTestPlan getElementAt(int index) {
                 return testManager.getTestsListElementAt(index);
             }
 
             @Override
-            public void addListDataListener(ListDataListener l)
-            {
+            public void addListDataListener(ListDataListener l) {
                 testManager.addTestsListDataListener(l);
             }
 
             @Override
-            public void removeListDataListener(ListDataListener l)
-            {
+            public void removeListDataListener(ListDataListener l) {
                 testManager.removeTestsListDataListener(l);
             }
         });
-        testsList.addListSelectionListener(new ListSelectionListener()
-        {
+        testsList.addListSelectionListener(new ListSelectionListener() {
             @Override
-            public void valueChanged(ListSelectionEvent e)
-            {
-                if (!e.getValueIsAdjusting())
-                {
-                    for (ListDataListener listener : commandsListDataListeners)
-                    {
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    for (ListDataListener listener : commandsListDataListeners) {
                         listener.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, getSelectedTestSize()));
                     }
                 }
             }
         });
-        commandsList.setModel(new ListModel<String>()
-        {
+        commandsList.setModel(new ListModel<String>() {
             @Override
-            public int getSize()
-            {
+            public int getSize() {
                 return getSelectedTestSize();
             }
 
             @Override
-            public String getElementAt(int index)
-            {
+            public String getElementAt(int index) {
                 return testsList.getSelectedValue().getCommandWithAnswer(index);
             }
 
             @Override
-            public void addListDataListener(ListDataListener l)
-            {
+            public void addListDataListener(ListDataListener l) {
                 commandsListDataListeners.add(l);
             }
 
             @Override
-            public void removeListDataListener(ListDataListener l)
-            {
+            public void removeListDataListener(ListDataListener l) {
                 commandsListDataListeners.remove(l);
             }
         });
         loadTestsButton.addActionListener(event -> {
             JFileChooser testFileChooser = new JFileChooser(CommonUtils.getTestsDirectory());
-            testFileChooser.setFileFilter(new FileFilter()
-            {
+            testFileChooser.setFileFilter(new FileFilter() {
                 @Override
-                public String getDescription()
-                {
+                public String getDescription() {
                     return CommonConstants.TEST_FILE_FILTER_NAME;
                 }
 
                 @Override
-                public boolean accept(File file)
-                {
+                public boolean accept(File file) {
                     return file.isDirectory() || file.getName().toLowerCase().endsWith(CommonConstants.TEST_EXTENSION);
                 }
             });
             testFileChooser.setMultiSelectionEnabled(true);
 
-            if (testFileChooser.showOpenDialog(TestRunner.this) != JFileChooser.APPROVE_OPTION)
-            {
+            if (testFileChooser.showOpenDialog(TestRunner.this) != JFileChooser.APPROVE_OPTION) {
                 return;
             }
 
             File[] testFiles = testFileChooser.getSelectedFiles();
 
-            try
-            {
+            try {
                 loadTestsFromFiles(testFiles);
-            }
-            catch (Throwable e)
-            {
+            } catch (Throwable e) {
                 showError(e);
             }
         });
-        startButton.addActionListener(new ActionListener()
-        {
+        startButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent event)
-            {
+            public void actionPerformed(ActionEvent event) {
                 loadTestsButton.setEnabled(false);
-                try
-                {
+                try {
                     startButton.setEnabled(false);
-                    try
-                    {
+                    try {
                         testManager.run(text -> logText.append(text));
-                    }
-                    finally
-                    {
+                    } finally {
                         startButton.setEnabled(true);
                     }
-                }
-                finally
-                {
+                } finally {
                     loadTestsButton.setEnabled(true);
                 }
             }
         });
     }
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         TestRunner testRunner = new TestRunner();
         testRunner.setVisible(true);
-        if (args.length > 0)
-        {
+        if (args.length > 0) {
             testRunner.loadTestsFromPaths(args);
         }
     }
 
-    private int getSelectedTestSize()
-    {
+    private int getSelectedTestSize() {
         return testsList.getSelectedValue() != null ? testsList.getSelectedValue().getSize() : 0;
     }
 
-    private void showError(Throwable exception)
-    {
+    private void showError(Throwable exception) {
         JOptionPane.showMessageDialog(this, "Произошла ошибка:\n" + exception.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
     }
 
-    private void loadTestsFromPaths(String[] testsToLoad)
-    {
-        try
-        {
+    private void loadTestsFromPaths(String[] testsToLoad) {
+        try {
             ArrayList<File> files = new ArrayList<>();
-            for (String fileToLoad : testsToLoad)
-            {
+            for (String fileToLoad : testsToLoad) {
                 File testFile = new File(fileToLoad);
-                if (testFile.exists())
-                {
+                if (testFile.exists()) {
                     files.add(testFile);
-                }
-                else
-                {
+                } else {
                     throw new Exception(MessageFormat.format("Файл {0}, переданный в параметрах, не существует", fileToLoad));
                 }
             }
             File[] filesArray = new File[files.size()];
             filesArray = files.toArray(filesArray);
             testManager.loadTestsFromFiles(filesArray);
-        }
-        catch (Throwable e)
-        {
+        } catch (Throwable e) {
             showError(e);
         }
     }
 
-    private void loadTestsFromFiles(File[] files)
-    {
-        try
-        {
+    private void loadTestsFromFiles(File[] files) {
+        try {
             testManager.loadTestsFromFiles(files);
-        }
-        catch (Throwable e)
-        {
+        } catch (Throwable e) {
             showError(e);
         }
     }

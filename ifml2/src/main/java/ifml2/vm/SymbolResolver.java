@@ -7,8 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public interface SymbolResolver
-{
+public interface SymbolResolver {
     Value resolveSymbol(@NotNull String symbol) throws IFML2VMException;
 
     List<Attribute> getAttributeList();

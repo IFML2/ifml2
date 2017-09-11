@@ -15,8 +15,7 @@ import java.text.MessageFormat;
 
 @XmlRootElement(name = "setProperty")
 @IFML2Instruction(title = "Установить свойство объекта")
-public class SetPropertyInstruction extends Instruction
-{
+public class SetPropertyInstruction extends Instruction {
     @XmlAttribute(name = "object")
     private String object;
 
@@ -27,11 +26,9 @@ public class SetPropertyInstruction extends Instruction
     private String value;
 
     @Override
-    public void run(RunningContext runningContext) throws IFML2Exception
-    {
+    public void run(RunningContext runningContext) throws IFML2Exception {
         Value objectGenericValue = ExpressionCalculator.calculate(runningContext, object);
-        if(!(objectGenericValue instanceof ObjectValue))
-        {
+        if (!(objectGenericValue instanceof ObjectValue)) {
             throw new IFML2VMException("Выражение (\"{0}\") для объекта не объектного типа, а {1}",
                     object, objectGenericValue != null ? objectGenericValue.getTypeName() : "пустое");
         }
@@ -39,14 +36,12 @@ public class SetPropertyInstruction extends Instruction
         IFMLObject ifmlObject = objectValue.getValue();
 
         //IFMLObject ifmlObject = runningContext.getObjectByName(object);
-        if(ifmlObject == null)
-        {
+        if (ifmlObject == null) {
             throw new IFML2VMException("Объект с именем \"{0}\" не найден", object);
         }
 
         Property property = ifmlObject.findPropertyByName(name);
-        if(property == null)
-        {
+        if (property == null) {
             throw new IFML2VMException("Свойство с именем \"{0}\" не найдено у объекта {1}", name, object);
         }
 
@@ -55,8 +50,7 @@ public class SetPropertyInstruction extends Instruction
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return MessageFormat.format("Установить свойству {0} значение {1}", name, value);
     }
 }

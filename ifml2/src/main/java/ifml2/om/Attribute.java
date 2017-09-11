@@ -6,8 +6,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlID;
 
 @XmlAccessorType(XmlAccessType.NONE)
-public class Attribute
-{
+public class Attribute {
     @SuppressWarnings("UnusedDeclaration")
     @XmlAttribute(name = "name")
     @XmlID
@@ -17,23 +16,19 @@ public class Attribute
     @XmlAttribute(name = "description")
     private String description;
 
-    Attribute()
-    {
+    Attribute() {
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public String getDescription()
-    {
+    public String getDescription() {
         return description;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return name;
     }
 }

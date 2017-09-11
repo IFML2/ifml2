@@ -7,14 +7,11 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class DictionaryAdapter extends XmlAdapter<XmlDictionary, HashMap<String, Word>>
-{
+public class DictionaryAdapter extends XmlAdapter<XmlDictionary, HashMap<String, Word>> {
     @Override
-    public HashMap<String, Word> unmarshal(XmlDictionary xmlDictionary) throws Exception
-    {
+    public HashMap<String, Word> unmarshal(XmlDictionary xmlDictionary) throws Exception {
         HashMap<String, Word> dictionary = new HashMap<String, Word>();
-        for (Word word : xmlDictionary.words)
-        {
+        for (Word word : xmlDictionary.words) {
             dictionary.put(word.ip.toLowerCase(), word);
         }
 
@@ -22,8 +19,7 @@ public class DictionaryAdapter extends XmlAdapter<XmlDictionary, HashMap<String,
     }
 
     @Override
-    public XmlDictionary marshal(HashMap<String, Word> wordHashMap) throws Exception
-    {
+    public XmlDictionary marshal(HashMap<String, Word> wordHashMap) throws Exception {
         XmlDictionary xmlDictionary = new XmlDictionary();
         xmlDictionary.words = new ArrayList<Word>(wordHashMap.values());
         return xmlDictionary;

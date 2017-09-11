@@ -9,8 +9,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
 @XmlAccessorType(XmlAccessType.NONE)
-public class ProcedureVariable extends IFMLEntity implements Cloneable
-{
+public class ProcedureVariable extends IFMLEntity implements Cloneable {
     @XmlAttribute(name = "name")
     private String name;
     @SuppressWarnings("UnusedDeclaration")
@@ -19,34 +18,28 @@ public class ProcedureVariable extends IFMLEntity implements Cloneable
     @XmlTransient
     private Value value;
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public void setName(String name)
-    {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public String getInitialValue()
-    {
+    public String getInitialValue() {
         return initialValue;
     }
 
-    public Value getValue()
-    {
+    public Value getValue() {
         return value;
     }
 
-    public void setValue(Value value)
-    {
+    public void setValue(Value value) {
         this.value = value;
     }
 
     @Override
-    protected ProcedureVariable clone() throws CloneNotSupportedException
-    {
+    protected ProcedureVariable clone() throws CloneNotSupportedException {
         ProcedureVariable clone = (ProcedureVariable) super.clone(); // clone flat fields
 
         // clone objects

@@ -16,8 +16,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.MessageFormat;
 
-public class GUIUtils
-{
+public class GUIUtils {
     private static final String IFML2_EDITOR_GUI_IMAGES = "/ifml2/editor/gui/images/";
     public static final Icon ADD_ELEMENT_ICON = getEditorIcon("Add24.gif");
     public static final Icon EDIT_ELEMENT_ICON = getEditorIcon("Edit24.gif");
@@ -37,8 +36,7 @@ public class GUIUtils
     public static final Icon CIPHERED_STORY_FILE_ICON = STORY_FILE_ICON;
     public static final Icon LIBRARY_FILE_ICON = STORY_FILE_ICON;
 
-    public static void packAndCenterWindow(@NotNull Window window)
-    {
+    public static void packAndCenterWindow(@NotNull Window window) {
         window.pack();
 
         // center form
@@ -52,8 +50,7 @@ public class GUIUtils
         window.setLocation(x, y);
     }
 
-    public static void showErrorMessage(Component parentComponent, @NotNull Throwable exception)
-    {
+    public static void showErrorMessage(Component parentComponent, @NotNull Throwable exception) {
         StringWriter stringWriter = new StringWriter();
         exception.printStackTrace(new PrintWriter(stringWriter));
         JOptionPane.showMessageDialog(parentComponent, stringWriter.toString(), "Произошла ошибка!", JOptionPane.ERROR_MESSAGE);
@@ -68,11 +65,9 @@ public class GUIUtils
      * @param gender       Gender of word.
      * @return true if user pressed YES.
      */
-    public static boolean showDeleteConfirmDialog(Component owner, String objectNameVP, String objectNameRP, Word.Gender gender)
-    {
+    public static boolean showDeleteConfirmDialog(Component owner, String objectNameVP, String objectNameRP, Word.Gender gender) {
         String thisGendered = "";
-        switch (gender)
-        {
+        switch (gender) {
             case MASCULINE:
                 thisGendered = "этот";
                 break;
@@ -87,7 +82,7 @@ public class GUIUtils
         String title = MessageFormat.format("Удаление {0}", objectNameRP);
 
         return JOptionPane.YES_OPTION ==
-               JOptionPane.showConfirmDialog(owner, question, title, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                JOptionPane.showConfirmDialog(owner, question, title, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
     }
 
     /**
@@ -97,54 +92,43 @@ public class GUIUtils
      * @param action AbstractAction to make dependent.
      * @param list   JList to direct action state.
      */
-    public static void makeActionDependentFromJList(@NotNull final AbstractAction action, @NotNull final JList list)
-    {
+    public static void makeActionDependentFromJList(@NotNull final AbstractAction action, @NotNull final JList list) {
         // initialize
         action.setEnabled(!list.isSelectionEmpty());
 
         // add listener
-        list.addListSelectionListener(new ListSelectionListener()
-        {
+        list.addListSelectionListener(new ListSelectionListener() {
             @Override
-            public void valueChanged(ListSelectionEvent e)
-            {
+            public void valueChanged(ListSelectionEvent e) {
                 action.setEnabled(!list.isSelectionEmpty());
             }
         });
     }
 
-    private static ImageIcon getEditorIcon(String fileName)
-    {
+    private static ImageIcon getEditorIcon(String fileName) {
         return new ImageIcon(GUIUtils.class.getResource(IFML2_EDITOR_GUI_IMAGES + fileName));
     }
 
-    public static void showMemoDialog(Window owner, String title, String message)
-    {
+    public static void showMemoDialog(Window owner, String title, String message) {
         new ShowMemoDialog(owner, title, message);
     }
 
-    public static void ReportError(@NotNull Window owner, @NotNull Throwable exception)
-    {
+    public static void ReportError(@NotNull Window owner, @NotNull Throwable exception) {
         exception.printStackTrace();
         FormatLogger LOG = new FormatLogger(owner.getClass());
         LOG.error(exception.getMessage());
         String errorMessage = "";
-        if (!(exception instanceof IFML2LoadXmlException) && exception.getCause() instanceof IFML2LoadXmlException)
-        {
+        if (!(exception instanceof IFML2LoadXmlException) && exception.getCause() instanceof IFML2LoadXmlException) {
             exception = exception.getCause();
         }
-        if (exception instanceof IFML2LoadXmlException)
-        {
+        if (exception instanceof IFML2LoadXmlException) {
             errorMessage += "В файле истории есть ошибки:";
-            for (ValidationEvent validationEvent : ((IFML2LoadXmlException) exception).getEvents())
-            {
+            for (ValidationEvent validationEvent : ((IFML2LoadXmlException) exception).getEvents()) {
                 errorMessage += MessageFormat
                         .format("\n\"{0}\" at {1},{2}", validationEvent.getMessage(), validationEvent.getLocator().getLineNumber(),
                                 validationEvent.getLocator().getColumnNumber());
             }
-        }
-        else
-        {
+        } else {
             StringWriter stringWriter = new StringWriter();
             exception.printStackTrace(new PrintWriter(stringWriter));
             errorMessage += stringWriter.toString();
@@ -152,10 +136,8 @@ public class GUIUtils
         showMemoDialog(owner, "Произошла ошибка", errorMessage);
     }
 
-    public static class EventComboBoxModelWithNullElement<T> extends DefaultEventComboBoxModel<T>
-    {
-        public EventComboBoxModelWithNullElement(EventList<T> eventList, T selectedItem)
-        {
+    public static class EventComboBoxModelWithNullElement<T> extends DefaultEventComboBoxModel<T> {
+        public EventComboBoxModelWithNullElement(EventList<T> eventList, T selectedItem) {
             super(eventList);
             setSelectedItem(selectedItem);
         }
@@ -163,14 +145,12 @@ public class GUIUtils
         // override model to add null element
 
         @Override
-        public int getSize()
-        {
+        public int getSize() {
             return super.getSize() + 1; // add null element
         }
 
         @Override
-        public Object getElementAt(int index)
-        {
+        public Object getElementAt(int index) {
             return index == 0 ? null : super.getElementAt(index - 1); // assume element 0 is null
         }
     }

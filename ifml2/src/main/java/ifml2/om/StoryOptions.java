@@ -4,190 +4,156 @@ import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ifml2.vm.instructions.SetVarInstruction;
 
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlIDREF;
 
 import static javax.xml.bind.annotation.XmlAccessType.NONE;
 
 @XmlAccessorType(NONE)
-public class StoryOptions
-{
+public class StoryOptions {
     @XmlElement(name = "startLocationOption")
     private final StartLocationOption startLocationOption = new StartLocationOption();
-
-    public StartLocationOption getStartLocationOption()
-    {
-        return startLocationOption;
-    }
-
     @XmlElement(name = "startProcedureOption")
     private final StartProcedureOption startProcedureOption = new StartProcedureOption();
-
-    public StartProcedureOption getStartProcedureOption()
-    {
-        return startProcedureOption;
-    }
-
     @XmlElement(name = "storyDescription")
     private final StoryDescription storyDescription = new StoryDescription();
-
-    public StoryDescription getStoryDescription()
-    {
-        return storyDescription;
-    }
-
+    @XmlElement(name = "systemCommandsDisableOption")
+    private final SystemCommandsDisableOption systemCommandsDisableOption = new SystemCommandsDisableOption();
     @XmlElementWrapper(name = "globalVars")
     @XmlElement(name = "var")
     private EventList<SetVarInstruction> vars = new BasicEventList<SetVarInstruction>();
 
-    public EventList<SetVarInstruction> getVars()
-    {
+    public StartLocationOption getStartLocationOption() {
+        return startLocationOption;
+    }
+
+    public StartProcedureOption getStartProcedureOption() {
+        return startProcedureOption;
+    }
+
+    public StoryDescription getStoryDescription() {
+        return storyDescription;
+    }
+
+    public EventList<SetVarInstruction> getVars() {
         return vars;
     }
 
-    public void setVars(EventList<SetVarInstruction> vars)
-    {
+    public void setVars(EventList<SetVarInstruction> vars) {
         this.vars = vars;
     }
 
-    @XmlElement(name = "systemCommandsDisableOption")
-    private final SystemCommandsDisableOption systemCommandsDisableOption = new SystemCommandsDisableOption();
-
-    public SystemCommandsDisableOption getSystemCommandsDisableOption()
-    {
+    public SystemCommandsDisableOption getSystemCommandsDisableOption() {
         return systemCommandsDisableOption;
     }
 
     @XmlAccessorType(NONE)
-    public static class StartLocationOption
-    {
+    public static class StartLocationOption {
         @XmlIDREF
         @XmlAttribute(name = "location")
         private Location location;
-
-        public Location getLocation()
-        {
-            return location;
-        }
-
-        public void setLocation(Location location)
-        {
-            this.location = location;
-        }
-
         @XmlAttribute(name = "showStartLocDesc")
         private boolean showStartLocDesc;
 
-        public boolean getShowStartLocDesc()
-        {
+        public Location getLocation() {
+            return location;
+        }
+
+        public void setLocation(Location location) {
+            this.location = location;
+        }
+
+        public boolean getShowStartLocDesc() {
             return showStartLocDesc;
         }
 
-        public void setShowStartLocDesc(boolean showStartLocDesc)
-        {
+        public void setShowStartLocDesc(boolean showStartLocDesc) {
             this.showStartLocDesc = showStartLocDesc;
         }
     }
 
     @XmlAccessorType(NONE)
-    public static class StartProcedureOption
-    {
+    public static class StartProcedureOption {
         @XmlAttribute(name = "procedure")
         @XmlIDREF
         private Procedure procedure;
 
-        public Procedure getProcedure()
-        {
+        public Procedure getProcedure() {
             return procedure;
         }
 
-        public void setProcedure(Procedure procedure)
-        {
+        public void setProcedure(Procedure procedure) {
             this.procedure = procedure;
         }
     }
 
     @XmlAccessorType(NONE)
-    public static class StoryDescription
-    {
+    public static class StoryDescription {
         @XmlAttribute(name = "name")
         private String name;
-
-        public String getName()
-        {
-            return name;
-        }
-
-        public void setName(String name)
-        {
-            this.name = name;
-        }
-
         @XmlAttribute(name = "description")
         private String description;
-
-        public String getDescription()
-        {
-            return description;
-        }
-
-        public void setDescription(String description)
-        {
-            this.description = description;
-        }
-
         @XmlAttribute(name = "version")
         private String version;
-
-        public String getVersion()
-        {
-            return version;
-        }
-
-        public void setVersion(String version)
-        {
-            this.version = version;
-        }
-
         @XmlAttribute(name = "author")
         private String author;
 
-        public String getAuthor()
-        {
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public String getVersion() {
+            return version;
+        }
+
+        public void setVersion(String version) {
+            this.version = version;
+        }
+
+        public String getAuthor() {
             return author;
         }
 
-        public void setAuthor(String author)
-        {
+        public void setAuthor(String author) {
             this.author = author;
         }
     }
 
     @XmlAccessorType(NONE)
-    public static class SystemCommandsDisableOption
-    {
+    public static class SystemCommandsDisableOption {
         @XmlAttribute(name = "DisableHelp")
         private boolean disableHelp = false;
-
-        public boolean isDisableHelp()
-        {
-            return disableHelp;
-        }
-
-        public void setDisableHelp(boolean disableHelp)
-        {
-            this.disableHelp = disableHelp;
-        }
-
         @XmlAttribute(name = "DisableDebug")
         private boolean disableDebug = false;
 
-        public boolean isDisableDebug()
-        {
+        public boolean isDisableHelp() {
+            return disableHelp;
+        }
+
+        public void setDisableHelp(boolean disableHelp) {
+            this.disableHelp = disableHelp;
+        }
+
+        public boolean isDisableDebug() {
             return disableDebug;
         }
 
-        public void setDisableDebug(boolean disableDebug)
-        {
+        public void setDisableDebug(boolean disableDebug) {
             this.disableDebug = disableDebug;
         }
     }

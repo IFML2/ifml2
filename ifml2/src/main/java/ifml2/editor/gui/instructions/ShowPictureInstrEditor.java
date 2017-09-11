@@ -31,17 +31,14 @@ public class ShowPictureInstrEditor extends AbstractInstrEditor {
             // choose story file:
             JFileChooser storyFileChooser = new JFileChooser(CommonUtils.getGamesDirectory());
             storyFileChooser.removeChoosableFileFilter(storyFileChooser.getAcceptAllFileFilter()); // remove All files filter
-            storyFileChooser.setFileFilter(new FileFilter()
-            {
+            storyFileChooser.setFileFilter(new FileFilter() {
                 @Override
-                public String getDescription()
-                {
+                public String getDescription() {
                     return "Файлы изображений (*.jpg, *.jpeg, *.png, *.gif)";
                 }
 
                 @Override
-                public boolean accept(File file)
-                {
+                public boolean accept(File file) {
                     String loweredName = file.getName().toLowerCase();
                     return file.isDirectory()
                             || loweredName.endsWith(".jpg")
@@ -51,11 +48,9 @@ public class ShowPictureInstrEditor extends AbstractInstrEditor {
                 }
             });
 
-            storyFileChooser.setFileView(new FileView()
-            {
+            storyFileChooser.setFileView(new FileView() {
                 @Override
-                public Icon getIcon(File file)
-                {
+                public Icon getIcon(File file) {
                     return file.isDirectory() ? GUIUtils.DIRECTORY_ICON : GUIUtils.STORY_FILE_ICON; // TODO: 07.02.2016 change to image file icon
                 }
             });

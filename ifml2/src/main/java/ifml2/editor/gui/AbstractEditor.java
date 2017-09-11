@@ -7,7 +7,11 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
  * Common abstract ancestor for all editors.<br/>
@@ -18,12 +22,10 @@ import java.awt.event.*;
  *
  * @param <T> Edited object type.
  */
-public abstract class AbstractEditor<T> extends JDialog
-{
+public abstract class AbstractEditor<T> extends JDialog {
     private boolean isOk;
 
-    public AbstractEditor(Window owner)
-    {
+    public AbstractEditor(Window owner) {
         super(owner, ModalityType.DOCUMENT_MODAL);
     }
 
@@ -35,8 +37,7 @@ public abstract class AbstractEditor<T> extends JDialog
      * @param buttonOK          editor OK button.
      * @param buttonCancel      editor Cancel button.
      */
-    protected void initializeEditor(String editorTitle, @NotNull JPanel editorContentPane, JButton buttonOK, JButton buttonCancel)
-    {
+    protected void initializeEditor(String editorTitle, @NotNull JPanel editorContentPane, JButton buttonOK, JButton buttonCancel) {
         setTitle(editorTitle);
 
         setContentPane(editorContentPane);
@@ -46,20 +47,15 @@ public abstract class AbstractEditor<T> extends JDialog
 
         GUIUtils.packAndCenterWindow(this);
 
-        buttonOK.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
+        buttonOK.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 onOK();
             }
         });
 
-        if (buttonCancel != null)
-        {
-            buttonCancel.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent e)
-                {
+        if (buttonCancel != null) {
+            buttonCancel.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
                     onCancel();
                 }
             });
@@ -67,19 +63,15 @@ public abstract class AbstractEditor<T> extends JDialog
 
         // call onCancel() when cross is clicked
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        addWindowListener(new WindowAdapter()
-        {
-            public void windowClosing(WindowEvent e)
-            {
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
                 onCancel();
             }
         });
 
         // call onCancel() on ESCAPE
-        editorContentPane.registerKeyboardAction(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
+        editorContentPane.registerKeyboardAction(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 onCancel();
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
@@ -91,8 +83,7 @@ public abstract class AbstractEditor<T> extends JDialog
      *
      * @see DataNotValidException
      */
-    protected void validateData() throws DataNotValidException
-    {
+    protected void validateData() throws DataNotValidException {
         // do nothing - everything is correct by default
     }
 
@@ -104,27 +95,21 @@ public abstract class AbstractEditor<T> extends JDialog
      */
     public abstract void updateData(@NotNull T data) throws IFML2EditorException;
 
-    private void onOK()
-    {
-        try
-        {
+    private void onOK() {
+        try {
             validateData();
             isOk = true;
             dispose();
-        }
-        catch (DataNotValidException e)
-        {
+        } catch (DataNotValidException e) {
             JOptionPane.showMessageDialog(this, e.getMessage(), "Данные не верны", JOptionPane.ERROR_MESSAGE);
             Component componentForFocus = e.getComponentForFocus();
-            if (componentForFocus != null)
-            {
+            if (componentForFocus != null) {
                 componentForFocus.requestFocusInWindow();
             }
         }
     }
 
-    private void onCancel()
-    {
+    private void onCancel() {
         isOk = false;
         dispose();
     }
@@ -134,8 +119,7 @@ public abstract class AbstractEditor<T> extends JDialog
      *
      * @return true if OK was pressed.
      */
-    public boolean showDialog()
-    {
+    public boolean showDialog() {
         setVisible(true);
         return isOk;
     }

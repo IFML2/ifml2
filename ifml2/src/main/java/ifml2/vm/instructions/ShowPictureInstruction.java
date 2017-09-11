@@ -6,7 +6,6 @@ import ifml2.vm.RunningContext;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -29,42 +28,39 @@ public class ShowPictureInstruction extends Instruction {
         virtualMachine.outPicture(filePath, maxHeight, maxWidth);
     }
 
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
-    }
-
-    public void setMaxHeight(int maxHeight) {
-        this.maxHeight = maxHeight;
-    }
-
-    public void setMaxWidth(int maxWidth) {
-        this.maxWidth = maxWidth;
-    }
-
     public String getFilePath() {
         return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
     }
 
     public int getMaxHeight() {
         return maxHeight;
     }
 
+    public void setMaxHeight(int maxHeight) {
+        this.maxHeight = maxHeight;
+    }
+
     public int getMaxWidth() {
         return maxWidth;
+    }
+
+    public void setMaxWidth(int maxWidth) {
+        this.maxWidth = maxWidth;
     }
 
     @Override
     public String toString() {
         String restrictions = "";
-        if (maxHeight > 0 || maxWidth > 0)
-        {
+        if (maxHeight > 0 || maxWidth > 0) {
             restrictions += " с ограничениями";
-            if (maxHeight > 0)
-            {
+            if (maxHeight > 0) {
                 restrictions += format(" по высоте %d", maxHeight);
             }
-            if (maxWidth > 0)
-            {
+            if (maxWidth > 0) {
                 restrictions += format(" по ширине %d", maxWidth);
             }
         }

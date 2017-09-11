@@ -6,39 +6,36 @@ import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 import java.text.MessageFormat;
 
-public class PropertyDefinition
-{
-    @XmlAttribute(name = "name")
-    private String name;
-
-    @XmlAttribute(name = "value")
-    private String value;
-
-    public String getName()
-    {
-        return name;
-    }
-
+public class PropertyDefinition {
     @XmlAttribute(name = "description")
     public String description;
-
+    @XmlAttribute(name = "name")
+    private String name;
+    @XmlAttribute(name = "value")
+    private String value;
     @XmlAttribute(name = "type")
     private Type type;
 
-    public Type getType()
-    {
+    public String getName() {
+        return name;
+    }
+
+    public Type getType() {
         return type;
     }
 
-    public String getValue()
-    {
+    public String getValue() {
         return value;
+    }
+
+    @Override
+    public String toString() {
+        return MessageFormat.format("Определение свойства \"{0}\" типа {1}", name, type);
     }
 
     @XmlEnum
     @XmlType(namespace = "PropertyDefinition")
-    public enum Type
-    {
+    public enum Type {
         @XmlEnumValue(value = "text")
         TEXT,
         @XmlEnumValue(value = "number")
@@ -47,11 +44,5 @@ public class PropertyDefinition
         LOGIC,
         @XmlEnumValue(value = "collection")
         COLLECTION
-    }
-
-    @Override
-    public String toString()
-    {
-        return MessageFormat.format("Определение свойства \"{0}\" типа {1}", name,  type);
     }
 }

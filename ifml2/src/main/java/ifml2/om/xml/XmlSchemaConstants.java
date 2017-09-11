@@ -1,7 +1,6 @@
 package ifml2.om.xml;
 
-public interface XmlSchemaConstants
-{
+public interface XmlSchemaConstants {
     public static final String OBJECT_ATTRIBUTE_TAG = "attribute";
     public static final String OBJECT_ATTRIBUTES_TAG = "attributes";
     public static final String OBJECT_WORDS_TAG = "words";

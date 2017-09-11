@@ -11,17 +11,14 @@ import org.apache.log4j.Logger;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.util.ArrayList;
 
-public class UsedLibrariesAdapter extends XmlAdapter<XmlUsedLibrary, EventList<Library>>
-{
+public class UsedLibrariesAdapter extends XmlAdapter<XmlUsedLibrary, EventList<Library>> {
     private final static Logger LOG = Logger.getLogger(UsedLibrariesAdapter.class);
 
     @Override
-    public XmlUsedLibrary marshal(EventList<Library> libraries)
-    {
+    public XmlUsedLibrary marshal(EventList<Library> libraries) {
         XmlUsedLibrary xmlUsedLibrary = new XmlUsedLibrary();
         ArrayList<String> usedLibrary = new ArrayList<String>();
-        for (Library library : libraries)
-        {
+        for (Library library : libraries) {
             usedLibrary.add(library.getPath());
         }
         xmlUsedLibrary.usedLibrary = usedLibrary;
@@ -29,13 +26,11 @@ public class UsedLibrariesAdapter extends XmlAdapter<XmlUsedLibrary, EventList<L
     }
 
     @Override
-    public EventList<Library> unmarshal(XmlUsedLibrary xmlUsedLibrary) throws IFML2Exception
-    {
+    public EventList<Library> unmarshal(XmlUsedLibrary xmlUsedLibrary) throws IFML2Exception {
         LOG.trace(String.format("unmarshal(XmlUsedLibrary = %s)", xmlUsedLibrary));
 
         EventList<Library> libraries = new BasicEventList<Library>();
-        for (String libPath : xmlUsedLibrary.usedLibrary)
-        {
+        for (String libPath : xmlUsedLibrary.usedLibrary) {
             libraries.add(OMManager.loadLibrary(libPath));
         }
 

@@ -7,33 +7,27 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 
 @XmlAccessorType(XmlAccessType.NONE)
-public class Parameter extends IFMLEntity implements Cloneable
-{
+public class Parameter extends IFMLEntity implements Cloneable {
     @XmlAttribute(name = "name")
     private String name;
 
-    public Parameter(String name)
-    {
+    public Parameter(String name) {
         this.name = name;
     }
 
-    public Parameter()
-    {
+    public Parameter() {
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public void setName(String name)
-    {
+    public void setName(String name) {
         this.name = name;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return name;
     }
 }
