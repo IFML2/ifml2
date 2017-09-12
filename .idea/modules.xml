@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/ifml2/ifml2.iml" filepath="$PROJECT_DIR$/ifml2/ifml2.iml" />
       <module fileurl="file://$PROJECT_DIR$/manual/manual.iml" filepath="$PROJECT_DIR$/manual/manual.iml" />
-      <module fileurl="file://$PROJECT_DIR$/ifml2/target/maven-archiver/maven-archiver.iml" filepath="$PROJECT_DIR$/ifml2/target/maven-archiver/maven-archiver.iml" />
       <module fileurl="file://$PROJECT_DIR$/root.iml" filepath="$PROJECT_DIR$/root.iml" />
     </modules>
   </component>
