@@ -3,7 +3,6 @@ package ifml2.om;
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
-import ifml2.FormatLogger;
 import ifml2.IFML2Exception;
 import ifml2.IFMLEntity;
 import ifml2.om.xml.XmlSchemaConstants;
@@ -13,6 +12,8 @@ import ifml2.vm.values.CollectionValue;
 import ifml2.vm.values.Value;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -28,7 +29,7 @@ import static ifml2.om.xml.XmlSchemaConstants.STARTING_POSITION_INVENTORY_ELEMEN
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class Item extends IFMLObject implements Cloneable {
-    private static final FormatLogger LOG = FormatLogger.getLogger(Item.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Item.class);
     private static final String CONTAINER_PROP_NAME = "СодержащаяКоллекция";
     @XmlElement(name = ITEM_STARTING_POSITION_ELEMENT)
     private ItemStartingPosition startingPosition = new ItemStartingPosition();

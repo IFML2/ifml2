@@ -1,6 +1,5 @@
 package ifml2.engine.saved;
 
-import ifml2.FormatLogger;
 import ifml2.IFML2Exception;
 import ifml2.engine.Engine;
 import ifml2.om.Item;
@@ -8,6 +7,8 @@ import ifml2.om.Location;
 import ifml2.om.Story;
 import ifml2.vm.values.Value;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
@@ -21,7 +22,7 @@ import java.util.Map;
 @XmlRootElement(name = "saved-game")
 public class SavedGame {
     @XmlTransient
-    private static final FormatLogger LOG = FormatLogger.getLogger(SavedGame.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SavedGame.class);
     @XmlAttribute(name = "story-file")
     public String storyFileName;
     @XmlElementWrapper(name = "global-vars")

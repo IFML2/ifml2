@@ -2,7 +2,6 @@ package ifml2.engine;
 
 import ca.odell.glazedlists.BasicEventList;
 import ifml2.CommonConstants;
-import ifml2.FormatLogger;
 import ifml2.IFML2Exception;
 import ifml2.SystemIdentifiers;
 import ifml2.engine.featureproviders.IPlayerFeatureProvider;
@@ -39,6 +38,8 @@ import ifml2.vm.values.TextValue;
 import ifml2.vm.values.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -57,7 +58,7 @@ import static ifml2.engine.Engine.SystemCommand.HELP;
 import static java.lang.String.format;
 
 public class Engine {
-    public static final FormatLogger LOG = FormatLogger.getLogger(Engine.class);
+    public static final Logger LOG = LoggerFactory.getLogger(Engine.class);
     private static final String DEBUG_OUTPUT_PREFIX = "    [ОТЛАДКА] ";
     private final HashMap<String, Value> globalVariables = new HashMap<>();
     private final Parser parser = new Parser();

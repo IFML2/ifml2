@@ -6,6 +6,8 @@ import ifml2.editor.gui.ShowMemoDialog;
 import ifml2.om.IFML2LoadXmlException;
 import ifml2.om.Word;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -115,7 +117,7 @@ public class GUIUtils {
 
     public static void ReportError(@NotNull Window owner, @NotNull Throwable exception) {
         exception.printStackTrace();
-        FormatLogger LOG = new FormatLogger(owner.getClass());
+        Logger LOG = LoggerFactory.getLogger(owner.getClass());
         LOG.error(exception.getMessage());
         String errorMessage = "";
         if (!(exception instanceof IFML2LoadXmlException) && exception.getCause() instanceof IFML2LoadXmlException) {

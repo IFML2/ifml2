@@ -1,6 +1,5 @@
 package ifml2.engine.saved;
 
-import ifml2.FormatLogger;
 import ifml2.om.Item;
 import ifml2.om.Property;
 import ifml2.om.PropertyDefinition;
@@ -11,6 +10,8 @@ import ifml2.om.Story;
 import ifml2.vm.values.CollectionValue;
 import ifml2.vm.values.Value;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
@@ -18,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SavedProperty {
-    private static final FormatLogger LOG = FormatLogger.getLogger(SavedProperty.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SavedProperty.class);
     @XmlAttribute(name = "name")
     private String name;
     @XmlElement(name = "item")

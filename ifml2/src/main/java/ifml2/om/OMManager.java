@@ -3,11 +3,12 @@ package ifml2.om;
 import com.sun.xml.internal.bind.IDResolver;
 import ifml2.CommonConstants;
 import ifml2.CommonUtils;
-import ifml2.FormatLogger;
 import ifml2.IFML2Exception;
 import ifml2.engine.saved.SavedGame;
 import ifml2.om.xml.xmladapters.LocationAdapter;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import javax.crypto.Cipher;
@@ -35,7 +36,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 public class OMManager {
-    public static final FormatLogger LOG = FormatLogger.getLogger(OMManager.class);
+    public static final Logger LOG = LoggerFactory.getLogger(OMManager.class);
 
     /**
      * Loads story from xml file
@@ -383,7 +384,7 @@ public class OMManager {
     }
 
     private static class IFMLIDResolver extends IDResolver {
-        public static final FormatLogger LOG = FormatLogger.getLogger(IFMLIDResolver.class);
+        public static final Logger LOG = LoggerFactory.getLogger(IFMLIDResolver.class);
         private final BindingMap bindings = new BindingMap();
         private Story story;
 
@@ -488,7 +489,7 @@ public class OMManager {
         }
 
         private class BindingMap extends HashMap<String, ArrayList<Object>> {
-            public final FormatLogger LOG = FormatLogger.getLogger(BindingMap.class);
+            public final Logger LOG = LoggerFactory.getLogger(BindingMap.class);
 
             public void addBinding(String name, Object object) {
                 // add name in lower case

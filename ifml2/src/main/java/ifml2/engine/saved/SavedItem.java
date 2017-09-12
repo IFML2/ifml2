@@ -1,10 +1,11 @@
 package ifml2.engine.saved;
 
-import ifml2.FormatLogger;
 import ifml2.om.Item;
 import ifml2.om.Role;
 import ifml2.om.Story;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SavedItem {
-    private static final FormatLogger LOG = FormatLogger.getLogger(SavedItem.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SavedItem.class);
     @XmlElementWrapper(name = "roles")
     @XmlElement(name = "role")
     private List<SavedRole> roles = new ArrayList<SavedRole>();

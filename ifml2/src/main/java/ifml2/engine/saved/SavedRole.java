@@ -1,6 +1,5 @@
 package ifml2.engine.saved;
 
-import ifml2.FormatLogger;
 import ifml2.om.Item;
 import ifml2.om.Property;
 import ifml2.om.PropertyDefinition;
@@ -8,6 +7,8 @@ import ifml2.om.PropertyDefinition.Type;
 import ifml2.om.Role;
 import ifml2.om.Story;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
@@ -15,7 +16,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import java.util.ArrayList;
 
 public class SavedRole {
-    private static final FormatLogger LOG = FormatLogger.getLogger(SavedRole.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SavedRole.class);
     @XmlElementWrapper(name = "props")
     @XmlElement(name = "prop")
     private ArrayList<SavedProperty> properties = new ArrayList<SavedProperty>();
