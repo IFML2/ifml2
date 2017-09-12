@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp spec="1.0+" codebase="file:///workspace\ifml2\ifml2\target" href="">
+    <information>
+        <title>ЯРИЛ 2.0</title>
+        <vendor>Sonic</vendor>
+        <offline-allowed/>
+    </information>
+    <resources>
+        <j2se version="1.8+" href="http://java.sun.com/products/autodl/j2se"/>
+        <jar href="ifml2-2.0.0-SNAPSHOT-jar-with-dependencies.jar" main="true" />
+    </resources>
+    <security>
+        <all-permissions />
+    </security>
+    <application-desc main-class="ifml2.Launcher" />
+    <update check="background"/>
+</jnlp>
