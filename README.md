@@ -1,5 +1,7 @@
 # Interactive Fiction Markup Language ver. 2.0
 
+[![Build Status](https://travis-ci.org/Madzi/ifml2.svg?branch=master)](https://travis-ci.org/Madzi/ifml2)
+
 Russian [Interactive Fiction](http://ifwiki.org/index.php/Interactive_fiction) Platform ([parser](http://ifwiki.org/index.php/Parser)).
 
 [More info](http://forum.ifiction.ru/viewtopic.php?id=1765) (russian).
