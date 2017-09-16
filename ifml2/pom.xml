@@ -57,26 +57,6 @@
                     </descriptorRefs>
                 </configuration>
             </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jarsigner-plugin</artifactId>
-                <version>1.4</version>
-                <executions>
-                    <execution>
-                        <id>sign</id>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <keystore>/path/to/keystore</keystore>
-                    <alias>key-alias</alias>
-                    <storepass>store-password</storepass>
-                    <keypass>key-password</keypass>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
