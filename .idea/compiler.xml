@@ -6,17 +6,20 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="common" />
         <module name="docs" />
         <module name="ifml2" />
-        <module name="maven-archiver" />
+        <module name="vm" />
+        <module name="xml" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="common" target="1.8" />
       <module name="docs" target="1.5" />
       <module name="ifml2" target="1.8" />
-      <module name="manual" target="1.5" />
-      <module name="maven-archiver" target="1.5" />
       <module name="root" target="1.5" />
+      <module name="vm" target="1.8" />
+      <module name="xml" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

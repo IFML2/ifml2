@@ -2,8 +2,6 @@ package ifml2.editor.gui;
 
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.swing.DefaultEventListModel;
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
 import ifml2.GUIUtils;
 import ifml2.om.InstructionList;
 import ifml2.om.Story;

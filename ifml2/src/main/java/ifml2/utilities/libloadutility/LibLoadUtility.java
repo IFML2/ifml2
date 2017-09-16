@@ -1,7 +1,5 @@
 package ifml2.utilities.libloadutility;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
 import ifml2.CommonConstants;
 import ifml2.GUIUtils;
 import ifml2.om.Library;

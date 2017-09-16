@@ -2,8 +2,6 @@ package ifml2.editor.gui.forms;
 
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.swing.DefaultEventListModel;
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
 import ifml2.GUIUtils;
 import ifml2.editor.gui.ButtonAction;
 import ifml2.om.Word;

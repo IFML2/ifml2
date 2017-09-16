@@ -1,8 +1,6 @@
 package ifml2.editor.gui;
 
 import ca.odell.glazedlists.EventList;
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
 import ifml2.CommonConstants;
 import ifml2.CommonUtils;
 import ifml2.GUIUtils;
@@ -16,7 +14,7 @@ import ifml2.editor.gui.editors.ProcedureEditor;
 import ifml2.editor.gui.editors.StoryOptionsEditor;
 import ifml2.editor.gui.editors.UsedLibsEditor;
 import ifml2.editor.gui.forms.ListEditForm;
-import ifml2.engine.EngineVersion;
+import ifml2.engine.featureproviders.graphic.EngineVersion;
 import ifml2.om.Action;
 import ifml2.om.InheritedSystemProcedures;
 import ifml2.om.Item;

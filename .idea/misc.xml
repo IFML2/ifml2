@@ -3,10 +3,9 @@
   <component name="MavenProjectsManager">
     <option name="originalFiles">
       <list>
-        <option value="$PROJECT_DIR$/ifml2/target/maven-archiver/pom.properties" />
-        <option value="$PROJECT_DIR$/manual/pom.xml" />
-        <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/docs/pom.xml" />
+        <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/xml/pom.xml" />
       </list>
     </option>
   </component>

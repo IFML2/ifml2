@@ -1,8 +1,5 @@
 package ifml2.editor.gui.instructions;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.intellij.uiDesigner.core.Spacer;
 import ifml2.editor.IFML2EditorException;
 import ifml2.vm.instructions.Instruction;
 import ifml2.vm.instructions.RollDiceInstruction;

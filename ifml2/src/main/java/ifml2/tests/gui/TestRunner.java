@@ -1,11 +1,9 @@
 package ifml2.tests.gui;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
 import ifml2.CommonConstants;
 import ifml2.CommonUtils;
 import ifml2.GUIUtils;
-import ifml2.engine.EngineVersion;
+import ifml2.engine.featureproviders.graphic.EngineVersion;
 import ifml2.tests.IFMLTestPlan;
 import ifml2.tests.TestManager;
 

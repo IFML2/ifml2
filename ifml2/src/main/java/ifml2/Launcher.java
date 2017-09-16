@@ -1,7 +1,7 @@
 package ifml2;
 
 import ifml2.editor.gui.Editor;
-import ifml2.engine.EngineVersion;
+import ifml2.engine.featureproviders.graphic.EngineVersion;
 import ifml2.players.guiplayer.GUIPlayer;
 import ifml2.tests.gui.TestRunner;
 import org.apache.log4j.Logger;

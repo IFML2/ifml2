@@ -1,7 +1,5 @@
 package ifml2.players.guiplayer;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
 import ifml2.CommonUtils;
 import ifml2.GUIUtils;
 import ifml2.IFML2Exception;
@@ -40,7 +38,7 @@ import static ifml2.GUIUtils.OPEN_ICON;
 import static ifml2.GUIUtils.SAVE_FILE_ICON;
 import static ifml2.GUIUtils.SAVE_ICON;
 import static ifml2.GUIUtils.STORY_FILE_ICON;
-import static ifml2.engine.EngineVersion.VERSION;
+import static ifml2.engine.featureproviders.graphic.EngineVersion.VERSION;
 import static java.lang.String.format;
 import static javax.swing.JOptionPane.QUESTION_MESSAGE;
 import static javax.swing.JOptionPane.YES_NO_OPTION;

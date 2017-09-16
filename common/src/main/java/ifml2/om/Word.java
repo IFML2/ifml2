@@ -1,0 +1,157 @@
+package ifml2.om;
+
+import ifml2.IFMLEntity;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlEnumValue;
+import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import java.util.ArrayList;
+
+@XmlRootElement(name = "word")
+@XmlAccessorType(XmlAccessType.NONE)
+public class Word extends IFMLEntity {
+    /**
+     * IFML objects which is linked to the word. Are set in OMManager
+     */
+    @XmlTransient
+    private final ArrayList<IFMLObject> linkerObjects = new ArrayList<IFMLObject>();
+
+    // todo перевести на HashMap<GramCase, string>
+    @XmlElement(name = "ip")
+    @XmlID
+    public String ip;
+
+    @XmlElement(name = "rp")
+    public String rp;
+
+    @XmlElement(name = "dp")
+    public String dp;
+
+    @XmlElement(name = "vp")
+    public String vp;
+
+    @XmlElement(name = "tp")
+    public String tp;
+
+    @XmlElement(name = "pp")
+    public String pp;
+
+    public Word() {
+        super();
+    }
+
+    public Word(String ip) {
+        this.ip = ip;
+    }
+
+    public static String getClassName() {
+        return "Словарная запись";
+    }
+
+    public void addLinkerObject(IFMLObject ifmlObject) {
+        if (!linkerObjects.contains(ifmlObject)) {
+            linkerObjects.add(ifmlObject);
+        }
+    }
+
+    public ArrayList<IFMLObject> getLinkerObjects() {
+        return linkerObjects;
+    }
+
+    @Override
+    public String toString() {
+        return ip;
+    }
+
+    private String getFormOrIP(String form) {
+        if (form == null || "".equals(form)) {
+            return "(" + ip + ")";
+        } else {
+            return form;
+        }
+    }
+
+    public String getFormByGramCase(GramCase gramCase) {
+        switch (gramCase) {
+            case IP:
+                return ip;
+
+            case RP:
+                return getFormOrIP(rp);
+
+            case DP:
+                return getFormOrIP(dp);
+
+            case VP:
+                return getFormOrIP(vp);
+
+            case TP:
+                return getFormOrIP(tp);
+
+            case PP:
+                return getFormOrIP(pp);
+
+            default:
+                throw new AssertionError("Лишний enum в Word.getFormByGramCase()!");
+        }
+    }
+
+    @XmlEnum
+    public enum GramCase {
+        @XmlEnumValue(value = "ip")
+        IP("ИП", "кто (что)"),
+        @XmlEnumValue(value = "rp")
+        RP("РП", "кого (чего)"),
+        @XmlEnumValue(value = "dp")
+        DP("ДП", "кому (чему)"),
+        @XmlEnumValue(value = "vp")
+        VP("ВП", "кого (что)"),
+        @XmlEnumValue(value = "tp")
+        TP("ТП", "кем (чем)"),
+        @XmlEnumValue(value = "pp")
+        PP("ПП", "ком (чём)");
+
+        @XmlTransient
+        private final String abbreviation;
+        @XmlTransient
+        private final String questionWord;
+
+        GramCase(String abbreviation, String questionWord) {
+            this.abbreviation = abbreviation;
+            this.questionWord = questionWord;
+        }
+
+        public static GramCase getValueByAbbr(String abbreviation) {
+            for (GramCase caseEnum : values()) {
+                if (caseEnum.abbreviation.equalsIgnoreCase(abbreviation)) {
+                    return caseEnum;
+                }
+            }
+            return null;
+        }
+
+        public String getAbbreviation() {
+            return abbreviation;
+        }
+
+        public String getQuestionWord() {
+            return questionWord;
+        }
+
+        @Override
+        public String toString() {
+            return abbreviation;
+        }
+    }
+
+    public enum Gender {
+        MASCULINE,
+        FEMININE,
+        NEUTER
+    }
+}

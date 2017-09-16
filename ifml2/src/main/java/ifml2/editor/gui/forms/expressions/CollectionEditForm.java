@@ -2,8 +2,6 @@ package ifml2.editor.gui.forms.expressions;
 
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
 import ifml2.editor.gui.forms.ListEditForm;
 import ifml2.om.IFMLObject;
 import ifml2.om.Item;

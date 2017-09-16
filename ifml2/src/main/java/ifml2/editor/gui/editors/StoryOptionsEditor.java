@@ -2,9 +2,6 @@ package ifml2.editor.gui.editors;
 
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.intellij.uiDesigner.core.Spacer;
 import ifml2.GUIUtils.EventComboBoxModelWithNullElement;
 import ifml2.editor.gui.AbstractEditor;
 import ifml2.editor.gui.EditorUtils;
