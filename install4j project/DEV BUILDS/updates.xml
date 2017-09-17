@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<updateDescriptor baseUrl="">
-  <entry targetMediaFileId="37" updatableVersionMin="" updatableVersionMax="" fileName="ЯРИЛ_2_0_DEVELOPER_BUILD_j6.exe" newVersion="DEVELOPER BUILD" newMediaFileId="37" fileSize="1777152" bundledJre="" archive="false">
-    <comment language="ru" />
-    <comment language="en" />
-  </entry>
-</updateDescriptor>
-

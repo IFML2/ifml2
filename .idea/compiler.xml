@@ -8,16 +8,21 @@
         <outputRelativeToContentRoot value="true" />
         <module name="common" />
         <module name="docs" />
-        <module name="ifml2" />
-        <module name="vm" />
-        <module name="xml" />
+        <module name="editor" />
+        <module name="gui" />
+        <module name="player" />
+        <module name="tester" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="common" target="1.8" />
       <module name="docs" target="1.5" />
-      <module name="ifml2" target="1.8" />
+      <module name="editor" target="1.8" />
+      <module name="gui" target="1.5" />
+      <module name="ifml2" target="1.5" />
+      <module name="player" target="1.8" />
       <module name="root" target="1.5" />
+      <module name="tester" target="1.8" />
       <module name="vm" target="1.8" />
       <module name="xml" target="1.8" />
     </bytecodeTargetLevel>
