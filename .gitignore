@@ -1,6 +1,6 @@
 # Idea files
-.idea/
-*.iml
+#.idea/
+#*.iml
 # Eclipse files
 .settings/
 .classpath
