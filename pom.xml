@@ -165,6 +165,12 @@
                     <artifactId>ideauidesigner-maven-plugin</artifactId>
                     <version>1.0-beta-2-17.1.5</version>
                 </plugin>
+
+                <plugin>
+                    <groupId>com.zenjava</groupId>
+                    <artifactId>javafx-maven-plugin</artifactId>
+                    <version>8.8.3</version>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
