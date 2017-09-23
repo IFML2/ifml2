@@ -13,7 +13,8 @@
 
     <artifactId>fx</artifactId>
     <packaging>pom</packaging>
-    <name>IFML2 :: FX MODULES</name>
 
+    <name>IFML2 :: FX</name>
+    <description>JavaFX applications</description>
 
 </project>
