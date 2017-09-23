@@ -16,22 +16,22 @@
 === Тег <storyOptions>
 Тег содержит в себе информацию о настройках истории
 
-===== Тег <startLocationOption>
+==== Тег <startLocationOption>
 * showStartLocDesc
 * location
 
-===== startProcedureOption
+==== startProcedureOption
 * procedure
 
-===== storyDescription
+==== storyDescription
 * version
 * name
 * description
 * author
 
-===== globalVars
+==== globalVars
 
-====== var *
+===== var *
 * name
 * value
 

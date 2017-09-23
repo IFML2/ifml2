@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
+<project
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+>
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -13,9 +14,7 @@
     </parent>
 
     <artifactId>player</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-
     <name>IFML2 :: PLAYER</name>
 
     <build>
@@ -37,26 +36,24 @@
                 </configuration>
             </plugin>
 
-<plugin>
-    <groupId>org.codehaus.mojo</groupId>
-    <artifactId>ideauidesigner-maven-plugin</artifactId>
-    <executions>
-        <execution>
-            <goals>
-                <goal>javac2</goal>
-            </goals>
-        </execution>
-    </executions>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>ideauidesigner-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>javac2</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <fork>true</fork>
+                    <debug>true</debug>
+                    <failOnError>true</failOnError>
+                </configuration>
+            </plugin>
 
-    <configuration>
-        <fork>true</fork>
-        <debug>true</debug>
-        <failOnError>true</failOnError>
-    </configuration>
-</plugin>
-
-
-             <plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
@@ -70,7 +67,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>ifml2.Launcher</mainClass>
+                            <mainClass>ifml2.players.guiplayer.GUIPlayer</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
@@ -127,8 +124,11 @@
         <dependency>
             <groupId>com.intellij</groupId>
             <artifactId>forms_rt</artifactId>
-            <version>4.5.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>jgoodies</groupId>
+            <artifactId>forms</artifactId>
         </dependency>
     </dependencies>
-
 </project>
