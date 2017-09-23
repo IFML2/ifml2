@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
+<project
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+>
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -12,10 +13,11 @@
         <relativePath>../</relativePath>
     </parent>
 
-    <artifactId>tester</artifactId>
+    <artifactId>player</artifactId>
     <packaging>jar</packaging>
 
-    <name>IFML2 :: TESTER</name>
+    <name>IFML2 :: SWING :: PLAYER</name>
+    <description>The IFML2 Player</description>
 
     <build>
         <plugins>
@@ -67,7 +69,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>ifml2.tests.gui.TestRunner</mainClass>
+                            <mainClass>ifml2.players.guiplayer.GUIPlayer</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
@@ -81,7 +83,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <configuration>
                     <vendor>IFML2</vendor>
-                    <mainClass>ifml2.tests.gui.TestRunner</mainClass>
+                    <mainClass>ifml2.players.guiplayer.GUIPlayer</mainClass>
                 </configuration>
             </plugin>
         </plugins>

@@ -52,7 +52,7 @@ public class Launcher {
                     return "Тестер";
                 }
             };
-            Object answer = JOptionPane.showInputDialog(null, "Что запустить?", format("%s %s", RUSSIAN_PRODUCT_NAME, EngineVersion.VERSION),
+            Object answer = JOptionPane.showInputDialog(null, "Что запустить?", String.format("%s %s", CommonConstants.RUSSIAN_PRODUCT_NAME, EngineVersion.VERSION),
                     JOptionPane.QUESTION_MESSAGE, null, new Object[]{playerOption, editorOption, testerOption}, playerOption);
             if (playerOption.equals(answer)) {
                 GUIPlayer.main(args);

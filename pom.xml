@@ -13,10 +13,8 @@
     <modules>
         <module>common</module>
         <module>docs</module>
-        <module>editor</module>
-        <module>player</module>
-        <module>tester</module>
-        <module>gui</module>
+        <module>swing</module>
+        <module>fx</module>
     </modules>
 
     <properties>

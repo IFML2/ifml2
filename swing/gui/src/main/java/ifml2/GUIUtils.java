@@ -18,6 +18,7 @@ import java.io.StringWriter;
 import java.text.MessageFormat;
 
 public class GUIUtils {
+
     private static final String IFML2_EDITOR_GUI_IMAGES = "/ifml2/editor/gui/images/";
     public static final Icon ADD_ELEMENT_ICON = getEditorIcon("Add24.gif");
     public static final Icon EDIT_ELEMENT_ICON = getEditorIcon("Edit24.gif");
