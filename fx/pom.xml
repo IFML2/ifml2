@@ -13,6 +13,7 @@
 
     <artifactId>fx</artifactId>
     <packaging>pom</packaging>
+    <version>2.0.0-SNAPSHOT</version>
 
     <name>IFML2 :: FX</name>
     <description>JavaFX applications</description>

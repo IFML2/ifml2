@@ -13,8 +13,9 @@
 
     <artifactId>tutorial</artifactId>
     <packaging>pom</packaging>
+    <version>2.0.0-SNAPSHOT</version>
 
-    <name>IFMl2 :: DOCS :: TUTORIAL</name>
+    <name>IFML2 :: DOCS :: TUTORIAL</name>
     <description>The tutorial of Ifml2</description>
 
     <build>

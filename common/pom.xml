@@ -15,6 +15,7 @@
     <version>2.0.0-SNAPSHOT</version>
 
     <name>IFML2 :: COMMON</name>
+    <description>The common things need to be separated to own modules</description>
 
     <build>
         <plugins>

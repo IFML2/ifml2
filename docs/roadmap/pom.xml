@@ -6,24 +6,16 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>ifml2</artifactId>
+        <artifactId>docs</artifactId>
         <groupId>ifml2</groupId>
         <version>2.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>swing</artifactId>
+    <artifactId>roadmap</artifactId>
     <packaging>pom</packaging>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>2.0.0-SNAPDHOT</version>
 
-    <name>IFML2 :: SWING</name>
-    <description>The Swing applications</description>
-
-    <modules>
-        <module>tester</module>
-        <module>player</module>
-        <module>editor</module>
-        <module>gui</module>
-        <module>launcher</module>
-    </modules>
+    <name>IFML2 :: DOCS :: ROADMAP</name>
+    <description>The roadmap IFML2 discussion</description>
 
 </project>

@@ -12,8 +12,10 @@
 
     <artifactId>editor</artifactId>
     <packaging>jar</packaging>
+    <version>2.0.0-SNAPSHOT</version>
 
     <name>IFML2 :: EDITOR</name>
+    <description>The IFML2 Story Editor</description>
 
     <build>
         <plugins>
