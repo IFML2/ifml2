@@ -7,8 +7,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>ifml2</artifactId>
-        <groupId>swing</groupId>
+        <artifactId>swing</artifactId>
+        <groupId>ifml2</groupId>
         <version>2.0.0-SNAPSHOT</version>
         <relativePath>../</relativePath>
     </parent>
