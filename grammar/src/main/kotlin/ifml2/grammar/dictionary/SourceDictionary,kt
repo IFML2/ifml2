@@ -1,0 +1,9 @@
+package ifml2.grammar.dictionary
+
+import ifml2.grammar.source.WordSource
+
+interface SourceDictionary : Dictionary {
+    fun addSource(src: WordSource) {
+        src.toDictionary().forEach { add(it) }
+    }
+}
