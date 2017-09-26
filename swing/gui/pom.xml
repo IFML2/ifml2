@@ -8,7 +8,7 @@
 
     <parent>
         <artifactId>ifml2</artifactId>
-        <groupId>ifml2</groupId>
+        <groupId>swing</groupId>
         <version>2.0.0-SNAPSHOT</version>
         <relativePath>../</relativePath>
     </parent>
