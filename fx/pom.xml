@@ -9,6 +9,7 @@
         <artifactId>ifml2</artifactId>
         <groupId>ifml2</groupId>
         <version>2.0.0-SNAPSHOT</version>
+        <relativePath>../</relativePath>
     </parent>
 
     <artifactId>fx</artifactId>
