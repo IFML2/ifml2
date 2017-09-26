@@ -1,0 +1,11 @@
+package ifml2.grammar.word.parts
+
+enum class Case {
+    NOMINATIVE,    // иминительный
+    GENITIVE,      // родительный
+    DATIVE,        // датильный
+    ACCUSATIVE,    // винительный
+    INSTRUMENTAL,  // творительный
+    PREPOSITIONAL, // предложный
+    VOCATIVE       // звательный
+}
