@@ -1,6 +1,12 @@
-The Roadmap
-===========
+ЯРИЛ2 -- Дорожная карта
+======================
+Язык Разметки Интерактивной Литературы
 :doctype: article
+:toc: left
+:toclevels: 3
+:toc-position: left
+:toc-title: ЯРИЛ2 - Дорожная карта
+:numbered:
 :icons: font
 
 == Конфигурация
