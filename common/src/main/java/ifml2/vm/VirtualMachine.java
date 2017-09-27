@@ -3,6 +3,7 @@ package ifml2.vm;
 import ifml2.IFML2Exception;
 import ifml2.SystemIdentifiers;
 import ifml2.engine.Engine;
+import ifml2.engine.IEngine;
 import ifml2.om.Action;
 import ifml2.om.Hook;
 import ifml2.om.IFMLObject;
@@ -32,7 +33,7 @@ public class VirtualMachine {
             put(SystemIdentifiers.EMPTY_VALUE, new EmptyValue());
         }
     };
-    private Engine engine;
+    private IEngine engine;
     private final HashMap<SystemProcedureType, Procedure> inheritedSystemProcedures = new HashMap<SystemProcedureType, Procedure>() {
         @Override
         public Procedure get(Object key) {
@@ -47,11 +48,11 @@ public class VirtualMachine {
         }
     };
 
-    public Engine getEngine() {
+    public IEngine getEngine() {
         return engine;
     }
 
-    public void setEngine(Engine engine) {
+    public void setEngine(IEngine engine) {
         this.engine = engine;
     }
 

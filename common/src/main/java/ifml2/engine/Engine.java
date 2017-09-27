@@ -55,7 +55,7 @@ import java.util.concurrent.Callable;
 import static ifml2.engine.Engine.SystemCommand.HELP;
 import static java.lang.String.format;
 
-public class Engine {
+public class Engine implements IEngine {
     public static final Logger LOG = LoggerFactory.getLogger(Engine.class);
     private static final String DEBUG_OUTPUT_PREFIX = "    [ОТЛАДКА] ";
     private final HashMap<String, Value> globalVariables = new HashMap<>();

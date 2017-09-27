@@ -5,7 +5,9 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import ifml2.CommonUtils;
 import ifml2.GUIUtils;
 import ifml2.IFML2Exception;
+import ifml2.ServiceRegistry;
 import ifml2.engine.Engine;
+import ifml2.engine.IEngine;
 import ifml2.engine.featureproviders.graphic.IOutputIconProvider;
 import ifml2.engine.featureproviders.text.IOutputPlainTextProvider;
 import ifml2.om.IFML2LoadXmlException;
@@ -56,7 +58,7 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
     private JTextField commandText;
     private JTextPane logTextPane;
     private JScrollPane scrollPane;
-    private Engine engine = new Engine(this);
+    private IEngine engine = ServiceRegistry.getEngine(this);
     private ListIterator<String> historyIterator = commandHistory.listIterator();
     private String storyFile;
     private boolean isFromTempFile;
