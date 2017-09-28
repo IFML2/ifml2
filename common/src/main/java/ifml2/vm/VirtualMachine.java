@@ -2,7 +2,6 @@ package ifml2.vm;
 
 import ifml2.IFML2Exception;
 import ifml2.SystemIdentifiers;
-import ifml2.engine.Engine;
 import ifml2.engine.IEngine;
 import ifml2.om.Action;
 import ifml2.om.Hook;
@@ -25,7 +24,8 @@ import java.util.List;
 import static ifml2.om.Procedure.SystemProcedureType;
 import static ifml2.om.Procedure.SystemProcedureType.SHOW_LOCATION;
 
-public class VirtualMachine {
+public class VirtualMachine implements IVirtualMachine {
+
     private final HashMap<String, Value> systemConstants = new HashMap<String, Value>() {
         {
             put(SystemIdentifiers.TRUE_BOOL_LITERAL, new BooleanValue(true));

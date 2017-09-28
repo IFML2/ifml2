@@ -6,8 +6,8 @@ import ca.odell.glazedlists.GlazedLists;
 import ifml2.IFML2Exception;
 import ifml2.IFMLEntity;
 import ifml2.om.xml.XmlSchemaConstants;
+import ifml2.vm.IVirtualMachine;
 import ifml2.vm.SymbolResolver;
-import ifml2.vm.VirtualMachine;
 import ifml2.vm.values.CollectionValue;
 import ifml2.vm.values.Value;
 import org.slf4j.Logger;
@@ -71,7 +71,7 @@ public class Item extends IFMLObject implements Cloneable {
      * @param virtualMachine Virtual Machine
      * @return Value returned by trigger
      */
-    public Value getAccessibleContent(VirtualMachine virtualMachine) throws IFML2Exception {
+    public Value getAccessibleContent(IVirtualMachine virtualMachine) throws IFML2Exception {
         //todo: run own triggers -- when they will exist
 
         // run roles' triggers

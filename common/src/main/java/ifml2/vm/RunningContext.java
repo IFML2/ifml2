@@ -15,19 +15,19 @@ import java.util.List;
 
 public class RunningContext implements SymbolResolver {
     private HashMap<String, Variable> loweredLocalVariablesMap = new HashMap<String, Variable>();
-    private VirtualMachine virtualMachine = null;
+    private IVirtualMachine virtualMachine = null;
     private Value returnValue;
     private IFMLObject defaultObject;
     private Procedure contextProcedure; // procedure for searching procedure vars
 
-    private RunningContext(VirtualMachine virtualMachine) {
+    private RunningContext(IVirtualMachine virtualMachine) {
         this.virtualMachine = virtualMachine;
     }
 
     /**
      * Создание нового пустого контекста.
      */
-    public static RunningContext CreateNewContext(/*@NotNull*/ VirtualMachine virtualMachine) {
+    public static RunningContext CreateNewContext(IVirtualMachine virtualMachine) {
         return new RunningContext(virtualMachine);
     }
 
@@ -35,7 +35,7 @@ public class RunningContext implements SymbolResolver {
      * Создание нового пустого контекста для процедуры.
      */
     public static RunningContext CreateCallContext(
-            /*@NotNull*/ VirtualMachine virtualMachine,
+            /*@NotNull*/ IVirtualMachine virtualMachine,
             /*@NotNull*/ Procedure contextProcedure,
            /*@Nullable*/ List<Variable> parameters
     ) {

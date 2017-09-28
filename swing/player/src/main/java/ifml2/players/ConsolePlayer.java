@@ -2,7 +2,7 @@ package ifml2.players;
 
 import ifml2.IFML2Exception;
 import ifml2.engine.Engine;
-import ifml2.engine.featureproviders.text.IOutputPlainTextProvider;
+import ifml2.engine.featureproviders.text.OutputPlainTextProvider;
 
 import java.util.Scanner;
 
@@ -11,7 +11,7 @@ public class ConsolePlayer {
      * @param args First arg is story file path
      */
     public static void main(String[] args) {
-        IOutputPlainTextProvider outputPlainTextProvider = System.out::print;
+        OutputPlainTextProvider outputPlainTextProvider = System.out::print;
 
         Engine engine = new Engine(outputPlainTextProvider);
 

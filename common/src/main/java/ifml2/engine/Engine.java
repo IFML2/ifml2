@@ -4,9 +4,9 @@ import ca.odell.glazedlists.BasicEventList;
 import ifml2.CommonConstants;
 import ifml2.IFML2Exception;
 import ifml2.SystemIdentifiers;
-import ifml2.engine.featureproviders.IPlayerFeatureProvider;
-import ifml2.engine.featureproviders.graphic.IOutputIconProvider;
-import ifml2.engine.featureproviders.text.IOutputPlainTextProvider;
+import ifml2.engine.featureproviders.PlayerFeatureProvider;
+import ifml2.engine.featureproviders.graphic.OutputIconProvider;
+import ifml2.engine.featureproviders.text.OutputPlainTextProvider;
 import ifml2.engine.saved.SavedGame;
 import ifml2.om.Action;
 import ifml2.om.Hook;
@@ -26,6 +26,7 @@ import ifml2.parser.IFML2ParseException;
 import ifml2.parser.Parser;
 import ifml2.vm.ExpressionCalculator;
 import ifml2.vm.IFML2VMException;
+import ifml2.vm.IVirtualMachine;
 import ifml2.vm.RunningContext;
 import ifml2.vm.Variable;
 import ifml2.vm.VirtualMachine;
@@ -60,7 +61,7 @@ public class Engine implements IEngine {
     private static final String DEBUG_OUTPUT_PREFIX = "    [ОТЛАДКА] ";
     private final HashMap<String, Value> globalVariables = new HashMap<>();
     private final Parser parser = new Parser();
-    private final VirtualMachine virtualMachine = new VirtualMachine();
+    private final IVirtualMachine virtualMachine = new VirtualMachine();
     private final HashMap<String, Value> systemVariables = new HashMap<>();
     private final ArrayList<Item> abyss = new ArrayList<>();
     private Story story = null;
@@ -94,7 +95,7 @@ public class Engine implements IEngine {
     private DataHelper dataHelper = new DataHelper();
     private String storyFileName;
     private boolean isDebugMode = false;
-    private IPlayerFeatureProvider playerFeatureProvider;
+    private PlayerFeatureProvider playerFeatureProvider;
     private Date starTime = new Date();
     private HashMap<String, Callable<? extends Value>> ENGINE_SYMBOLS = new HashMap<String, Callable<? extends Value>>() {
         {
@@ -137,7 +138,7 @@ public class Engine implements IEngine {
         }
     };
 
-    public Engine(IPlayerFeatureProvider playerFeatureProvider) {
+    public Engine(PlayerFeatureProvider playerFeatureProvider) {
         this.playerFeatureProvider = playerFeatureProvider;
         virtualMachine.setEngine(this);
         LOG.info("Engine created.");
@@ -168,8 +169,8 @@ public class Engine implements IEngine {
     }
 
     private void outputPlainText(String text) {
-        if (playerFeatureProvider instanceof IOutputPlainTextProvider) {
-            ((IOutputPlainTextProvider) playerFeatureProvider).outputPlainText(text);
+        if (playerFeatureProvider instanceof OutputPlainTextProvider) {
+            ((OutputPlainTextProvider) playerFeatureProvider).outputPlainText(text);
         }
     }
 
@@ -382,7 +383,7 @@ public class Engine implements IEngine {
     }
 
     public void outIcon(String iconFilePath, int maxHeight, int maxWidth) {
-        if (playerFeatureProvider instanceof IOutputIconProvider) {
+        if (playerFeatureProvider instanceof OutputIconProvider) {
             // convert path relative to game to absolute path
             Path storyFolder = Paths.get(storyFileName).normalize().getParent();
             Path iconPath = Paths.get(iconFilePath);
@@ -397,7 +398,7 @@ public class Engine implements IEngine {
             Icon icon = new ImageIcon(resizedImage);
 
             // output icon
-            ((IOutputIconProvider) playerFeatureProvider).outputIcon(icon);
+            ((OutputIconProvider) playerFeatureProvider).outputIcon(icon);
         }
     }
 
@@ -462,11 +463,11 @@ public class Engine implements IEngine {
 
     private String genReporterName(Class reporter) {
         String reporterName;
-        if (Engine.class.equals(reporter)) {
+        if (IEngine.class.equals(reporter)) {
             reporterName = "Движок";
         } else if (Parser.class.equals(reporter)) {
             reporterName = "Парсер";
-        } else if (VirtualMachine.class.equals(reporter)) {
+        } else if (IVirtualMachine.class.equals(reporter)) {
             reporterName = "ВиртуальнаяМашина";
         } else {
             reporterName = reporter != null ? reporter.getClass().getSimpleName() : "";
@@ -618,7 +619,7 @@ public class Engine implements IEngine {
         throw new IFML2VMException("Неизвестный идентификатор \"{0}\"", symbol);
     }
 
-    public VirtualMachine getVirtualMachine() {
+    public IVirtualMachine getVirtualMachine() {
         return virtualMachine;
     }
 

@@ -6,10 +6,9 @@ import ifml2.CommonUtils;
 import ifml2.GUIUtils;
 import ifml2.IFML2Exception;
 import ifml2.ServiceRegistry;
-import ifml2.engine.Engine;
 import ifml2.engine.IEngine;
-import ifml2.engine.featureproviders.graphic.IOutputIconProvider;
-import ifml2.engine.featureproviders.text.IOutputPlainTextProvider;
+import ifml2.engine.featureproviders.graphic.OutputIconProvider;
+import ifml2.engine.featureproviders.text.OutputPlainTextProvider;
 import ifml2.om.IFML2LoadXmlException;
 import org.apache.log4j.Logger;
 
@@ -48,7 +47,7 @@ import static javax.swing.JOptionPane.QUESTION_MESSAGE;
 import static javax.swing.JOptionPane.YES_NO_OPTION;
 import static javax.swing.JOptionPane.YES_OPTION;
 
-public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutputIconProvider {
+public class GUIPlayer extends JFrame implements OutputPlainTextProvider, OutputIconProvider {
     private static final Logger LOG = Logger.getLogger(GUIPlayer.class);
     private static final String START_ANEW_COMMAND = "заново!";
     private static final String SAVE_COMMAND = "сохранить";

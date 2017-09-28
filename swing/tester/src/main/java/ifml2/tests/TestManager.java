@@ -2,7 +2,7 @@ package ifml2.tests;
 
 import ifml2.IFML2Exception;
 import ifml2.engine.Engine;
-import ifml2.engine.featureproviders.text.IOutputPlainTextProvider;
+import ifml2.engine.featureproviders.text.OutputPlainTextProvider;
 
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
@@ -17,7 +17,7 @@ import java.util.Date;
 public class TestManager {
     private final ArrayList<IFMLTestPlan> testPlans = new ArrayList<>();
     private final ArrayList<ListDataListener> testsListDataListeners = new ArrayList<>();
-    private IOutputPlainTextProvider outputPlainTextProvider;
+    private OutputPlainTextProvider outputPlainTextProvider;
 
     ArrayList<IFMLTestPlan> getTestPlans() {
         return testPlans;
@@ -64,12 +64,12 @@ public class TestManager {
         testsListDataListeners.remove(listDataListener);
     }
 
-    public void run(IOutputPlainTextProvider outputPlainTextProvider) {
+    public void run(OutputPlainTextProvider outputPlainTextProvider) {
         this.outputPlainTextProvider = outputPlainTextProvider;
 
         log("=== Запуск тестов ===");
         String[] outText = {""};
-        Engine engine = new Engine((IOutputPlainTextProvider) text -> outText[0] += ((outText[0].length() > 0) ? '\n' : "") + text);
+        Engine engine = new Engine((OutputPlainTextProvider) text -> outText[0] += ((outText[0].length() > 0) ? '\n' : "") + text);
 
         int plansSuccess = 0;
         for (IFMLTestPlan testPlan : getTestPlans()) {
