@@ -24,6 +24,7 @@ import ifml2.om.StoryOptions;
 import ifml2.parser.FormalElement;
 import ifml2.parser.IFML2ParseException;
 import ifml2.parser.Parser;
+import ifml2.parser.ParserImpl;
 import ifml2.vm.ExpressionCalculator;
 import ifml2.vm.IFML2VMException;
 import ifml2.vm.VirtualMachine;
@@ -60,7 +61,7 @@ public class EngineImpl implements Engine {
     public static final Logger LOG = LoggerFactory.getLogger(EngineImpl.class);
     private static final String DEBUG_OUTPUT_PREFIX = "    [ОТЛАДКА] ";
     private final HashMap<String, Value> globalVariables = new HashMap<>();
-    private final Parser parser = new Parser();
+    private final Parser parser = new ParserImpl();
     private final VirtualMachine virtualMachine = new VirtualMachineImpl();
     private final HashMap<String, Value> systemVariables = new HashMap<>();
     private final ArrayList<Item> abyss = new ArrayList<>();
@@ -305,7 +306,7 @@ public class EngineImpl implements Engine {
             return true;
         }
 
-        Parser.ParseResult parseResult;
+        ParserImpl.ParseResult parseResult;
         try {
             outEngDebug("Анализируем команду игрока \"{0}\"...", trimmedCommand);
             parseResult = parser.parse(trimmedCommand, story.getDataHelper(), dataHelper);
