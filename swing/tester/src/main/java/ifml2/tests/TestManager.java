@@ -1,7 +1,7 @@
 package ifml2.tests;
 
 import ifml2.IFML2Exception;
-import ifml2.engine.Engine;
+import ifml2.engine.EngineImpl;
 import ifml2.engine.featureproviders.text.OutputPlainTextProvider;
 
 import javax.swing.event.ListDataEvent;
@@ -69,7 +69,7 @@ public class TestManager {
 
         log("=== Запуск тестов ===");
         String[] outText = {""};
-        Engine engine = new Engine((OutputPlainTextProvider) text -> outText[0] += ((outText[0].length() > 0) ? '\n' : "") + text);
+        EngineImpl engine = new EngineImpl((OutputPlainTextProvider) text -> outText[0] += ((outText[0].length() > 0) ? '\n' : "") + text);
 
         int plansSuccess = 0;
         for (IFMLTestPlan testPlan : getTestPlans()) {

@@ -2,7 +2,7 @@ package ifml2.parser;
 
 import ca.odell.glazedlists.EventList;
 import ifml2.IFML2Exception;
-import ifml2.engine.Engine;
+import ifml2.engine.EngineImpl;
 import ifml2.om.Action;
 import ifml2.om.IFMLObject;
 import ifml2.om.LiteralTemplateElement;
@@ -25,7 +25,7 @@ import static ifml2.om.Word.GramCase.RP;
 import static java.lang.String.format;
 
 public class Parser {
-    public ParseResult parse(String phrase, Story.DataHelper storyDataHelper, Engine.DataHelper engineDataHelper) throws IFML2Exception {
+    public ParseResult parse(String phrase, Story.DataHelper storyDataHelper, EngineImpl.DataHelper engineDataHelper) throws IFML2Exception {
         outParsDebug(engineDataHelper, "Начало анализа команды \"{0}\"...", phrase);
 
         if (storyDataHelper.getAllActions() == null || storyDataHelper.getAllActions().size() == 0) {
@@ -129,11 +129,11 @@ public class Parser {
         return new ParseResult(firstFittedTemplate.action, formalElements);
     }
 
-    private void outParsDebug(int level, Engine.DataHelper engineDataHelper, String message, Object... args) {
+    private void outParsDebug(int level, EngineImpl.DataHelper engineDataHelper, String message, Object... args) {
         engineDataHelper.outDebug(this.getClass(), level, message, args);
     }
 
-    private void outParsDebug(Engine.DataHelper engineDataHelper, String message, Object... args) {
+    private void outParsDebug(EngineImpl.DataHelper engineDataHelper, String message, Object... args) {
         outParsDebug(0, engineDataHelper, message, args);
     }
 
@@ -173,7 +173,7 @@ public class Parser {
     }
 
     private ArrayList<FittedTemplate> removeInaccessibleObjects(ArrayList<FittedTemplate> fittedTemplates,
-                                                                Engine.DataHelper engineDataHelper) throws IFML2Exception {
+                                                                EngineImpl.DataHelper engineDataHelper) throws IFML2Exception {
         ArrayList<FittedTemplate> result = new ArrayList<FittedTemplate>();
         IFMLObject inaccessibleObject = null;
 
@@ -222,7 +222,7 @@ public class Parser {
     }
 
     private ArrayList<FittedFormalElement> fitPhraseWithTemplate(ArrayList<String> phraseAsList, List<TemplateElement> template,
-                                                                 Story.DataHelper storyDataHelper, Engine.DataHelper engineDataHelper, int debugLevel) throws IFML2Exception {
+                                                                 Story.DataHelper storyDataHelper, EngineImpl.DataHelper engineDataHelper, int debugLevel) throws IFML2Exception {
         outParsDebug(debugLevel, engineDataHelper, "Сравниваем фразу {0} с шаблоном {1}...", phraseAsList, template);
 
         // get vars into local copy
@@ -285,7 +285,7 @@ public class Parser {
 
     /*@Contract("null, _, _ -> fail")*/
     private TemplateElementFitResult fitTemplateElementWithPhrase(TemplateElement templateElement, ArrayList<String> phrase,
-                                                                  Engine.DataHelper engineDataHelper, Story.DataHelper storyDataHelper, int debugLevel) throws IFML2Exception {
+                                                                  EngineImpl.DataHelper engineDataHelper, Story.DataHelper storyDataHelper, int debugLevel) throws IFML2Exception {
         outParsDebug(debugLevel, engineDataHelper, "Сопоставляем элемент шаблона {0} с фразой {1}...", templateElement, phrase);
         IFML2Exception lastException = null;
 
@@ -368,7 +368,7 @@ public class Parser {
     private FitObjectWithPhraseResult fitObjectWithPhrase(
             /*@NotNull*/ Word.GramCase gramCase,
             /*@NotNull*/ List<String> phrase,
-            /*@NotNull*/ Engine.DataHelper engineDataHelper,
+            /*@NotNull*/ EngineImpl.DataHelper engineDataHelper,
             /*@NotNull*/ Story.DataHelper storyDataHelper,
             int debugLevel
     ) throws IFML2Exception {
@@ -476,7 +476,7 @@ public class Parser {
         return 0;
     }
 
-    private int fitSynonymWithPhrase(String synonym, ArrayList<String> phrase, Engine.DataHelper engineDataHelper,
+    private int fitSynonymWithPhrase(String synonym, ArrayList<String> phrase, EngineImpl.DataHelper engineDataHelper,
                                      int debugLevel) throws IFML2ParseException {
         outParsDebug(debugLevel, engineDataHelper, "Сравниваем синоним \"{0}\" с фразой {1}...", synonym, phrase);
         ArrayList<String> synonymWords = new ArrayList<String>(Arrays.asList(synonym.split("\\s+")));

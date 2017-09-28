@@ -8,7 +8,7 @@ import ifml2.om.Item;
 import ifml2.om.Location;
 import ifml2.vm.ExpressionCalculator;
 import ifml2.vm.IFML2VMException;
-import ifml2.vm.IVirtualMachine;
+import ifml2.vm.VirtualMachine;
 import ifml2.vm.RunningContext;
 import ifml2.vm.values.BooleanValue;
 import ifml2.vm.values.CollectionValue;
@@ -22,7 +22,7 @@ public abstract class Instruction implements Cloneable {
     /*@XmlAttribute(name = "position")
     public int position;*/
     @XmlTransient
-    public IVirtualMachine virtualMachine; // links
+    public VirtualMachine virtualMachine; // links
 
     private static void validateParameterForNull(String parameterValue, String instructionTitle,
                                                  Object parameterName) throws IFML2VMException {

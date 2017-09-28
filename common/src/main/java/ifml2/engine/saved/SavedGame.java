@@ -1,7 +1,7 @@
 package ifml2.engine.saved;
 
 import ifml2.IFML2Exception;
-import ifml2.engine.Engine;
+import ifml2.engine.EngineImpl;
 import ifml2.om.Item;
 import ifml2.om.Location;
 import ifml2.om.Story;
@@ -46,7 +46,7 @@ public class SavedGame {
     }
 
     public SavedGame(
-            /*@NotNull*/ Engine.DataHelper engineDataHelper,
+            /*@NotNull*/ EngineImpl.DataHelper engineDataHelper,
             /*@NotNull*/ Story.DataHelper storyDataHelper
     ) {
         storyFileName = engineDataHelper.getStoryFileName();
@@ -65,7 +65,7 @@ public class SavedGame {
         return savedItems;
     }
 
-    private static List<String> storeInventory(/*@NotNull*/ Engine.DataHelper dataHelper) {
+    private static List<String> storeInventory(/*@NotNull*/ EngineImpl.DataHelper dataHelper) {
         ArrayList<String> itemIds = new ArrayList<String>();
         for (Item item : dataHelper.getInventory()) {
             itemIds.add(item.getId());
@@ -73,7 +73,7 @@ public class SavedGame {
         return itemIds;
     }
 
-    private static List<SavedVariable> storeSystemVariables(/*@NotNull*/ Engine.DataHelper dataHelper) {
+    private static List<SavedVariable> storeSystemVariables(/*@NotNull*/ EngineImpl.DataHelper dataHelper) {
         List<SavedVariable> vars = new ArrayList<SavedVariable>();
         for (Map.Entry<String, Value> var : dataHelper.getSystemVariables().entrySet()) {
             vars.add(new SavedVariable(var.getKey(), var.getValue().toLiteral()));
@@ -81,7 +81,7 @@ public class SavedGame {
         return vars;
     }
 
-    public static List<SavedVariable> storeGlobalVariables(/*@NotNull*/ Engine.DataHelper dataHelper) {
+    public static List<SavedVariable> storeGlobalVariables(/*@NotNull*/ EngineImpl.DataHelper dataHelper) {
         List<SavedVariable> vars = new ArrayList<SavedVariable>();
         for (Map.Entry<String, Value> var : dataHelper.getGlobalVariables().entrySet()) {
             vars.add(new SavedVariable(var.getKey(), var.getValue().toLiteral()));
@@ -99,7 +99,7 @@ public class SavedGame {
 
     private static void restoreSystemVariables(
             /*@NotNull*/ List<SavedVariable> systemVariables,
-            /*@NotNull*/ Engine.DataHelper dataHelper
+            /*@NotNull*/ EngineImpl.DataHelper dataHelper
     ) throws IFML2Exception {
         for (SavedVariable var : systemVariables) {
             dataHelper.setSystemVariable(var.getName(), var.getValue());
@@ -108,7 +108,7 @@ public class SavedGame {
 
     private static void restoreGlobalVariables(
             /*@NotNull*/ List<SavedVariable> globalVariables,
-            /*@NotNull*/ Engine.DataHelper dataHelper
+            /*@NotNull*/ EngineImpl.DataHelper dataHelper
     ) throws IFML2Exception {
         for (SavedVariable var : globalVariables) {
             dataHelper.setGlobalVariable(var.getName(), var.getValue());
@@ -132,7 +132,7 @@ public class SavedGame {
 
     private static void restoreInventory(
             /*@NotNull*/ List<String> itemIds,
-            /*@NotNull*/ Engine.DataHelper dataHelper,
+            /*@NotNull*/ EngineImpl.DataHelper dataHelper,
             /*@NotNull*/ Story.DataHelper storyDataHelper
     ) {
         ArrayList<Item> inventory = dataHelper.getInventory();
@@ -149,7 +149,7 @@ public class SavedGame {
     }
 
     public void restoreGame(
-            /*@NotNull*/ Engine.DataHelper engineDataHelper,
+            /*@NotNull*/ EngineImpl.DataHelper engineDataHelper,
             /*@NotNull*/ Story.DataHelper storyDataHelper
     ) throws IFML2Exception {
         // check story file name

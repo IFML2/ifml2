@@ -1,7 +1,7 @@
 package ifml2.players;
 
 import ifml2.IFML2Exception;
-import ifml2.engine.Engine;
+import ifml2.engine.EngineImpl;
 import ifml2.engine.featureproviders.text.OutputPlainTextProvider;
 
 import java.util.Scanner;
@@ -13,7 +13,7 @@ public class ConsolePlayer {
     public static void main(String[] args) {
         OutputPlainTextProvider outputPlainTextProvider = System.out::print;
 
-        Engine engine = new Engine(outputPlainTextProvider);
+        EngineImpl engine = new EngineImpl(outputPlainTextProvider);
 
         if (args.length < 1) {
             System.out.println("Пропущен обязательный параметр - файл игры.");
