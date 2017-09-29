@@ -5,11 +5,12 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import ifml2.CommonUtils;
 import ifml2.GUIUtils;
 import ifml2.IFML2Exception;
-import ifml2.ServiceRegistry;
 import ifml2.engine.Engine;
 import ifml2.engine.featureproviders.graphic.OutputIconProvider;
 import ifml2.engine.featureproviders.text.OutputPlainTextProvider;
 import ifml2.om.IFML2LoadXmlException;
+import ifml2.service.ServiceRegistry;
+
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
@@ -48,18 +49,25 @@ import static javax.swing.JOptionPane.YES_NO_OPTION;
 import static javax.swing.JOptionPane.YES_OPTION;
 
 public class GUIPlayer extends JFrame implements OutputPlainTextProvider, OutputIconProvider {
+
+    private static final long serialVersionUID = 1L;
+    
     private static final Logger LOG = Logger.getLogger(GUIPlayer.class);
+    
     private static final String START_ANEW_COMMAND = "заново!";
     private static final String SAVE_COMMAND = "сохранить";
     private static final String LOAD_COMMAND = "загрузить";
+
     private final ArrayList<String> commandHistory = new ArrayList<>();
+    
     private JPanel mainPanel;
     private JTextField commandText;
     private JTextPane logTextPane;
     private JScrollPane scrollPane;
-    private Engine engine = ServiceRegistry.getEngine(this);
+    private Engine engine = ServiceRegistry.getEngine(this, this);
     private ListIterator<String> historyIterator = commandHistory.listIterator();
     private String storyFile;
+
     private boolean isFromTempFile;
 
     private GUIPlayer(boolean fromTempFile) {

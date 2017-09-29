@@ -531,30 +531,6 @@ public class ParserImpl implements Parser {
         return format("%s?", uppercaseFirstLetter(result.trim()));
     }
 
-    public class ParseResult {
-        public Action action = null;
-        public List<FormalElement> formalElements = null;
-
-        public ParseResult(Action action, ArrayList<FormalElement> formalElements) {
-            this.action = action;
-            this.formalElements = formalElements;
-        }
-
-        public Action getAction() {
-            return action;
-        }
-
-        public List<FormalElement> getFormalElements() {
-            return formalElements;
-        }
-
-        @Override
-        public String toString() {
-            return "Действие = [" + action +
-                    "], формальные элементы = [" + formalElements + ']';
-        }
-    }
-
     private class TemplateElementFitResult {
         public FittedFormalElement fittedFormalElement = null;
         public int usedWordsQty = 0;

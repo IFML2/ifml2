@@ -2,10 +2,10 @@ package ifml2.engine;
 
 import ca.odell.glazedlists.BasicEventList;
 import ifml2.CommonConstants;
+import ifml2.Environment;
 import ifml2.IFML2Exception;
 import ifml2.SystemIdentifiers;
 import ifml2.engine.featureproviders.PlayerFeatureProvider;
-import ifml2.engine.featureproviders.graphic.OutputIconProvider;
 import ifml2.engine.featureproviders.text.OutputPlainTextProvider;
 import ifml2.engine.saved.SavedGame;
 import ifml2.om.Action;
@@ -23,14 +23,13 @@ import ifml2.om.Story;
 import ifml2.om.StoryOptions;
 import ifml2.parser.FormalElement;
 import ifml2.parser.IFML2ParseException;
+import ifml2.parser.ParseResult;
 import ifml2.parser.Parser;
-import ifml2.parser.ParserImpl;
 import ifml2.vm.ExpressionCalculator;
 import ifml2.vm.IFML2VMException;
 import ifml2.vm.VirtualMachine;
 import ifml2.vm.RunningContext;
 import ifml2.vm.Variable;
-import ifml2.vm.VirtualMachineImpl;
 import ifml2.vm.instructions.SetVarInstruction;
 import ifml2.vm.values.BooleanValue;
 import ifml2.vm.values.CollectionValue;
@@ -41,11 +40,7 @@ import ifml2.vm.values.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.*;
-import java.awt.*;
 import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,14 +53,18 @@ import static ifml2.engine.EngineImpl.SystemCommand.HELP;
 import static java.lang.String.format;
 
 public class EngineImpl implements Engine {
+
     public static final Logger LOG = LoggerFactory.getLogger(EngineImpl.class);
-    private static final String DEBUG_OUTPUT_PREFIX = "    [ОТЛАДКА] ";
+
     private final HashMap<String, Value> globalVariables = new HashMap<>();
-    private final Parser parser = new ParserImpl();
-    private final VirtualMachine virtualMachine = new VirtualMachineImpl();
+
+    private final Parser parser;
+    private final VirtualMachine virtualMachine;
+    private Environment environment;
+
     private final HashMap<String, Value> systemVariables = new HashMap<>();
     private final ArrayList<Item> abyss = new ArrayList<>();
-    private Story story = null;
+
     private ArrayList<Item> inventory = new ArrayList<>();
     private HashMap<String, SystemCommand> SYSTEM_COMMANDS = new HashMap<String, SystemCommand>() {
         {
@@ -79,23 +78,22 @@ public class EngineImpl implements Engine {
         }
 
         @Override
-        public SystemCommand get(/*@NotNull*/ Object key) {
+        public SystemCommand get(Object key) {
             return super.get(key.toString().toLowerCase());
         }
 
         @Override
-        public boolean containsKey(/*@NotNull*/ Object key) {
+        public boolean containsKey(Object key) {
             return super.containsKey(key.toString().toLowerCase());
         }
 
         @Override
-        public SystemCommand put(/*@NotNull*/ String key, SystemCommand value) {
+        public SystemCommand put(String key, SystemCommand value) {
             return super.put(key.toLowerCase(), value);
         }
     };
     private DataHelper dataHelper = new DataHelper();
     private String storyFileName;
-    private boolean isDebugMode = false;
     private PlayerFeatureProvider playerFeatureProvider;
     private Date starTime = new Date();
     private HashMap<String, Callable<? extends Value>> ENGINE_SYMBOLS = new HashMap<String, Callable<? extends Value>>() {
@@ -106,16 +104,16 @@ public class EngineImpl implements Engine {
             put("инвентарь", returnInv);
             put("куча",
                     (Callable<TextValue>) () -> new TextValue(new CollectionValue(
-                            new ArrayList<>(story.getObjectsHeap().values())).toString()));
+                            new ArrayList<>(environment.getStory().getObjectsHeap().values())).toString()));
             put("словарь",
                     (Callable<TextValue>) () -> new TextValue(new CollectionValue(
-                            new ArrayList<>(story.getDictionary().values())).toString()));
+                            new ArrayList<>(environment.getStory().getDictionary().values())).toString()));
             put("пустота", (Callable<CollectionValue>) () -> new CollectionValue(abyss));
             put("глобальные", (Callable<TextValue>) () -> new TextValue(globalVariables.entrySet().toString()));
             put("локации",
-                    (Callable<TextValue>) () -> new TextValue(new CollectionValue(story.getLocations()).toString()));
+                    (Callable<TextValue>) () -> new TextValue(new CollectionValue(environment.getStory().getLocations()).toString()));
             put("предметы",
-                    (Callable<TextValue>) () -> new TextValue(new CollectionValue(story.getItems()).toString()));
+                    (Callable<TextValue>) () -> new TextValue(new CollectionValue(environment.getStory().getItems()).toString()));
             put("системные", new Callable<TextValue>() {
                 @Override
                 public TextValue call() throws Exception {
@@ -139,8 +137,10 @@ public class EngineImpl implements Engine {
         }
     };
 
-    public EngineImpl(PlayerFeatureProvider playerFeatureProvider) {
-        this.playerFeatureProvider = playerFeatureProvider;
+    public EngineImpl(final Environment environment, final VirtualMachine virtualMachine, final Parser parser) {
+        this.environment = environment;
+        this.virtualMachine = virtualMachine;
+        this.parser = parser;
         virtualMachine.setEngine(this);
         LOG.info("Engine created.");
     }
@@ -155,11 +155,11 @@ public class EngineImpl implements Engine {
         //TODO validate xml
 
         OMManager.LoadStoryResult loadStoryResult = OMManager.loadStoryFromFile(storyFileName, true, isAllowedOpenCipherFiles);
-        story = loadStoryResult.getStory();
+        environment.setStory(loadStoryResult.getStory());
         this.storyFileName = storyFileName;
         inventory = loadStoryResult.getInventory();
 
-        LOG.info("Story \"{0}\" loaded", story);
+        LOG.info("Story \"{0}\" loaded", environment.getStory());
     }
 
     public void outText(String text, Object... args) {
@@ -181,6 +181,8 @@ public class EngineImpl implements Engine {
 
     public void initGame() throws IFML2Exception {
         LOG.info("Initializing game...");
+
+        Story story = environment.getStory();
 
         if (story == null) {
             throw new IFML2Exception("История не загружена.");
@@ -235,15 +237,26 @@ public class EngineImpl implements Engine {
         });
 
         // show initial info
-        StoryOptions.StoryDescription storyDescription = story.getStoryOptions().getStoryDescription();
-        outTextLn(storyDescription.getName() != null ? storyDescription.getName() : "<Без имени>");
-        outTextLn("**********");
-        outTextLn(storyDescription.getDescription() != null ? storyDescription.getDescription() : "<Без описания>");
-        outTextLn(format("ВЕРСИЯ: %s", storyDescription.getVersion() != null ? storyDescription.getVersion() : "<Без версии>"));
-        outTextLn(format("АВТОР: %s", storyDescription.getAuthor() != null ? storyDescription.getAuthor() : "<Без автора>"));
-        outTextLn("**********\n");
+        showInitInfo(story.getStoryOptions().getStoryDescription());
+        runStartProcedure(story.getStartProcedure());
+        initStartLocation(story.getStartLocation());
 
-        Procedure startProcedure = story.getStartProcedure();
+        LOG.info("Game initialized.");
+    }
+
+    private void showInitInfo(final StoryOptions.StoryDescription storyDescription) {
+        final StringBuilder sb = new StringBuilder();
+        sb
+            .append(storyDescription.getName() != null ? storyDescription.getName() : "<Без имени>").append('\n')
+            .append("**********").append('\n')
+            .append(storyDescription.getDescription() != null ? environment.getStory().getStoryOptions().getStoryDescription() : "<Без имени>")
+            .append(format("ВЕРСИЯ: %s", storyDescription.getVersion() != null ? storyDescription.getVersion() : "<Без версии>"))
+            .append(format("АВТОР: %s", storyDescription.getAuthor() != null ? storyDescription.getAuthor() : "<Без автора>"))
+            .append("**********").append('\n');
+        environment.outText(sb.toString());
+    }
+
+    private void runStartProcedure(final Procedure startProcedure) {
         if (startProcedure != null) {
             try {
                 virtualMachine.runProcedureWithoutParameters(startProcedure);
@@ -252,11 +265,12 @@ public class EngineImpl implements Engine {
                 outTextLn(e.getMessage());
             }
         }
+    }
 
-        Location startLocation = story.getStartLocation();
+    private void initStartLocation(final Location startLocation) throws IFML2Exception {
         if (startLocation != null) {
             setCurrentLocation(startLocation);
-            if (story.IsShowStartLocDesc()) {
+            if (environment.getStory().IsShowStartLocDesc()) {
                 // show first location description
                 virtualMachine.showLocation(getCurrentLocation());
             }
@@ -264,16 +278,14 @@ public class EngineImpl implements Engine {
 
         if (getCurrentLocation() == null) {
             // if current location isn't set then take any
-            setCurrentLocation(story.getAnyLocation());
+            setCurrentLocation(environment.getStory().getAnyLocation());
         }
-
-        LOG.info("Game initialized.");
     }
 
     public boolean executeGamerCommand(String gamerCommand) {
         String trimmedCommand = gamerCommand.trim();
 
-        StoryOptions.SystemCommandsDisableOption systemCommandsDisableOption = story.getStoryOptions().getSystemCommandsDisableOption();
+        StoryOptions.SystemCommandsDisableOption systemCommandsDisableOption = environment.getStory().getStoryOptions().getSystemCommandsDisableOption();
 
         // check system commands
         if (SYSTEM_COMMANDS.containsKey(trimmedCommand)) {
@@ -281,35 +293,35 @@ public class EngineImpl implements Engine {
             switch (systemCommand) {
                 case HELP:
                     if (!systemCommandsDisableOption.isDisableHelp()) {
-                        outTextLn("Попробуйте одну из команд: " + story.getAllActions());
+                        outTextLn("Попробуйте одну из команд: " + environment.getStory().getAllActions());
                         return true;
                     }
             }
         }
 
         // check debug command
-        if (isDebugMode && trimmedCommand.length() > 0 && trimmedCommand.charAt(0) == '?') {
+        if (environment.isDebug() && trimmedCommand.length() > 0 && trimmedCommand.charAt(0) == '?') {
             String expression = trimmedCommand.substring(1);
             try {
                 Value value = ExpressionCalculator.calculate(RunningContext.CreateNewContext(virtualMachine), expression);
-                outDebug("({0}) {1}", value.getTypeName(), value);
+                environment.debug("({0}) {1}", value.getTypeName(), value);
             } catch (IFML2Exception e) {
-                outDebug("Ошибка при вычислении выражения: {0}", e.getMessage());
+                environment.debug("Ошибка при вычислении выражения: {0}", e.getMessage());
             }
             return true;
         }
 
         // switch debug mode
         if ("!отладка".equalsIgnoreCase(trimmedCommand) && !systemCommandsDisableOption.isDisableDebug()) {
-            isDebugMode = !isDebugMode;
-            outTextLn(DEBUG_OUTPUT_PREFIX + "Режим отладки {0}.", isDebugMode ? "включен" : "выключен");
+            environment.debugToggle();
+            environment.debug("Режим отладки {}.", environment.isDebug() ? "включен" : "выключен");
             return true;
         }
 
-        ParserImpl.ParseResult parseResult;
+        ParseResult parseResult;
         try {
             outEngDebug("Анализируем команду игрока \"{0}\"...", trimmedCommand);
-            parseResult = parser.parse(trimmedCommand, story.getDataHelper(), dataHelper);
+            parseResult = parser.parse(trimmedCommand, environment.getStory().getDataHelper(), dataHelper);
             outEngDebug("Анализ завершился успешно. Результат анализа команды: {0}.", parseResult);
 
             Action action = parseResult.getAction();
@@ -384,23 +396,7 @@ public class EngineImpl implements Engine {
     }
 
     public void outIcon(String iconFilePath, int maxHeight, int maxWidth) {
-        if (playerFeatureProvider instanceof OutputIconProvider) {
-            // convert path relative to game to absolute path
-            Path storyFolder = Paths.get(storyFileName).normalize().getParent();
-            Path iconPath = Paths.get(iconFilePath);
-            Path iconFullPath = storyFolder.resolve(iconPath);
-
-            // load and resize icon
-            ImageIcon imageIcon = new ImageIcon(iconFullPath.toAbsolutePath().toString());
-            int needHeight = maxHeight > 0 ? Math.min(maxHeight, imageIcon.getIconHeight()) : imageIcon.getIconHeight();
-            int needWidth = maxWidth > 0 ? Math.min(maxWidth, imageIcon.getIconWidth()) : imageIcon.getIconWidth();
-            Image image = imageIcon.getImage();
-            Image resizedImage = image.getScaledInstance(needWidth, needHeight, java.awt.Image.SCALE_SMOOTH);
-            Icon icon = new ImageIcon(resizedImage);
-
-            // output icon
-            ((OutputIconProvider) playerFeatureProvider).outputIcon(icon);
-        }
+        environment.outIcon(iconFilePath, maxHeight, maxWidth);
     }
 
     private void handleParseError(String trimmedCommand, IFML2ParseException parseException) {
@@ -459,7 +455,7 @@ public class EngineImpl implements Engine {
 
     public void outDebug(Class reporter, String message, Object... args) {
         String reporterName = genReporterName(reporter);
-        outDebug(reporterName + message, args);
+        environment.debug(reporterName + message, args);
     }
 
     private String genReporterName(Class reporter) {
@@ -474,18 +470,6 @@ public class EngineImpl implements Engine {
             reporterName = reporter != null ? reporter.getClass().getSimpleName() : "";
         }
         return '[' + reporterName + "] ";
-    }
-
-    /**
-     * Outputs debug message in game window only if debug mode is on.
-     *
-     * @param message Debug message.
-     * @param args    Arguments for message formatting.
-     */
-    public void outDebug(String message, Object... args) {
-        if (isDebugMode) {
-            outTextLn(DEBUG_OUTPUT_PREFIX + message, args);
-        }
     }
 
     private void fireAfterHooks(List<Variable> parameters, HashMap<Hook.Type, List<Hook>> objectHooks,
@@ -581,7 +565,7 @@ public class EngineImpl implements Engine {
     }
 
     public Story getStory() {
-        return story;
+        return environment.getStory();
     }
 
     /*@Nullable*/
@@ -598,7 +582,7 @@ public class EngineImpl implements Engine {
         return inventory;
     }
 
-    public Value resolveSymbol(/*@NotNull*/ String symbol) throws IFML2VMException {
+    public Value resolveSymbol(String symbol) throws IFML2VMException {
         String loweredSymbol = symbol.toLowerCase();
 
         try {
@@ -613,8 +597,8 @@ public class EngineImpl implements Engine {
             return systemVariables.get(loweredSymbol);
         }
 
-        if (story.getObjectsHeap().containsKey(loweredSymbol)) {
-            return new ObjectValue(story.getObjectsHeap().get(loweredSymbol));
+        if (environment.getStory().getObjectsHeap().containsKey(loweredSymbol)) {
+            return new ObjectValue(environment.getStory().getObjectsHeap().get(loweredSymbol));
         }
 
         throw new IFML2VMException("Неизвестный идентификатор \"{0}\"", symbol);
@@ -625,7 +609,7 @@ public class EngineImpl implements Engine {
     }
 
     public void saveGame(String saveFileName) throws IFML2Exception {
-        SavedGame savedGame = new SavedGame(dataHelper, story.getDataHelper());
+        SavedGame savedGame = new SavedGame(dataHelper, environment.getStory().getDataHelper());
         OMManager.saveGame(saveFileName, savedGame);
         outTextLn("Игра сохранена в файл {0}.", saveFileName);
     }
@@ -633,7 +617,7 @@ public class EngineImpl implements Engine {
     public void loadGame(String saveFileName) throws IFML2Exception {
         try {
             SavedGame savedGame = OMManager.loadGame(saveFileName);
-            savedGame.restoreGame(dataHelper, story.getDataHelper());
+            savedGame.restoreGame(dataHelper, environment.getStory().getDataHelper());
             outTextLn("Игра восстановлена из файла {0}.", saveFileName);
         } catch (IFML2Exception e) {
             String errorText = "Ошибка при загрузке игры! " + e.getMessage();
@@ -719,10 +703,10 @@ public class EngineImpl implements Engine {
         for (int i = 1; i <= level; i++) {
             tab += "  ";
         }
-        outDebug(tab + message, args);
+        environment.debug(tab + message, args);
     }
 
-    public Variable searchGlobalVariable(/*@Nullable*/ String name) {
+    public Variable searchGlobalVariable(String name) {
         if (name == null) {
             return null;
         }
@@ -757,7 +741,7 @@ public class EngineImpl implements Engine {
         }
 
         public List<Location> getLocations() {
-            return story.getLocations();
+            return environment.getStory().getLocations();
         }
 
         public void setGlobalVariable(/*@NotNull*/ String name, String expression) throws IFML2Exception {
@@ -770,9 +754,7 @@ public class EngineImpl implements Engine {
             systemVariables.put(name, value);
         }
 
-        public
-        /*@NotNull*/
-        String getStoryFileName() {
+        public String getStoryFileName() {
             return new File(storyFileName).getName();
         }
 
@@ -784,28 +766,22 @@ public class EngineImpl implements Engine {
             EngineImpl.this.outDebug(level, genReporterName(reporter) + message, args);
         }
 
-        public
-        /*@Nullable*/
-        Procedure getParseErrorHandler() {
-            return story.getInheritedSystemProcedures().getParseErrorHandler();
+        public Procedure getParseErrorHandler() {
+            return environment.getStory().getInheritedSystemProcedures().getParseErrorHandler();
         }
     }
 
     private class GlobalVariableProxy extends Variable {
         private final HashMap<String, Value> globalVariables;
 
-        public GlobalVariableProxy(/*@NotNull*/ HashMap<String, Value> globalVariables, /*@NotNull*/ String name, Value value) {
+        public GlobalVariableProxy(HashMap<String, Value> globalVariables, String name, Value value) {
             super(name.toLowerCase(), value);
             this.globalVariables = globalVariables;
         }
 
         @Override
         public Value getValue() {
-            if (globalVariables.containsKey(name)) {
-                return globalVariables.get(name);
-            }
-
-            return null;
+            return globalVariables.containsKey(name) ? globalVariables.get(name) : null;
         }
 
         @Override
@@ -820,4 +796,5 @@ public class EngineImpl implements Engine {
             throw new RuntimeException("Внутренняя ошибка: Запрещено менять имена переменных");
         }
     }
+
 }

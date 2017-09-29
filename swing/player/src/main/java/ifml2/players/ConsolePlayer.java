@@ -1,19 +1,18 @@
 package ifml2.players;
 
-import ifml2.IFML2Exception;
-import ifml2.engine.EngineImpl;
-import ifml2.engine.featureproviders.text.OutputPlainTextProvider;
-
 import java.util.Scanner;
+
+import ifml2.IFML2Exception;
+import ifml2.engine.Engine;
+import ifml2.engine.featureproviders.text.OutputPlainTextProvider;
+import ifml2.service.ServiceRegistry;
 
 public class ConsolePlayer {
     /**
      * @param args First arg is story file path
      */
     public static void main(String[] args) {
-        OutputPlainTextProvider outputPlainTextProvider = System.out::print;
-
-        EngineImpl engine = new EngineImpl(outputPlainTextProvider);
+        Engine engine = ServiceRegistry.getEngine(System.out::print, null);
 
         if (args.length < 1) {
             System.out.println("Пропущен обязательный параметр - файл игры.");
@@ -33,7 +32,7 @@ public class ConsolePlayer {
         do {
             System.out.print("\n> ");
             gamerCommand = scanner.nextLine();
-        }
-        while (engine.executeGamerCommand(gamerCommand));
+        } while (engine.executeGamerCommand(gamerCommand));
+        scanner.close();
     }
 }
