@@ -4,7 +4,7 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import ifml2.CommonConstants;
 import ifml2.CommonUtils;
-import ifml2.engine.EngineVersion;
+import ifml2.service.ServiceRegistry;
 import ifml2.tests.IFMLTestPlan;
 import ifml2.tests.TestManager;
 
@@ -35,7 +35,7 @@ public class TestRunner extends JFrame {
     private JPanel mainPanel;
 
     public TestRunner() {
-        super(format("%s Тестер %s", RUSSIAN_PRODUCT_NAME, EngineVersion.VERSION));
+        super(format("%s Тестер %s", RUSSIAN_PRODUCT_NAME, ServiceRegistry.VERSION));
         setContentPane(mainPanel);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         packAndCenterWindow(this);

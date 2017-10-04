@@ -3,6 +3,7 @@ package ifml2.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import ifml2.Environment;
 import ifml2.EnvironmentImpl;
 import ifml2.engine.Engine;
 import ifml2.engine.EngineImpl;
@@ -37,7 +38,10 @@ public enum ServiceRegistry {
             final OutputPlainTextProvider textProvider,
             final OutputIconProvider iconProvider
     ) {
-        return new EngineImpl(new EnvironmentImpl(textProvider, iconProvider), new VirtualMachineImpl(), new ParserImpl());
+        Environment environment = new EnvironmentImpl(textProvider, iconProvider);
+        return new EngineImpl(environment, new VirtualMachineImpl(environment), new ParserImpl());
     }
+
+    public static final String VERSION = "Выпуск 2016/5";
 
 }

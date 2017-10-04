@@ -4,6 +4,7 @@ import java.awt.Image;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.MessageFormat;
 import java.util.Optional;
 
 import javax.swing.Icon;
@@ -49,6 +50,7 @@ public class EnvironmentImpl implements Environment {
 
     @Override
     public void outText(final String text, final Object... args) {
+        outText(args.length > 0 ? MessageFormat.format(text, args) : text);
     }
 
     @Override

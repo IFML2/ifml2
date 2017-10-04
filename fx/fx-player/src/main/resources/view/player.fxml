@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.TextFlow?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1">
+   <top>
+      <MenuBar BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="История">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#onNewStory" text="Новая история" />
+                  <MenuItem fx:id="restart" disable="true" mnemonicParsing="false" onAction="#onRestartStory" text="Начать с начала" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem fx:id="loadGame" disable="true" mnemonicParsing="false" onAction="#onLoadGame" text="Загрузить игру" />
+                  <MenuItem fx:id="saveGame" disable="true" mnemonicParsing="false" onAction="#onSaveGame" text="Сохранить игру" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" onAction="#onExit" text="Выход" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+   <bottom>
+      <TextField fx:id="comLine" onKeyPressed="#onKeyPressed" BorderPane.alignment="CENTER" />
+   </bottom>
+   <center>
+      <ScrollPane fx:id="scroller" fitToWidth="true" BorderPane.alignment="CENTER">
+         <content>
+            <TextFlow fx:id="outPanel" prefHeight="200.0" prefWidth="200.0" />
+         </content>
+      </ScrollPane>
+   </center>
+</BorderPane>

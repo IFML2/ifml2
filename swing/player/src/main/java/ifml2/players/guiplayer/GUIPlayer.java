@@ -1,35 +1,5 @@
 package ifml2.players.guiplayer;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import ifml2.CommonUtils;
-import ifml2.GUIUtils;
-import ifml2.IFML2Exception;
-import ifml2.engine.Engine;
-import ifml2.engine.featureproviders.graphic.OutputIconProvider;
-import ifml2.engine.featureproviders.text.OutputPlainTextProvider;
-import ifml2.om.IFML2LoadXmlException;
-import ifml2.service.ServiceRegistry;
-
-import org.apache.log4j.Logger;
-
-import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileView;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.StyledDocument;
-import javax.xml.bind.ValidationEvent;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.ListIterator;
-
 import static ifml2.CommonConstants.CIPHERED_STORY_EXTENSION;
 import static ifml2.CommonConstants.RUSSIAN_PRODUCT_NAME;
 import static ifml2.CommonConstants.SAVE_EXTENSION;
@@ -42,36 +12,90 @@ import static ifml2.GUIUtils.OPEN_ICON;
 import static ifml2.GUIUtils.SAVE_FILE_ICON;
 import static ifml2.GUIUtils.SAVE_ICON;
 import static ifml2.GUIUtils.STORY_FILE_ICON;
-import static ifml2.engine.EngineVersion.VERSION;
 import static java.lang.String.format;
 import static javax.swing.JOptionPane.QUESTION_MESSAGE;
 import static javax.swing.JOptionPane.YES_NO_OPTION;
 import static javax.swing.JOptionPane.YES_OPTION;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.ListIterator;
+import java.util.function.Consumer;
+
+import javax.swing.AbstractAction;
+import javax.swing.BoundedRangeModel;
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
+import javax.swing.JViewport;
+import javax.swing.SwingUtilities;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileView;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.StyledDocument;
+import javax.xml.bind.ValidationEvent;
+
+import ifml2.service.HistoryService;
+import org.apache.log4j.Logger;
+
+import com.intellij.uiDesigner.core.GridConstraints;
+import com.intellij.uiDesigner.core.GridLayoutManager;
+
+import ifml2.CommonUtils;
+import ifml2.GUIUtils;
+import ifml2.IFML2Exception;
+import ifml2.engine.Engine;
+import ifml2.engine.featureproviders.graphic.OutputIconProvider;
+import ifml2.engine.featureproviders.text.OutputPlainTextProvider;
+import ifml2.om.IFML2LoadXmlException;
+import ifml2.service.ServiceRegistry;
+
 public class GUIPlayer extends JFrame implements OutputPlainTextProvider, OutputIconProvider {
 
     private static final long serialVersionUID = 1L;
-    
+
     private static final Logger LOG = Logger.getLogger(GUIPlayer.class);
-    
+
     private static final String START_ANEW_COMMAND = "заново!";
     private static final String SAVE_COMMAND = "сохранить";
     private static final String LOAD_COMMAND = "загрузить";
 
-    private final ArrayList<String> commandHistory = new ArrayList<>();
-    
     private JPanel mainPanel;
     private JTextField commandText;
     private JTextPane logTextPane;
     private JScrollPane scrollPane;
+
     private Engine engine = ServiceRegistry.getEngine(this, this);
-    private ListIterator<String> historyIterator = commandHistory.listIterator();
+    private HistoryService historyService = new HistoryService();
+
     private String storyFile;
 
     private boolean isFromTempFile;
 
     private GUIPlayer(boolean fromTempFile) {
-        super(format("%s Плеер %s", RUSSIAN_PRODUCT_NAME, VERSION));
+        super(format("%s Плеер %s", RUSSIAN_PRODUCT_NAME, ServiceRegistry.VERSION));
         this.isFromTempFile = fromTempFile;
 
         setContentPane(mainPanel);
@@ -101,11 +125,11 @@ public class GUIPlayer extends JFrame implements OutputPlainTextProvider, Output
                 } else
                     // history prev callback
                     if (KeyEvent.VK_UP == key || KeyEvent.VK_KP_UP == key) {
-                        commandText.setText(goHistoryPrev());
+                        commandText.setText(historyService.prev());
                     } else
                         // history next callback
                         if (KeyEvent.VK_DOWN == key || KeyEvent.VK_KP_DOWN == key) {
-                            commandText.setText(goHistoryNext());
+                            commandText.setText(historyService.next());
                         }
             }
         });
@@ -185,22 +209,20 @@ public class GUIPlayer extends JFrame implements OutputPlainTextProvider, Output
             return;
         }
 
-        updateHistory(gamerCommand);
+        historyService.update(gamerCommand);
 
         try {
-            if (START_ANEW_COMMAND.equalsIgnoreCase(gamerCommand)) {
-                startAnew();
-                return;
-            }
-
-            if (SAVE_COMMAND.equalsIgnoreCase(gamerCommand)) {
-                saveGame();
-                return;
-            }
-
-            if (LOAD_COMMAND.equalsIgnoreCase(gamerCommand)) {
-                loadGame();
-                return;
+            switch (gamerCommand.toLowerCase()) {
+                case START_ANEW_COMMAND:
+                    startAnew();
+                    return;
+                case SAVE_COMMAND:
+                    saveGame();
+                    return;
+                case LOAD_COMMAND:
+                    loadGame();
+                    return;
+                default:
             }
         } catch (IFML2Exception ex) {
             reportError(ex, "Ошибка при перезапуске истории!");
@@ -346,7 +368,7 @@ public class GUIPlayer extends JFrame implements OutputPlainTextProvider, Output
                         "Вы действительно хотите выйти?\r\n" + "Ведь всё, чего Вы тут достигли - не сохранится.", "Выйти",
                         YES_NO_OPTION, QUESTION_MESSAGE);
                 if (answer == YES_OPTION) {
-                    GUIPlayer.this.dispose();
+                    System.exit(0);
                 } else {
                     focusCommandText();
                 }
@@ -397,19 +419,6 @@ public class GUIPlayer extends JFrame implements OutputPlainTextProvider, Output
         }
     }
 
-    private String goHistoryNext() {
-        return historyIterator.hasNext() ? historyIterator.next() : "";
-    }
-
-    private String goHistoryPrev() {
-        return historyIterator.hasPrevious() ? historyIterator.previous() : "";
-    }
-
-    private void updateHistory(String gamerCommand) {
-        commandHistory.add(gamerCommand);
-        historyIterator = commandHistory.listIterator(commandHistory.size());
-    }
-
     public void setStoryFile(String storyFile) {
         this.storyFile = storyFile;
         updateTitle();
@@ -425,7 +434,7 @@ public class GUIPlayer extends JFrame implements OutputPlainTextProvider, Output
                 titleFile = file.getName();
             }
         }
-        setTitle(format("%s Плеер %s -- %s", RUSSIAN_PRODUCT_NAME, VERSION, titleFile));
+        setTitle(format("%s Плеер %s -- %s", RUSSIAN_PRODUCT_NAME, ServiceRegistry.VERSION, titleFile));
     }
 
     public String getCommandText() {

@@ -16,7 +16,6 @@ import ifml2.editor.gui.editors.ProcedureEditor;
 import ifml2.editor.gui.editors.StoryOptionsEditor;
 import ifml2.editor.gui.editors.UsedLibsEditor;
 import ifml2.editor.gui.forms.ListEditForm;
-import ifml2.engine.EngineVersion;
 import ifml2.om.Action;
 import ifml2.om.InheritedSystemProcedures;
 import ifml2.om.Item;
@@ -27,6 +26,7 @@ import ifml2.om.Procedure;
 import ifml2.om.Story;
 import ifml2.om.Word;
 import ifml2.players.guiplayer.GUIPlayer;
+import ifml2.service.ServiceRegistry;
 import ifml2.tests.gui.TestRunner;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -162,7 +162,7 @@ public class Editor extends JFrame {
     private void updateTitle() {
         String fileName = storyFile != null ? storyFile.getName() : "новая история";
         String storyEditedMark = isStoryEdited ? " - * история не сохранена" : "";
-        String editorTitle = format("%s Редактор %s -- %s%s", RUSSIAN_PRODUCT_NAME, EngineVersion.VERSION, fileName,
+        String editorTitle = format("%s Редактор %s -- %s%s", RUSSIAN_PRODUCT_NAME, ServiceRegistry.VERSION, fileName,
                 storyEditedMark);
         setTitle(editorTitle);
     }

@@ -163,10 +163,7 @@ public class EngineImpl implements Engine {
     }
 
     public void outText(String text, Object... args) {
-        String resultText;
-        // protection against {\d} in story
-        resultText = args.length > 0 ? MessageFormat.format(text, args) : text;
-        outputPlainText(resultText);
+        environment.outText(text);
     }
 
     private void outputPlainText(String text) {

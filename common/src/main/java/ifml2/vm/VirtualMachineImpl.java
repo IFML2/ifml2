@@ -1,5 +1,12 @@
 package ifml2.vm;
 
+import static ifml2.om.Procedure.SystemProcedureType.SHOW_LOCATION;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+
+import ifml2.Environment;
 import ifml2.IFML2Exception;
 import ifml2.SystemIdentifiers;
 import ifml2.engine.Engine;
@@ -10,6 +17,7 @@ import ifml2.om.InstructionList;
 import ifml2.om.Item;
 import ifml2.om.Location;
 import ifml2.om.Procedure;
+import ifml2.om.Procedure.SystemProcedureType;
 import ifml2.om.Story;
 import ifml2.om.Trigger;
 import ifml2.vm.instructions.Instruction;
@@ -17,14 +25,11 @@ import ifml2.vm.values.BooleanValue;
 import ifml2.vm.values.EmptyValue;
 import ifml2.vm.values.Value;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-
-import static ifml2.om.Procedure.SystemProcedureType;
-import static ifml2.om.Procedure.SystemProcedureType.SHOW_LOCATION;
-
 public class VirtualMachineImpl implements VirtualMachine {
+
+    public VirtualMachineImpl(final Environment environment) {
+        this.environment = environment;
+    }
 
     private final HashMap<String, Value> systemConstants = new HashMap<String, Value>() {
         {
@@ -33,7 +38,10 @@ public class VirtualMachineImpl implements VirtualMachine {
             put(SystemIdentifiers.EMPTY_VALUE, new EmptyValue());
         }
     };
+
     private Engine engine;
+    private Environment environment;
+
     private final HashMap<SystemProcedureType, Procedure> inheritedSystemProcedures = new HashMap<SystemProcedureType, Procedure>() {
         @Override
         public Procedure get(Object key) {
@@ -56,11 +64,11 @@ public class VirtualMachineImpl implements VirtualMachine {
         this.engine = engine;
     }
 
-    public void runAction(/*@NotNull*/ Action action, List<Variable> parameters) throws IFML2Exception {
+    public void runAction(Action action, List<Variable> parameters) throws IFML2Exception {
         runProcedure(action.getProcedureCall().getProcedure(), parameters);
     }
 
-    public void runProcedureWithoutParameters(/*@NotNull*/ Procedure procedure) throws IFML2Exception {
+    public void runProcedureWithoutParameters(Procedure procedure) throws IFML2Exception {
         try {
             RunningContext runningContext = RunningContext.CreateCallContext(this, procedure, null);
             runInstructionList(procedure.getProcedureBody(), runningContext);
@@ -69,7 +77,7 @@ public class VirtualMachineImpl implements VirtualMachine {
         }
     }
 
-    public Value callProcedureWithParameters(/*@NotNull*/ Procedure procedure, List<Variable> parameters) throws IFML2Exception {
+    public Value callProcedureWithParameters(Procedure procedure, List<Variable> parameters) throws IFML2Exception {
         try {
             RunningContext runningContext = RunningContext.CreateCallContext(this, procedure, parameters);
             runInstructionList(procedure.getProcedureBody(), runningContext);
@@ -79,7 +87,7 @@ public class VirtualMachineImpl implements VirtualMachine {
         }
     }
 
-    void runProcedure(/*@NotNull*/ Procedure procedure, List<Variable> parameters) throws IFML2Exception {
+    void runProcedure(Procedure procedure, List<Variable> parameters) throws IFML2Exception {
         try {
             RunningContext runningContext = RunningContext.CreateCallContext(this, procedure, parameters);
             runInstructionList(procedure.getProcedureBody(), runningContext);
@@ -88,13 +96,13 @@ public class VirtualMachineImpl implements VirtualMachine {
         }
     }
 
-    public void runHook(/*@NotNull*/ Hook hook, List<Variable> parameters) throws IFML2Exception {
+    public void runHook(Hook hook, List<Variable> parameters) throws IFML2Exception {
         RunningContext runningContext = RunningContext.CreateNewContext(this);
         runningContext.populateParameters(parameters);
         runInstructionList(hook.getInstructionList(), runningContext);
     }
 
-    public void runInstructionList(/*@NotNull*/ InstructionList instructionList, /*@NotNull*/ RunningContext runningContext) throws IFML2Exception {
+    public void runInstructionList(InstructionList instructionList, RunningContext runningContext) throws IFML2Exception {
         for (Instruction instruction : instructionList.getInstructions()) {
             instruction.virtualMachine = this;
             try {
@@ -106,7 +114,7 @@ public class VirtualMachineImpl implements VirtualMachine {
         }
     }
 
-    public void showLocation(/*@Nullable*/ Location location) throws IFML2Exception {
+    public void showLocation(Location location) throws IFML2Exception {
         if (location == null) {
             return;
         }
@@ -129,28 +137,20 @@ public class VirtualMachineImpl implements VirtualMachine {
     }
 
     private String convertObjectsToString(List<Item> inventory) {
-        String result = "";
+        StringBuilder sb = new StringBuilder();
 
         Iterator<Item> iterator = inventory.iterator();
 
-        while (iterator.hasNext()) {
-            String itemName = iterator.next().getName();
-
-            if ("".equals(result)) // it's the first word
-            {
-                result = itemName;
-            } else if (iterator.hasNext()) // there is an another word after that
-            {
-                result += ", " + itemName;
-            } else // it's the last word
-            {
-                result += " и " + itemName;
-            }
+        if (iterator.hasNext()) {
+            sb.append(iterator.next().getName());
         }
 
-        result += ".";
-
-        return result;
+        while (iterator.hasNext()) {
+            sb.append(iterator.hasNext() ? ", " : " и ")
+                .append(iterator.hasNext());
+            String itemName = iterator.next().getName();
+        }
+        return sb.toString();
     }
 
     public Value resolveSymbol(String symbol) throws IFML2VMException {
@@ -177,15 +177,15 @@ public class VirtualMachineImpl implements VirtualMachine {
     }
 
     public Story getStory() {
-        return engine.getStory();
+        return environment.getStory();
     }
 
     public void outTextLn(String text, Object... args) {
-        engine.outTextLn(text, args);
+        environment.outText(text + "\n", args);
     }
 
     public void outText(String text) {
-        engine.outText(text);
+        environment.outText(text);
     }
 
     public Variable searchGlobalVariable(String name) {
@@ -200,6 +200,6 @@ public class VirtualMachineImpl implements VirtualMachine {
     }
 
     public void outPicture(String filePath, int maxHeight, int maxWidth) {
-        engine.outIcon(filePath, maxHeight, maxWidth);
+        environment.outIcon(filePath, maxHeight, maxWidth);
     }
 }

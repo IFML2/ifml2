@@ -20,6 +20,7 @@
     <properties>
         <source.version>1.8</source.version>
         <target.version>1.8</target.version>
+        <kotlin.version>1.1.51</kotlin.version>
         <slf4j.version>1.7.25</slf4j.version>
     </properties>
 
@@ -53,6 +54,24 @@
                 <groupId>ifml2</groupId>
                 <artifactId>editor</artifactId>
                 <version>2.0.0-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ifml2</groupId>
+                <artifactId>fx-player</artifactId>
+                <version>2.0.0-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib-jre8</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-test</artifactId>
+                <version>${kotlin.version}</version>
             </dependency>
 
             <dependency>
@@ -164,6 +183,12 @@
                     <version>1.0-beta-2-17.1.5</version>
                 </plugin>
 -->
+                <plugin>
+                    <groupId>org.jetbrains.kotlin</groupId>
+                    <artifactId>kotlin-maven-plugin</artifactId>
+                    <version>${kotlin.version}</version>
+                </plugin>
+
                 <plugin>
                     <groupId>com.zenjava</groupId>
                     <artifactId>javafx-maven-plugin</artifactId>
