@@ -1,6 +1,11 @@
 package ifml2.service
 
-class HistoryService() {
+class HistoryService() : Service {
+
+    override val name: String = "HistoryService"
+
+    override fun start() {}
+    override fun stop () {}
 
     val history = arrayListOf<String>()
     var historyIterator = history.listIterator()
