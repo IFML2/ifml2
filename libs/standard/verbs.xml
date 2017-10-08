@@ -101,7 +101,9 @@
                     <literalElement position="1">
                         <synonym>осмотреть</synonym>
                         <synonym>осм</synonym>
+                        <synonym>о</synonym>
                         <synonym>исследовать</synonym>
+                        <synonym>изучить</synonym>
                     </literalElement>
                     <objectElement position="2" case="vp" parameter="предмет"/>
                 </template>
@@ -114,6 +116,10 @@
                 <template>
                     <literalElement position="1">
                         <synonym>идти на север</synonym>
+                        <synonym>шагать на север</synonym>
+                        <synonym>перейти на север</synonym>
+                        <synonym>бежать на север</synonym>
+                        <synonym>ползти на север</synonym>
                         <synonym>север</synonym>
                         <synonym>с</synonym>
                     </literalElement>
@@ -126,7 +132,17 @@
                 <template>
                     <literalElement position="1">
                         <synonym>идти на северо-восток</synonym>
+                        <synonym>шагать на северо-восток</synonym>
+                        <synonym>перейти на северо-восток</synonym>
+                        <synonym>бежать на северо-восток</synonym>
+                        <synonym>ползти на северо-восток</synonym>
                         <synonym>северо-восток</synonym>
+                        <synonym>идти на северовосток</synonym>
+                        <synonym>шагать на северовосток</synonym>
+                        <synonym>перейти на северовосток</synonym>
+                        <synonym>бежать на северовосток</synonym>
+                        <synonym>ползти на северовосток</synonym>
+                        <synonym>северовосток</synonym>
                         <synonym>св</synonym>
                     </literalElement>
                 </template>
@@ -150,7 +166,17 @@
                 <template>
                     <literalElement position="1">
                         <synonym>идти на юго-восток</synonym>
+                        <synonym>шагать на юго-восток</synonym>
+                        <synonym>перейти на юго-восток</synonym>
+                        <synonym>бежать на юго-восток</synonym>
+                        <synonym>ползти на юго-восток</synonym>
+                        <synonym>идти на юговосток</synonym>
+                        <synonym>шагать на юговосток</synonym>
+                        <synonym>перейти на юговосток</synonym>
+                        <synonym>бежать на юговосток</synonym>
+                        <synonym>ползти на юговосток</synonym>
                         <synonym>юго-восток</synonym>
+                        <synonym>юговосток</synonym>
                         <synonym>юв</synonym>
                     </literalElement>
                 </template>
@@ -162,6 +188,10 @@
                 <template>
                     <literalElement position="1">
                         <synonym>идти на юг</synonym>
+                        <synonym>шагать на юг</synonym>
+                        <synonym>перейти на юг</synonym>
+                        <synonym>бежать на юг</synonym>
+                        <synonym>ползти на юг</synonym>
                         <synonym>юг</synonym>
                         <synonym>ю</synonym>
                     </literalElement>
@@ -174,7 +204,17 @@
                 <template>
                     <literalElement position="1">
                         <synonym>идти на юго-запад</synonym>
+                        <synonym>шагать на юго-запад</synonym>
+                        <synonym>перейти на юго-запад</synonym>
+                        <synonym>бежать на юго-запад</synonym>
+                        <synonym>ползти на юго-запад</synonym>
+                        <synonym>идти на югозапад</synonym>
+                        <synonym>шагать на югозапад</synonym>
+                        <synonym>перейти на югозапад</synonym>
+                        <synonym>бежать на югозапад</synonym>
+                        <synonym>ползти на югозапад</synonym>
                         <synonym>юго-запад</synonym>
+                        <synonym>югозапад</synonym>
                         <synonym>юз</synonym>
                     </literalElement>
                 </template>
@@ -186,6 +226,10 @@
                 <template>
                     <literalElement position="1">
                         <synonym>идти на запад</synonym>
+                        <synonym>шагать на запад</synonym>
+                        <synonym>перейти на запад</synonym>
+                        <synonym>бежать на запад</synonym>
+                        <synonym>ползти на запад</synonym>
                         <synonym>запад</synonym>
                         <synonym>з</synonym>
                     </literalElement>
@@ -198,7 +242,17 @@
                 <template>
                     <literalElement position="1">
                         <synonym>идти на северо-запад</synonym>
+                        <synonym>шагать на северо-запад</synonym>
+                        <synonym>перейти на северо-запад</synonym>
+                        <synonym>бежать на северо-запад</synonym>
+                        <synonym>ползти на северо-запад</synonym>
+                        <synonym>идти на северозапад</synonym>
+                        <synonym>шагать на северозапад</synonym>
+                        <synonym>перейти на северозапад</synonym>
+                        <synonym>бежать на северозапад</synonym>
+                        <synonym>ползти на северозапад</synonym>
                         <synonym>северо-запад</synonym>
+                        <synonym>северозапад</synonym>
                         <synonym>сз</synonym>
                     </literalElement>
                 </template>
@@ -211,6 +265,10 @@
                     <literalElement position="1">
                         <synonym>идти вниз</synonym>
                         <synonym>спуститься вниз</synonym>
+                        <synonym>шагать вниз</synonym>
+                        <synonym>перейти вниз</synonym>
+                        <synonym>бежать вниз</synonym>
+                        <synonym>ползти вниз</synonym>
                         <synonym>спуститься</synonym>
                         <synonym>вниз</synonym>
                         <synonym>вн</synonym>
@@ -225,6 +283,17 @@
                     <literalElement position="1">
                         <synonym>идти наверх</synonym>
                         <synonym>подняться наверх</synonym>
+                        <synonym>шагать наверх</synonym>
+                        <synonym>перейти наверх</synonym>
+                        <synonym>бежать наверх</synonym>
+                        <synonym>ползти наверх</synonym>
+                        <synonym>идти вверх</synonym>
+                        <synonym>подняться вверх</synonym>
+                        <synonym>шагать вверх</synonym>
+                        <synonym>перейти вверх</synonym>
+                        <synonym>бежать вверх</synonym>
+                        <synonym>ползти вверх</synonym>
+                        <synonym>спуститься</synonym>
                         <synonym>подняться</synonym>
                         <synonym>наверх</synonym>
                         <synonym>вверх</synonym>
@@ -241,6 +310,8 @@
                     <literalElement position="1">
                         <synonym>инвентарий</synonym>
                         <synonym>инвентарь</synonym>
+                        <synonym>котомка</synonym>
+                        <synonym>вещи</synonym>
                         <synonym>инв</synonym>
                         <synonym>и</synonym>
                     </literalElement>
@@ -1144,12 +1215,13 @@
             </procedureBody>
         </procedure>
 
+        <!-- Это СТАНДАРТНАЯ БИБЛИОТЕКА, поэтому здесь нужно меньше приколов и больше адекватных реакций. -->
         <procedure name="Сесть">
             <procedureVariables>
                 <procedureVariable name="счётчик" initialValue="1"/>
             </procedureVariables>
             <procedureBody>
-                <showMessage position="1" type="text" message="Сижу, и что дальше?"/>
+                <showMessage position="1" type="text" message="Вы ненадолго присаживаетесь, а затем встаёте."/>
                 <!--ifml2:showMessage position="2" type="expression" message="'Счётчик = ' + счётчик"/-->
                 <if position="3" condition="счётчик = 1">
                     <then>
@@ -1166,38 +1238,38 @@
         <procedure name="Курить">
             <procedureBody>
                 <showMessage position="1" type="text"
-                             message="Минздрав предупреждает - Курение опасно для Вашего здоровья."/>
+                             message="Вам не хочется."/>
             </procedureBody>
         </procedure>
         <procedure name="Думать">
             <procedureBody>
                 <showMessage position="1" type="text"
-                             message="Ничего в голову не лезет, разве что: - Направо пойдешь - женатому быть, налево пойдешь - богатому быть, прямо - пойдешь - убитому быть. Вот где-то еще коня можно потерять. Только камня с надписью никакого нет. И где тут лево, где право не понять."/>
+                             message="Сейчас самое время начать."/>
             </procedureBody>
         </procedure>
         <procedure name="Свистеть">
             <procedureBody>
-                <showMessage position="1" type="text" message="Не свисти - денег не будет."/>
+                <showMessage position="1" type="text" message="Вы выводите коротенькую мелодию."/>
             </procedureBody>
         </procedure>
         <procedure name="Лечь">
             <procedureBody>
-                <showMessage position="1" type="text" message="Кто много лежит, тот бока отлежит."/>
+                <showMessage position="1" type="text" message="Вы ложитесь, но тут же встаёте. Неудобно."/>
             </procedureBody>
         </procedure>
         <procedure name="Петь">
             <procedureBody>
-                <showMessage position="1" type="text" message="Сначала научись говорить, а петь потом будешь."/>
+                <showMessage position="1" type="text" message="Вы заводите простую мелодию."/>
             </procedureBody>
         </procedure>
         <procedure name="Ползти">
             <procedureBody>
-                <showMessage position="1" type="text" message="Рожденный летать ползать не желает."/>
+                <showMessage position="1" type="text" message="Вы опускаетесь, но, так и не решив, куда ползти, встаёте обратно."/>
             </procedureBody>
         </procedure>
         <procedure name="Кричать">
             <procedureBody>
-                <showMessage position="1" type="text" message="А-а-а-а-а!!! Громче не могу."/>
+                <showMessage position="1" type="text" message="Вы громко кричите."/>
             </procedureBody>
         </procedure>
         <procedure name="Лететь">
@@ -1213,7 +1285,7 @@
         </procedure>
         <procedure name="Прыгать">
             <procedureBody>
-                <showMessage position="1" type="text" message="Прежде, чем прыгать, научись ползать."/>
+                <showMessage position="1" type="text" message="Вы подпрыгиваете на месте."/>
             </procedureBody>
         </procedure>
         <procedure name="Чесать">
@@ -1230,7 +1302,7 @@
         </procedure>
         <procedure name="Слушать">
             <procedureBody>
-                <showMessage position="1" type="text" message="Не слышны в саду даже шорохи,..."/>
+                <showMessage position="1" type="text" message="Вы слышите только полную тишину."/>
             </procedureBody>
         </procedure>
         <procedure name="Танцевать">
@@ -1247,7 +1319,7 @@
         </procedure>
         <procedure name="Спать">
             <procedureBody>
-                <showMessage position="1" type="text" message="Сон не берет, дрема не клонит, еда на ум нейдет."/>
+                <showMessage position="1" type="text" message="Вам не спится."/>
             </procedureBody>
         </procedure>
         <procedure name="ТрогатьПредмет">
