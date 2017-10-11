@@ -8,7 +8,7 @@ import ifml2.vm.values.Value;
 import java.util.List;
 
 public interface SymbolResolver {
-    Value resolveSymbol(/*@NotNull*/ String symbol) throws IFML2VMException;
+    Value resolveSymbol(String symbol) throws IFML2VMException;
 
     List<Attribute> getAttributeList();
 

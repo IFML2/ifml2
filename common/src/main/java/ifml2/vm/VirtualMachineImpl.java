@@ -16,6 +16,7 @@ import ifml2.om.IFMLObject;
 import ifml2.om.InstructionList;
 import ifml2.om.Item;
 import ifml2.om.Location;
+import ifml2.om.Parameter;
 import ifml2.om.Procedure;
 import ifml2.om.Procedure.SystemProcedureType;
 import ifml2.om.Story;
@@ -70,7 +71,7 @@ public class VirtualMachineImpl implements VirtualMachine {
 
     public void runProcedureWithoutParameters(Procedure procedure) throws IFML2Exception {
         try {
-            RunningContext runningContext = RunningContext.CreateCallContext(this, procedure, null);
+            RunningContext runningContext = createCallContext(procedure, null);
             runInstructionList(procedure.getProcedureBody(), runningContext);
         } catch (IFML2VMException e) {
             throw new IFML2VMException(e, "{0}\n  в процедуре \"{1}\"", e.getMessage(), procedure.getName());
@@ -79,7 +80,7 @@ public class VirtualMachineImpl implements VirtualMachine {
 
     public Value callProcedureWithParameters(Procedure procedure, List<Variable> parameters) throws IFML2Exception {
         try {
-            RunningContext runningContext = RunningContext.CreateCallContext(this, procedure, parameters);
+            RunningContext runningContext = createCallContext(procedure, parameters);
             runInstructionList(procedure.getProcedureBody(), runningContext);
             return runningContext.getReturnValue();
         } catch (IFML2VMException e) {
@@ -89,7 +90,7 @@ public class VirtualMachineImpl implements VirtualMachine {
 
     void runProcedure(Procedure procedure, List<Variable> parameters) throws IFML2Exception {
         try {
-            RunningContext runningContext = RunningContext.CreateCallContext(this, procedure, parameters);
+            RunningContext runningContext = createCallContext(procedure, parameters);
             runInstructionList(procedure.getProcedureBody(), runningContext);
         } catch (IFML2VMException e) {
             throw new IFML2VMException(e, "{0}\n  в процедуре \"{1}\"", e.getMessage(), procedure.getName());
@@ -97,7 +98,7 @@ public class VirtualMachineImpl implements VirtualMachine {
     }
 
     public void runHook(Hook hook, List<Variable> parameters) throws IFML2Exception {
-        RunningContext runningContext = RunningContext.CreateNewContext(this);
+        RunningContext runningContext = createRunningContext();
         runningContext.populateParameters(parameters);
         runInstructionList(hook.getInstructionList(), runningContext);
     }
@@ -164,7 +165,7 @@ public class VirtualMachineImpl implements VirtualMachine {
     }
 
     public Value runTrigger(Trigger trigger, IFMLObject ifmlObject) throws IFML2Exception {
-        RunningContext runningContext = RunningContext.CreateNewContext(this);
+        RunningContext runningContext = createRunningContext();
         runningContext.setDefaultObject(ifmlObject);
 
         runInstructionList(trigger.getInstructions(), runningContext);
@@ -192,9 +193,6 @@ public class VirtualMachineImpl implements VirtualMachine {
         return engine.searchGlobalVariable(name);
     }
 
-    /**
-     * Initializes (resets) virtual machine.
-     */
     public void init() {
         inheritedSystemProcedures.clear();
     }
@@ -202,4 +200,37 @@ public class VirtualMachineImpl implements VirtualMachine {
     public void outPicture(String filePath, int maxHeight, int maxWidth) {
         environment.outIcon(filePath, maxHeight, maxWidth);
     }
+
+    @Override
+    public RunningContext createRunningContext() {
+        return new RunningContext(this);
+    }
+
+    @Override
+    public RunningContext createCallContext(final Procedure contextProcedure, final List<Variable> paramters) {
+        final RunningContext runningContext = new RunningContext(this, contextProcedure);
+
+        if (paramters != null && !paramters.isEmpty()) {
+            paramters.stream()
+                    .filter(paramter -> paramter.name != null)
+                    .forEach(runningContext::putVariable);
+        }
+
+        contextProcedure.getParameters().stream()
+                .map(Parameter::getName)
+                .filter(runningContext::isLocalVariableNotExists)
+                .forEach(runningContext::writeEmptyLocalVariable);
+
+        return runningContext;
+    }
+
+    @Override
+    public RunningContext createNestedContext(final RunningContext parentRunningContext) {
+        final RunningContext runningContext = new RunningContext(this);
+
+        parentRunningContext.getVariables().forEach(runningContext::writeLocalVariable);
+
+        return runningContext;
+    }
+
 }

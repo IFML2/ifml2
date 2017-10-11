@@ -15,9 +15,13 @@
         <module>docs</module>
         <module>swing</module>
         <module>fx</module>
+        <module>platform</module>
     </modules>
 
     <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <project.encoding.sourceFiles>UTF-8</project.encoding.sourceFiles>
         <source.version>1.8</source.version>
         <target.version>1.8</target.version>
         <kotlin.version>1.1.51</kotlin.version>
@@ -72,6 +76,18 @@
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-test</artifactId>
                 <version>${kotlin.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.osgi</groupId>
+                <artifactId>org.osgi.core</artifactId>
+                <version>6.0.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>org.apache.felix.framework</artifactId>
+                <version>5.6.8</version>
             </dependency>
 
             <dependency>

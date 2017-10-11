@@ -23,16 +23,21 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "procedure")
 @XmlAccessorType(XmlAccessType.NONE)
 public class Procedure extends IFMLEntity implements Cloneable {
+
     @XmlAttribute(name = "inheritsSystemProcedure")
     private SystemProcedureType inheritsSystemProcedure = null;
+
     @XmlElementWrapper(name = "procedureVariables")
     @XmlElement(name = "procedureVariable")
     private EventList<ProcedureVariable> variables = new BasicEventList<ProcedureVariable>();
+
     @XmlElement(name = "procedureBody")
     private InstructionList procedureBody = new InstructionList();
+
     @XmlAttribute(name = "name")
     @XmlID
     private String name;
+
     @XmlElementWrapper(name = "parameters")
     @XmlElement(name = "parameter")
     private EventList<Parameter> parameters = new BasicEventList<Parameter>();
@@ -45,13 +50,9 @@ public class Procedure extends IFMLEntity implements Cloneable {
     }
 
     public Parameter getParameterByName(String parameterName) {
-        for (Parameter parameter : parameters) {
-            if (parameter.getName().equalsIgnoreCase(parameterName)) {
-                return parameter;
-            }
-        }
-
-        return null;
+        return parameters.stream()
+                .filter(parameter -> parameter.getName().equalsIgnoreCase(parameterName))
+                .findAny().orElse(null);
     }
 
     public String getName() {
@@ -185,7 +186,7 @@ public class Procedure extends IFMLEntity implements Cloneable {
     private class ProcedureVariableProxy extends Variable {
         private ProcedureVariable procedureVariable;
 
-        public ProcedureVariableProxy(/*@NotNull*/ ProcedureVariable procedureVariable) {
+        public ProcedureVariableProxy(ProcedureVariable procedureVariable) {
             super(procedureVariable.getName(), procedureVariable.getValue());
             this.procedureVariable = procedureVariable;
         }

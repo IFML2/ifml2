@@ -1,3 +1,0 @@
-package ifml2.feature
-
-interface PlayerFeatureProvider

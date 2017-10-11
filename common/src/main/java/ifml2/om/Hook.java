@@ -13,6 +13,7 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class Hook extends IFMLEntity {
+
     @XmlElement(name = "instructions")
     public InstructionList instructionList = new InstructionList();
 
@@ -73,12 +74,14 @@ public class Hook extends IFMLEntity {
     @XmlEnum
     @XmlType(namespace = "Hook")
     public enum Type {
+
         @XmlEnumValue(value = "before")
         BEFORE(0, "до"),
         @XmlEnumValue(value = "after")
         AFTER(1, "после"),
         @XmlEnumValue(value = "instead")
         INSTEAD(2, "вместо");
+
         public final int sortValue;
         private String ruName;
 

@@ -114,10 +114,10 @@ public class ParserImpl implements Parser {
             FormalElement formalElement;
             if (fittedFormalElement instanceof FittedSynonym) {
                 FittedSynonym fittedSynonym = (FittedSynonym) fittedFormalElement;
-                formalElement = new FormalElement(fittedSynonym.synonym, fittedSynonym.parameter);
+                formalElement = new FormalLiteral(fittedSynonym.synonym, fittedSynonym.parameter);
             } else if (fittedFormalElement instanceof FittedObjects) {
                 FittedObjects fittedObjects = (FittedObjects) fittedFormalElement;
-                formalElement = new FormalElement(fittedObjects.objects.get(0), fittedObjects.parameter);
+                formalElement = new FormalObject(fittedObjects.objects.get(0), fittedObjects.parameter);
             } else {
                 throw new IFML2Exception(format("Системная ошибка: ПодходящийФомральныйЭлемент имеет неизвестный тип\nФраза: %s\nШаблон: %s.", phrase,
                         firstFittedTemplate.fittedFormalElements));

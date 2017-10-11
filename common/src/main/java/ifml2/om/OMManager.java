@@ -6,6 +6,7 @@ import ifml2.CommonUtils;
 import ifml2.IFML2Exception;
 import ifml2.engine.saved.SavedGame;
 import ifml2.om.xml.xmladapters.LocationAdapter;
+import ifml2.storage.StoryDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -47,7 +48,7 @@ public class OMManager {
      * @return Wrapped result containing story and loaded inventory (see toInitItemsStartLoc param).
      * @throws IFML2Exception If some error has occurred during loading.
      */
-    public static LoadStoryResult loadStoryFromFile(/*@NotNull*/ String storyFileName, final boolean toInitItemsStartLoc, boolean isAllowedOpenCipherFiles) throws IFML2Exception {
+    public static StoryDTO loadStoryFromFile(/*@NotNull*/ String storyFileName, final boolean toInitItemsStartLoc, boolean isAllowedOpenCipherFiles) throws IFML2Exception {
         LOG.debug("loadStoryFromFile(storyFileName = \"{0}\", toInitItemsStartLoc = {1}) :: begin", storyFileName, toInitItemsStartLoc);
 
         InputStream inputStream = null;
@@ -157,7 +158,7 @@ public class OMManager {
 
                 LOG.debug("loadStoryFromFile :: End");
 
-                return new LoadStoryResult(story, inventory);
+                return new StoryDTO(story, inventory);
             } finally {
                 if (inputStream != null) {
                     inputStream.close();
@@ -362,24 +363,6 @@ public class OMManager {
         Marshaller marshaller = context.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
         marshaller.marshal(library, libFile);
-    }
-
-    public static class LoadStoryResult {
-        private final Story story;
-        private final ArrayList<Item> inventory;
-
-        public LoadStoryResult(Story story, ArrayList<Item> inventory) {
-            this.story = story;
-            this.inventory = inventory;
-        }
-
-        public Story getStory() {
-            return story;
-        }
-
-        public ArrayList<Item> getInventory() {
-            return inventory;
-        }
     }
 
     private static class IFMLIDResolver extends IDResolver {

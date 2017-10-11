@@ -16,6 +16,7 @@ import java.util.List;
 @XmlRootElement(name = "loop")
 @IFML2Instruction(title = "Цикл")
 public class LoopInstruction extends Instruction {
+
     @XmlElement(name = "empty")
     private final InstructionList emptyInstructions = null;
 
@@ -52,7 +53,7 @@ public class LoopInstruction extends Instruction {
 
         List<IFMLObject> filteredCollection = new ArrayList<IFMLObject>();
 
-        RunningContext nestedContext = RunningContext.CreateNestedContext(runningContext);
+        RunningContext nestedContext = virtualMachine.createNestedContext(runningContext);
 
         // iterate the collection and filter it
         if (conditionExpression != null && !"".equals(conditionExpression)) {

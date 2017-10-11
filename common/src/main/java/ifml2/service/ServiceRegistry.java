@@ -9,7 +9,9 @@ import ifml2.engine.Engine;
 import ifml2.engine.EngineImpl;
 import ifml2.engine.featureproviders.graphic.OutputIconProvider;
 import ifml2.engine.featureproviders.text.OutputPlainTextProvider;
+import ifml2.om.OMManager;
 import ifml2.parser.ParserImpl;
+import ifml2.storage.StorageImpl;
 import ifml2.vm.VirtualMachineImpl;
 
 public enum ServiceRegistry {
@@ -39,7 +41,7 @@ public enum ServiceRegistry {
             final OutputIconProvider iconProvider
     ) {
         Environment environment = new EnvironmentImpl(textProvider, iconProvider);
-        return new EngineImpl(environment, new VirtualMachineImpl(environment), new ParserImpl());
+        return new EngineImpl(environment, new VirtualMachineImpl(environment), new ParserImpl(), new StorageImpl());
     }
 
     public static final String VERSION = "Выпуск 2016/5";

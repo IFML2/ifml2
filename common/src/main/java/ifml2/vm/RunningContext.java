@@ -3,82 +3,55 @@ package ifml2.vm;
 import ifml2.IFML2Exception;
 import ifml2.om.Attribute;
 import ifml2.om.IFMLObject;
-import ifml2.om.Parameter;
 import ifml2.om.Procedure;
 import ifml2.om.RoleDefinition;
 import ifml2.vm.values.EmptyValue;
 import ifml2.vm.values.Value;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 
 public class RunningContext implements SymbolResolver {
-    private HashMap<String, Variable> loweredLocalVariablesMap = new HashMap<String, Variable>();
-    private VirtualMachine virtualMachine = null;
+
+    private VariableMap variables = new VariableMapImpl();
+
     private Value returnValue;
     private IFMLObject defaultObject;
-    private Procedure contextProcedure; // procedure for searching procedure vars
 
-    private RunningContext(VirtualMachine virtualMachine) {
+    private final VirtualMachine virtualMachine;
+    private final Procedure contextProcedure; // procedure for searching procedure vars
+
+    public RunningContext(VirtualMachine virtualMachine) {
+        this(virtualMachine, null);
+    }
+
+    public RunningContext(VirtualMachine virtualMachine, Procedure contextProcedure) {
         this.virtualMachine = virtualMachine;
+        this.contextProcedure = contextProcedure;
     }
 
-    /**
-     * Создание нового пустого контекста.
-     */
-    public static RunningContext CreateNewContext(VirtualMachine virtualMachine) {
-        return new RunningContext(virtualMachine);
+    public void putVariable(Variable variable) {
+        variables.put(variable);
     }
 
-    /**
-     * Создание нового пустого контекста для процедуры.
-     */
-    public static RunningContext CreateCallContext(
-            /*@NotNull*/ VirtualMachine virtualMachine,
-            /*@NotNull*/ Procedure contextProcedure,
-           /*@Nullable*/ List<Variable> parameters
-    ) {
-        RunningContext runningContext = new RunningContext(virtualMachine);
-        runningContext.contextProcedure = contextProcedure;
-
-        // fill parameters
-        if (parameters != null) {
-            for (Variable parameter : parameters) {
-                String name = parameter.getName();
-                if (name != null) {
-                    String loweredName = name.toLowerCase();
-                    runningContext.loweredLocalVariablesMap.put(loweredName, parameter);
-                }
-            }
-        }
-
-        // fill not set parameters as EmptyValue
-        for (Parameter parameter : contextProcedure.getParameters()) {
-            if (runningContext.searchLocalVariable(parameter.getName()) == null) {
-                runningContext.writeLocalVariable(new Variable(parameter.getName(), new EmptyValue()));
-            }
-        }
-
-        return runningContext;
+    public Collection<Variable> getVariables() {
+        return variables.getVariables();
     }
 
-    /**
-     * Создание вложенного контекста (копирование ссылок на локальные переменные)
-     */
-    public static RunningContext CreateNestedContext(/*@NotNull*/ RunningContext parentRunningContext) {
-        RunningContext runningContext = new RunningContext(parentRunningContext.virtualMachine);
-
-        // copy local variables
-        Collection<Variable> localVariables = parentRunningContext.loweredLocalVariablesMap.values();
-        for (Variable variable : localVariables) {
-            runningContext.writeLocalVariable(variable);
-        }
-
-        return runningContext;
+    public boolean isLocalVaribleExists(final String name) {
+        return this.searchLocalVariable(name) != null;
     }
 
-    public Value resolveSymbol(/*@NotNull*/ String symbol) throws IFML2VMException {
+    public boolean isLocalVariableNotExists(final String name) {
+        return !isLocalVaribleExists(name);
+    }
+
+
+    public void writeEmptyLocalVariable(final String name) {
+        writeLocalVariable(new Variable(name, new EmptyValue()));
+    }
+
+    public Value resolveSymbol(String symbol) throws IFML2VMException {
         String loweredSymbol = symbol.toLowerCase();
 
         // check context variables
@@ -90,11 +63,8 @@ public class RunningContext implements SymbolResolver {
             throw new IFML2VMException(e, "{0}\n  во время поиска символа \"{1}\" в контексте", e.getMessage(), symbol);
         }
 
-        if (variable != null) {
-            Value value = variable.getValue();
-            if (value != null) {
-                return value;
-            }
+        if (variable != null && variable.getValue() != null) {
+            return variable.getValue();
         }
 
         // check default object
@@ -138,19 +108,8 @@ public class RunningContext implements SymbolResolver {
         return virtualMachine.searchGlobalVariable(name);
     }
 
-    /*@Contract("null -> null")*/
     private Variable searchLocalVariable(String name) {
-        if (name == null) {
-            return null;
-        }
-
-        String loweredName = name.toLowerCase();
-
-        if (loweredLocalVariablesMap.containsKey(loweredName)) {
-            return loweredLocalVariablesMap.get(loweredName);
-        }
-
-        return null;
+        return name == null ? null : variables.get(name);
     }
 
     /**
@@ -159,12 +118,12 @@ public class RunningContext implements SymbolResolver {
      * @param name  name of variable.
      * @param value value for setting.
      */
-    public void writeVariable(/*@NotNull*/ String name, Value value) throws IFML2Exception {
+    public void writeVariable(String name, Value value) throws IFML2Exception {
         String loweredName = name.toLowerCase();
 
         // search local variable
-        if (loweredLocalVariablesMap.containsKey(loweredName)) {
-            Variable variable = loweredLocalVariablesMap.get(loweredName);
+        if (variables.containsVariable(name)) {
+            Variable variable = variables.get(name);
             variable.setValue(value);
             return;
         }
@@ -186,7 +145,7 @@ public class RunningContext implements SymbolResolver {
         }
 
         // write local variable
-        loweredLocalVariablesMap.put(loweredName, new Variable(name, value));
+        variables.put(new Variable(name, value));
     }
 
     public void setDefaultObject(IFMLObject defaultObject) {
@@ -201,18 +160,16 @@ public class RunningContext implements SymbolResolver {
         this.returnValue = returnValue;
     }
 
-    private void writeLocalVariable(/*@NotNull*/ Variable variable) {
-        String name = variable.getName();
-        if (name != null) {
-            loweredLocalVariablesMap.put(name.toLowerCase(), variable);
+    public void writeLocalVariable(Variable variable) {
+        if (variable.getName()!= null) {
+            variables.put(variable);
         }
     }
 
     public void populateParameters(List<Variable> parameters) {
         if (parameters != null) {
-            for (Variable parameter : parameters) {
-                writeLocalVariable(parameter);
-            }
+            parameters.forEach(this::writeLocalVariable);
         }
     }
+
 }

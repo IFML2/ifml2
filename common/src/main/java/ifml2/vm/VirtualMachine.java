@@ -48,4 +48,10 @@ public interface VirtualMachine {
 
     void outPicture(String filePath, int maxHeight, int maxWidth);
 
+    RunningContext createRunningContext();
+
+    RunningContext createCallContext(Procedure contextProcedure, List<Variable> paramters);
+
+    RunningContext createNestedContext(RunningContext parentRunningContext);
+
 }

@@ -135,7 +135,7 @@ public class SavedGame {
             /*@NotNull*/ EngineImpl.DataHelper dataHelper,
             /*@NotNull*/ Story.DataHelper storyDataHelper
     ) {
-        ArrayList<Item> inventory = dataHelper.getInventory();
+        List<Item> inventory = dataHelper.getInventory();
         inventory.clear();
         for (String id : itemIds) {
             Item item = storyDataHelper.findItemById(id);

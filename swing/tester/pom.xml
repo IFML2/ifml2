@@ -140,5 +140,9 @@
             <groupId>jgoodies</groupId>
             <artifactId>forms</artifactId>
         </dependency>
+        <dependency>
+            <groupId>ifml2</groupId>
+            <artifactId>common</artifactId>
+        </dependency>
     </dependencies>
 </project>

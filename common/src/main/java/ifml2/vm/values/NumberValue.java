@@ -13,7 +13,7 @@ public class NumberValue extends Value<Double> implements IAddableValue {
     }
 
     @Override
-    public CompareResult compareTo(/*@NotNull*/ Value rightValue) {
+    public CompareResult compareTo(final Value rightValue) {
         if (rightValue instanceof NumberValue) {
             final int compareResult = Double.compare(value, ((NumberValue) rightValue).getValue());
             if (compareResult == 0) {
