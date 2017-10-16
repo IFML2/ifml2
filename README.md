@@ -4,6 +4,8 @@ Russian [Interactive Fiction](http://ifwiki.org/index.php/Interactive_fiction) P
 
 [More info](http://forum.ifiction.ru/viewtopic.php?id=1765) (russian).
 
+[Issue tracker](http://ifml2.myjetbrains.com) (russian).
+
 ## Supported by
 * Cross-platform installer  
 [![BitRock Logo](https://dl.dropboxusercontent.com/u/87862945/IFML2/installersby_tiny.png)](http://bitrock.com)
