@@ -1190,61 +1190,49 @@
             </procedureBody>
         </procedure>
 
-        <!-- Это СТАНДАРТНАЯ БИБЛИОТЕКА, поэтому здесь нужно меньше приколов и больше адекватных реакций. -->
         <procedure name="Сесть">
             <procedureVariables>
                 <procedureVariable name="счётчик" initialValue="1"/>
             </procedureVariables>
             <procedureBody>
-                <showMessage position="1" type="text" message="Вы ненадолго присаживаетесь, а затем встаёте."/>
-                <!--ifml2:showMessage position="2" type="expression" message="'Счётчик = ' + счётчик"/-->
-                <if position="3" condition="счётчик = 1">
-                    <then>
-                        <!--ifml2:showMessage position="1" type="text" message="Cчётчик = 1!"/-->
-                    </then>
-                </if>
-                <var position="4" name="счётчик" value="счётчик + 1"/>
-                <!--ifml2:showMessage position="5" type="expression" message="'Счётчик = ' + счётчик"/-->
-                <var position="6" name="локальная" value="2"/>
-                <var position="7" name="локальная" value="локальная + 1"/>
-                <!--ifml2:showMessage position="8" type="expression" message="'Локальная = ' + локальная"/-->
+                <showMessage position="1" type="text" message="Сижу, и что дальше?"/>
             </procedureBody>
         </procedure>
         <procedure name="Курить">
             <procedureBody>
                 <showMessage position="1" type="text"
-                             message="Вам не хочется."/>
+                             message="Минздрав предупреждает - Курение опасно для Вашего здоровья."/>
             </procedureBody>
         </procedure>
         <procedure name="Думать">
             <procedureBody>
                 <showMessage position="1" type="text"
-                             message="Сейчас самое время начать."/>
+                             message="Ничего в голову не лезет, разве что: - Направо пойдешь - женатому быть, налево пойдешь - богатому быть, прямо - пойдешь - убитому быть. Вот где-то еще коня можно потерять. Только камня с надписью никакого нет. И где тут лево, где право не понять."/>
             </procedureBody>
         </procedure>
         <procedure name="Свистеть">
             <procedureBody>
-                <showMessage position="1" type="text" message="Вы выводите коротенькую мелодию."/>
+                <showMessage position="1" type="text" message="Не свисти - денег не будет."/>
             </procedureBody>
         </procedure>
         <procedure name="Лечь">
             <procedureBody>
-                <showMessage position="1" type="text" message="Вы ложитесь, но тут же встаёте. Неудобно."/>
+                <showMessage position="1" type="text" message="Кто много лежит, тот бока отлежит."/>
             </procedureBody>
         </procedure>
         <procedure name="Петь">
             <procedureBody>
-                <showMessage position="1" type="text" message="Вы заводите простую мелодию."/>
+                <showMessage position="1" type="text" message="Сначала научись говорить, а петь потом будешь."/>
             </procedureBody>
         </procedure>
         <procedure name="Ползти">
             <procedureBody>
-                <showMessage position="1" type="text" message="Вы опускаетесь, но, так и не решив, куда ползти, встаёте обратно."/>
+                <showMessage position="1" type="text" message="Рожденный летать ползать не желает."/>
             </procedureBody>
         </procedure>
         <procedure name="Кричать">
             <procedureBody>
-                <showMessage position="1" type="text" message="Вы громко кричите."/>
+                <showMessage position="1" type="text" message="А-а-а-а-а!!! Громче не могу."/>
             </procedureBody>
         </procedure>
         <procedure name="Лететь">
@@ -1260,7 +1248,7 @@
         </procedure>
         <procedure name="Прыгать">
             <procedureBody>
-                <showMessage position="1" type="text" message="Вы подпрыгиваете на месте."/>
+                <showMessage position="1" type="text" message="Прежде, чем прыгать, научись ползать."/>
             </procedureBody>
         </procedure>
         <procedure name="Чесать">
@@ -1277,7 +1265,7 @@
         </procedure>
         <procedure name="Слушать">
             <procedureBody>
-                <showMessage position="1" type="text" message="Вы слышите только полную тишину."/>
+                <showMessage position="1" type="text" message="Не слышны в саду даже шорохи,..."/>
             </procedureBody>
         </procedure>
         <procedure name="Танцевать">
@@ -1294,7 +1282,7 @@
         </procedure>
         <procedure name="Спать">
             <procedureBody>
-                <showMessage position="1" type="text" message="Вам не спится."/>
+                <showMessage position="1" type="text" message="Сон не берет, дрема не клонит, еда на ум нейдет."/>
             </procedureBody>
         </procedure>
         <procedure name="ТрогатьПредмет">
