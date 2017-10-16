@@ -137,12 +137,6 @@
                         <synonym>бежать на северо-восток</synonym>
                         <synonym>ползти на северо-восток</synonym>
                         <synonym>северо-восток</synonym>
-                        <synonym>идти на северовосток</synonym>
-                        <synonym>шагать на северовосток</synonym>
-                        <synonym>перейти на северовосток</synonym>
-                        <synonym>бежать на северовосток</synonym>
-                        <synonym>ползти на северовосток</synonym>
-                        <synonym>северовосток</synonym>
                         <synonym>св</synonym>
                     </literalElement>
                 </template>
@@ -170,13 +164,7 @@
                         <synonym>перейти на юго-восток</synonym>
                         <synonym>бежать на юго-восток</synonym>
                         <synonym>ползти на юго-восток</synonym>
-                        <synonym>идти на юговосток</synonym>
-                        <synonym>шагать на юговосток</synonym>
-                        <synonym>перейти на юговосток</synonym>
-                        <synonym>бежать на юговосток</synonym>
-                        <synonym>ползти на юговосток</synonym>
                         <synonym>юго-восток</synonym>
-                        <synonym>юговосток</synonym>
                         <synonym>юв</synonym>
                     </literalElement>
                 </template>
@@ -208,13 +196,7 @@
                         <synonym>перейти на юго-запад</synonym>
                         <synonym>бежать на юго-запад</synonym>
                         <synonym>ползти на юго-запад</synonym>
-                        <synonym>идти на югозапад</synonym>
-                        <synonym>шагать на югозапад</synonym>
-                        <synonym>перейти на югозапад</synonym>
-                        <synonym>бежать на югозапад</synonym>
-                        <synonym>ползти на югозапад</synonym>
                         <synonym>юго-запад</synonym>
-                        <synonym>югозапад</synonym>
                         <synonym>юз</synonym>
                     </literalElement>
                 </template>
@@ -246,13 +228,7 @@
                         <synonym>перейти на северо-запад</synonym>
                         <synonym>бежать на северо-запад</synonym>
                         <synonym>ползти на северо-запад</synonym>
-                        <synonym>идти на северозапад</synonym>
-                        <synonym>шагать на северозапад</synonym>
-                        <synonym>перейти на северозапад</synonym>
-                        <synonym>бежать на северозапад</synonym>
-                        <synonym>ползти на северозапад</synonym>
                         <synonym>северо-запад</synonym>
-                        <synonym>северозапад</synonym>
                         <synonym>сз</synonym>
                     </literalElement>
                 </template>
