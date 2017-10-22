@@ -10,5 +10,5 @@ import java.util.List;
 @XmlRootElement(name = "dictionary")
 public class XmlDictionary {
     @XmlElement(name = "word")
-    public List<Word> words = new ArrayList<Word>();
+    public List<Word> words = new ArrayList<>();
 }

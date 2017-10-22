@@ -185,8 +185,7 @@ class PlayerView : View("FX ЯРИЛ 2.0 - Рассказчик"), OutputPlainTe
         outPanel.add(Text(text))
     }
 
-    override fun outputIcon(icon: Icon?) {
-        TODO("not implemented")
+    override fun outputIcon(icon: Icon) {
         //TODO: Need convert icon to ImageView
     }
 

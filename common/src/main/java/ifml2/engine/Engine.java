@@ -9,14 +9,18 @@ import ifml2.vm.values.Value;
 
 public interface Engine {
 
+    @Deprecated
     Story getStory();
 
     void setCurrentLocation(Location currentLocation);
 
+    @Deprecated
     void outText(String text, Object... args);
 
+    @Deprecated
     void outTextLn(String text, Object... args);
 
+    @Deprecated
     void outIcon(String iconFilePath, int maxHeight, int maxWidth);
 
     Value resolveSymbol(String symbol) throws IFML2VMException;
@@ -25,10 +29,13 @@ public interface Engine {
 
     boolean executeGamerCommand(String gamerCommand);
 
+    @Deprecated
     void loadGame(String saveFileName) throws IFML2Exception;
 
+    @Deprecated
     void saveGame(String saveFileName) throws IFML2Exception;
 
+    @Deprecated
     void loadStory(String storyFileName, boolean isAllowedOpenCipherFiles) throws IFML2Exception;
 
     void initGame() throws IFML2Exception;

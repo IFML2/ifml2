@@ -15,11 +15,15 @@
     <packaging>pom</packaging>
 
     <name>IFML2 :: PLATFORM</name>
+    <description>The platform</description>
 
     <modules>
-        <module>platform-starter</module>
+        <!--<module>bundles</module>-->
+        <module>platform-core</module>
         <module>platform-editor</module>
         <module>platform-player</module>
+        <module>platform-server</module>
+        <module>platform-starter</module>
     </modules>
     
 </project>

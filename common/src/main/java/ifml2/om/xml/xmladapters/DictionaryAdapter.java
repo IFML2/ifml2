@@ -6,22 +6,20 @@ import ifml2.om.xml.xmlobjects.XmlDictionary;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
-public class DictionaryAdapter extends XmlAdapter<XmlDictionary, HashMap<String, Word>> {
+public class DictionaryAdapter extends XmlAdapter<XmlDictionary, Map<String, Word>> {
     @Override
-    public HashMap<String, Word> unmarshal(XmlDictionary xmlDictionary) throws Exception {
-        HashMap<String, Word> dictionary = new HashMap<String, Word>();
-        for (Word word : xmlDictionary.words) {
-            dictionary.put(word.ip.toLowerCase(), word);
-        }
-
+    public Map<String, Word> unmarshal(XmlDictionary xmlDictionary) throws Exception {
+        Map<String, Word> dictionary = new HashMap<>();
+        xmlDictionary.words.forEach(word -> { dictionary.put(word.ip.toLowerCase(), word); });
         return dictionary;
     }
 
     @Override
-    public XmlDictionary marshal(HashMap<String, Word> wordHashMap) throws Exception {
+    public XmlDictionary marshal(Map<String, Word> wordHashMap) throws Exception {
         XmlDictionary xmlDictionary = new XmlDictionary();
-        xmlDictionary.words = new ArrayList<Word>(wordHashMap.values());
+        xmlDictionary.words = new ArrayList<>(wordHashMap.values());
         return xmlDictionary;
     }
 }

@@ -4,7 +4,6 @@ import com.sun.xml.internal.bind.IDResolver;
 import ifml2.CommonConstants;
 import ifml2.CommonUtils;
 import ifml2.IFML2Exception;
-import ifml2.engine.saved.SavedGame;
 import ifml2.om.xml.xmladapters.LocationAdapter;
 import ifml2.storage.StoryDTO;
 import org.slf4j.Logger;
@@ -281,35 +280,6 @@ public class OMManager {
             File file = new File(xmlFile);
 
             marshaller.marshal(story, file);
-        } catch (JAXBException e) {
-            throw new IFML2Exception(e);
-        }
-    }
-
-    public static void saveGame(String saveFileName, SavedGame savedGame) throws IFML2Exception {
-        try {
-            JAXBContext context = JAXBContext.newInstance(SavedGame.class);
-            Marshaller marshaller = context.createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
-            File file = new File(saveFileName);
-
-            marshaller.marshal(savedGame, file);
-        } catch (JAXBException e) {
-            throw new IFML2Exception(e);
-        }
-    }
-
-    public static SavedGame loadGame(String saveFileName) throws IFML2Exception {
-        try {
-            File file = new File(saveFileName);
-            if (file.exists()) {
-                JAXBContext context = JAXBContext.newInstance(SavedGame.class);
-                Unmarshaller unmarshaller = context.createUnmarshaller();
-                return (SavedGame) unmarshaller.unmarshal(file);
-            } else {
-                throw new IFML2Exception("Файл \"{0}\" не существует.", saveFileName);
-            }
         } catch (JAXBException e) {
             throw new IFML2Exception(e);
         }

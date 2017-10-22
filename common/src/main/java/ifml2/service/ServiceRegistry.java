@@ -17,21 +17,21 @@ import ifml2.vm.VirtualMachineImpl;
 public enum ServiceRegistry {
     INSTANCE;
 
-    private List<Ifml2Service> services = new ArrayList<>();
-
-    public void registerService(final Ifml2Service service) {
-        service.start();
-        services.add(service);
-    }
-
-    public void unregisterService(final Ifml2Service service) {
-        service.stop();
-        services.remove(service);
-    }
-
-    public Ifml2Service findService(final String name) {
-        return services.stream().filter(srv -> srv.getName().equals(name)).findAny().orElse(null);
-    }
+//    private List<Ifml2Service> services = new ArrayList<>();
+//
+//    public void registerService(final Ifml2Service service) {
+//        service.start();
+//        services.add(service);
+//    }
+//
+//    public void unregisterService(final Ifml2Service service) {
+//        service.stop();
+//        services.remove(service);
+//    }
+//
+//    public Ifml2Service findService(final String name) {
+//        return services.stream().filter(srv -> srv.getName().equals(name)).findAny().orElse(null);
+//    }
 
     private ServiceRegistry() {
     }

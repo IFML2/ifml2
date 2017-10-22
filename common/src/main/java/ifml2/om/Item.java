@@ -35,8 +35,6 @@ public class Item extends IFMLObject implements Cloneable {
     @XmlTransient
     private List<? extends IFMLEntity> container;
 
-    /*@NotNull*/
-    /*@Contract(pure = true)*/
     static String getClassName() {
         return "Предмет";
     }
@@ -55,7 +53,7 @@ public class Item extends IFMLObject implements Cloneable {
      * @param item item to copy to
      * @throws CloneNotSupportedException
      */
-    public void copyTo(/*@NotNull*/ Item item) throws CloneNotSupportedException {
+    public void copyTo(Item item) throws CloneNotSupportedException {
         super.copyTo(item);
         item.setStartingPosition(startingPosition.clone());
     }
@@ -118,7 +116,7 @@ public class Item extends IFMLObject implements Cloneable {
     }
 
     @Override
-    public Value getMemberValue(/*@NotNull*/ String propertyName, /*@NotNull*/ SymbolResolver symbolResolver) throws IFML2Exception {
+    public Value getMemberValue(String propertyName, SymbolResolver symbolResolver) throws IFML2Exception {
         if (CONTAINER_PROP_NAME.equalsIgnoreCase(propertyName)) return new CollectionValue(container);
         else
             return super.getMemberValue(propertyName, symbolResolver);

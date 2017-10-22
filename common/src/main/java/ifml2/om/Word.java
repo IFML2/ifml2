@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 @XmlRootElement(name = "word")
 @XmlAccessorType(XmlAccessType.NONE)
@@ -69,11 +70,7 @@ public class Word extends IFMLEntity {
     }
 
     private String getFormOrIP(String form) {
-        if (form == null || "".equals(form)) {
-            return "(" + ip + ")";
-        } else {
-            return form;
-        }
+        return (form == null || form.isEmpty()) ? "(" + ip + ")" : form;
     }
 
     public String getFormByGramCase(GramCase gramCase) {
@@ -127,12 +124,10 @@ public class Word extends IFMLEntity {
         }
 
         public static GramCase getValueByAbbr(String abbreviation) {
-            for (GramCase caseEnum : values()) {
-                if (caseEnum.abbreviation.equalsIgnoreCase(abbreviation)) {
-                    return caseEnum;
-                }
-            }
-            return null;
+            return Arrays.stream(values())
+                    .filter(caseEnum -> caseEnum.abbreviation.equalsIgnoreCase(abbreviation))
+                    .findFirst()
+                    .orElse(null);
         }
 
         public String getAbbreviation() {

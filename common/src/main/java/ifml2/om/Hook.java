@@ -66,6 +66,10 @@ public class Hook extends IFMLEntity {
         return instructionList;
     }
 
+    public boolean canDo(final Action action) {
+        return this.action.equals(action);
+    }
+
     @Override
     public String toString() {
         return String.format("%s: %s (%s)", action, objectElement != null ? objectElement : "", type.getRuName());

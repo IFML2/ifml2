@@ -1,6 +1,7 @@
 package ifml2.parser;
 
 import ifml2.om.IFMLObject;
+import ifml2.vm.Variable;
 import ifml2.vm.values.Value;
 
 public abstract class FormalElement {
@@ -18,6 +19,10 @@ public abstract class FormalElement {
     }
 
     public abstract Value getValue();
+
+    public Variable toVariable() {
+        return new Variable(getParameterName(), getValue());
+    }
 
     @Override
     public String toString() {

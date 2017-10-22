@@ -7,8 +7,8 @@ import java.text.MessageFormat;
 
 public class IFMLEntity implements Cloneable {
     protected static <T extends IFMLEntity> EventList<T> deepCloneEventList(
-            /*@NotNull*/ EventList<T> eventList,
-            /*@NotNull*/ Class<T> clazz
+            EventList<T> eventList,
+            Class<T> clazz
     ) throws CloneNotSupportedException {
         EventList<T> cloneList = new BasicEventList<T>();
         for (T element : eventList) {

@@ -5,36 +5,39 @@ import ifml2.CommonConstants;
 import ifml2.Environment;
 import ifml2.IFML2Exception;
 import ifml2.SystemIdentifiers;
-import ifml2.engine.featureproviders.PlayerFeatureProvider;
-import ifml2.engine.featureproviders.text.OutputPlainTextProvider;
-import ifml2.engine.saved.SavedGame;
+import ifml2.engine.saved.XmlSavedGame;
 import ifml2.om.Action;
 import ifml2.om.Hook;
 import ifml2.om.IFMLObject;
 import ifml2.om.Item;
 import ifml2.om.Location;
-import ifml2.om.OMManager;
 import ifml2.om.Procedure;
 import ifml2.om.Property;
 import ifml2.om.PropertyDefinition;
 import ifml2.om.Restriction;
 import ifml2.om.Role;
+import ifml2.om.RoleDefinition;
 import ifml2.om.Story;
 import ifml2.om.StoryOptions;
 import ifml2.parser.FormalElement;
-import ifml2.parser.FormalLiteral;
 import ifml2.parser.FormalObject;
 import ifml2.parser.IFML2ParseException;
 import ifml2.parser.ParseResult;
 import ifml2.parser.Parser;
 import ifml2.storage.Storage;
+import ifml2.storage.StorageImpl;
 import ifml2.storage.StoryDTO;
+import ifml2.storage.domain.SavedGame;
+import ifml2.storage.domain.SavedItem;
+import ifml2.storage.domain.SavedLocation;
+import ifml2.storage.domain.SavedProperty;
+import ifml2.storage.domain.SavedRole;
+import ifml2.storage.domain.SavedVariable;
 import ifml2.vm.ExpressionCalculator;
 import ifml2.vm.IFML2VMException;
 import ifml2.vm.RunningContext;
 import ifml2.vm.Variable;
 import ifml2.vm.VirtualMachine;
-import ifml2.vm.instructions.SetVarInstruction;
 import ifml2.vm.values.BooleanValue;
 import ifml2.vm.values.CollectionValue;
 import ifml2.vm.values.NumberValue;
@@ -45,62 +48,60 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
+import static ifml2.engine.SystemCommand.HELP;
 import static java.lang.String.format;
 
 public class EngineImpl implements Engine {
 
     public static final Logger LOG = LoggerFactory.getLogger(EngineImpl.class);
 
-    private final HashMap<String, Value> globalVariables = new HashMap<>();
+    private final TypedMap<Value> globalVariables = new TypedMap<Value>();
 
     private Environment environment;
     private final VirtualMachine virtualMachine;
     private final Parser parser;
-    private final Storage storage;
+    private final StorageImpl storage;
 
-    private final HashMap<String, Value> systemVariables = new HashMap<>();
+    private final TypedMap<Value> systemVariables = new TypedMap<Value>();
     private final ArrayList<Item> abyss = new ArrayList<>();
 
     private List<Item> inventory = new ArrayList<>();
-    private CommandMap SYSTEM_COMMANDS = new CommandMapImpl();
+    private TypedMap<SystemCommand> SYSTEM_COMMANDS = new TypedMap<SystemCommand>()
+            .preSet("помощь", HELP)
+            .preSet("помоги", HELP)
+            .preSet("помогите", HELP)
+            .preSet("инфо", HELP)
+            .preSet("информация", HELP)
+            .preSet("help", HELP)
+            .preSet("info", HELP);
     private DataHelper dataHelper = new DataHelper();
     private String storyFileName;
     private Date starTime = new Date();
-    private HashMap<String, Callable<? extends Value>> ENGINE_SYMBOLS = new HashMap<String, Callable<? extends Value>>() {
-        {
-            Callable<CollectionValue> returnInv = () -> new CollectionValue(inventory);
+    private TypedMap<Callable<? extends Value>> ENGINE_SYMBOLS = new TypedMap<>();
 
-            put("инвентарий", returnInv);
-            put("инвентарь", returnInv);
-            put("куча",
-                    (Callable<TextValue>) () -> new TextValue(new CollectionValue(
-                            new ArrayList<>(environment.getStory().getObjectsHeap().values())).toString()));
-            put("словарь",
-                    (Callable<TextValue>) () -> new TextValue(new CollectionValue(
-                            new ArrayList<>(environment.getStory().getDictionary().values())).toString()));
-            put("пустота", (Callable<CollectionValue>) () -> new CollectionValue(abyss));
-            put("глобальные", (Callable<TextValue>) () -> new TextValue(globalVariables.entrySet().toString()));
-            put("локации",
-                    (Callable<TextValue>) () -> new TextValue(new CollectionValue(environment.getStory().getLocations()).toString()));
-            put("предметы",
-                    (Callable<TextValue>) () -> new TextValue(new CollectionValue(environment.getStory().getItems()).toString()));
-            put("системные", (Callable<TextValue>) () -> new TextValue(format("Системные переменные: %s", ENGINE_SYMBOLS.keySet())));
-            put("секунды", (Callable<NumberValue>) () -> {
-                return new NumberValue((System.currentTimeMillis() - starTime.getTime()) / 1000);
-            });
-            put("минуты", (Callable<NumberValue>) () -> {
-                return new NumberValue((System.currentTimeMillis() - starTime.getTime()) / 1000 / 60);
-            });
-        }
-    };
+    {
+        Callable<CollectionValue> returnInv = () -> new CollectionValue(inventory);
+
+        ENGINE_SYMBOLS.preSet("инвентарий", returnInv)
+                .preSet("инвентарь", returnInv)
+                .preSet("куча",         (Callable<TextValue>) ()        -> new TextValue(new CollectionValue(new ArrayList<>(environment.getStory().getObjectsHeap().values())).toString()))
+                .preSet("словарь",      (Callable<TextValue>) ()        -> new TextValue(new CollectionValue(new ArrayList<>(environment.getStory().getDictionary().values())).toString()))
+                .preSet("пустота",      (Callable<CollectionValue>) ()  -> new CollectionValue(abyss))
+                .preSet("глобальные",   (Callable<TextValue>) ()        -> new TextValue(globalVariables.entrySet().toString()))
+                .preSet("локации",      (Callable<TextValue>) ()        -> new TextValue(new CollectionValue(environment.getStory().getLocations()).toString()))
+                .preSet("предметы",     (Callable<TextValue>) ()        -> new TextValue(new CollectionValue(environment.getStory().getItems()).toString()))
+                .preSet("системные",    (Callable<TextValue>) ()        -> new TextValue(format("Системные переменные: %s", ENGINE_SYMBOLS.keySet())))
+                .preSet("секунды",      (Callable<NumberValue>) ()      -> { return new NumberValue((System.currentTimeMillis() - starTime.getTime()) / 1000); })
+                .preSet("минуты",       (Callable<NumberValue>) ()      -> { return new NumberValue((System.currentTimeMillis() - starTime.getTime()) / 1000 / 60); });
+    }
 
     public EngineImpl(
             final Environment environment,
@@ -111,7 +112,7 @@ public class EngineImpl implements Engine {
         this.environment = environment;
         this.virtualMachine = virtualMachine;
         this.parser = parser;
-        this.storage = storage;
+        this.storage = (StorageImpl) storage;
         virtualMachine.setEngine(this);
         LOG.info("Engine created.");
     }
@@ -156,13 +157,17 @@ public class EngineImpl implements Engine {
 
         // load global vars
         globalVariables.clear();
-        for (SetVarInstruction varInstruction : story.getStoryOptions().getVars()) {
-            Value value = ExpressionCalculator.calculate(virtualMachine.createRunningContext(), varInstruction.getValue());
+        story.getStoryOptions().getVars().forEach(varInstruction -> {
             String name = varInstruction.getName();
             if (name != null) {
-                globalVariables.put(name.toLowerCase(), value);
+                try {
+                    globalVariables.put(name, ExpressionCalculator.calculate(virtualMachine.createRunningContext(), varInstruction.getValue()));
+                } catch (IFML2Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
-        }
+        });
 
         // find properties and evaluates its expression into value
         for (IFMLObject ifmlObject : story.getObjectsHeap().values()) {
@@ -386,21 +391,8 @@ public class EngineImpl implements Engine {
         }
     }
 
-    private Value formalElementToValue(final FormalObject object) {
-        return new ObjectValue(object.getObject());
-    }
-
-    private Value formalElementToValue(final FormalLiteral literal) {
-        return new TextValue(literal.getLiteral());
-    }
-
     private List<Variable> convertFormalElementsToParameters(List<FormalElement> formalElements) throws IFML2Exception {
-        List<Variable> parameters = new ArrayList<>(formalElements.size());
-        for (FormalElement formalElement : formalElements) {
-            parameters.add(new Variable(formalElement.getParameterName(), formalElement.getValue()));
-        }
-
-        return parameters;
+        return formalElements.stream().map(FormalElement::toVariable).collect(Collectors.toList());
     }
 
     private void outEngDebug(String message, Object... args) {
@@ -458,7 +450,7 @@ public class EngineImpl implements Engine {
 
         // collect current location hooks
         currentLocation.getHooks().stream()
-                .filter(hook -> action.equals(hook.getAction()))
+                .filter(hook -> hook.canDo(action))
                 .forEach(locationHooks::add);
         return locationHooks;
     }
@@ -468,11 +460,14 @@ public class EngineImpl implements Engine {
         HookMap objectHooks = new HookMapImpl();
 
         // collect all object hooks
-        formalElements.stream().filter(formalElement -> formalElement instanceof FormalObject && ((FormalObject) formalElement).getObject() instanceof Item)
+        formalElements.stream()
+            .filter(formalElement -> formalElement instanceof FormalObject)
+            .filter(formalElement -> ((FormalObject) formalElement).getObject() instanceof Item)
                 .forEach(formalElement -> {
             Item item = (Item) ((FormalObject) formalElement).getObject();
             item.getHooks().stream()
-                    .filter(hook -> action.equals(hook.getAction()) && formalElement.getParameterName().equalsIgnoreCase(hook.getObjectElement()))
+                    .filter(hook -> hook.canDo(action))
+                    .filter(hook -> formalElement.getParameterName().equalsIgnoreCase(hook.getObjectElement()))
                     .forEach(objectHooks::add);
         });
         return objectHooks;
@@ -505,7 +500,6 @@ public class EngineImpl implements Engine {
         return environment.getStory();
     }
 
-    /*@Nullable*/
     public Location getCurrentLocation() {
         ObjectValue object = (ObjectValue) systemVariables.get(SystemIdentifiers.CURRENT_LOCATION_SYSTEM_VARIABLE.toLowerCase());
         return object != null ? (Location) object.getValue() : null;
@@ -546,20 +540,129 @@ public class EngineImpl implements Engine {
     }
 
     public void saveGame(String saveFileName) throws IFML2Exception {
-        SavedGame savedGame = new SavedGame(dataHelper, environment.getStory().getDataHelper());
-        OMManager.saveGame(saveFileName, savedGame);
+        XmlSavedGame savedGame = new XmlSavedGame(dataHelper, environment.getStory().getDataHelper());
+        storage.saveGame(saveFileName, savedGame);
         outTextLn("Игра сохранена в файл {0}.", saveFileName);
     }
 
     public void loadGame(String saveFileName) throws IFML2Exception {
         try {
-            SavedGame savedGame = OMManager.loadGame(saveFileName);
+            XmlSavedGame savedGame = (XmlSavedGame) storage.loadGame(saveFileName);
             savedGame.restoreGame(dataHelper, environment.getStory().getDataHelper());
             outTextLn("Игра восстановлена из файла {0}.", saveFileName);
         } catch (IFML2Exception e) {
             String errorText = "Ошибка при загрузке игры! " + e.getMessage();
             outTextLn(errorText);
             LOG.error(errorText);
+        }
+    }
+
+    private void applyToStory(SavedGame savedGame) throws IFML2Exception {
+        Story.DataHelper storyHelper = environment.getStory().getDataHelper();
+        String engineStoryFileName = dataHelper.getStoryFileName();
+        if (!savedGame.getStoryFileName().equalsIgnoreCase(engineStoryFileName)) {
+            throw new IFML2Exception("Saved game from {} not acceptable to story {}", savedGame.getStoryFileName(), engineStoryFileName);
+        }
+        // restoreGlobalVars
+        savedGame.getGlobalVars().forEach(this::setGlobalVarFromSaved);
+        // restoreSystemVars
+        savedGame.getSystemVars().forEach(this::setSystemVarFromSaved);
+        // restoreInventory
+        List<Item> inventory = dataHelper.getInventory();
+        inventory.clear();
+        savedGame.getSavedInventory().forEach(id -> {
+            Item item = storyHelper.findItemById(id);
+            if (item != null) {
+                inventory.add(item);
+                item.setContainer(inventory);
+            } else {
+                LOG.warn("[Game loading] Inventory loading: there is no item with id '{}'.", id);
+            }
+        });
+        // restoreLocations
+        savedGame.getSavedLocations().forEach(savedLocation -> restoreSavedLocation(savedLocation, storyHelper));
+        // restoreSavedItems
+        savedGame.getSavedItems().forEach(savedItem -> restoreSavedItem(savedItem, storyHelper));
+    }
+
+    private void setGlobalVarFromSaved(SavedVariable savedVariable) {
+        try {
+            dataHelper.setGlobalVariable(savedVariable.getName(), savedVariable.getValue());
+        } catch (IFML2Exception ex) {
+            LOG.error("Unable set global variable '{}'", savedVariable.getName(), ex);
+        }
+    }
+
+    private void setSystemVarFromSaved(SavedVariable savedVariable) {
+        try {
+            dataHelper.setSystemVariable(savedVariable.getName(), savedVariable.getValue());
+        } catch (IFML2Exception ex) {
+            LOG.error("Unable set system variable '{}'", savedVariable.getName(), ex);
+        }
+    }
+
+    private void restoreSavedLocation(SavedLocation savedLocation, Story.DataHelper storyHelper) {
+        Location location = storyHelper.findLocationById(savedLocation.getId());
+        if (location != null) {
+            List<Item> locationItems = location.getItems();
+            locationItems.clear();
+            savedLocation.getItems().forEach(itemId -> {
+                Item item = storyHelper.findItemById(itemId);
+                if (item != null) {
+                    locationItems.add(item);
+                    item.setContainer(locationItems);
+                } else {
+                    LOG.warn("[Game loading] Location items loading: there is no item with id '{}'.", itemId);
+                }
+            });
+        } else {
+            LOG.warn("Location with ID '{}' not found", savedLocation.getId());
+        }
+    }
+
+    private void restoreSavedItem(SavedItem savedItem, Story.DataHelper storyHelper) {
+        Item item = storyHelper.findItemById(savedItem.getId());
+        if (item != null) {
+            savedItem.getRoles().forEach(savedRole -> restoreSavedRole(savedRole, item, storyHelper));
+        } else {
+            LOG.warn("Item with ID '{}' not found", savedItem.getId());
+        }
+    }
+
+    private void restoreSavedRole(SavedRole savedRole, Item item, Story.DataHelper storyHelper) {
+        Role role = item.findRoleByName(savedRole.getName());
+        if (role != null) {
+            savedRole.getProperties().forEach(savedProperty -> restoreSavedProperty(savedProperty, role, storyHelper));
+        } else {
+            LOG.warn("Role '{}' not found for '{}'", savedRole.getName(), item.getId());
+        }
+    }
+
+    private void restoreSavedProperty(SavedProperty savedProperty, Role role, Story.DataHelper storyHelper) {
+        Property property = role.findPropertyByName(savedProperty.getName());
+        if (property != null) {
+            RoleDefinition roleDefinition = role.getRoleDefinition();
+            PropertyDefinition propertyDefinition = roleDefinition.findPropertyDefinitionByName(savedProperty.getName());
+            if (propertyDefinition != null) {
+                if (PropertyDefinition.Type.COLLECTION == propertyDefinition.getType()) {
+                    List<Item> propItems = new ArrayList<>();
+                    savedProperty.getItems().forEach(itemId -> {
+                        Item propItem = storyHelper.findItemById(itemId);
+                        if (propItem != null) {
+                            propItem.moveTo(propItems);
+                        } else {
+                            LOG.warn("[Game loading] Location items loading: there is no item with id '{}'.", itemId);
+                        }
+                    });
+                    property.setValue(new CollectionValue(propItems));
+                } else {
+                    LOG.error("SYSTEM ERROR: Property '{}' into the role '{}' not marked as collection, but into the saved game it's marked");
+                }
+            } else {
+                LOG.error("SYSTEM ERROR: Property '{}' not found into the role '{}'", savedProperty.getName(), role.getName());
+            }
+        } else {
+            LOG.warn("Property '{}' not found into the role '{}'", savedProperty.getName(), role.getName());
         }
     }
 
@@ -576,17 +679,14 @@ public class EngineImpl implements Engine {
             Value itemContents = item.getAccessibleContent(getVirtualMachine());
             if (itemContents != null) {
                 if (!(itemContents instanceof CollectionValue)) {
-                    throw new IFML2VMException("Триггер доступного содержимого у предмета \"{0}\" вернул не коллекцию, а \"{1}\"!",
-                            itemToCheck, itemContents.getTypeName());
+                    throw new IFML2VMException("Триггер доступного содержимого у предмета \"{0}\" вернул не коллекцию, а \"{1}\"!", itemToCheck, itemContents.getTypeName());
                 }
 
                 List itemContentsList = ((CollectionValue) itemContents).getValue();
                 List<Item> itemContentsItemList = new BasicEventList<>();
                 for (Object object : itemContentsList) {
                     if (!(object instanceof Item)) {
-                        throw new IFML2VMException(
-                                "Триггер доступного содержимого у предмета \"{0}\" вернул в коллекции не предмет, а \"{1}\"!", itemToCheck,
-                                object);
+                        throw new IFML2VMException("Триггер доступного содержимого у предмета \"{0}\" вернул в коллекции не предмет, а \"{1}\"!", itemToCheck, object);
                     }
 
                     itemContentsItemList.add((Item) object);
@@ -636,11 +736,9 @@ public class EngineImpl implements Engine {
     }
 
     private void outDebug(int level, String message, Object... args) {
-        String tab = "";
-        for (int i = 1; i <= level; i++) {
-            tab += "  ";
-        }
-        environment.debug(tab + message, args);
+        final StringBuilder sb = new StringBuilder();
+        IntStream.range(1, level).forEach(i -> sb.append("  "));
+        environment.debug(sb.append(message).toString(), args);
     }
 
     public Variable searchGlobalVariable(String name) {
@@ -661,11 +759,11 @@ public class EngineImpl implements Engine {
      * Helper for saved games data.
      */
     public class DataHelper {
-        public HashMap<String, Value> getGlobalVariables() {
+        public TypedMap<Value> getGlobalVariables() {
             return globalVariables;
         }
 
-        public HashMap<String, Value> getSystemVariables() {
+        public TypedMap<Value> getSystemVariables() {
             return systemVariables;
         }
 
@@ -705,16 +803,16 @@ public class EngineImpl implements Engine {
     }
 
     private class GlobalVariableProxy extends Variable {
-        private final HashMap<String, Value> globalVariables;
+        private final TypedMap<Value> globalVariables;
 
-        public GlobalVariableProxy(HashMap<String, Value> globalVariables, String name, Value value) {
+        public GlobalVariableProxy(TypedMap<Value> globalVariables, String name, Value value) {
             super(name.toLowerCase(), value);
             this.globalVariables = globalVariables;
         }
 
         @Override
         public Value getValue() {
-            return globalVariables.getOrDefault(name, null);
+            return globalVariables.get(name);
         }
 
         @Override
