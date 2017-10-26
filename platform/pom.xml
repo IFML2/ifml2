@@ -23,7 +23,6 @@
         <module>platform-editor</module>
         <module>platform-player</module>
         <module>platform-server</module>
-        <module>platform-starter</module>
     </modules>
     
 </project>
