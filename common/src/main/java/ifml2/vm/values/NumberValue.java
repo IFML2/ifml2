@@ -2,12 +2,15 @@ package ifml2.vm.values;
 
 import ifml2.vm.IFML2ExpressionException;
 
-import static ifml2.vm.values.Value.CompareResult.EQUAL;
-import static ifml2.vm.values.Value.CompareResult.LEFT_BIGGER;
-import static ifml2.vm.values.Value.CompareResult.RIGHT_BIGGER;
-import static ifml2.vm.values.Value.Operation.ADD;
+import static ifml2.vm.values.CompareResult.EQUAL;
+import static ifml2.vm.values.CompareResult.LEFT_BIGGER;
+import static ifml2.vm.values.CompareResult.RIGHT_BIGGER;
+import static ifml2.vm.values.Operation.ADD;
 
 public class NumberValue extends Value<Double> implements IAddableValue {
+
+    public static final String LITERAL = "число";
+
     public NumberValue(double value) {
         super(value);
     }
@@ -34,7 +37,7 @@ public class NumberValue extends Value<Double> implements IAddableValue {
     }
 
     @Override
-    public Value add(Value rightValue) throws IFML2ExpressionException {
+    public Value plus(Value rightValue) throws IFML2ExpressionException {
         if (rightValue instanceof NumberValue) {
             return new NumberValue(value + ((NumberValue) rightValue).getValue());
         } else if (rightValue instanceof TextValue) {
@@ -47,7 +50,7 @@ public class NumberValue extends Value<Double> implements IAddableValue {
 
     @Override
     public String getTypeName() {
-        return "число";
+        return LITERAL;
     }
 
     @Override

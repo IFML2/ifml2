@@ -2,9 +2,9 @@ package ifml2.vm.values;
 
 import ifml2.IFMLEntity;
 
-import static ifml2.vm.values.Value.CompareResult.EQUAL;
-import static ifml2.vm.values.Value.CompareResult.NOT_APPLICABLE;
-import static ifml2.vm.values.Value.CompareResult.UNEQUAL;
+import static ifml2.vm.values.CompareResult.EQUAL;
+import static ifml2.vm.values.CompareResult.NOT_APPLICABLE;
+import static ifml2.vm.values.CompareResult.UNEQUAL;
 
 public abstract class Value<T> extends IFMLEntity implements Cloneable {
     protected T value;
@@ -16,11 +16,6 @@ public abstract class Value<T> extends IFMLEntity implements Cloneable {
     protected Value() {
     }
 
-    /**
-     * Тип величины в понятном виде.
-     *
-     * @return название типа
-     */
     public abstract String getTypeName();
 
     public abstract String toLiteral();
@@ -29,7 +24,7 @@ public abstract class Value<T> extends IFMLEntity implements Cloneable {
         return value;
     }
 
-    public CompareResult compareTo(/*@NotNull*/ Value rightValue) {
+    public CompareResult compareTo(Value rightValue) {
         if (getClass().equals(rightValue.getClass())) {
             // одинаковые классы сравниваем напрямую через equals
             return equals(rightValue) ? EQUAL : UNEQUAL;
@@ -62,29 +57,5 @@ public abstract class Value<T> extends IFMLEntity implements Cloneable {
     @Override
     public Value clone() throws CloneNotSupportedException {
         return (Value) super.clone();
-    }
-
-    public enum Operation {
-        ADD("сложение");
-
-        final String caption;
-
-        Operation(String caption) {
-            this.caption = caption;
-        }
-
-        /*@Contract(pure = true)*/
-        @Override
-        public String toString() {
-            return caption;
-        }
-    }
-
-    public enum CompareResult {
-        EQUAL,
-        UNEQUAL,
-        LEFT_BIGGER,
-        RIGHT_BIGGER,
-        NOT_APPLICABLE
     }
 }

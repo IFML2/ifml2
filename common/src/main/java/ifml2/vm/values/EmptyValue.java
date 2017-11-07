@@ -1,16 +1,16 @@
 package ifml2.vm.values;
 
-import static ifml2.vm.values.Value.CompareResult.EQUAL;
-import static ifml2.vm.values.Value.CompareResult.UNEQUAL;
+import static ifml2.vm.values.CompareResult.EQUAL;
+import static ifml2.vm.values.CompareResult.UNEQUAL;
 
-/**
- * Empty value
- */
 public class EmptyValue extends Value {
+
+    public static final String EMPTY = "пусто";
+    public static final String LITERAL = EMPTY;
 
     @Override
     public String getTypeName() {
-        return "пусто";
+        return LITERAL;
     }
 
     @Override
@@ -20,11 +20,11 @@ public class EmptyValue extends Value {
 
     @Override
     public String toLiteral() {
-        return "пусто";
+        return LITERAL;
     }
 
     @Override
-    public CompareResult compareTo(/*@NotNull*/ Value rightValue) {
+    public CompareResult compareTo(Value rightValue) {
         return rightValue instanceof EmptyValue ? EQUAL : UNEQUAL;
     }
 }

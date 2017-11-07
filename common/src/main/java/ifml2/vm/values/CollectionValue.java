@@ -5,6 +5,9 @@ import ifml2.IFMLEntity;
 import java.util.List;
 
 public class CollectionValue extends Value<List<? extends IFMLEntity>> {
+
+    public static final String LITERAL = "коллекция";
+
     public CollectionValue(List<? extends IFMLEntity> value) {
         super(value);
     }
@@ -12,32 +15,11 @@ public class CollectionValue extends Value<List<? extends IFMLEntity>> {
     @Override
     public String toString() {
         return "CollectionValue";
-//        return format("[%s]", String.join(", ", () -> {
-//            return new Iterator<CharSequence>() {
-//                public Iterator<? extends IFMLEntity> iterator = value.iterator();
-//
-//                @Override
-//                public boolean hasNext() {
-//                    return iterator.hasNext();
-//                }
-//
-//                @Override
-//                public CharSequence next() {
-//                    IFMLEntity next = iterator.next();
-//                    if (next instanceof IFMLObject) {
-//                        IFMLObject object = (IFMLObject) next;
-//                        return format("%s \"%s\"", object.getId(), object.getName());
-//                    } else {
-//                        return next.toString();
-//                    }
-//                }
-//            };
-//        }));
     }
 
     @Override
     public String getTypeName() {
-        return "коллекция";
+        return LITERAL;
     }
 
     @Override

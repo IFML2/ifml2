@@ -5,13 +5,15 @@ import ifml2.vm.SymbolResolver;
 
 public class SymbolValue extends Value<String> {
 
+    public static final String LITERAL = "идентификатор";
+
     public SymbolValue(String value) {
         super(value);
     }
 
     @Override
     public String getTypeName() {
-        return "идентификатор";
+        return LITERAL;
     }
 
     @Override

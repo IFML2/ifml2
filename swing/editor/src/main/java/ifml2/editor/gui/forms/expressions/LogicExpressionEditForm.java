@@ -3,6 +3,7 @@ package ifml2.editor.gui.forms.expressions;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import ifml2.SystemIdentifiers;
+import ifml2.vm.values.BooleanValue;
 
 import javax.swing.*;
 import java.awt.*;
@@ -64,7 +65,7 @@ public class LogicExpressionEditForm extends ExpressionEditForm {
 
     private Boolean extractLogic(String expression) {
         Matcher matcher = pattern.matcher(expression);
-        return matcher.matches() && SystemIdentifiers.TRUE_BOOL_LITERAL.equalsIgnoreCase(matcher.group(1));
+        return matcher.matches() && BooleanValue.TRUE.equalsIgnoreCase(matcher.group(1));
     }
 
     @Override
@@ -73,7 +74,7 @@ public class LogicExpressionEditForm extends ExpressionEditForm {
     }
 
     private String createLiteral(boolean logic) {
-        return logic ? SystemIdentifiers.TRUE_BOOL_LITERAL : SystemIdentifiers.FALSE_BOOL_LITERAL;
+        return logic ? BooleanValue.TRUE : BooleanValue.FALSE;
     }
 
     /**

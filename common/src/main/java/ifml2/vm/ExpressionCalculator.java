@@ -4,6 +4,7 @@ import ifml2.IFML2Exception;
 import ifml2.om.IFMLObject;
 import ifml2.vm.values.BooleanValue;
 import ifml2.vm.values.CollectionValue;
+import ifml2.vm.values.CompareResult;
 import ifml2.vm.values.EmptyValue;
 import ifml2.vm.values.IAddableValue;
 import ifml2.vm.values.NumberValue;
@@ -480,13 +481,13 @@ public class ExpressionCalculator {
                 Value rightValue = rightExpr.solve();
 
                 if (leftValue instanceof IAddableValue) {
-                    return ((IAddableValue) leftValue).add(rightValue);
+                    return ((IAddableValue) leftValue).plus(rightValue);
                 } else if (rightValue instanceof TextValue) {
                     // если левый операнд не поддерживает сложение, но правый - текст, то всё превращаем в строку и клеим
                     return new TextValue(leftValue.toString() + ((TextValue) rightValue).getValue());
                 } else {
                     throw new IFML2ExpressionException("Не поддерживается операция \"{0}\" между типом \"{1}\" и \"{2}\"",
-                            Value.Operation.ADD, leftValue.getTypeName(), leftValue.getTypeName());
+                            Operation.ADD, leftValue.getTypeName(), leftValue.getTypeName());
                 }
             }
         }
@@ -670,7 +671,7 @@ public class ExpressionCalculator {
                 Value leftValue = leftExpr.solve();
                 Value rightValue = rightExpr.solve();
 
-                Value.CompareResult compareResult = leftValue.compareTo(rightValue);
+                CompareResult compareResult = leftValue.compareTo(rightValue);
                 switch (compareResult) {
                     case EQUAL:
                         return new BooleanValue(isPositive);
@@ -707,7 +708,7 @@ public class ExpressionCalculator {
 
                 Value rightValue = rightExpr.solve();
 
-                Value.CompareResult compareResult = leftValue.compareTo(rightValue);
+                CompareResult compareResult = leftValue.compareTo(rightValue);
                 switch (compareResult) {
                     case LEFT_BIGGER:
                         return new BooleanValue(isPositive);

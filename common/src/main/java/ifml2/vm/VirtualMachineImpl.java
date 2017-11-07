@@ -34,9 +34,9 @@ public class VirtualMachineImpl implements VirtualMachine {
 
     private final HashMap<String, Value> systemConstants = new HashMap<String, Value>() {
         {
-            put(SystemIdentifiers.TRUE_BOOL_LITERAL, new BooleanValue(true));
-            put(SystemIdentifiers.FALSE_BOOL_LITERAL, new BooleanValue(false));
-            put(SystemIdentifiers.EMPTY_VALUE, new EmptyValue());
+            put(BooleanValue.TRUE, new BooleanValue(true));
+            put(BooleanValue.FALSE, new BooleanValue(false));
+            put(EmptyValue.EMPTY, new EmptyValue());
         }
     };
 

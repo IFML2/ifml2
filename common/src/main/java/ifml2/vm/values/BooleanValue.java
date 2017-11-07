@@ -1,8 +1,11 @@
 package ifml2.vm.values;
 
-import ifml2.SystemIdentifiers;
-
 public class BooleanValue extends Value<Boolean> {
+
+    public static final String LITERAL = "логика";
+    public static final String TRUE = "да";
+    public static final String FALSE = "нет";
+
     public BooleanValue(boolean value) {
         super(value);
     }
@@ -14,11 +17,11 @@ public class BooleanValue extends Value<Boolean> {
 
     @Override
     public String getTypeName() {
-        return "логика";
+        return LITERAL;
     }
 
     @Override
     public String toLiteral() {
-        return value ? SystemIdentifiers.TRUE_BOOL_LITERAL : SystemIdentifiers.FALSE_BOOL_LITERAL;
+        return value ? TRUE : FALSE;
     }
 }
