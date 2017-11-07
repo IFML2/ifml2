@@ -2,7 +2,6 @@ package ifml2.editor.gui.forms.expressions;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
-import ifml2.SystemIdentifiers;
 import ifml2.vm.values.BooleanValue;
 
 import javax.swing.*;

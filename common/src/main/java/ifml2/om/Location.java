@@ -14,8 +14,13 @@ import java.util.concurrent.Callable;
 
 @XmlTransient
 public class Location extends IFMLObject {
+
+    public static final String CURRENT = "ТекущаяЛокация";
+
     protected HashMap<ExitDirection, Location> exits = new HashMap<>();
+
     protected List<Item> items = new ArrayList<>();
+
     private HashMap<String, Callable<? extends Value>> LOCATION_SYMBOLS = new HashMap<String, Callable<? extends Value>>() {
         {
             put("север", (Callable<Value>) () -> getObjectValue(ExitDirection.NORTH));

@@ -8,7 +8,6 @@ import java.util.List;
 
 import ifml2.Environment;
 import ifml2.IFML2Exception;
-import ifml2.SystemIdentifiers;
 import ifml2.engine.Engine;
 import ifml2.om.Action;
 import ifml2.om.Hook;

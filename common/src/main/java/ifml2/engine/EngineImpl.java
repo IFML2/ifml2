@@ -4,7 +4,6 @@ import ca.odell.glazedlists.BasicEventList;
 import ifml2.CommonConstants;
 import ifml2.Environment;
 import ifml2.IFML2Exception;
-import ifml2.SystemIdentifiers;
 import ifml2.engine.saved.XmlSavedGame;
 import ifml2.om.Action;
 import ifml2.om.Hook;
@@ -501,12 +500,12 @@ public class EngineImpl implements Engine {
     }
 
     public Location getCurrentLocation() {
-        ObjectValue object = (ObjectValue) systemVariables.get(SystemIdentifiers.CURRENT_LOCATION_SYSTEM_VARIABLE.toLowerCase());
+        ObjectValue object = (ObjectValue) systemVariables.get(Location.CURRENT.toLowerCase());
         return object != null ? (Location) object.getValue() : null;
     }
 
     public void setCurrentLocation(Location currentLocation) {
-        systemVariables.put(SystemIdentifiers.CURRENT_LOCATION_SYSTEM_VARIABLE.toLowerCase(), new ObjectValue(currentLocation));
+        systemVariables.put(Location.CURRENT.toLowerCase(), new ObjectValue(currentLocation));
     }
 
     public List<Item> getInventory() {
