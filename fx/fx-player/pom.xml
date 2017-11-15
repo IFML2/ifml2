@@ -8,13 +8,12 @@
     <parent>
         <groupId>ifml2</groupId>
         <artifactId>fx</artifactId>
-        <version>2.0.0-SNAPSHOT</version>
+        <version>2.1.0-SNAPSHOT</version>
         <relativePath>../</relativePath>
     </parent>
 
     <artifactId>fx-player</artifactId>
     <packaging>jar</packaging>
-    <version>2.0.0-SNAPSHOT</version>
 
     <name>IFML2 :: FX :: PLAYER</name>
     <description>The FX player for IFML2</description>
@@ -92,7 +91,6 @@
             <plugin>
                 <groupId>com.zenjava</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
-                <version>8.8.3</version>
                 <configuration>
                     <vendor>IFML2</vendor>
                     <mainClass>ifml2.fx.player.FxPlayerApp</mainClass>

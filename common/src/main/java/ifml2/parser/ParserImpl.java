@@ -25,6 +25,7 @@ import static ifml2.om.Word.GramCase.RP;
 import static java.lang.String.format;
 
 public class ParserImpl implements Parser {
+
     public ParseResult parse(String phrase, Story.DataHelper storyDataHelper, EngineImpl.DataHelper engineDataHelper) throws IFML2Exception {
         outParsDebug(engineDataHelper, "Начало анализа команды \"{0}\"...", phrase);
 
@@ -33,7 +34,7 @@ public class ParserImpl implements Parser {
         }
 
         // split phrase to array
-        ArrayList<String> phraseAsList = new ArrayList<String>(Arrays.asList(phrase.split("\\s+")));
+        List<String> phraseAsList = new ArrayList<>(Arrays.asList(phrase.split("\\s+")));
         outParsDebug(engineDataHelper, "Разбили фразу на слова: {0}.", phraseAsList);
 
         // prepare list of all fitted templates
@@ -79,19 +80,19 @@ public class ParserImpl implements Parser {
             }
         }
 
-        if (fittedTemplates.size() == 0) {
+        if (fittedTemplates.isEmpty()) {
             throw lastException;
         }
 
         // clean fitted templates from templates with inaccessible objects
-        ArrayList<FittedTemplate> accessibleTemplates = null;
+        List<FittedTemplate> accessibleTemplates = null;
         try {
             accessibleTemplates = removeInaccessibleObjects(fittedTemplates, engineDataHelper);
         } catch (IFML2Exception e) {
             lastException = e; // always rewrite last exception because inaccessible objects are more important for errors
         }
 
-        if (accessibleTemplates == null || accessibleTemplates.size() == 0) {
+        if (accessibleTemplates == null || accessibleTemplates.isEmpty()) {
             throw lastException;
         }
 
@@ -138,19 +139,18 @@ public class ParserImpl implements Parser {
     }
 
     private String convertListToString(List<String> stringArrayList) {
-        String result = "";
+        StringBuilder result = new StringBuilder();
         for (String element : stringArrayList) {
             if (result.length() > 0) {
-                result += " ";
+                result.append(" ");
             }
-            result += element;
+            result.append(element);
         }
-        return result;
+        return result.toString();
     }
 
-    /*@NotNull*/
     private String convertFittedToString(List<FittedFormalElement> fittedFormalElements) throws IFML2Exception {
-        String result = "";
+        StringBuilder result = new StringBuilder();
 
         for (FittedFormalElement fittedFormalElement : fittedFormalElements) {
             String element = "";
@@ -159,22 +159,22 @@ public class ParserImpl implements Parser {
             } else if (fittedFormalElement instanceof FittedObjects) {
                 List<IFMLObject> fittedObjects = ((FittedObjects) fittedFormalElement).objects;
 
-                if (fittedObjects.size() > 0) {
+                if (!fittedObjects.isEmpty()) {
                     element = fittedObjects.get(0).getName(((FittedObjects) fittedFormalElement).gramCase);
                 } else {
                     throw new IFML2Exception(format("Системная ошибка: в FittedObjects кол-во объектов = 0\nfittedFormalElements = %s\nfittedFormalElement = %s",
                             fittedFormalElements, fittedFormalElement));
                 }
             }
-            result += " " + element;
+            result.append(" ").append(element);
         }
 
-        return result.trim();
+        return result.toString().trim();
     }
 
-    private ArrayList<FittedTemplate> removeInaccessibleObjects(ArrayList<FittedTemplate> fittedTemplates,
+    private List<FittedTemplate> removeInaccessibleObjects(ArrayList<FittedTemplate> fittedTemplates,
                                                                 EngineImpl.DataHelper engineDataHelper) throws IFML2Exception {
-        ArrayList<FittedTemplate> result = new ArrayList<FittedTemplate>();
+        List<FittedTemplate> result = new ArrayList<>();
         IFMLObject inaccessibleObject = null;
 
         for (FittedTemplate fittedTemplate : fittedTemplates) {
@@ -182,7 +182,7 @@ public class ParserImpl implements Parser {
 
             for (FittedFormalElement fittedFormalElement : fittedTemplate.getFittedFormalElements()) {
                 if (fittedFormalElement instanceof FittedObjects) {
-                    ArrayList<IFMLObject> objectsToRemove = new ArrayList<IFMLObject>();
+                    ArrayList<IFMLObject> objectsToRemove = new ArrayList<>();
 
                     List<IFMLObject> fittedObjects = ((FittedObjects) fittedFormalElement).getObjects();
 
@@ -209,7 +209,7 @@ public class ParserImpl implements Parser {
             }
         }
 
-        if (result.size() > 0) {
+        if (!result.isEmpty()) {
             return result;
         } else {
             if (inaccessibleObject != null) {
@@ -221,13 +221,13 @@ public class ParserImpl implements Parser {
         }
     }
 
-    private ArrayList<FittedFormalElement> fitPhraseWithTemplate(ArrayList<String> phraseAsList, List<TemplateElement> template,
+    private ArrayList<FittedFormalElement> fitPhraseWithTemplate(List<String> phraseAsList, List<TemplateElement> template,
                                                                  Story.DataHelper storyDataHelper, EngineImpl.DataHelper engineDataHelper, int debugLevel) throws IFML2Exception {
         outParsDebug(debugLevel, engineDataHelper, "Сравниваем фразу {0} с шаблоном {1}...", phraseAsList, template);
 
         // get vars into local copy
-        ArrayList<String> phraseRest = new ArrayList<String>(phraseAsList);
-        ArrayList<TemplateElement> templateRest = new ArrayList<TemplateElement>(template);
+        ArrayList<String> phraseRest = new ArrayList<>(phraseAsList);
+        ArrayList<TemplateElement> templateRest = new ArrayList<>(template);
 
         // take the first element of template
         TemplateElement firstTemplateElement = templateRest.get(0);
@@ -239,7 +239,7 @@ public class ParserImpl implements Parser {
                 debugLevel + 1);
         outParsDebug(debugLevel, engineDataHelper, "Результат: {0}", result);
 
-        ArrayList<FittedFormalElement> fittedFormalElements = new ArrayList<FittedFormalElement>();
+        ArrayList<FittedFormalElement> fittedFormalElements = new ArrayList<>();
 
         fittedFormalElements.add(result.fittedFormalElement);
 
@@ -283,7 +283,6 @@ public class ParserImpl implements Parser {
         }
     }
 
-    /*@Contract("null, _, _ -> fail")*/
     private TemplateElementFitResult fitTemplateElementWithPhrase(TemplateElement templateElement, ArrayList<String> phrase,
                                                                   EngineImpl.DataHelper engineDataHelper, Story.DataHelper storyDataHelper, int debugLevel) throws IFML2Exception {
         outParsDebug(debugLevel, engineDataHelper, "Сопоставляем элемент шаблона {0} с фразой {1}...", templateElement, phrase);
@@ -364,18 +363,17 @@ public class ParserImpl implements Parser {
         }
     }
 
-    /*@NotNull*/
     private FitObjectWithPhraseResult fitObjectWithPhrase(
-            /*@NotNull*/ Word.GramCase gramCase,
-            /*@NotNull*/ List<String> phrase,
-            /*@NotNull*/ EngineImpl.DataHelper engineDataHelper,
-            /*@NotNull*/ Story.DataHelper storyDataHelper,
+            Word.GramCase gramCase,
+            List<String> phrase,
+            EngineImpl.DataHelper engineDataHelper,
+            Story.DataHelper storyDataHelper,
             int debugLevel
     ) throws IFML2Exception {
         outParsDebug(debugLevel, engineDataHelper, "Сопоставление фразы {0} с объектом по падежу {1}...", phrase,
                 gramCase.getAbbreviation());
 
-        if (phrase.size() == 0) {
+        if (phrase.isEmpty()) {
             throw new IFML2Exception("Внутрення ошибка: в метод подбора объекта (fitObjectWithPhrase) попала пустая фраза!");
         }
 
@@ -415,7 +413,7 @@ public class ParserImpl implements Parser {
         }
 
         // get the first word objects
-        List<IFMLObject> firstWordObjects = new ArrayList<IFMLObject>(firstWord.getLinkerObjects());
+        List<IFMLObject> firstWordObjects = new ArrayList<>(firstWord.getLinkerObjects());
         // case when dict word has no links to objects
         if (firstWordObjects.size() == 0) {
             throw new IFML2ParseException(format("Вообще нигде не вижу %s.", firstWord.getFormByGramCase(RP)),
@@ -432,18 +430,18 @@ public class ParserImpl implements Parser {
 
                 // check word duplicates to separate next template element
                 List<Word> nextWords = result.getFoundWords();
-                List<Word> commonWords = new ArrayList<Word>(foundWords);
+                List<Word> commonWords = new ArrayList<>(foundWords);
                 commonWords.retainAll(nextWords);
-                if (commonWords.size() > 0) // there are common words next -> it may be next template element
+                if (!commonWords.isEmpty()) // there are common words next -> it may be next template element
                 {
                     return new FitObjectWithPhraseResult(foundWords, firstWordObjects, firstWordChunksCount);
                 }
 
                 foundWords.addAll(nextWords);
 
-                List<IFMLObject> commonObjects = new ArrayList<IFMLObject>(firstWordObjects);
+                List<IFMLObject> commonObjects = new ArrayList<>(firstWordObjects);
                 commonObjects.retainAll(result.getObjects()); // retains only intersection of objects
-                if (commonObjects.size() > 0) // there is common objects for two words -> so it's the other word of the same object
+                if (!commonObjects.isEmpty()) // there is common objects for two words -> so it's the other word of the same object
                 {
                     return new FitObjectWithPhraseResult(foundWords, commonObjects, firstWordChunksCount + result.getUsedWordsQty());
                 }
@@ -459,7 +457,7 @@ public class ParserImpl implements Parser {
         String casedDictWord = word.getFormByGramCase(gramCase);
         List<String> casedDictWordArray = Arrays.asList(casedDictWord.split("\\s+"));
 
-        if (casedDictWordArray.size() > 0 && casedDictWordArray.size() <= restPhrase.size()) {
+        if (!casedDictWordArray.isEmpty() && casedDictWordArray.size() <= restPhrase.size()) {
             int currentWord = 0;
 
             for (String dictWordPart : casedDictWordArray) {
@@ -516,19 +514,19 @@ public class ParserImpl implements Parser {
     }
 
     private String makeQuestionsForTemplate(ArrayList<TemplateElement> templateRest) throws IFML2Exception {
-        String result = "";
+        StringBuilder result = new StringBuilder();
 
         for (TemplateElement templateElement : templateRest) {
             if (templateElement instanceof LiteralTemplateElement) {
-                result += ' ' + ((LiteralTemplateElement) templateElement).getSynonyms().get(0);
+                result.append(' ').append(((LiteralTemplateElement) templateElement).getSynonyms().get(0));
             } else if (templateElement instanceof ObjectTemplateElement) {
-                result += ' ' + ((ObjectTemplateElement) templateElement).getGramCase().getQuestionWord();
+                result.append(' ').append(((ObjectTemplateElement) templateElement).getGramCase().getQuestionWord());
             } else {
                 throw new IFML2Exception("Системная ошибка: ЭлементШаблона неизвестного типа.");
             }
         }
 
-        return format("%s?", uppercaseFirstLetter(result.trim()));
+        return format("%s?", uppercaseFirstLetter(result.toString().trim()));
     }
 
     private class TemplateElementFitResult {

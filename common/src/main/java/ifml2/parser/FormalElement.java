@@ -6,8 +6,6 @@ import ifml2.vm.values.Value;
 
 public abstract class FormalElement {
 
-    public IFMLObject object = null;
-
     private String parameterName;
 
     public FormalElement(final String parameterName) {

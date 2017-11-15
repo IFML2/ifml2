@@ -10,7 +10,7 @@ public class ParseResult {
     public Action action = null;
     public List<FormalElement> formalElements = null;
 
-    public ParseResult(Action action, ArrayList<FormalElement> formalElements) {
+    public ParseResult(Action action, List<FormalElement> formalElements) {
         this.action = action;
         this.formalElements = formalElements;
     }

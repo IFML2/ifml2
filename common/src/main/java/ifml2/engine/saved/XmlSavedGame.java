@@ -77,7 +77,7 @@ public class XmlSavedGame implements SavedGame {
     }
 
     public List<SavedVariable> getGlobalVars() {
-        return (List<SavedVariable>) globalVars;
+        return globalVars;
     }
 
     public void setGlobalVars(List<SavedVariable> globalVars) {
@@ -85,7 +85,7 @@ public class XmlSavedGame implements SavedGame {
     }
 
     public List<SavedVariable> getSystemVars() {
-        return (List<SavedVariable>) systemVars;
+        return systemVars;
     }
 
     public void setSystemVars(List<SavedVariable> systemVars) {
@@ -101,7 +101,7 @@ public class XmlSavedGame implements SavedGame {
     }
 
     public List<SavedLocation> getSavedLocations() {
-        return (List<SavedLocation>) savedLocations;
+        return savedLocations;
     }
 
     public void setSavedLocations(List<SavedLocation> savedLocations) {
@@ -109,7 +109,7 @@ public class XmlSavedGame implements SavedGame {
     }
 
     public List<SavedItem> getSavedItems() {
-        return (List<SavedItem>) savedItems;
+        return savedItems;
     }
 
     public void setSavedItems(List<SavedItem> savedItems) {
@@ -162,13 +162,8 @@ public class XmlSavedGame implements SavedGame {
         }
     }
 
-    private static void restoreGlobalVariables(
-            List<SavedVariable> globalVariables,
-            EngineImpl.DataHelper dataHelper
-    ) throws IFML2Exception {
-        for (SavedVariable var : globalVariables) {
-            dataHelper.setGlobalVariable(var.getName(), var.getValue());
-        }
+    private static void restoreGlobalVariables(List<SavedVariable> globalVariables, EngineImpl.DataHelper dataHelper) throws IFML2Exception {
+        globalVariables.forEach(dataHelper::setGlobalVariable);
     }
 
     private static void restoreSavedLocations(

@@ -5,6 +5,7 @@ import static ifml2.om.Procedure.SystemProcedureType.SHOW_LOCATION;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import ifml2.Environment;
 import ifml2.IFML2Exception;
@@ -31,7 +32,7 @@ public class VirtualMachineImpl implements VirtualMachine {
         this.environment = environment;
     }
 
-    private final HashMap<String, Value> systemConstants = new HashMap<String, Value>() {
+    private final Map<String, Value> systemConstants = new HashMap<String, Value>() {
         {
             put(BooleanValue.TRUE, new BooleanValue(true));
             put(BooleanValue.FALSE, new BooleanValue(false));
@@ -42,7 +43,7 @@ public class VirtualMachineImpl implements VirtualMachine {
     private Engine engine;
     private Environment environment;
 
-    private final HashMap<SystemProcedureType, Procedure> inheritedSystemProcedures = new HashMap<SystemProcedureType, Procedure>() {
+    private final Map<SystemProcedureType, Procedure> inheritedSystemProcedures = new HashMap<SystemProcedureType, Procedure>() {
         @Override
         public Procedure get(Object key) {
             // lazy initialization
@@ -129,9 +130,8 @@ public class VirtualMachineImpl implements VirtualMachine {
             // not inherited! do as usual...
             outTextLn(location.getName());
             outTextLn(location.getDescription());
-            if (location.getItems().size() > 0) {
-                String objectsList = convertObjectsToString(location.getItems());
-                outTextLn("А также тут {0}", objectsList);
+            if (!location.getItems().isEmpty()) {
+                outTextLn("А также тут {0}", convertObjectsToString(location.getItems()));
             }
         }
     }
@@ -211,7 +211,7 @@ public class VirtualMachineImpl implements VirtualMachine {
 
         if (paramters != null && !paramters.isEmpty()) {
             paramters.stream()
-                    .filter(paramter -> paramter.name != null)
+                    .filter(parameter -> parameter.name != null)
                     .forEach(runningContext::putVariable);
         }
 

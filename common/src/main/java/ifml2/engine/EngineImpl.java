@@ -774,6 +774,14 @@ public class EngineImpl implements Engine {
             return environment.getStory().getLocations();
         }
 
+        public void setGlobalVariable(SavedVariable var) {
+            try {
+                setGlobalVariable(var.getName(), var.getValue());
+            } catch (IFML2Exception ex) {
+                // TODO: ???
+            }
+        }
+
         public void setGlobalVariable(String name, String expression) throws IFML2Exception {
             Value value = ExpressionCalculator.calculate(virtualMachine.createRunningContext(), expression);
             globalVariables.put(name.toLowerCase(), value);

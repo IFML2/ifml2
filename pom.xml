@@ -5,7 +5,7 @@
 
     <groupId>ifml2</groupId>
     <artifactId>ifml2</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>2.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>IFML2</name>
@@ -17,6 +17,7 @@
         <module>fx</module>
         <module>platform</module>
         <module>base</module>
+        
     </modules>
 
     <properties>
@@ -34,49 +35,49 @@
             <dependency>
                 <groupId>ifml2</groupId>
                 <artifactId>base</artifactId>
-                <version>2.0.0-SNAPSHOT</version>
+                <version>2.1.0-SNAPSHOT</version>
             </dependency>
 
             <dependency>
                 <groupId>ifml2</groupId>
                 <artifactId>helper</artifactId>
-                <version>2.0.0-SNAPSHOT</version>
+                <version>2.1.0-SNAPSHOT</version>
             </dependency>
 
             <dependency>
                 <groupId>ifml2</groupId>
                 <artifactId>common</artifactId>
-                <version>2.0.0-SNAPSHOT</version>
+                <version>2.1.0-SNAPSHOT</version>
             </dependency>
 
             <dependency>
                 <groupId>ifml2</groupId>
                 <artifactId>gui</artifactId>
-                <version>2.0.0-SNAPSHOT</version>
+                <version>2.1.0-SNAPSHOT</version>
             </dependency>
 
             <dependency>
                 <groupId>ifml2</groupId>
                 <artifactId>tester</artifactId>
-                <version>2.0.0-SNAPSHOT</version>
+                <version>2.1.0-SNAPSHOT</version>
             </dependency>
 
             <dependency>
                 <groupId>ifml2</groupId>
                 <artifactId>player</artifactId>
-                <version>2.0.0-SNAPSHOT</version>
+                <version>2.1.0-SNAPSHOT</version>
             </dependency>
 
             <dependency>
                 <groupId>ifml2</groupId>
                 <artifactId>editor</artifactId>
-                <version>2.0.0-SNAPSHOT</version>
+                <version>2.1.0-SNAPSHOT</version>
             </dependency>
 
             <dependency>
                 <groupId>ifml2</groupId>
                 <artifactId>fx-player</artifactId>
-                <version>2.0.0-SNAPSHOT</version>
+                <version>2.1.0-SNAPSHOT</version>
             </dependency>
 
             <dependency>
