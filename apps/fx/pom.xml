@@ -19,4 +19,11 @@
     <name>IFML2 :: APPLICATIONS :: FX</name>
     <description>JavaFX applications and utility</description>
 
+    <modules>
+        <module>fx-editor</module>
+        <module>fx-player</module>
+        <module>fx-tester</module>
+        <module>fx-launcher</module>
+    </modules>
+
 </project>
