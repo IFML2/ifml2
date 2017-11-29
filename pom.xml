@@ -12,6 +12,7 @@
     <description>Interactive Fiction Markup Language 2.0</description>
 
     <modules>
+        <module>apps</module>
         <module>legacy</module>
     </modules>
 
