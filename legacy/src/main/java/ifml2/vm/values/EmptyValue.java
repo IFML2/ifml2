@@ -8,30 +8,25 @@ import static ifml2.vm.values.Value.CompareResult.UNEQUAL;
 /**
  * Empty value
  */
-public class EmptyValue extends Value
-{
+public class EmptyValue extends Value {
 
     @Override
-    public String getTypeName()
-    {
+    public String getTypeName() {
         return "пусто";
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return toLiteral();
     }
 
     @Override
-    public String toLiteral()
-    {
+    public String toLiteral() {
         return "пусто";
     }
 
     @Override
-    public CompareResult compareTo(@NotNull Value rightValue)
-    {
+    public CompareResult compareTo(@NotNull Value rightValue) {
         return rightValue instanceof EmptyValue ? EQUAL : UNEQUAL;
     }
 }

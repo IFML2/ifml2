@@ -8,15 +8,13 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 
-public class ReturnInstrEditor extends AbstractInstrEditor
-{
+public class ReturnInstrEditor extends AbstractInstrEditor {
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
     private JTextField returnExpressionText;
 
-    public ReturnInstrEditor(Window owner, ReturnInstruction instruction)
-    {
+    public ReturnInstrEditor(Window owner, ReturnInstruction instruction) {
         super(owner);
         initializeEditor(Instruction.getTitleFor(ReturnInstruction.class), contentPane, buttonOK, buttonCancel);
 
@@ -25,14 +23,12 @@ public class ReturnInstrEditor extends AbstractInstrEditor
     }
 
     @Override
-    protected Class<? extends Instruction> getInstrClass()
-    {
+    protected Class<? extends Instruction> getInstrClass() {
         return ReturnInstruction.class;
     }
 
     @Override
-    public void getInstruction(@NotNull Instruction instruction) throws IFML2EditorException
-    {
+    public void getInstruction(@NotNull Instruction instruction) throws IFML2EditorException {
         updateData(instruction);
 
         ReturnInstruction returnInstruction = (ReturnInstruction) instruction;

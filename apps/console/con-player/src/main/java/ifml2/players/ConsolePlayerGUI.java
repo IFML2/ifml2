@@ -6,8 +6,7 @@ import java.io.File;
 
 public class ConsolePlayerGUI {
     /**
-     * @param args
-     *            Not used yet
+     * @param args Not used yet
      */
     public static void main(String[] args) {
         JFileChooser ifmlFileChooser = new JFileChooser();
@@ -24,7 +23,7 @@ public class ConsolePlayerGUI {
         });
 
         if (ifmlFileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-            ConsolePlayer.main(new String[] { ifmlFileChooser.getSelectedFile().getAbsolutePath() });
+            ConsolePlayer.main(new String[]{ifmlFileChooser.getSelectedFile().getAbsolutePath()});
         }
     }
 

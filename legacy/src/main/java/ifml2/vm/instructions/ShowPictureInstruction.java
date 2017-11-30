@@ -6,7 +6,6 @@ import ifml2.vm.RunningContext;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -56,15 +55,12 @@ public class ShowPictureInstruction extends Instruction {
     @Override
     public String toString() {
         String restrictions = "";
-        if (maxHeight > 0 || maxWidth > 0)
-        {
+        if (maxHeight > 0 || maxWidth > 0) {
             restrictions += " с ограничениями";
-            if (maxHeight > 0)
-            {
+            if (maxHeight > 0) {
                 restrictions += format(" по высоте %d", maxHeight);
             }
-            if (maxWidth > 0)
-            {
+            if (maxWidth > 0) {
                 restrictions += format(" по ширине %d", maxWidth);
             }
         }

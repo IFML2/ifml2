@@ -12,15 +12,13 @@ import javax.swing.*;
  * Also you can override init() method and initialize state, properties,
  * add listeners for controlling action state and so on.
  */
-public abstract class ButtonAction extends AbstractAction
-{
+public abstract class ButtonAction extends AbstractAction {
     /**
      * Creates ButtonAction and assigns it to provided button. Button will be enabled.
      *
      * @param button JButton that will be assigned by action
      */
-    public ButtonAction(@NotNull JButton button)
-    {
+    public ButtonAction(@NotNull JButton button) {
         this(button, true);
     }
 
@@ -30,8 +28,7 @@ public abstract class ButtonAction extends AbstractAction
      * @param button    JButton that will be assigned by action
      * @param isEnabled Button enable
      */
-    public ButtonAction(@NotNull JButton button, boolean isEnabled)
-    {
+    public ButtonAction(@NotNull JButton button, boolean isEnabled) {
         super(button.getText(), button.getIcon()); // create abstract action with button text and icon
         button.setAction(this); // set action to button
         setEnabled(isEnabled); // set isEnabled
@@ -44,8 +41,7 @@ public abstract class ButtonAction extends AbstractAction
      * @param button JButton that will be assigned by action
      * @param list   JList which selection controls action enabled property
      */
-    public ButtonAction(@NotNull JButton button, @NotNull JList list)
-    {
+    public ButtonAction(@NotNull JButton button, @NotNull JList list) {
         super(button.getText(), button.getIcon()); // create abstract action with button text and icon
         button.setAction(this); // set action to button
         GUIUtils.makeActionDependentFromJList(this, list); // make action dependent from JList selection
@@ -54,8 +50,7 @@ public abstract class ButtonAction extends AbstractAction
     /**
      * Initialize action. You can register isEnabled listener. Overwrite it for registering listeners for executing at creation.
      */
-    public void init()
-    {
+    public void init() {
         // optional
     }
 }

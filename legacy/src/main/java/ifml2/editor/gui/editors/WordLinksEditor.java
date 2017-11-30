@@ -21,10 +21,14 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static ifml2.om.Word.GramCase.*;
+import static ifml2.om.Word.GramCase.DP;
+import static ifml2.om.Word.GramCase.IP;
+import static ifml2.om.Word.GramCase.PP;
+import static ifml2.om.Word.GramCase.RP;
+import static ifml2.om.Word.GramCase.TP;
+import static ifml2.om.Word.GramCase.VP;
 
-public class WordLinksEditor extends AbstractEditor<WordLinks>
-{
+public class WordLinksEditor extends AbstractEditor<WordLinks> {
     public static final String NEW_WORD_ACTION = "Новое...";
     public static final String DELETE_WORD_ACTION = "Удалить";
     public static final String MAIN_WORD_MUST_BE_SET_ERROR_MESSAGE_DIALOG = "Основное слово не установлено. Его необходимо установить.";
@@ -53,53 +57,40 @@ public class WordLinksEditor extends AbstractEditor<WordLinks>
     private boolean isUpdatingText = false;
     private ArrayList<Word> wordsClone = null;
 
-    public WordLinksEditor(Window owner, final HashMap<String, Word> dictionary, WordLinks wordLinks)
-    {
+    public WordLinksEditor(Window owner, final HashMap<String, Word> dictionary, WordLinks wordLinks) {
         super(owner);
         initializeEditor(DICTIONARY_EDITOR_TITLE, contentPane, buttonOK, null);
 
         // -- init form --
 
-        wordList.addListSelectionListener(new ListSelectionListener()
-        {
+        wordList.addListSelectionListener(new ListSelectionListener() {
             @Override
-            public void valueChanged(ListSelectionEvent e)
-            {
+            public void valueChanged(ListSelectionEvent e) {
                 repaintCurrentWord((Word) wordList.getSelectedValue());
             }
         });
 
-        DocumentListener wordDocListener = new DocumentListener()
-        {
+        DocumentListener wordDocListener = new DocumentListener() {
             @Override
-            public void insertUpdate(DocumentEvent e)
-            {
-                try
-                {
+            public void insertUpdate(DocumentEvent e) {
+                try {
                     updateCurrentWord(e.getDocument());
-                }
-                catch (IFML2EditorException ex)
-                {
+                } catch (IFML2EditorException ex) {
                     GUIUtils.showErrorMessage(WordLinksEditor.this, ex);
                 }
             }
 
             @Override
-            public void removeUpdate(DocumentEvent e)
-            {
-                try
-                {
+            public void removeUpdate(DocumentEvent e) {
+                try {
                     updateCurrentWord(e.getDocument());
-                }
-                catch (IFML2EditorException ex)
-                {
+                } catch (IFML2EditorException ex) {
                     GUIUtils.showErrorMessage(WordLinksEditor.this, ex);
                 }
             }
 
             @Override
-            public void changedUpdate(DocumentEvent e)
-            {
+            public void changedUpdate(DocumentEvent e) {
                 //do nothing
             }
         };
@@ -122,34 +113,26 @@ public class WordLinksEditor extends AbstractEditor<WordLinks>
         ppText.getDocument().putProperty(CASE_DOC_PROPERTY, PP);
         ppText.getDocument().addDocumentListener(wordDocListener);
 
-        newWordButton.setAction(new AbstractAction(NEW_WORD_ACTION, GUIUtils.ADD_ELEMENT_ICON)
-        {
+        newWordButton.setAction(new AbstractAction(NEW_WORD_ACTION, GUIUtils.ADD_ELEMENT_ICON) {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 String newWordIp = JOptionPane.showInputDialog(WORD_IP_QUERY_PROMPT);
-                if (newWordIp != null && !"".equals(newWordIp))
-                {
+                if (newWordIp != null && !"".equals(newWordIp)) {
                     Word word = new Word(newWordIp);
-                    if (dictionary.containsKey(newWordIp))
-                    {
+                    if (dictionary.containsKey(newWordIp)) {
                         JOptionPane.showMessageDialog(WordLinksEditor.this, DUPLICATED_WORD_INFO_MESSAGE, DUPLICATED_WORD_INFO_DIALOG_TITLE,
                                 JOptionPane.INFORMATION_MESSAGE);
                         word = dictionary.get(newWordIp);
-                    }
-                    else
-                    {
+                    } else {
                         dictionary.put(newWordIp, word);
                     }
                     wordsClone.add(word);
                     updateLinksAndMain(word);
 
                     // set main word in case it isn't set
-                    if (mainWordCombo.getSelectedItem() == null)
-                    {
+                    if (mainWordCombo.getSelectedItem() == null) {
                         if (JOptionPane.showConfirmDialog(WordLinksEditor.this, SET_MAIN_WORD_QUERY_PROMPT, SET_MAIN_WORD_DIALOG_TITLE,
-                                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
-                        {
+                                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
                             mainWordCombo.setSelectedItem(word);
                         }
                     }
@@ -157,14 +140,11 @@ public class WordLinksEditor extends AbstractEditor<WordLinks>
             }
         });
 
-        delWordButton.setAction(new AbstractAction(DELETE_WORD_ACTION, GUIUtils.DEL_ELEMENT_ICON)
-        {
+        delWordButton.setAction(new AbstractAction(DELETE_WORD_ACTION, GUIUtils.DEL_ELEMENT_ICON) {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 Word word = (Word) wordList.getSelectedValue();
-                if (word != null && JOptionPane.showConfirmDialog(getContentPane(), WORD_DELETION_QUERY_PROMPT) == JOptionPane.YES_OPTION)
-                {
+                if (word != null && JOptionPane.showConfirmDialog(getContentPane(), WORD_DELETION_QUERY_PROMPT) == JOptionPane.YES_OPTION) {
                     wordsClone.remove(word);
                     updateLinksAndMain(word);
                 }
@@ -180,54 +160,43 @@ public class WordLinksEditor extends AbstractEditor<WordLinks>
         mainWordCombo.setSelectedItem(wordLinks.getMainWord());
     }
 
-    private void updateLinksAndMain(Word word)
-    {
+    private void updateLinksAndMain(Word word) {
         updateWordLinks(word);
         updateMainWord();
     }
 
-    private void updateMainWord()
-    {
+    private void updateMainWord() {
         Object selectedMainWord = mainWordCombo.getSelectedItem();
         mainWordCombo.setModel(new DefaultComboBoxModel(wordsClone.toArray()));
         mainWordCombo.setSelectedItem(selectedMainWord);
     }
 
-    private void updateWordLinks(Word word)
-    {
+    private void updateWordLinks(Word word) {
         updateWordLinks();
         wordList.setSelectedValue(word, true);
     }
 
-    private void updateCurrentWord(Document document) throws IFML2EditorException
-    {
-        if (isUpdatingText)
-        {
+    private void updateCurrentWord(Document document) throws IFML2EditorException {
+        if (isUpdatingText) {
             return;
         }
 
         Word word = (Word) wordList.getSelectedValue();
-        if (word != null)
-        {
+        if (word != null) {
 
             String text = null;
-            try
-            {
+            try {
                 text = document.getText(0, document.getLength());
-            }
-            catch (BadLocationException e)
-            {
+            } catch (BadLocationException e) {
                 GUIUtils.showErrorMessage(WordLinksEditor.this, e);
             }
 
-            if (text != null)
-            {
+            if (text != null) {
                 text = text.trim();
             }
 
             Word.GramCase gramCase = (Word.GramCase) document.getProperty(CASE_DOC_PROPERTY);
-            switch (gramCase)
-            {
+            switch (gramCase) {
                 case IP:
                     word.ip = text;
                     break;
@@ -252,13 +221,10 @@ public class WordLinksEditor extends AbstractEditor<WordLinks>
         }
     }
 
-    private void repaintCurrentWord(Word word)
-    {
+    private void repaintCurrentWord(Word word) {
         isUpdatingText = true;
-        try
-        {
-            if (word != null)
-            {
+        try {
+            if (word != null) {
                 casesPanel.setBorder(new TitledBorder(word.ip));
             }
             ipText.setText(word != null ? word.ip : "");
@@ -267,18 +233,14 @@ public class WordLinksEditor extends AbstractEditor<WordLinks>
             vpText.setText(word != null ? word.vp : "");
             tpText.setText(word != null ? word.tp : "");
             ppText.setText(word != null ? word.pp : "");
-        }
-        finally
-        {
+        } finally {
             isUpdatingText = false;
         }
     }
 
-    private void updateWordLinks()
-    {
+    private void updateWordLinks() {
         DefaultListModel wordLinksListModel = new DefaultListModel();
-        for (Word word : wordsClone)
-        {
+        for (Word word : wordsClone) {
             wordLinksListModel.addElement(word);
         }
         wordList.setModel(wordLinksListModel);
@@ -287,19 +249,16 @@ public class WordLinksEditor extends AbstractEditor<WordLinks>
     //TODO: привести редактор в порядок; сделать транзакционным! позволить редактировать ИП - через обновление HashMap словаря
 
     @Override
-    public void updateData(@NotNull WordLinks wordLinks)
-    {
+    public void updateData(@NotNull WordLinks wordLinks) {
         wordLinks.getWords().clear();
         wordLinks.getWords().addAll(wordsClone);
         wordLinks.setMainWord((Word) mainWordCombo.getSelectedItem());
     }
 
     @Override
-    protected void validateData() throws DataNotValidException
-    {
+    protected void validateData() throws DataNotValidException {
         // check if main word is set
-        if (mainWordCombo.getSelectedItem() == null)
-        {
+        if (mainWordCombo.getSelectedItem() == null) {
             throw new DataNotValidException(MAIN_WORD_MUST_BE_SET_ERROR_MESSAGE_DIALOG, mainWordCombo);
         }
     }

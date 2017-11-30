@@ -8,7 +8,8 @@
             <documentation>История - тип</documentation>
         </annotation>
         <all>
-            <xs:element name="inheritedSystemProcedures" type="ifml2:inheritedSystemProceduresType" maxOccurs="1" minOccurs="0"/>
+            <xs:element name="inheritedSystemProcedures" type="ifml2:inheritedSystemProceduresType" maxOccurs="1"
+                        minOccurs="0"/>
             <element name="storyOptions" type="ifml2:storyOptionsType" maxOccurs="1" minOccurs="0"/>
             <element name="libraries" type="ifml2:usedLibrariesType" maxOccurs="1" minOccurs="0"/>
             <element name="attribute-definitions" type="ifml2:attribute-definitionsType" maxOccurs="1" minOccurs="0"/>
@@ -467,7 +468,7 @@
             </extension>
         </complexContent>
     </complexType>
-    
+
     <xs:complexType name="instructionShowPictureType">
         <complexContent>
             <extension base="ifml2:instructionType">
@@ -570,7 +571,8 @@
             <element name="startProcedureOption" type="ifml2:startProcedureOptionType"/>
             <element name="storyDescription" type="ifml2:storyDescriptionType"/>
             <element name="globalVars" type="ifml2:varsType" minOccurs="0"/>
-            <xs:element name="systemCommandsDisableOption" type="ifml2:systemCommandsDisableOptionType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="systemCommandsDisableOption" type="ifml2:systemCommandsDisableOptionType" minOccurs="0"
+                        maxOccurs="1"/>
         </all>
     </complexType>
 
@@ -606,7 +608,8 @@
         <restriction base="string">
             <enumeration value="showLocation">
                 <annotation>
-                    <documentation>Системная процедура, выводящая описание текущей локации: её имя, описание и список предметов в ней.
+                    <documentation>Системная процедура, выводящая описание текущей локации: её имя, описание и список
+                        предметов в ней.
                         Параметров не принимает.
                     </documentation>
                 </annotation>

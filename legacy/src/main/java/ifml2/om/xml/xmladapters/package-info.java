@@ -3,4 +3,4 @@
         @XmlJavaTypeAdapter(value = ifml2.story.xmladapters.DictionaryAdapter.class, type=HashMap.class)/*,
         @XmlJavaTypeAdapter(value = PositionAdapter.class, type= IPosition.class)*/
         //})
-package ifml2.om.xml.xmladapters;
+        package ifml2.om.xml.xmladapters;

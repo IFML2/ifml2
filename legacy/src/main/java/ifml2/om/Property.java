@@ -7,16 +7,26 @@ import ifml2.IFML2Exception;
 import ifml2.IFMLEntity;
 import ifml2.vm.ExpressionCalculator;
 import ifml2.vm.RunningContext;
-import ifml2.vm.values.*;
+import ifml2.vm.values.BooleanValue;
+import ifml2.vm.values.CollectionValue;
+import ifml2.vm.values.NumberValue;
+import ifml2.vm.values.TextValue;
+import ifml2.vm.values.Value;
 
 import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlIDREF;
+import javax.xml.bind.annotation.XmlTransient;
 
-import static ifml2.om.xml.XmlSchemaConstants.*;
+import static ifml2.om.xml.XmlSchemaConstants.PROPERTY_COLLECTION_ITEM_ELEMENT;
+import static ifml2.om.xml.XmlSchemaConstants.PROPERTY_NAME_ATTRIBUTE;
+import static ifml2.om.xml.XmlSchemaConstants.PROPERTY_VALUE_ATTRIBUTE;
 
 @XmlAccessorType(XmlAccessType.NONE)
-public class Property extends IFMLEntity
-{
+public class Property extends IFMLEntity {
     @XmlAttribute(name = PROPERTY_NAME_ATTRIBUTE)
     private String name; //can't load as IDREF because this name isn't unique
 
@@ -33,13 +43,11 @@ public class Property extends IFMLEntity
     private Value value;
 
     @SuppressWarnings("UnusedDeclaration")
-    public Property()
-    {
+    public Property() {
         // JAXB
     }
 
-    public Property(PropertyDefinition propertyDefinition, Role parentRole)
-    {
+    public Property(PropertyDefinition propertyDefinition, Role parentRole) {
         name = propertyDefinition.getName();
         this.parentRole = parentRole;
         valueExpression = propertyDefinition.getValue();
@@ -48,8 +56,7 @@ public class Property extends IFMLEntity
     }
 
     @Override
-    protected Property clone() throws CloneNotSupportedException
-    {
+    protected Property clone() throws CloneNotSupportedException {
         Property clone = (Property) super.clone(); // flat clone
 
         // deep clone
@@ -59,8 +66,7 @@ public class Property extends IFMLEntity
         return clone;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
@@ -71,19 +77,16 @@ public class Property extends IFMLEntity
      * @param parent       Parent, should be Role
      */
     @SuppressWarnings("UnusedDeclaration")
-    private void afterUnmarshal(final Unmarshaller unmarshaller, final Object parent)
-    {
+    private void afterUnmarshal(final Unmarshaller unmarshaller, final Object parent) {
         assert parent instanceof Role;
         parentRole = (Role) parent;
     }
 
-    public Value getValue()
-    {
+    public Value getValue() {
         return value;
     }
 
-    public void setValue(Value value)
-    {
+    public void setValue(Value value) {
         this.value = value;
     }
 
@@ -92,20 +95,16 @@ public class Property extends IFMLEntity
      *
      * @param runningContext Running context
      */
-    public void evaluateFromPrimaryExpression(RunningContext runningContext) throws IFML2Exception
-    {
+    public void evaluateFromPrimaryExpression(RunningContext runningContext) throws IFML2Exception {
         // get PropertyDefinition
         assert parentRole != null;
         PropertyDefinition propertyDefinition = parentRole.getRoleDefinition().findPropertyDefinitionByName(name);
-        switch (propertyDefinition.getType())
-        {
+        switch (propertyDefinition.getType()) {
             case COLLECTION:
                 value = new CollectionValue(collectionItems);
                 //set parent to items
-                for (IFMLObject ifmlObject : collectionItems)
-                {
-                    if (ifmlObject instanceof Item)
-                    {
+                for (IFMLObject ifmlObject : collectionItems) {
+                    if (ifmlObject instanceof Item) {
                         ((Item) ifmlObject).setContainer(collectionItems);
                     }
                 }
@@ -113,8 +112,7 @@ public class Property extends IFMLEntity
 
             case LOGIC:
                 Value logicValue = ExpressionCalculator.calculate(runningContext, valueExpression);
-                if (!(logicValue instanceof BooleanValue))
-                {
+                if (!(logicValue instanceof BooleanValue)) {
                     throw new IFML2Exception("Выражение \"{0}\" для свойства \"{1}\" не логического типа", valueExpression,
                             propertyDefinition.getName());
                 }
@@ -123,8 +121,7 @@ public class Property extends IFMLEntity
 
             case NUMBER:
                 Value numberValue = ExpressionCalculator.calculate(runningContext, valueExpression);
-                if (!(numberValue instanceof NumberValue))
-                {
+                if (!(numberValue instanceof NumberValue)) {
                     throw new IFML2Exception("Выражение \"{0}\" для свойства \"{1}\" не числового типа", valueExpression,
                             propertyDefinition.getName());
                 }
@@ -133,8 +130,7 @@ public class Property extends IFMLEntity
 
             case TEXT:
                 Value textValue = ExpressionCalculator.calculate(runningContext, valueExpression);
-                if (!(textValue instanceof TextValue))
-                {
+                if (!(textValue instanceof TextValue)) {
                     throw new IFML2Exception("Выражение \"{0}\" для свойства \"{1}\" не текстового типа", valueExpression,
                             propertyDefinition.getName());
                 }
@@ -147,33 +143,27 @@ public class Property extends IFMLEntity
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return name; /*MessageFormat.format("Свойство \"{0}\" = {1}", name, value);*/
     }
 
-    public PropertyDefinition findDefinition()
-    {
+    public PropertyDefinition findDefinition() {
         return parentRole.getRoleDefinition().findPropertyDefinitionByName(name);
     }
 
-    public String getValueExpression()
-    {
+    public String getValueExpression() {
         return valueExpression;
     }
 
-    public void setValueExpression(String valueExpression)
-    {
+    public void setValueExpression(String valueExpression) {
         this.valueExpression = valueExpression;
     }
 
-    public EventList<IFMLObject> getCollectionItems()
-    {
+    public EventList<IFMLObject> getCollectionItems() {
         return collectionItems;
     }
 
-    public void setCollectionItems(EventList<IFMLObject> collectionItems)
-    {
+    public void setCollectionItems(EventList<IFMLObject> collectionItems) {
         this.collectionItems = collectionItems;
     }
 }

@@ -14,20 +14,34 @@ import ifml2.om.xml.xmladapters.UsedLibrariesAdapter;
 import org.jetbrains.annotations.NotNull;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
-import static ifml2.om.xml.XmlSchemaConstants.*;
+import static ifml2.om.xml.XmlSchemaConstants.ITEMS_ITEM_ELEMENT;
+import static ifml2.om.xml.XmlSchemaConstants.LOCATIONS_LOCATION_ELEMENT;
+import static ifml2.om.xml.XmlSchemaConstants.PROCEDURES_PROCEDURE_ELEMENT;
+import static ifml2.om.xml.XmlSchemaConstants.STORY_ITEMS_ELEMENT;
+import static ifml2.om.xml.XmlSchemaConstants.STORY_LOCATIONS_ELEMENT;
+import static ifml2.om.xml.XmlSchemaConstants.STORY_PROCEDURES_ELEMENT;
 
 @XmlRootElement(name = "story")
 @XmlAccessorType(XmlAccessType.NONE)
-public class Story
-{
+public class Story {
     @XmlTransient
-    private static HashMap<Class, String> CLASSES_NAMES = new HashMap<Class, String>()
-    {
+    private static HashMap<Class, String> CLASSES_NAMES = new HashMap<Class, String>() {
         {
             put(Location.class, Location.getClassName());
             put(Item.class, Item.getClassName());
@@ -80,25 +94,20 @@ public class Story
     {
         // subscribe to locations changes for object tree update
         locations.addListEventListener(listChanges -> {
-            while (listChanges.next() && listChanges.getType() == ListEvent.DELETE)
-            {
+            while (listChanges.next() && listChanges.getType() == ListEvent.DELETE) {
                 EventList<Location> locList = listChanges.getSourceList();
 
                 // delete from items
-                for (Item item : items)
-                {
+                for (Item item : items) {
                     EventList<Location> startLocations = item.getStartingPosition().getLocations();
                     startLocations.stream().filter(startLocation -> !locList.contains(startLocation)).forEach(startLocations::remove);
                 }
 
                 // delete from locations
-                for (Location location : locList)
-                {
-                    for (ExitDirection direction : ExitDirection.values())
-                    {
+                for (Location location : locList) {
+                    for (ExitDirection direction : ExitDirection.values()) {
                         Location destination = location.getExit(direction);
-                        if (destination != null && !locList.contains(destination))
-                        {
+                        if (destination != null && !locList.contains(destination)) {
                             location.setExit(direction, null);
                         }
                     }
@@ -108,14 +117,11 @@ public class Story
 
                 // delete from heap
                 Iterator<IFMLObject> iterator = objectsHeap.values().iterator();
-                while (iterator.hasNext())
-                {
+                while (iterator.hasNext()) {
                     IFMLObject object = iterator.next();
-                    if (object instanceof Location)
-                    {
+                    if (object instanceof Location) {
                         Location location = (Location) object;
-                        if (!locList.contains(location))
-                        {
+                        if (!locList.contains(location)) {
                             iterator.remove();
                         }
                     }
@@ -125,17 +131,14 @@ public class Story
 
         // subscribe to procedures changes for object tree update
         procedures.addListEventListener(listChanges -> {
-            while (listChanges.next() && listChanges.getType() == ListEvent.DELETE)
-            {
+            while (listChanges.next() && listChanges.getType() == ListEvent.DELETE) {
                 EventList<Procedure> proceduresList = listChanges.getSourceList();
 
                 // delete from actions
-                for (Action action : actions)
-                {
+                for (Action action : actions) {
                     Action.ProcedureCall procedureCall = action.getProcedureCall();
                     Procedure procedure = procedureCall.getProcedure();
-                    if (procedure != null && !proceduresList.contains(procedure))
-                    {
+                    if (procedure != null && !proceduresList.contains(procedure)) {
                         procedureCall.setProcedure(null);
                     }
                 }
@@ -143,15 +146,13 @@ public class Story
                 // delete from start procedure
                 StoryOptions.StartProcedureOption startProcedureOption = storyOptions.getStartProcedureOption();
                 Procedure procedure = startProcedureOption.getProcedure();
-                if (procedure != null && !proceduresList.contains(procedure))
-                {
+                if (procedure != null && !proceduresList.contains(procedure)) {
                     startProcedureOption.setProcedure(null);
                 }
 
                 // -- delete from system inherited procedures --
                 Procedure parseErrorHandler = inheritedSystemProcedures.getParseErrorHandler();
-                if(parseErrorHandler != null && !proceduresList.contains(parseErrorHandler))
-                {
+                if (parseErrorHandler != null && !proceduresList.contains(parseErrorHandler)) {
                     inheritedSystemProcedures.setParseErrorHandler(null);
                 }
             }
@@ -160,14 +161,12 @@ public class Story
         // todo subscribe to other lists changes
     }
 
-    public DataHelper getDataHelper()
-    {
+    public DataHelper getDataHelper() {
         return dataHelper;
     }
 
     @Override
-    public Story clone() throws CloneNotSupportedException
-    {
+    public Story clone() throws CloneNotSupportedException {
         //noinspection UnnecessaryLocalVariable
         Story clone = (Story) super.clone(); // todo check subscriptions made in anonymous constructor
        /* clone.actions = GlazedLists.eventList(actions);
@@ -180,73 +179,57 @@ public class Story
         return clone;
     }
 
-    public StoryOptions getStoryOptions()
-    {
+    public StoryOptions getStoryOptions() {
         return storyOptions;
     }
 
-    public EventList<Library> getLibraries()
-    {
+    public EventList<Library> getLibraries() {
         return libraries;
     }
 
-    public HashMap<String, Word> getDictionary()
-    {
+    public HashMap<String, Word> getDictionary() {
         return dictionary;
     }
 
-    public EventList<Location> getLocations()
-    {
+    public EventList<Location> getLocations() {
         return locations;
     }
 
-    public EventList<Item> getItems()
-    {
+    public EventList<Item> getItems() {
         return items;
     }
 
-    public HashMap<String, IFMLObject> getObjectsHeap()
-    {
+    public HashMap<String, IFMLObject> getObjectsHeap() {
         return objectsHeap;
     }
 
     @XmlTransient
-    public void setObjectsHeap(HashMap<String, IFMLObject> objectsHeap)
-    {
+    public void setObjectsHeap(HashMap<String, IFMLObject> objectsHeap) {
         this.objectsHeap = objectsHeap;
     }
 
-    public EventList<Action> getActions()
-    {
+    public EventList<Action> getActions() {
         return actions;
     }
 
-    public EventList<Action> getAllActions()
-    {
+    public EventList<Action> getAllActions() {
         EventList<Action> allActions = new BasicEventList<>();
-        if (actions != null)
-        {
+        if (actions != null) {
             allActions.addAll(actions);
         }
-        if (libraries != null)
-        {
-            for (Library library : libraries)
-            {
+        if (libraries != null) {
+            for (Library library : libraries) {
                 allActions.addAll(library.actions);
             }
         }
         return allActions;
     }
 
-    public EventList<Attribute> getAllAttributes()
-    {
-        if (allAttributes == null)
-        {
+    public EventList<Attribute> getAllAttributes() {
+        if (allAttributes == null) {
             allAttributes = new BasicEventList<>();
-            if (libraries != null)
-            {
-                for (Library library : libraries)
-                {
+            if (libraries != null) {
+                for (Library library : libraries) {
                     allAttributes.addAll(library.getAttributes());
                 }
             }
@@ -254,15 +237,11 @@ public class Story
         return allAttributes;
     }
 
-    public List<RoleDefinition> getAllRoleDefinitions()
-    {
-        if (allRoleDefinitions == null)
-        {
+    public List<RoleDefinition> getAllRoleDefinitions() {
+        if (allRoleDefinitions == null) {
             allRoleDefinitions = new BasicEventList<>();
-            if (libraries != null)
-            {
-                for (Library library : libraries)
-                {
+            if (libraries != null) {
+                for (Library library : libraries) {
                     allRoleDefinitions.addAll(library.getRoleDefinitions());
                 }
             }
@@ -270,35 +249,27 @@ public class Story
         return allRoleDefinitions;
     }
 
-    public EventList<Procedure> getProcedures()
-    {
+    public EventList<Procedure> getProcedures() {
         return procedures;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return MessageFormat.format("История \"{0}\"", id);
     }
 
-    public Procedure getSystemInheritorProcedure(SystemProcedureType systemProcedureType)
-    {
+    public Procedure getSystemInheritorProcedure(SystemProcedureType systemProcedureType) {
         // for this story
-        for (Procedure procedure : procedures)
-        {
-            if (systemProcedureType.equals(procedure.getInheritsSystemProcedure()))
-            {
+        for (Procedure procedure : procedures) {
+            if (systemProcedureType.equals(procedure.getInheritsSystemProcedure())) {
                 return procedure;
             }
         }
 
         // for libs
-        for (Library library : libraries)
-        {
-            for (Procedure procedure : library.procedures)
-            {
-                if (systemProcedureType.equals(procedure.getInheritsSystemProcedure()))
-                {
+        for (Library library : libraries) {
+            for (Procedure procedure : library.procedures) {
+                if (systemProcedureType.equals(procedure.getInheritsSystemProcedure())) {
                     return procedure;
                 }
             }
@@ -307,47 +278,38 @@ public class Story
         return null;
     }
 
-    public Procedure getStartProcedure()
-    {
+    public Procedure getStartProcedure() {
         return storyOptions.getStartProcedureOption().getProcedure();
     }
 
-    public Location getStartLocation()
-    {
+    public Location getStartLocation() {
         return storyOptions.getStartLocationOption().getLocation();
     }
 
-    public Location getAnyLocation()
-    {
+    public Location getAnyLocation() {
         return locations.iterator().next();
     }
 
-    public boolean IsShowStartLocDesc()
-    {
+    public boolean IsShowStartLocDesc() {
         return storyOptions.getStartLocationOption().getShowStartLocDesc();
     }
 
-    public void addLocation(@NotNull Location location)
-    {
+    public void addLocation(@NotNull Location location) {
         locations.add(location);
         objectsHeap.put(location.getId().toLowerCase(), location);
     }
 
-    public void addItem(@NotNull Item item)
-    {
+    public void addItem(@NotNull Item item) {
         items.add(item);
         objectsHeap.put(item.getId().toLowerCase(), item);
     }
 
-    public InheritedSystemProcedures getInheritedSystemProcedures()
-    {
+    public InheritedSystemProcedures getInheritedSystemProcedures() {
         return inheritedSystemProcedures;
     }
 
-    public class DataHelper
-    {
-        public EventList<Location> getLocations()
-        {
+    public class DataHelper {
+        public EventList<Location> getLocations() {
             return locations;
         }
 
@@ -357,15 +319,12 @@ public class Story
          * @param id Location id.
          * @return Location if finds and null otherwise.
          */
-        public Location findLocationById(@NotNull String id)
-        {
+        public Location findLocationById(@NotNull String id) {
             String loweredId = id.trim().toLowerCase();
 
-            if (objectsHeap.containsKey(loweredId))
-            {
+            if (objectsHeap.containsKey(loweredId)) {
                 IFMLObject object = objectsHeap.get(loweredId);
-                if (object instanceof Location)
-                {
+                if (object instanceof Location) {
                     return (Location) object;
                 }
             }
@@ -373,20 +332,16 @@ public class Story
             return null;
         }
 
-        public EventList<Action> getAllActions()
-        {
+        public EventList<Action> getAllActions() {
             return Story.this.getAllActions();
         }
 
-        public HashMap<String, Word> getDictionary()
-        {
+        public HashMap<String, Word> getDictionary() {
             return dictionary;
         }
 
-        public String generateIdByName(String name, @NotNull Class forClass)
-        {
-            if (name == null || "".equals(name))
-            {
+        public String generateIdByName(String name, @NotNull Class forClass) {
+            if (name == null || "".equals(name)) {
                 return "";
             }
 
@@ -394,32 +349,25 @@ public class Story
 
             String camelCaseId = "";
 
-            for (String word : words)
-            {
+            for (String word : words) {
                 camelCaseId += CommonUtils.uppercaseFirstLetter(word);
             }
 
             String classedId = camelCaseId;
 
             // adding type postfix for more uniqueness (avoiding JAXB collection typing bug JAXB-546)
-            if (Location.class.equals(forClass))
-            {
+            if (Location.class.equals(forClass)) {
                 classedId += "Лок";
-            }
-            else if (Item.class.equals(forClass))
-            {
+            } else if (Item.class.equals(forClass)) {
                 classedId += "Пред";
-            }
-            else
-            {
+            } else {
                 throw new NotImplementedException();
             }
 
             String id = classedId;
 
             int counter = 1;
-            while (findObjectById(id) != null)
-            {
+            while (findObjectById(id) != null) {
                 id = classedId + counter;
                 counter++;
             }
@@ -427,12 +375,10 @@ public class Story
             return id;
         }
 
-        public String getObjectClassName(@NotNull Object object) throws IFML2Exception
-        {
+        public String getObjectClassName(@NotNull Object object) throws IFML2Exception {
             Class objectClass = object.getClass();
 
-            if (CLASSES_NAMES.containsKey(objectClass))
-            {
+            if (CLASSES_NAMES.containsKey(objectClass)) {
                 return CLASSES_NAMES.get(objectClass);
             }
 
@@ -445,52 +391,42 @@ public class Story
          * @param id object id
          * @return object if found, null otherwise
          */
-        public Object findObjectById(String id)
-        {
+        public Object findObjectById(String id) {
             String loweredId = id.toLowerCase();
 
-            if (objectsHeap.containsKey(loweredId))
-            {
+            if (objectsHeap.containsKey(loweredId)) {
                 return objectsHeap.get(loweredId);
             }
 
-            if (dictionary.containsKey(loweredId))
-            {
+            if (dictionary.containsKey(loweredId)) {
                 return dictionary.get(loweredId);
             }
 
             return findProcedureById(loweredId);
         }
 
-        public Procedure findProcedureById(@NotNull String name)
-        {
-            for (Procedure procedure : procedures)
-            {
-                if (name.equalsIgnoreCase(procedure.getName()))
-                {
+        public Procedure findProcedureById(@NotNull String name) {
+            for (Procedure procedure : procedures) {
+                if (name.equalsIgnoreCase(procedure.getName())) {
                     return procedure;
                 }
             }
             return null;
         }
 
-        public EventList<Library> getLibraries()
-        {
+        public EventList<Library> getLibraries() {
             return libraries;
         }
 
-        public EventList<Action> getActions()
-        {
+        public EventList<Action> getActions() {
             return actions;
         }
 
-        public EventList<Procedure> getProcedures()
-        {
+        public EventList<Procedure> getProcedures() {
             return procedures;
         }
 
-        public EventList<Item> getItems()
-        {
+        public EventList<Item> getItems() {
             return items;
         }
 
@@ -500,15 +436,12 @@ public class Story
          * @param id Item id.
          * @return Item if finds and null otherwise.
          */
-        public Item findItemById(@NotNull String id)
-        {
+        public Item findItemById(@NotNull String id) {
             String loweredId = id.trim().toLowerCase();
 
-            if (objectsHeap.containsKey(loweredId))
-            {
+            if (objectsHeap.containsKey(loweredId)) {
                 IFMLObject object = objectsHeap.get(loweredId);
-                if (object instanceof Item)
-                {
+                if (object instanceof Item) {
                     return (Item) object;
                 }
             }
@@ -523,12 +456,9 @@ public class Story
          * @param library   Library to find by path.
          * @return true if the same library is found and false otherwise.
          */
-        public boolean isLibListContainsLib(List<Library> libraries, Library library)
-        {
-            for (Library lib : libraries)
-            {
-                if (lib.getPath().equalsIgnoreCase(library.getPath()))
-                {
+        public boolean isLibListContainsLib(List<Library> libraries, Library library) {
+            for (Library lib : libraries) {
+                if (lib.getPath().equalsIgnoreCase(library.getPath())) {
                     return true;
                 }
             }
@@ -543,15 +473,12 @@ public class Story
          * @return list of affected actions
          */
         @NotNull
-        public ArrayList<Action> findActionsByProcedure(@NotNull Procedure procedure)
-        {
+        public ArrayList<Action> findActionsByProcedure(@NotNull Procedure procedure) {
             ArrayList<Action> results = new ArrayList<>();
 
-            for (Action action : actions)
-            {
+            for (Action action : actions) {
                 Action.ProcedureCall procedureCall = action.getProcedureCall();
-                if (procedure.equals(procedureCall.getProcedure()))
-                {
+                if (procedure.equals(procedureCall.getProcedure())) {
                     results.add(action);
                 }
             }
@@ -563,13 +490,11 @@ public class Story
          *
          * @return copied list of all role definitions
          */
-        public List<RoleDefinition> getCopyOfAllRoleDefinitions()
-        {
+        public List<RoleDefinition> getCopyOfAllRoleDefinitions() {
             return GlazedLists.eventList(Story.this.getAllRoleDefinitions()); // clone list to prevent deleting
         }
 
-        public Collection<IFMLObject> getCopyOfAllObjects()
-        {
+        public Collection<IFMLObject> getCopyOfAllObjects() {
             return GlazedLists.eventList(objectsHeap.values());
         }
     }

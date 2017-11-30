@@ -1,7 +1,11 @@
 package ifml2.engine.saved;
 
-import ifml2.om.*;
+import ifml2.om.Item;
+import ifml2.om.Property;
+import ifml2.om.PropertyDefinition;
 import ifml2.om.PropertyDefinition.Type;
+import ifml2.om.Role;
+import ifml2.om.Story;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

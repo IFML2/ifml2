@@ -1,12 +1,14 @@
 <?xml version = "1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/css">
         note { color: red }
-</xml-stylesheet?>
+        </xml-stylesheet?>
 <ifml2notes>
     <release version="Прототип 10 выпуск 5 правка 4 (Хоббит, глава 4)">
         <noteBlock date="10.04.2014">
-            <note type="add" area="internal">Добавлен класс ButtonAction для автоматизации создания действий на кнопках и повышения
-                наглядности кнопок в интерфейсе. На кнопки локаций повешены иконки для наглядности, их действия превращены в ButtonAction.
+            <note type="add" area="internal">Добавлен класс ButtonAction для автоматизации создания действий на кнопках
+                и повышения
+                наглядности кнопок в интерфейсе. На кнопки локаций повешены иконки для наглядности, их действия
+                превращены в ButtonAction.
             </note>
         </noteBlock>
     </release>

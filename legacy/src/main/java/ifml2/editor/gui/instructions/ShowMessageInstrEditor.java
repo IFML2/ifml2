@@ -12,8 +12,7 @@ import java.text.MessageFormat;
 import static ifml2.vm.instructions.ShowMessageInstr.Type.EXPRESSION;
 import static ifml2.vm.instructions.ShowMessageInstr.Type.TEXT;
 
-public class ShowMessageInstrEditor extends AbstractInstrEditor
-{
+public class ShowMessageInstrEditor extends AbstractInstrEditor {
     private static final String SHOW_MESSAGE_INSTR_EDITOR_TITLE = Instruction.getTitleFor(ShowMessageInstr.class);
     private static final String TYPE_ERROR = "Message type \"{0}\" is unknown";
     private JPanel contentPane;
@@ -25,15 +24,13 @@ public class ShowMessageInstrEditor extends AbstractInstrEditor
     private JCheckBox beginWithCapCheck;
     private JCheckBox carriageReturnCheck;
 
-    public ShowMessageInstrEditor(Window owner, @NotNull ShowMessageInstr instruction) throws IFML2EditorException
-    {
+    public ShowMessageInstrEditor(Window owner, @NotNull ShowMessageInstr instruction) throws IFML2EditorException {
         super(owner);
         initializeEditor(SHOW_MESSAGE_INSTR_EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
 
         // -- init form data --
 
-        switch (instruction.getType())
-        {
+        switch (instruction.getType()) {
             case TEXT:
                 textTypeRadio.setSelected(true);
                 break;
@@ -51,28 +48,21 @@ public class ShowMessageInstrEditor extends AbstractInstrEditor
     }
 
     @Override
-    protected Class<? extends Instruction> getInstrClass()
-    {
+    protected Class<? extends Instruction> getInstrClass() {
         return ShowMessageInstr.class;
     }
 
     @Override
-    public void getInstruction(@NotNull Instruction instruction) throws IFML2EditorException
-    {
+    public void getInstruction(@NotNull Instruction instruction) throws IFML2EditorException {
         updateData(instruction);
 
         ShowMessageInstr showMessageInstr = (ShowMessageInstr) instruction;
 
-        if (textTypeRadio.isSelected())
-        {
+        if (textTypeRadio.isSelected()) {
             showMessageInstr.setType(TEXT);
-        }
-        else if (exprTypeRadio.isSelected())
-        {
+        } else if (exprTypeRadio.isSelected()) {
             showMessageInstr.setType(EXPRESSION);
-        }
-        else
-        {
+        } else {
             throw new IFML2EditorException("No type is selected!");
         }
 

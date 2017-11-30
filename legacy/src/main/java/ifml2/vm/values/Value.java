@@ -4,43 +4,38 @@ import ifml2.IFMLEntity;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import static ifml2.vm.values.Value.CompareResult.*;
+import static ifml2.vm.values.Value.CompareResult.EQUAL;
+import static ifml2.vm.values.Value.CompareResult.NOT_APPLICABLE;
+import static ifml2.vm.values.Value.CompareResult.UNEQUAL;
 
-public abstract class Value<T> extends IFMLEntity implements Cloneable
-{
+public abstract class Value<T> extends IFMLEntity implements Cloneable {
     protected T value;
 
-    public Value(T value)
-    {
+    public Value(T value) {
         this.value = value;
     }
 
-    protected Value()
-    {
+    protected Value() {
     }
 
     /**
      * Тип величины в понятном виде.
+     *
      * @return название типа
      */
     public abstract String getTypeName();
 
     public abstract String toLiteral();
 
-    public T getValue()
-    {
+    public T getValue() {
         return value;
     }
 
-    public CompareResult compareTo(@NotNull Value rightValue)
-    {
-        if(getClass().equals(rightValue.getClass()))
-        {
+    public CompareResult compareTo(@NotNull Value rightValue) {
+        if (getClass().equals(rightValue.getClass())) {
             // одинаковые классы сравниваем напрямую через equals
             return equals(rightValue) ? EQUAL : UNEQUAL;
-        }
-        else if(rightValue instanceof EmptyValue)
-        {
+        } else if (rightValue instanceof EmptyValue) {
             // если правое значение - пустота, то возвращаем равенство, если this тоже пустота
             return this instanceof EmptyValue ? EQUAL : UNEQUAL; // irish principle (double check) - cause it's overridden in EmptyValue
         }
@@ -48,14 +43,11 @@ public abstract class Value<T> extends IFMLEntity implements Cloneable
     }
 
     @Override
-    public boolean equals(Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals(Object o) {
+        if (this == o) {
             return true;
         }
-        if (!(o instanceof Value))
-        {
+        if (!(o instanceof Value)) {
             return false;
         }
 
@@ -65,38 +57,32 @@ public abstract class Value<T> extends IFMLEntity implements Cloneable
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return value != null ? value.toString() : "";
     }
 
     @Override
-    public Value clone() throws CloneNotSupportedException
-    {
+    public Value clone() throws CloneNotSupportedException {
         return (Value) super.clone();
     }
 
-    public enum Operation
-    {
+    public enum Operation {
         ADD("сложение");
 
         final String caption;
 
-        Operation(String caption)
-        {
+        Operation(String caption) {
             this.caption = caption;
         }
 
         @Contract(pure = true)
         @Override
-        public String toString()
-        {
+        public String toString() {
             return caption;
         }
     }
 
-    public enum CompareResult
-    {
+    public enum CompareResult {
         EQUAL,
         UNEQUAL,
         LEFT_BIGGER,

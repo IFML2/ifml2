@@ -5,8 +5,8 @@ import ifml2.GUIUtils;
 import ifml2.IFML2Exception;
 import ifml2.engine.Engine;
 import ifml2.engine.featureproviders.graphic.IOutputIconProvider;
-import ifml2.om.IFML2LoadXmlException;
 import ifml2.engine.featureproviders.text.IOutputPlainTextProvider;
+import ifml2.om.IFML2LoadXmlException;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
@@ -16,7 +16,9 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
 import javax.xml.bind.ValidationEvent;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -24,11 +26,23 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.ListIterator;
 
-import static ifml2.CommonConstants.*;
-import static ifml2.GUIUtils.*;
+import static ifml2.CommonConstants.CIPHERED_STORY_EXTENSION;
+import static ifml2.CommonConstants.RUSSIAN_PRODUCT_NAME;
+import static ifml2.CommonConstants.SAVE_EXTENSION;
+import static ifml2.CommonConstants.SAVE_FILE_FILTER_NAME;
+import static ifml2.CommonConstants.STORY_ALL_TYPES_FILE_FILTER_NAME;
+import static ifml2.CommonConstants.STORY_EXTENSION;
+import static ifml2.GUIUtils.DIRECTORY_ICON;
+import static ifml2.GUIUtils.NEW_ELEMENT_ICON;
+import static ifml2.GUIUtils.OPEN_ICON;
+import static ifml2.GUIUtils.SAVE_FILE_ICON;
+import static ifml2.GUIUtils.SAVE_ICON;
+import static ifml2.GUIUtils.STORY_FILE_ICON;
 import static ifml2.engine.EngineVersion.VERSION;
 import static java.lang.String.format;
-import static javax.swing.JOptionPane.*;
+import static javax.swing.JOptionPane.QUESTION_MESSAGE;
+import static javax.swing.JOptionPane.YES_NO_OPTION;
+import static javax.swing.JOptionPane.YES_OPTION;
 
 public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutputIconProvider {
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(GUIPlayer.class);
@@ -74,14 +88,14 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
                         processCommand(getCommandText());
                     }
                 } else
-                // history prev callback
-                if (KeyEvent.VK_UP == key || KeyEvent.VK_KP_UP == key) {
-                    commandText.setText(goHistoryPrev());
-                } else
-                // history next callback
-                if (KeyEvent.VK_DOWN == key || KeyEvent.VK_KP_DOWN == key) {
-                    commandText.setText(goHistoryNext());
-                }
+                    // history prev callback
+                    if (KeyEvent.VK_UP == key || KeyEvent.VK_KP_UP == key) {
+                        commandText.setText(goHistoryPrev());
+                    } else
+                        // history next callback
+                        if (KeyEvent.VK_DOWN == key || KeyEvent.VK_KP_DOWN == key) {
+                            commandText.setText(goHistoryNext());
+                        }
             }
         });
 
@@ -112,7 +126,7 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
     private static String showOpenStoryFileDialog(Window owner) {
         JFileChooser storyFileChooser = new JFileChooser(CommonUtils.getGamesDirectory());
         storyFileChooser.removeChoosableFileFilter(storyFileChooser.getAcceptAllFileFilter()); // remove All files
-                                                                                               // filter
+        // filter
         storyFileChooser.setFileFilter(new FileFilter() {
             @Override
             public String getDescription() {
@@ -188,7 +202,7 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
     private void loadGame() {
         JFileChooser savedGameFileChooser = new JFileChooser(CommonUtils.getSavesDirectory());
         savedGameFileChooser.removeChoosableFileFilter(savedGameFileChooser.getAcceptAllFileFilter()); // remove All
-                                                                                                       // files filter
+        // files filter
         savedGameFileChooser.setFileFilter(new FileFilter() {
             @Override
             public String getDescription() {
@@ -227,7 +241,7 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
     private void saveGame() {
         JFileChooser savedGameFileChooser = new JFileChooser(CommonUtils.getSavesDirectory());
         savedGameFileChooser.removeChoosableFileFilter(savedGameFileChooser.getAcceptAllFileFilter()); // remove All
-                                                                                                       // files filter
+        // files filter
         savedGameFileChooser.setFileFilter(new FileFilter() {
             @Override
             public String getDescription() {

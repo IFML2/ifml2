@@ -15,7 +15,12 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlIDREF;
+import javax.xml.bind.annotation.XmlTransient;
 import java.util.List;
 
 import static ifml2.om.Trigger.Type.GET_ACCESSIBLE_CONTENT;
@@ -49,8 +54,7 @@ public class Item extends IFMLObject implements Cloneable {
     /**
      * Copies all field of item but container.
      *
-     * @param item
-     *            item to copy to
+     * @param item item to copy to
      * @throws CloneNotSupportedException
      */
     public void copyTo(@NotNull Item item) throws CloneNotSupportedException {
@@ -66,8 +70,7 @@ public class Item extends IFMLObject implements Cloneable {
     /**
      * Just runs appropriate trigger
      *
-     * @param virtualMachine
-     *            Virtual Machine
+     * @param virtualMachine Virtual Machine
      * @return Value returned by trigger
      */
     public Value getAccessibleContent(VirtualMachine virtualMachine) throws IFML2Exception {

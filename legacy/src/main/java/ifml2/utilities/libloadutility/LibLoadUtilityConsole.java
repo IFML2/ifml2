@@ -2,40 +2,45 @@ package ifml2.utilities.libloadutility;
 
 import ifml2.IFML2Exception;
 import ifml2.om.Action;
-import ifml2.om.*;
+import ifml2.om.Library;
+import ifml2.om.LiteralTemplateElement;
+import ifml2.om.OMManager;
+import ifml2.om.ObjectTemplateElement;
+import ifml2.om.Parameter;
+import ifml2.om.Procedure;
+import ifml2.om.Template;
 import ifml2.vm.instructions.ShowMessageInstr;
 
 import javax.swing.*;
 import javax.xml.bind.JAXBException;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.MessageFormat;
 
 import static ifml2.om.Word.GramCase.VP;
 import static ifml2.vm.instructions.ShowMessageInstr.Type.EXPRESSION;
 import static ifml2.vm.instructions.ShowMessageInstr.Type.TEXT;
 
-public class LibLoadUtilityConsole
-{
-    private static void log(String message, Object... args)
-    {
+public class LibLoadUtilityConsole {
+    private static void log(String message, Object... args) {
         System.out.println(MessageFormat.format(message, args));
     }
 
-    public static void main(String[] args) throws IFML2Exception, IOException, JAXBException
-    {
+    public static void main(String[] args) throws IFML2Exception, IOException, JAXBException {
         log("Утилита запущена.");
 
         // load text file
         String currentDirectoryPath = System.getProperty("user.dir");
         JFileChooser openTextDialog = new JFileChooser(currentDirectoryPath);
-        if (openTextDialog.showOpenDialog(null) != JFileChooser.APPROVE_OPTION)
-        {
+        if (openTextDialog.showOpenDialog(null) != JFileChooser.APPROVE_OPTION) {
             JOptionPane.showMessageDialog(null, "Файл для загрузки не выбран. Завершение работы.");
             return;
         }
         File textFile = openTextDialog.getSelectedFile();
-        if (!textFile.exists())
-        {
+        if (!textFile.exists()) {
             JOptionPane.showMessageDialog(null, "Файл для загрузки не существует. Завершение работы.");
             return;
         }
@@ -45,8 +50,7 @@ public class LibLoadUtilityConsole
         File[] libs = libFolder.listFiles();
         File selectedLib = (File) JOptionPane.showInputDialog(null, "Выберите библиотеку для заполнения:", "Библиотека ЯРИЛ",
                 JOptionPane.QUESTION_MESSAGE, null, libs, null);
-        if (selectedLib == null)
-        {
+        if (selectedLib == null) {
             JOptionPane.showMessageDialog(null, "Библиотека ЯРИЛ для заполнения не выбрана. Завершение работы.");
             return;
         }
@@ -62,18 +66,15 @@ public class LibLoadUtilityConsole
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(textFile), "UTF8"));
         int lineNo = 0;
         String lineStr;
-        while ((lineStr = bufferedReader.readLine()) != null)
-        {
+        while ((lineStr = bufferedReader.readLine()) != null) {
             lineNo++;
             log("\nОбработка строки №{0}: {1}", lineNo, lineStr);
 
             String[] parts = lineStr.split("\\|");
-            if (parts.length < 3)
-            {
+            if (parts.length < 3) {
                 log("В строке меньше 3х частей => строка отброшена.");
                 continue;
-            } else if (parts.length > 3)
-            {
+            } else if (parts.length > 3) {
                 log("В строке больше 3х частей => строка отброшена.");
                 continue;
             }
@@ -83,14 +84,11 @@ public class LibLoadUtilityConsole
             log("Разбивка строки:\n\tглагол: {0}\n\tтип: {1}\n\tсообщение: {2}", verb, type, message);
 
             ShowMessageInstr.Type messageType;
-            if ("текст".equalsIgnoreCase(type))
-            {
+            if ("текст".equalsIgnoreCase(type)) {
                 messageType = TEXT;
-            } else if ("выражение".equalsIgnoreCase(type))
-            {
+            } else if ("выражение".equalsIgnoreCase(type)) {
                 messageType = EXPRESSION;
-            } else
-            {
+            } else {
                 log("\tТип не текст и не выражение => строка отброшена.");
                 continue;
             }
@@ -99,19 +97,15 @@ public class LibLoadUtilityConsole
             ShowMessageInstr showMessageInstr = new ShowMessageInstr();
             showMessageInstr.setType(messageType);
             showMessageInstr.setBeginWithCap(true);
-            if (messageType == TEXT)
-            {
+            if (messageType == TEXT) {
                 showMessageInstr.setMessageExpr(message);
-            } else
-            {
+            } else {
                 // get constant and var
                 String[] messParts = message.split("\\+");
-                if (messParts.length < 2)
-                {
+                if (messParts.length < 2) {
                     log("В сообщении не найдена запятая, невозможно найти выражение => строка отброшена.");
                     continue;
-                } else if (messParts.length > 2)
-                {
+                } else if (messParts.length > 2) {
                     log("В сообщении больше одной запятой, невозможно найти выражение => строка отброшена.");
                     continue;
                 }
@@ -124,8 +118,7 @@ public class LibLoadUtilityConsole
             // create procedure
             String procedureName = messageType == TEXT ? verb : verb + "Предмет";
             Procedure procedure = new Procedure(procedureName);
-            if (messageType == EXPRESSION)
-            {
+            if (messageType == EXPRESSION) {
                 // add parameter to procedure
                 Parameter parameter = new Parameter();
                 parameter.setName("предмет");
@@ -140,8 +133,7 @@ public class LibLoadUtilityConsole
             LiteralTemplateElement verbLit = new LiteralTemplateElement();
             verbLit.getSynonyms().add(verb);
             template.getElements().add(verbLit);
-            if (messageType == EXPRESSION)
-            {
+            if (messageType == EXPRESSION) {
                 // add object element
                 ObjectTemplateElement itemTem = new ObjectTemplateElement();
                 itemTem.setGramCase(VP);

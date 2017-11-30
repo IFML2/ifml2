@@ -10,6 +10,7 @@ import javax.swing.*;
 public interface IOutputIconProvider extends IPlayerFeatureProvider {
     /**
      * Outputs Icon.
+     *
      * @param icon icon to output.
      */
     void outputIcon(Icon icon);

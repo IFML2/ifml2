@@ -3,15 +3,20 @@ package ifml2.om;
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlIDREF;
 import java.util.List;
 
 import static ifml2.om.xml.XmlSchemaConstants.ROLE_DEFINITION_ATTRIBUTES_ELEMENT;
 import static ifml2.om.xml.XmlSchemaConstants.ROLE_DEFINITION_ATTRIBUTE_ELEMENT;
 
 @XmlAccessorType(XmlAccessType.NONE)
-public class RoleDefinition
-{
+public class RoleDefinition {
     @XmlElementWrapper(name = "properties")
     @XmlElement(name = "property")
     private List<PropertyDefinition> propertyDefinitions = new BasicEventList<PropertyDefinition>();
@@ -32,46 +37,36 @@ public class RoleDefinition
     @XmlIDREF
     private EventList<Attribute> attributes = new BasicEventList<Attribute>();
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public EventList<Attribute> getAttributes()
-    {
+    public EventList<Attribute> getAttributes() {
         return attributes;
     }
 
-    public void setAttributes(EventList<Attribute> attributes)
-    {
+    public void setAttributes(EventList<Attribute> attributes) {
         this.attributes = attributes;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return /*"определение роли " + */name;
     }
 
-    public PropertyDefinition findPropertyDefinitionByName(String name)
-    {
+    public PropertyDefinition findPropertyDefinitionByName(String name) {
         assert name != null;
-        for (PropertyDefinition propertyDefinition : propertyDefinitions)
-        {
-            if (name.equalsIgnoreCase(propertyDefinition.getName()))
-            {
+        for (PropertyDefinition propertyDefinition : propertyDefinitions) {
+            if (name.equalsIgnoreCase(propertyDefinition.getName())) {
                 return propertyDefinition;
             }
         }
         return null;
     }
 
-    public Trigger getTrigger(Trigger.Type triggerType)
-    {
-        for (Trigger trigger : getTriggers())
-        {
-            if (triggerType.equals(trigger.getType()))
-            {
+    public Trigger getTrigger(Trigger.Type triggerType) {
+        for (Trigger trigger : getTriggers()) {
+            if (triggerType.equals(trigger.getType())) {
                 return trigger;
             }
         }
@@ -79,18 +74,15 @@ public class RoleDefinition
         return null;
     }
 
-    public List<PropertyDefinition> getPropertyDefinitions()
-    {
+    public List<PropertyDefinition> getPropertyDefinitions() {
         return propertyDefinitions;
     }
 
-    public String getDescription()
-    {
+    public String getDescription() {
         return description;
     }
 
-    public List<Trigger> getTriggers()
-    {
+    public List<Trigger> getTriggers() {
         return triggers;
     }
 }

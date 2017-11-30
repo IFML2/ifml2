@@ -5,13 +5,19 @@ import ca.odell.glazedlists.EventList;
 import ifml2.IFMLEntity;
 import org.jetbrains.annotations.NotNull;
 
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlIDREF;
 
-import static ifml2.om.xml.XmlSchemaConstants.*;
+import static ifml2.om.xml.XmlSchemaConstants.ROLE_NAME_ATTRIBUTE;
+import static ifml2.om.xml.XmlSchemaConstants.ROLE_PROPERTIES_ELEMENT;
+import static ifml2.om.xml.XmlSchemaConstants.ROLE_PROPERTY_ELEMENT;
 
 @XmlAccessorType(XmlAccessType.NONE)
-public class Role extends IFMLEntity
-{
+public class Role extends IFMLEntity {
     @SuppressWarnings("UnusedDeclaration")
     @XmlAttribute(name = ROLE_NAME_ATTRIBUTE)
     @XmlIDREF
@@ -21,26 +27,22 @@ public class Role extends IFMLEntity
     @XmlElement(name = ROLE_PROPERTY_ELEMENT)
     private EventList<Property> properties = new BasicEventList<Property>();
 
-    public Role(RoleDefinition roleDefinition)
-    {
+    public Role(RoleDefinition roleDefinition) {
         this.roleDefinition = roleDefinition;
 
         // fill with properties
-        for (PropertyDefinition propertyDefinition : roleDefinition.getPropertyDefinitions())
-        {
+        for (PropertyDefinition propertyDefinition : roleDefinition.getPropertyDefinitions()) {
             properties.add(new Property(propertyDefinition, this));
         }
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    public Role()
-    {
+    public Role() {
 
     }
 
     @Override
-    public Role clone() throws CloneNotSupportedException
-    {
+    public Role clone() throws CloneNotSupportedException {
         Role clone = (Role) super.clone(); // flat clone
 
         // deep clone
@@ -49,39 +51,31 @@ public class Role extends IFMLEntity
         return clone;
     }
 
-    public RoleDefinition getRoleDefinition()
-    {
+    public RoleDefinition getRoleDefinition() {
         return roleDefinition;
     }
 
-    public EventList<Property> getProperties()
-    {
+    public EventList<Property> getProperties() {
         return properties;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return roleDefinition != null ? roleDefinition.getName() : "не задана";
     }
 
-    public String getName()
-    {
+    public String getName() {
         assert roleDefinition != null;
         return roleDefinition.getName();
     }
 
-    public Property tryFindPropertyByDefinition(PropertyDefinition propertyDefinition)
-    {
-        if (propertyDefinition == null)
-        {
+    public Property tryFindPropertyByDefinition(PropertyDefinition propertyDefinition) {
+        if (propertyDefinition == null) {
             return null;
         }
 
-        for (Property property : properties)
-        {
-            if (propertyDefinition.getName().equalsIgnoreCase(property.getName()))
-            {
+        for (Property property : properties) {
+            if (propertyDefinition.getName().equalsIgnoreCase(property.getName())) {
                 return property;
             }
         }
@@ -89,12 +83,9 @@ public class Role extends IFMLEntity
         return null;
     }
 
-    public Property findPropertyByName(String name)
-    {
-        for (Property property : properties)
-        {
-            if (property.getName().equalsIgnoreCase(name))
-            {
+    public Property findPropertyByName(String name) {
+        for (Property property : properties) {
+            if (property.getName().equalsIgnoreCase(name)) {
                 return property;
             }
         }
@@ -102,8 +93,7 @@ public class Role extends IFMLEntity
         return null;
     }
 
-    public void copyTo(@NotNull Role role) throws CloneNotSupportedException
-    {
+    public void copyTo(@NotNull Role role) throws CloneNotSupportedException {
         role.roleDefinition = roleDefinition;
         role.properties = deepCloneEventList(properties, Property.class);
     }

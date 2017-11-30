@@ -10,42 +10,35 @@ import java.text.MessageFormat;
 
 @XmlRootElement(name = "var")
 @IFML2Instruction(title = "Установить переменную")
-public class SetVarInstruction extends Instruction
-{
+public class SetVarInstruction extends Instruction {
     private String name;
     private String value;
 
     @Override
-    public void run(RunningContext runningContext) throws IFML2Exception
-    {
+    public void run(RunningContext runningContext) throws IFML2Exception {
         runningContext.writeVariable(name, ExpressionCalculator.calculate(runningContext, value));
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return MessageFormat.format("Установить переменной \"{0}\" значение {1}", name, value);
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
     @XmlAttribute(name = "name")
-    public void setName(String name)
-    {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public String getValue()
-    {
+    public String getValue() {
         return value;
     }
 
     @XmlAttribute(name = "value")
-    public void setValue(String value)
-    {
+    public void setValue(String value) {
         this.value = value;
     }
 }

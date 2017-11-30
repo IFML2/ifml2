@@ -6,12 +6,25 @@ import ifml2.CommonUtils;
 import ifml2.GUIUtils;
 import ifml2.IFML2Exception;
 import ifml2.editor.IFML2EditorException;
-import ifml2.editor.gui.editors.*;
+import ifml2.editor.gui.editors.ActionEditor;
+import ifml2.editor.gui.editors.InheritedSystemProceduresEditor;
+import ifml2.editor.gui.editors.ItemEditor;
+import ifml2.editor.gui.editors.LocationEditor;
+import ifml2.editor.gui.editors.ProcedureEditor;
+import ifml2.editor.gui.editors.StoryOptionsEditor;
+import ifml2.editor.gui.editors.UsedLibsEditor;
 import ifml2.editor.gui.forms.ListEditForm;
 import ifml2.engine.EngineVersion;
 import ifml2.om.Action;
+import ifml2.om.InheritedSystemProcedures;
+import ifml2.om.Item;
+import ifml2.om.Library;
+import ifml2.om.Location;
+import ifml2.om.OMManager;
+import ifml2.om.Procedure;
+import ifml2.om.Story;
+import ifml2.om.Word;
 import ifml2.players.GUIPlayer;
-import ifml2.om.*;
 import ifml2.tests.gui.TestRunner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -121,11 +134,9 @@ public class Editor extends JFrame {
     /**
      * Устанавливает историю, сбрасывает флаг правки истории, пересвязывает данные в
      * списках.
-     * 
-     * @param story
-     *            история
-     * @param filePath
-     *            путь к файлу истории
+     *
+     * @param story    история
+     * @param filePath путь к файлу истории
      */
     public void setStory(@NotNull Story story, String filePath) {
         this.story = story;
@@ -240,7 +251,7 @@ public class Editor extends JFrame {
                 // choose cipher story file:
                 JFileChooser storyFileChooser = new JFileChooser(CommonUtils.getGamesDirectory());
                 storyFileChooser.removeChoosableFileFilter(storyFileChooser.getAcceptAllFileFilter()); // remove All
-                                                                                                       // files filter
+                // files filter
                 storyFileChooser.setFileFilter(new FileFilter() {
                     @Override
                     public String getDescription() {
@@ -353,7 +364,7 @@ public class Editor extends JFrame {
         storyMenu.add(new AbstractAction("Открыть Тестер...") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                TestRunner.main(new String[] {});
+                TestRunner.main(new String[]{});
             }
         });
         mainMenu.add(storyMenu);
@@ -388,7 +399,7 @@ public class Editor extends JFrame {
         // choose story file:
         JFileChooser storyFileChooser = new JFileChooser(CommonUtils.getGamesDirectory());
         storyFileChooser.removeChoosableFileFilter(storyFileChooser.getAcceptAllFileFilter()); // remove All files
-                                                                                               // filter
+        // filter
         storyFileChooser.setFileFilter(new FileFilter() {
             @Override
             public String getDescription() {
@@ -449,7 +460,7 @@ public class Editor extends JFrame {
         // choose story file:
         JFileChooser storyFileChooser = new JFileChooser(CommonUtils.getGamesDirectory());
         storyFileChooser.removeChoosableFileFilter(storyFileChooser.getAcceptAllFileFilter()); // remove All files
-                                                                                               // filter
+        // filter
         storyFileChooser.setFileFilter(new FileFilter() {
             @Override
             public String getDescription() {

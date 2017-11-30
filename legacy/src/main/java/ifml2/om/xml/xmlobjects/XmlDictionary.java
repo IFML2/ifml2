@@ -7,9 +7,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
 
-@XmlRootElement(name="dictionary")
-public class XmlDictionary
-{
-	@XmlElement(name="word")
-	public List<Word> words = new ArrayList<Word>();
+@XmlRootElement(name = "dictionary")
+public class XmlDictionary {
+    @XmlElement(name = "word")
+    public List<Word> words = new ArrayList<Word>();
 }

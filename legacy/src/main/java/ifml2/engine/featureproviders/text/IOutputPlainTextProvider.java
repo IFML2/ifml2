@@ -8,6 +8,7 @@ import ifml2.engine.featureproviders.IPlayerFeatureProvider;
 public interface IOutputPlainTextProvider extends IPlayerFeatureProvider {
     /**
      * Outputs plain text.
+     *
      * @param text plain text to output.
      */
     void outputPlainText(String text);

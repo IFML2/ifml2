@@ -29,8 +29,7 @@ import java.util.List;
  *
  * @param <T> Edited type.
  */
-public abstract class ListEditForm<T> extends JInternalFrame
-{
+public abstract class ListEditForm<T> extends JInternalFrame {
     protected Window owner;
     private EventList<T> clonedList;
     private JPanel contentPane;
@@ -57,8 +56,7 @@ public abstract class ListEditForm<T> extends JInternalFrame
      * @param clazz        T class.
      */
     public ListEditForm(@Nullable final Window owner, @NotNull final String objectNameVP, @NotNull final String objectNameRP,
-            @NotNull final Word.Gender gender, Class<T> clazz)
-    {
+                        @NotNull final Word.Gender gender, Class<T> clazz) {
         setContentPane(contentPane);
 
         this.clazz = clazz;
@@ -68,60 +66,46 @@ public abstract class ListEditForm<T> extends JInternalFrame
         this.gender = gender;
 
         // init buttons
-        final ButtonAction addButtonAction = new ButtonAction(addElementButton)
-        {
+        final ButtonAction addButtonAction = new ButtonAction(addElementButton) {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                try
-                {
+            public void actionPerformed(ActionEvent e) {
+                try {
                     T element = createElement();
-                    if (element != null)
-                    {
+                    if (element != null) {
                         addElementToList(element);
                         elementsList.setSelectedValue(element, true);
                         fireListChangeListeners();
                     }
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     GUIUtils.showErrorMessage(owner, ex);
                 }
             }
         };
         addElementButton.setAction(addButtonAction);
 
-        final ButtonAction editButtonAction = new ButtonAction(editElementButton, elementsList)
-        {
+        final ButtonAction editButtonAction = new ButtonAction(editElementButton, elementsList) {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 doEditElement(getSelectedElement());
             }
         };
         editElementButton.setAction(editButtonAction);
 
-        final ButtonAction delButtonAction = new ButtonAction(delElementButton, elementsList)
-        {
+        final ButtonAction delButtonAction = new ButtonAction(delElementButton, elementsList) {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 T selectedElement = getSelectedElement();
                 int selectedIndex = elementsList.getSelectedIndex();
 
                 Boolean toRemove = false;
 
-                try
-                {
+                try {
                     toRemove = beforeDelete(selectedElement);
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     GUIUtils.showErrorMessage(owner, ex);
                 }
 
-                if (toRemove)
-                {
+                if (toRemove) {
                     clonedList.remove(selectedElement);
 
                     selectedIndex = Math.min(selectedIndex, elementsList.getModel().getSize() - 1); // make index not exceeding limit
@@ -134,13 +118,11 @@ public abstract class ListEditForm<T> extends JInternalFrame
         delElementButton.setAction(delButtonAction);
 
         // init popup menu
-        popupMenu = new JPopupMenu()
-        {
+        popupMenu = new JPopupMenu() {
             {
                 add(addButtonAction);
                 addSeparator();
-                if (isShowEditButton())
-                {
+                if (isShowEditButton()) {
                     add(editButtonAction);
                 }
                 add(delButtonAction);
@@ -148,49 +130,39 @@ public abstract class ListEditForm<T> extends JInternalFrame
         };
 
         // double and right clicks
-        elementsList.addMouseListener(new MouseAdapter()
-        {
+        elementsList.addMouseListener(new MouseAdapter() {
             // right click show popup
             @Override
-            public void mouseReleased(MouseEvent e)
-            {
+            public void mouseReleased(MouseEvent e) {
                 showPopup(e);
             }
 
             // right click show popup
             @Override
-            public void mousePressed(MouseEvent e)
-            {
+            public void mousePressed(MouseEvent e) {
                 showPopup(e);
             }
 
-            public void showPopup(MouseEvent e)
-            {
-                if (e.isPopupTrigger())
-                {
+            public void showPopup(MouseEvent e) {
+                if (e.isPopupTrigger()) {
                     popupMenu.show(e.getComponent(), e.getX(), e.getY());
                 }
             }
 
             // double click edits
             @Override
-            public void mouseClicked(MouseEvent e)
-            {
-                if (e.getClickCount() == 2)
-                {
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
                     doEditElement(getSelectedElement());
                 }
             }
         });
 
-        upButton.setAction(new ButtonAction(upButton)
-        {
+        upButton.setAction(new ButtonAction(upButton) {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 int selIdx = elementsList.getSelectedIndex();
-                if (selIdx > 0)
-                {
+                if (selIdx > 0) {
                     Collections.swap(clonedList, selIdx, selIdx - 1);
                     elementsList.setSelectedIndex(selIdx - 1);
                     fireListChangeListeners();
@@ -198,34 +170,27 @@ public abstract class ListEditForm<T> extends JInternalFrame
             }
 
             @Override
-            public void init()
-            {
+            public void init() {
                 updateState();
 
-                elementsList.addListSelectionListener(new ListSelectionListener()
-                {
+                elementsList.addListSelectionListener(new ListSelectionListener() {
                     @Override
-                    public void valueChanged(ListSelectionEvent e)
-                    {
+                    public void valueChanged(ListSelectionEvent e) {
                         updateState();
                     }
                 });
             }
 
-            private void updateState()
-            {
+            private void updateState() {
                 setEnabled(elementsList.getSelectedIndex() > 0);
             }
         });
 
-        downButton.setAction(new ButtonAction(downButton)
-        {
+        downButton.setAction(new ButtonAction(downButton) {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 int selIdx = elementsList.getSelectedIndex();
-                if (selIdx < clonedList.size() - 1)
-                {
+                if (selIdx < clonedList.size() - 1) {
                     Collections.swap(clonedList, selIdx, selIdx + 1);
                     elementsList.setSelectedIndex(selIdx + 1);
                     fireListChangeListeners();
@@ -233,22 +198,18 @@ public abstract class ListEditForm<T> extends JInternalFrame
             }
 
             @Override
-            public void init()
-            {
+            public void init() {
                 updateState();
 
-                elementsList.addListSelectionListener(new ListSelectionListener()
-                {
+                elementsList.addListSelectionListener(new ListSelectionListener() {
                     @Override
-                    public void valueChanged(ListSelectionEvent e)
-                    {
+                    public void valueChanged(ListSelectionEvent e) {
                         updateState();
                     }
                 });
             }
 
-            private void updateState()
-            {
+            private void updateState() {
                 int selectedInstrIdx = elementsList.getSelectedIndex();
                 int listSize = elementsList.getModel().getSize();
                 setEnabled(selectedInstrIdx < listSize - 1);
@@ -262,8 +223,7 @@ public abstract class ListEditForm<T> extends JInternalFrame
      *
      * @param element adding element.
      */
-    protected void addElementToList(T element)
-    {
+    protected void addElementToList(T element) {
         clonedList.add(element);
     }
 
@@ -285,8 +245,7 @@ public abstract class ListEditForm<T> extends JInternalFrame
      * @return true if edit was made and false vise versa.
      * @throws Exception will be shown.
      */
-    protected boolean editElement(T selectedElement) throws Exception
-    {
+    protected boolean editElement(T selectedElement) throws Exception {
         return false;
     }
 
@@ -300,8 +259,7 @@ public abstract class ListEditForm<T> extends JInternalFrame
      * @return true if element should be deleted and false vise versa.
      * @throws Exception will be shown.
      */
-    protected boolean beforeDelete(T selectedElement) throws Exception
-    {
+    protected boolean beforeDelete(T selectedElement) throws Exception {
         return showDeleteConfirmDialog();
     }
 
@@ -310,40 +268,30 @@ public abstract class ListEditForm<T> extends JInternalFrame
      *
      * @param changeListener ChangeListener to receive events.
      */
-    public void addListChangeListener(ChangeListener changeListener)
-    {
+    public void addListChangeListener(ChangeListener changeListener) {
         listChangeListeners.add(changeListener);
     }
 
-    private void fireListChangeListeners()
-    {
-        for (ChangeListener changeListener : listChangeListeners)
-        {
+    private void fireListChangeListeners() {
+        for (ChangeListener changeListener : listChangeListeners) {
             changeListener.stateChanged(new ChangeEvent(clonedList));
         }
     }
 
-    public boolean showDeleteConfirmDialog()
-    {
+    public boolean showDeleteConfirmDialog() {
         return GUIUtils.showDeleteConfirmDialog(owner, objectNameVP, objectNameRP, gender);
     }
 
-    private void doEditElement(@Nullable T selectedElement)
-    {
-        try
-        {
-            if (selectedElement != null)
-            {
+    private void doEditElement(@Nullable T selectedElement) {
+        try {
+            if (selectedElement != null) {
                 Boolean isEdited = editElement(selectedElement);
-                if (isEdited)
-                {
+                if (isEdited) {
                     elementsList.setSelectedValue(selectedElement, true);
                     fireListChangeListeners();
                 }
             }
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             GUIUtils.showErrorMessage(owner, ex);
         }
     }
@@ -353,8 +301,7 @@ public abstract class ListEditForm<T> extends JInternalFrame
      *
      * @return selected list element.
      */
-    protected T getSelectedElement()
-    {
+    protected T getSelectedElement() {
 
         final Object selectedValue = elementsList.getSelectedValue();
         return clazz.isInstance(selectedValue) ? clazz.cast(selectedValue) : null;
@@ -365,8 +312,7 @@ public abstract class ListEditForm<T> extends JInternalFrame
      *
      * @param clonedList Already cloned list. All changes are made with him.
      */
-    public void bindData(EventList<T> clonedList)
-    {
+    public void bindData(EventList<T> clonedList) {
         this.clonedList = clonedList;
         elementsList.setModel(new DefaultEventListModel<T>(clonedList));
     }
@@ -385,21 +331,18 @@ public abstract class ListEditForm<T> extends JInternalFrame
     {
         upDownToolbar.setVisible(showUpDownButtons);
     }*/
-    public boolean isShowEditButton()
-    {
+    public boolean isShowEditButton() {
         return editElementButton.isVisible();
     }
 
     /**
      * Flag to show or hide edit button and edit item in popup menu.
      */
-    public void setShowEditButton(boolean showEditButton)
-    {
+    public void setShowEditButton(boolean showEditButton) {
         editElementButton.setVisible(showEditButton);
     }
 
-    public EventList<T> getClonedList()
-    {
+    public EventList<T> getClonedList() {
         return clonedList;
     }
 }

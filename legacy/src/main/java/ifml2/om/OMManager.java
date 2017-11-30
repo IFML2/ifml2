@@ -15,9 +15,19 @@ import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.*;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.ValidationEvent;
+import javax.xml.bind.ValidationEventHandler;
 import javax.xml.bind.util.ValidationEventCollector;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -31,21 +41,17 @@ public class OMManager {
     /**
      * Loads story from xml file
      *
-     * @param storyFileName
-     *            Full path to xml file with story.
-     * @param toInitItemsStartLoc
-     *            Provide true if items should be copied into start positions
-     *            (inventory and locations). It's necessary in Editor.
-     * @param isAllowedOpenCipherFiles
-     *            Provide true if it's allowed to load ciphered stories (from
-     *            Players) or false if not (from Editor).
+     * @param storyFileName            Full path to xml file with story.
+     * @param toInitItemsStartLoc      Provide true if items should be copied into start positions
+     *                                 (inventory and locations). It's necessary in Editor.
+     * @param isAllowedOpenCipherFiles Provide true if it's allowed to load ciphered stories (from
+     *                                 Players) or false if not (from Editor).
      * @return Wrapped result containing story and loaded inventory (see
-     *         toInitItemsStartLoc param).
-     * @throws IFML2Exception
-     *             If some error has occurred during loading.
+     * toInitItemsStartLoc param).
+     * @throws IFML2Exception If some error has occurred during loading.
      */
     public static LoadStoryResult loadStoryFromFile(@NotNull String storyFileName, final boolean toInitItemsStartLoc,
-            boolean isAllowedOpenCipherFiles) throws IFML2Exception {
+                                                    boolean isAllowedOpenCipherFiles) throws IFML2Exception {
         LOG.debug("loadStoryFromFile(storyFileName = \"{0}\", toInitItemsStartLoc = {1}) :: begin", storyFileName,
                 toInitItemsStartLoc);
 
@@ -143,7 +149,7 @@ public class OMManager {
                 LOG.debug("loadStoryFromFile :: after unmarshal");
 
                 addWordReverseLinks(ifmlObjectsHeap); // adding links is made explicitly because WordLinks in unmarshal
-                                                      // listeners are not loaded with words yet
+                // listeners are not loaded with words yet
 
                 if (validationEventCollector.hasEvents()) {
                     throw new IFML2LoadXmlException(validationEventCollector.getEvents());
@@ -351,9 +357,7 @@ public class OMManager {
 
                     // write cipher
                     cipherStoryFile.write(storyBytesEncrypted);
-                }
-
-                finally {
+                } finally {
                     cipherStoryFile.close();
                 }
             } finally {
@@ -451,7 +455,7 @@ public class OMManager {
 
                                 // attributes
                                 if (aClass == Attribute.class || aClass == Object.class) // todo: remove Object after
-                                                                                         // JAXB fix of JAXB-546
+                                // JAXB fix of JAXB-546
                                 {
                                     LOG.debug("call() ::   => searching Attribute \"{0}\"", s);
                                     Attribute attribute = library.getAttributeByName(s);
@@ -462,7 +466,7 @@ public class OMManager {
                                 }
                                 // actions
                                 else if (aClass == Action.class || aClass == Object.class) // todo: remove Object after
-                                                                                           // JAXB fix of JAXB-546
+                                // JAXB fix of JAXB-546
                                 {
                                     LOG.debug("call() ::   => searching Action \"{0}\"", s);
                                     Action action = library.getActionByName(s);
@@ -525,8 +529,8 @@ public class OMManager {
                             Class objectClass = object.getClass();
                             if (/* objectClass.equals(aClass) || */ aClass
                                     .isAssignableFrom(objectClass) /* || aClass == Object.class */) // todo remove
-                                                                                                    // Object after JAXB
-                                                                                                    // fix of JAXB-546
+                            // Object after JAXB
+                            // fix of JAXB-546
                             {
                                 if (aClass == Object.class) {
                                     LOG.warn("containsKeyOfClass() :: returns true for \"{0}\" when aClass is Object!",
@@ -549,12 +553,12 @@ public class OMManager {
                             Class<?> objectClass = object.getClass();
                             if (aClass.isAssignableFrom(
                                     objectClass) /* objectClass.equals(aClass) || aClass == Object.class */) // todo
-                                                                                                             // remove
-                                                                                                             // Object
-                                                                                                             // after
-                                                                                                             // JAXB fix
-                                                                                                             // of
-                                                                                                             // JAXB-546
+                            // remove
+                            // Object
+                            // after
+                            // JAXB fix
+                            // of
+                            // JAXB-546
                             {
                                 if (aClass == Object.class) {
                                     LOG.warn(

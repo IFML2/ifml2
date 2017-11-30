@@ -18,8 +18,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.HashMap;
 
-public class ProceduresEditor extends AbstractEditor<HashMap<String, Procedure>>
-{
+public class ProceduresEditor extends AbstractEditor<HashMap<String, Procedure>> {
     private JPanel contentPane;
     private JButton buttonOK;
     private JList proceduresList;
@@ -34,21 +33,17 @@ public class ProceduresEditor extends AbstractEditor<HashMap<String, Procedure>>
 
     private EventList<Procedure> procedures = null;
 
-    private final AbstractAction delProcedureAction = new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
-    {
+    private final AbstractAction delProcedureAction = new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON) {
         @Override
-        public void actionPerformed(ActionEvent e)
-        {
+        public void actionPerformed(ActionEvent e) {
             Procedure procedure = (Procedure) proceduresList.getSelectedValue();
 
-            if(procedure == null)
-            {
+            if (procedure == null) {
                 return;
             }
 
-            if(JOptionPane.showConfirmDialog(ProceduresEditor.this, "Вы действительно хотите удалить процедуру " + procedure.getName() + "?",
-                    "Удаление процедуры", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
-            {
+            if (JOptionPane.showConfirmDialog(ProceduresEditor.this, "Вы действительно хотите удалить процедуру " + procedure.getName() + "?",
+                    "Удаление процедуры", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                 procedures.remove(procedure);
                 updateAllData();
             }
@@ -56,85 +51,67 @@ public class ProceduresEditor extends AbstractEditor<HashMap<String, Procedure>>
     };
 
     private Story.DataHelper storyDataHelper;
-    private final AbstractAction addInstructionAction = new AbstractAction("Добавить...", GUIUtils.ADD_ELEMENT_ICON)
-    {
+    private final AbstractAction addInstructionAction = new AbstractAction("Добавить...", GUIUtils.ADD_ELEMENT_ICON) {
         @Override
-        public void actionPerformed(ActionEvent e)
-        {
+        public void actionPerformed(ActionEvent e) {
             Procedure procedure = (Procedure) proceduresList.getSelectedValue();
 
-            if (procedure != null)
-            {
+            if (procedure != null) {
                 Instruction.Type instrType = EditorUtils.askInstructionType(ProceduresEditor.this);
 
-                if (instrType != null)
-                {
-                    try
-                    {
+                if (instrType != null) {
+                    try {
                         Instruction instruction = instrType.createInstrInstance();
-                        if (EditorUtils.showAssociatedEditor(ProceduresEditor.this, instruction, storyDataHelper))
-                        {
+                        if (EditorUtils.showAssociatedEditor(ProceduresEditor.this, instruction, storyDataHelper)) {
                             procedure.getInstructions().add(instruction);
                             updateSelectedProcedure();
                             instructionsList.setSelectedValue(instruction, true);
                         }
-                    }
-                    catch (Throwable ex)
-                    {
+                    } catch (Throwable ex) {
                         GUIUtils.showErrorMessage(ProceduresEditor.this, ex);
                     }
                 }
             }
         }
     };
-    private final AbstractAction editInstructionAction = new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON)
-    {
+    private final AbstractAction editInstructionAction = new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON) {
         @Override
-        public void actionPerformed(ActionEvent e)
-        {
+        public void actionPerformed(ActionEvent e) {
             Instruction instruction = (Instruction) instructionsList.getSelectedValue();
 
-            if (instruction != null && EditorUtils.showAssociatedEditor(ProceduresEditor.this, instruction, storyDataHelper))
-            {
+            if (instruction != null && EditorUtils.showAssociatedEditor(ProceduresEditor.this, instruction, storyDataHelper)) {
                 updateSelectedProcedure();
             }
         }
     };
-    private final AbstractAction delInstructionAction = new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
-    {
+    private final AbstractAction delInstructionAction = new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON) {
         @Override
-        public void actionPerformed(ActionEvent e)
-        {
+        public void actionPerformed(ActionEvent e) {
             Procedure procedure = (Procedure) proceduresList.getSelectedValue();
             Instruction instruction = (Instruction) instructionsList.getSelectedValue();
 
             if (procedure != null && instruction != null &&
                     JOptionPane.showConfirmDialog(ProceduresEditor.this, "Вы действительно хотите удалить выбраную инструкцию?",
-                    "Удаление инструкции", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
-            {
+                            "Удаление инструкции", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                 procedure.getInstructions().remove(instruction);
             }
         }
     };
 
-    public ProceduresEditor(Window owner, final EventList<Procedure> procedures, Story.DataHelper storyDataHelper)
-    {
+    public ProceduresEditor(Window owner, final EventList<Procedure> procedures, Story.DataHelper storyDataHelper) {
         super(owner);
         initializeEditor(PROCEDURES_EDITOR_TITLE, contentPane, buttonOK, null);
         this.storyDataHelper = storyDataHelper;
 
         // -- init form --
 
-        addProcedureButton.setAction(new AbstractAction("Новая...", GUIUtils.ADD_ELEMENT_ICON)
-        {
+        addProcedureButton.setAction(new AbstractAction("Новая...", GUIUtils.ADD_ELEMENT_ICON) {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 String procedureName = JOptionPane.showInputDialog(ProceduresEditor.this, "Имя новой процедуры:",
                         "Новая процедура", JOptionPane.QUESTION_MESSAGE);
 
-                if(procedureName != null && !"".equals(procedureName))
-                {
+                if (procedureName != null && !"".equals(procedureName)) {
                     Procedure procedure = new Procedure(procedureName);
                     procedures.add(procedure);
                     updateAllData();
@@ -146,23 +123,19 @@ public class ProceduresEditor extends AbstractEditor<HashMap<String, Procedure>>
 
         addInstructionButton.setAction(addInstructionAction);
         editInstructionButton.setAction(editInstructionAction);
-        delInstructionButton.setAction(delInstructionAction); 
+        delInstructionButton.setAction(delInstructionAction);
 
-        proceduresList.addListSelectionListener(new ListSelectionListener()
-        {
+        proceduresList.addListSelectionListener(new ListSelectionListener() {
             @Override
-            public void valueChanged(ListSelectionEvent e)
-            {
+            public void valueChanged(ListSelectionEvent e) {
                 updateActions();
                 updateSelectedProcedure();
             }
         });
 
-        instructionsList.addListSelectionListener(new ListSelectionListener()
-        {
+        instructionsList.addListSelectionListener(new ListSelectionListener() {
             @Override
-            public void valueChanged(ListSelectionEvent e)
-            {
+            public void valueChanged(ListSelectionEvent e) {
                 updateActions();
             }
         });
@@ -174,13 +147,11 @@ public class ProceduresEditor extends AbstractEditor<HashMap<String, Procedure>>
     }
 
     @Override
-    public void updateData(@NotNull HashMap<String, Procedure> data) throws IFML2EditorException
-    {
+    public void updateData(@NotNull HashMap<String, Procedure> data) throws IFML2EditorException {
         // todo refactor editor to transact mode
     }
 
-    private void updateActions()
-    {
+    private void updateActions() {
         boolean proceduresCanBeEdited = proceduresList.getSelectedValue() != null;
         delProcedureAction.setEnabled(proceduresCanBeEdited);
 
@@ -190,21 +161,17 @@ public class ProceduresEditor extends AbstractEditor<HashMap<String, Procedure>>
         delInstructionAction.setEnabled(instructionsCanBeEdited);
     }
 
-    private void updateSelectedProcedure()
-    {
+    private void updateSelectedProcedure() {
         Procedure procedure = (Procedure) proceduresList.getSelectedValue();
 
-        if (procedure != null)
-        {
+        if (procedure != null) {
             instructionsList.setModel(new DefaultEventListModel<Instruction>(procedure.getInstructions()));
         }
     }
 
-    private void updateAllData()
-    {
+    private void updateAllData() {
         DefaultListModel proceduresListModel = new DefaultListModel();
-        for(Procedure procedure : procedures)
-        {
+        for (Procedure procedure : procedures) {
             proceduresListModel.addElement(procedure);
         }
         proceduresList.setModel(proceduresListModel);

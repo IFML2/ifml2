@@ -8,8 +8,7 @@ import java.util.Scanner;
 
 public class ConsolePlayer {
     /**
-     * @param args
-     *            First arg is story file path
+     * @param args First arg is story file path
      */
     public static void main(String[] args) {
         IOutputPlainTextProvider outputPlainTextProvider = System.out::print;

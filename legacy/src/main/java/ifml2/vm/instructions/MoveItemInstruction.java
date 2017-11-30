@@ -13,21 +13,18 @@ import java.util.List;
 
 @XmlRootElement(name = "moveItem")
 @IFML2Instruction(title = "Переместить предмет")
-public class MoveItemInstruction extends Instruction
-{
+public class MoveItemInstruction extends Instruction {
     private String itemExpr = "";
     private String toCollectionExpr = "";
 
     @Override
-    public void run(RunningContext runningContext) throws IFML2Exception
-    {
+    public void run(RunningContext runningContext) throws IFML2Exception {
         Item item = getItemFromExpression(itemExpr, runningContext, getTitle(), "предмет", false);
         assert item.getContainer() != null;
 
         List<? extends IFMLEntity> collection = getCollectionFromExpression(toCollectionExpr, runningContext, getTitle(), "куда");
 
-        if (collection.contains(item))
-        {
+        if (collection.contains(item)) {
             throw new IFML2Exception(CommonUtils.uppercaseFirstLetter(item.getName()) + " уже там.");
         }
 
@@ -36,30 +33,25 @@ public class MoveItemInstruction extends Instruction
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return MessageFormat.format("Переместить предмет \"{0}\" в коллекцию \"{1}\"", itemExpr, toCollectionExpr);
     }
 
-    public String getItemExpr()
-    {
+    public String getItemExpr() {
         return itemExpr;
     }
 
     @XmlAttribute(name = "item")
-    public void setItemExpr(String itemExpr)
-    {
+    public void setItemExpr(String itemExpr) {
         this.itemExpr = itemExpr;
     }
 
-    public String getToCollectionExpr()
-    {
+    public String getToCollectionExpr() {
         return toCollectionExpr;
     }
 
     @XmlAttribute(name = "to")
-    public void setToCollectionExpr(String toCollectionExpr)
-    {
+    public void setToCollectionExpr(String toCollectionExpr) {
         this.toCollectionExpr = toCollectionExpr;
     }
 }

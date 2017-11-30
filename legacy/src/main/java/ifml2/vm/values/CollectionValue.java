@@ -31,8 +31,7 @@ public class CollectionValue extends Value<List<? extends IFMLEntity>> {
                     if (next instanceof IFMLObject) {
                         IFMLObject object = (IFMLObject) next;
                         return format("%s \"%s\"", object.getId(), object.getName());
-                    }
-                    else {
+                    } else {
                         return next.toString();
                     }
                 }

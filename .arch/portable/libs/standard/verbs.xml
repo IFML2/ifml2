@@ -18,7 +18,8 @@
         <role-definition name="поверхность"
                          description="Означает, что предмет является поверхностью и может держать на себе предметы.">
             <properties>
-                <property name="предметыСверху" description="Коллекция предметов, лежащих на поверхности." type="collection"/>
+                <property name="предметыСверху" description="Коллекция предметов, лежащих на поверхности."
+                          type="collection"/>
             </properties>
             <triggers>
                 <trigger type="getAccessibleContent">
@@ -30,9 +31,11 @@
             </triggers>
         </role-definition>
 
-        <role-definition name="контейнер" description="Означает, что предмет является контейнером и может содержать в себе предметы.">
+        <role-definition name="контейнер"
+                         description="Означает, что предмет является контейнером и может содержать в себе предметы.">
             <properties>
-                <property name="предметыВнутри" type="collection" description="Коллекция предметов, находящихся внутри."/>
+                <property name="предметыВнутри" type="collection"
+                          description="Коллекция предметов, находящихся внутри."/>
             </properties>
             <triggers>
                 <trigger type="getAccessibleContent">
@@ -667,7 +670,8 @@
                 </restriction>
                 <restriction condition="не предмет.читаемый">
                     <reaction>
-                        <showMessage position="1" type="expression" message="'На ' + предмет.пп + ' ничего не написано.'"/>
+                        <showMessage position="1" type="expression"
+                                     message="'На ' + предмет.пп + ' ничего не написано.'"/>
                     </reaction>
                 </restriction>
             </restrictions>
@@ -810,7 +814,8 @@
             <restrictions>
                 <restriction condition="не предмет.надеваемый">
                     <reaction>
-                        <showMessage type="expression" message="предмет.вп + ' невозможно надеть.'" beginWithCap="true"/>
+                        <showMessage type="expression" message="предмет.вп + ' невозможно надеть.'"
+                                     beginWithCap="true"/>
                     </reaction>
                 </restriction>
                 <restriction condition="предмет.надет">
@@ -840,7 +845,8 @@
             <restrictions>
                 <restriction condition="не предмет.надеваемый">
                     <reaction>
-                        <showMessage type="expression" message="предмет.вп + ' невозможно ни надеть, ни снять.'" beginWithCap="true"/>
+                        <showMessage type="expression" message="предмет.вп + ' невозможно ни надеть, ни снять.'"
+                                     beginWithCap="true"/>
                     </reaction>
                 </restriction>
                 <restriction condition="не предмет.надет">
@@ -926,7 +932,8 @@
                     <then>
                         <loop position="1" collection="предмет.предметыСверху" element="предметСверху">
                             <alone>
-                                <showMessage position="1" type="expression" message="'Сверху ' + предметСверху.имя + '.'"
+                                <showMessage position="1" type="expression"
+                                             message="'Сверху ' + предметСверху.имя + '.'"
                                              carriageReturn="true"/>
                             </alone>
                             <first>
@@ -953,22 +960,27 @@
                                         <!-- предмет открываемый, поэтому предметы видно, если только он открыт -->
                                         <loop collection="предмет.предметыВнутри" element="предметВнутри">
                                             <empty>
-                                                <showMessage position="1" type="text" message="Внутри ничего нет." carriageReturn="true"/>
+                                                <showMessage position="1" type="text" message="Внутри ничего нет."
+                                                             carriageReturn="true"/>
                                             </empty>
                                             <alone>
-                                                <showMessage position="1" type="expression" message="'Внутри ' + предметВнутри.имя + '.'"
+                                                <showMessage position="1" type="expression"
+                                                             message="'Внутри ' + предметВнутри.имя + '.'"
                                                              carriageReturn="true"/>
                                             </alone>
                                             <first>
-                                                <showMessage position="1" type="expression" message="'Внутри ' + предметВнутри.имя"
+                                                <showMessage position="1" type="expression"
+                                                             message="'Внутри ' + предметВнутри.имя"
                                                              carriageReturn="false"/>
                                             </first>
                                             <next>
-                                                <showMessage position="1" type="expression" message="', ' + предметВнутри.имя"
+                                                <showMessage position="1" type="expression"
+                                                             message="', ' + предметВнутри.имя"
                                                              carriageReturn="false"/>
                                             </next>
                                             <last>
-                                                <showMessage position="1" type="expression" message="' и ' + предметВнутри.имя + '.'"
+                                                <showMessage position="1" type="expression"
+                                                             message="' и ' + предметВнутри.имя + '.'"
                                                              carriageReturn="true"/>
                                             </last>
                                         </loop>
@@ -979,14 +991,17 @@
                                 <!-- предмет не открываемый, поэтому он по логике открыт всегда -->
                                 <loop collection="предмет.предметыВнутри" element="предметВнутри">
                                     <empty>
-                                        <showMessage position="1" type="text" message="Внутри ничего нет." carriageReturn="true"/>
+                                        <showMessage position="1" type="text" message="Внутри ничего нет."
+                                                     carriageReturn="true"/>
                                     </empty>
                                     <alone>
-                                        <showMessage position="1" type="expression" message="'Внутри ' + предметВнутри.имя + '.'"
+                                        <showMessage position="1" type="expression"
+                                                     message="'Внутри ' + предметВнутри.имя + '.'"
                                                      carriageReturn="true"/>
                                     </alone>
                                     <first>
-                                        <showMessage position="1" type="expression" message="'Внутри ' + предметВнутри.имя"
+                                        <showMessage position="1" type="expression"
+                                                     message="'Внутри ' + предметВнутри.имя"
                                                      carriageReturn="false"/>
                                     </first>
                                     <next>
@@ -994,7 +1009,8 @@
                                                      carriageReturn="false"/>
                                     </next>
                                     <last>
-                                        <showMessage position="1" type="expression" message="' и ' + предметВнутри.имя + '.'"
+                                        <showMessage position="1" type="expression"
+                                                     message="' и ' + предметВнутри.имя + '.'"
                                                      carriageReturn="true"/>
                                     </last>
                                 </loop>
@@ -1134,7 +1150,8 @@
                         <if condition="предмет.надет">
                             <then>
                                 <setProperty object="предмет" name="надет" value="нет"/>
-                                <showMessage type="expression" message="'Сначала вы сняли ' + предмет.вп + '.'" carriageReturn="true"/>
+                                <showMessage type="expression" message="'Сначала вы сняли ' + предмет.вп + '.'"
+                                             carriageReturn="true"/>
                             </then>
                         </if>
                     </then>
@@ -1380,7 +1397,8 @@
                             <then>
                                 <if condition="не кудаПоложить.открыт">
                                     <then>
-                                        <showMessage type="expression" beginWithCap="true" message="кудаПоложить + ' закрыт.'"/>
+                                        <showMessage type="expression" beginWithCap="true"
+                                                     message="кудаПоложить + ' закрыт.'"/>
                                         <var name="можноЛиКласть" value="нет"/>
                                     </then>
                                 </if>
@@ -1416,7 +1434,8 @@
                         <loop position="1" collection="чтоОткрыть.предметыВнутри"
                               element="предмет">
                             <empty>
-                                <showMessage position="1" type="text" message="Внутри ничего нет." carriageReturn="true"/>
+                                <showMessage position="1" type="text" message="Внутри ничего нет."
+                                             carriageReturn="true"/>
                             </empty>
                             <alone>
                                 <showMessage position="1" type="expression" message="'Внутри ' + предмет.имя + '.'"
@@ -1431,7 +1450,8 @@
                                              message="', ' + предмет.имя" carriageReturn="false"/>
                             </next>
                             <last>
-                                <showMessage position="1" type="expression" message="' и ' + предмет.имя + '.'" carriageReturn="true"/>
+                                <showMessage position="1" type="expression" message="' и ' + предмет.имя + '.'"
+                                             carriageReturn="true"/>
                             </last>
                         </loop>
                     </then>
