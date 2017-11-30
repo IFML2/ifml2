@@ -13,6 +13,7 @@
 
     <modules>
         <module>apps</module>
+        <module>docs</module>
         <module>legacy</module>
     </modules>
 

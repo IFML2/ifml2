@@ -1,0 +1,85 @@
+= Файл истории
+============
+Описание структуры
+:doctype: article
+:toc: left
+:toclevels: 4
+:toc-position: left
+:toc-title: ЯРИЛ2 - Описание файла истории
+:numbered:
+:icons: font
+
+== Тег <story>
+Тег `<story>` содержит атрибут:
+* `id`
+
+=== Тег <storyOptions>
+Тег содержит в себе информацию о настройках истории
+
+==== Тег <startLocationOption>
+* showStartLocDesc
+* location
+
+==== startProcedureOption
+* procedure
+
+==== storyDescription
+* version
+* name
+* description
+* author
+
+==== globalVars
+
+===== var *
+* name
+* value
+
+=== Тег procedures
+
+==== procedure *
+* name
+
+===== procedureVariables
+
+===== procedureBody
+
+===== parameters
+
+=== libraries
+
+==== library *
+
+=== dictionary
+
+==== word *
+
+===== ip
+===== rp
+===== dp
+===== vp
+===== tp
+===== pp
+
+=== locations
+
+==== location *
+
+=== items
+
+==== item *
+
+=== Тег <actions>
+Содержит _(не пустой/возможно пустой)_ список тегов `<action>`
+
+==== Тег <action> *
+* description
+* name
+
+===== <templates>
+
+====== <template>
+
+===== <procedureCall>
+
+===== <restrictions>
