@@ -62,20 +62,16 @@ public class GUIUtils {
     /**
      * Shows delete confirmation dialog.
      *
-     * @param owner
-     *            Owner window for dialog.
-     * @param objectNameVP
-     *            Object name being deleted in "Vinitelniy" (Accusative) case.
-     *            Answers the question: "Delete what?".
-     * @param objectNameRP
-     *            Object name being deleted in "Roditelniy" (Genitive) case. Answers
-     *            the question: "Deletion of what?".
-     * @param gender
-     *            Gender of word.
+     * @param owner        Owner window for dialog.
+     * @param objectNameVP Object name being deleted in "Vinitelniy" (Accusative) case.
+     *                     Answers the question: "Delete what?".
+     * @param objectNameRP Object name being deleted in "Roditelniy" (Genitive) case. Answers
+     *                     the question: "Deletion of what?".
+     * @param gender       Gender of word.
      * @return true if user pressed YES.
      */
     public static boolean showDeleteConfirmDialog(Component owner, String objectNameVP, String objectNameRP,
-            Word.Gender gender) {
+                                                  Word.Gender gender) {
         String thisGendered = "";
         switch (gender) {
             case MASCULINE:
@@ -100,10 +96,8 @@ public class GUIUtils {
      * selected and vise versa. Firstly initializes action state via current
      * selection state. Secondary creates list selection listener.
      *
-     * @param action
-     *            AbstractAction to make dependent.
-     * @param list
-     *            JList to direct action state.
+     * @param action AbstractAction to make dependent.
+     * @param list   JList to direct action state.
      */
     public static void makeActionDependentFromJList(@NotNull final AbstractAction action, @NotNull final JList list) {
         // initialize

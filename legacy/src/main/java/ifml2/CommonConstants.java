@@ -2,8 +2,7 @@ package ifml2;
 
 import java.text.MessageFormat;
 
-public interface CommonConstants
-{
+public interface CommonConstants {
     String GAMES_DIRECTORY = "\\Games";
     String LIBRARIES_DIRECTORY = "\\libs";
     String TESTS_DIRECTORY = "\\Tests";

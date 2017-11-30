@@ -2,11 +2,14 @@ package ifml2.om;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
-
-import javax.xml.bind.annotation.*;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import static ifml2.om.xml.XmlSchemaConstants.LIBRARY_PROCEDURES_ELEMENT;
 import static ifml2.om.xml.XmlSchemaConstants.PROCEDURES_PROCEDURE_ELEMENT;

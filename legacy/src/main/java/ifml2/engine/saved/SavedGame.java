@@ -10,7 +10,11 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -92,21 +96,21 @@ public class SavedGame {
     }
 
     private static void restoreSystemVariables(@NotNull List<SavedVariable> systemVariables,
-            @NotNull Engine.DataHelper dataHelper) throws IFML2Exception {
+                                               @NotNull Engine.DataHelper dataHelper) throws IFML2Exception {
         for (SavedVariable var : systemVariables) {
             dataHelper.setSystemVariable(var.getName(), var.getValue());
         }
     }
 
     private static void restoreGlobalVariables(@NotNull List<SavedVariable> globalVariables,
-            @NotNull Engine.DataHelper dataHelper) throws IFML2Exception {
+                                               @NotNull Engine.DataHelper dataHelper) throws IFML2Exception {
         for (SavedVariable var : globalVariables) {
             dataHelper.setGlobalVariable(var.getName(), var.getValue());
         }
     }
 
     private static void restoreSavedLocations(@NotNull List<SavedLocation> savedLocationItems,
-            @NotNull Story.DataHelper storyDataHelper) {
+                                              @NotNull Story.DataHelper storyDataHelper) {
         for (SavedLocation savedLocation : savedLocationItems) {
             savedLocation.restore(storyDataHelper);
         }
@@ -119,7 +123,7 @@ public class SavedGame {
     }
 
     private static void restoreInventory(@NotNull List<String> itemIds, @NotNull Engine.DataHelper dataHelper,
-            @NotNull Story.DataHelper storyDataHelper) {
+                                         @NotNull Story.DataHelper storyDataHelper) {
         ArrayList<Item> inventory = dataHelper.getInventory();
         inventory.clear();
         for (String id : itemIds) {
