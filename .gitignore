@@ -1,10 +1,9 @@
-# Idea files
+# IDEA files
 .idea/
 *.iml
 # Eclipse files
 .settings/
-.classpath
 .project
-# Common files
+.classpath
+# Maven files
 target/
-*.log
