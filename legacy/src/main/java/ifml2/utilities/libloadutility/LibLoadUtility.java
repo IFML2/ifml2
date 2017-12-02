@@ -1,14 +1,9 @@
 package ifml2.utilities.libloadutility;
 
-import ifml2.CommonConstants;
-import ifml2.GUIUtils;
-import ifml2.om.*;
-import ifml2.vm.instructions.ShowMessageInstr;
-import org.jetbrains.annotations.NotNull;
+import static ifml2.om.Word.GramCase.VP;
+import static ifml2.vm.instructions.ShowMessageInstr.Type.EXPRESSION;
+import static ifml2.vm.instructions.ShowMessageInstr.Type.TEXT;
 
-import javax.swing.*;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -19,17 +14,37 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
 
-import static ifml2.om.Word.GramCase.VP;
-import static ifml2.vm.instructions.ShowMessageInstr.Type.EXPRESSION;
-import static ifml2.vm.instructions.ShowMessageInstr.Type.TEXT;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
+import javax.swing.SwingWorker;
+import javax.swing.WindowConstants;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+
+import org.jetbrains.annotations.NotNull;
+
+import ifml2.CommonConstants;
+import ifml2.GUIUtils;
+import ifml2.om.Library;
+import ifml2.om.LiteralTemplateElement;
+import ifml2.om.OMManager;
+import ifml2.om.ObjectTemplateElement;
+import ifml2.om.Parameter;
+import ifml2.om.Procedure;
+import ifml2.om.Template;
+import ifml2.vm.instructions.ShowMessageInstr;
 
 /**
  * Lib load utility main frame
  *
  * @author realsonic on 15.03.14.
  */
-public class LibLoadUtility extends JFrame
-{
+public class LibLoadUtility extends JFrame {
     private final String currentDirectoryPath = System.getProperty("user.dir");
     private JTextField textFileTextField;
     private JButton selectTextFileButton;
@@ -45,78 +60,59 @@ public class LibLoadUtility extends JFrame
     private File textFile;
     private File libFile;
     private File saveLibFile;
-    private SwingWorker<Void,String> swingWorker;
+    private SwingWorker<Void, String> swingWorker;
 
-    public LibLoadUtility()
-    {
+    public LibLoadUtility() {
         super("Утилита заполнения библиотек");
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setContentPane(contentPane);
         GUIUtils.packAndCenterWindow(this);
 
-        selectTextFileButton.addActionListener(new ActionListener()
-        {
+        selectTextFileButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 // load text file
                 JFileChooser openTextDialog = new JFileChooser(currentDirectoryPath);
-                if (openTextDialog.showOpenDialog(LibLoadUtility.this) == JFileChooser.APPROVE_OPTION)
-                {
+                if (openTextDialog.showOpenDialog(LibLoadUtility.this) == JFileChooser.APPROVE_OPTION) {
                     File selectedFile = openTextDialog.getSelectedFile();
-                    if (selectedFile.exists())
-                    {
+                    if (selectedFile.exists()) {
                         setTextFile(selectedFile);
-                    }
-                    else
-                    {
+                    } else {
                         JOptionPane.showMessageDialog(LibLoadUtility.this, "Файл для загрузки не существует.");
                     }
                 }
             }
         });
-        selectLibButton.addActionListener(new ActionListener()
-        {
+        selectLibButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 // load lib file
                 String libPath = new File(currentDirectoryPath, CommonConstants.LIBS_FOLDER).getPath();
                 JFileChooser openLibDialog = new JFileChooser(libPath);
-                if (openLibDialog.showOpenDialog(LibLoadUtility.this) == JFileChooser.APPROVE_OPTION)
-                {
+                if (openLibDialog.showOpenDialog(LibLoadUtility.this) == JFileChooser.APPROVE_OPTION) {
                     File selectedFile = openLibDialog.getSelectedFile();
-                    if (selectedFile.exists())
-                    {
+                    if (selectedFile.exists()) {
                         setLibFile(selectedFile);
-                    }
-                    else
-                    {
+                    } else {
                         JOptionPane.showMessageDialog(LibLoadUtility.this, "Файл библиотеки не существует.");
                     }
                 }
             }
         });
-        saveLibButton.addActionListener(new ActionListener()
-        {
+        saveLibButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 // choose filled lib file
                 JFileChooser saveLibDialog = new JFileChooser(currentDirectoryPath);
-                if(libFile != null)
-                {
+                if (libFile != null) {
                     saveLibDialog.setSelectedFile(new File("filled_" + libFile.getName()));
                 }
-                if (saveLibDialog.showOpenDialog(LibLoadUtility.this) == JFileChooser.APPROVE_OPTION)
-                {
+                if (saveLibDialog.showOpenDialog(LibLoadUtility.this) == JFileChooser.APPROVE_OPTION) {
                     File selectedFile = saveLibDialog.getSelectedFile();
-                    if (selectedFile.exists())
-                    {
-                        if (JOptionPane.showConfirmDialog(LibLoadUtility.this, "Файл библиотеки уже существует. Перезаписать?",
-                                                          "Уже существует", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) ==
-                            JOptionPane.NO_OPTION)
-                        {
+                    if (selectedFile.exists()) {
+                        if (JOptionPane.showConfirmDialog(LibLoadUtility.this,
+                                "Файл библиотеки уже существует. Перезаписать?", "Уже существует",
+                                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.NO_OPTION) {
                             return;
                         }
                     }
@@ -124,37 +120,29 @@ public class LibLoadUtility extends JFrame
                 }
             }
         });
-        startButton.addActionListener(new ActionListener()
-        {
+        startButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                if (textFile == null)
-                {
+            public void actionPerformed(ActionEvent e) {
+                if (textFile == null) {
                     JOptionPane.showMessageDialog(LibLoadUtility.this, "Не выбран файл загрузки", "Нет файла загрузки",
-                                                  JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                if (libFile == null)
-                {
+                if (libFile == null) {
                     JOptionPane.showMessageDialog(LibLoadUtility.this, "Не выбран файл библиотеки", "Нет библиотеки",
-                                                  JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                if (saveLibFile == null)
-                {
-                    JOptionPane.showMessageDialog(LibLoadUtility.this, "Не задан файл сохранения библиотеки", "Некуда сохранять",
-                                                  JOptionPane.ERROR_MESSAGE);
+                if (saveLibFile == null) {
+                    JOptionPane.showMessageDialog(LibLoadUtility.this, "Не задан файл сохранения библиотеки",
+                            "Некуда сохранять", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
-                swingWorker = new SwingWorker<Void, String>()
-                {
+                swingWorker = new SwingWorker<Void, String>() {
                     @Override
-                    protected Void doInBackground() throws Exception
-                    {
-                        try
-                        {
+                    protected Void doInBackground() throws Exception {
+                        try {
                             log("Старт...");
 
                             // load library
@@ -169,38 +157,30 @@ public class LibLoadUtility extends JFrame
                                     new InputStreamReader(new FileInputStream(textFile), "UTF8"));
                             int lineNo = 0;
                             String lineStr;
-                            while ((lineStr = bufferedReader.readLine()) != null)
-                            {
+                            while ((lineStr = bufferedReader.readLine()) != null) {
                                 lineNo++;
                                 log("\nОбработка строки №{0}: {1}", lineNo, lineStr);
 
                                 String[] parts = lineStr.split("\\|");
-                                if (parts.length < 3)
-                                {
+                                if (parts.length < 3) {
                                     log("В строке меньше 3х частей => строка отброшена.");
                                     continue;
-                                }
-                                else if (parts.length > 3)
-                                {
+                                } else if (parts.length > 3) {
                                     log("В строке больше 3х частей => строка отброшена.");
                                     continue;
                                 }
                                 String verb = parts[0];
                                 String type = parts[1];
                                 String message = parts[2];
-                                log("Разбивка строки:\n\tглагол: {0}\n\tтип: {1}\n\tсообщение: {2}", verb, type, message);
+                                log("Разбивка строки:\n\tглагол: {0}\n\tтип: {1}\n\tсообщение: {2}", verb, type,
+                                        message);
 
                                 ShowMessageInstr.Type messageType;
-                                if ("текст".equalsIgnoreCase(type))
-                                {
+                                if ("текст".equalsIgnoreCase(type)) {
                                     messageType = TEXT;
-                                }
-                                else if ("выражение".equalsIgnoreCase(type))
-                                {
+                                } else if ("выражение".equalsIgnoreCase(type)) {
                                     messageType = EXPRESSION;
-                                }
-                                else
-                                {
+                                } else {
                                     log("\tТип не текст и не выражение => строка отброшена.");
                                     continue;
                                 }
@@ -209,21 +189,15 @@ public class LibLoadUtility extends JFrame
                                 ShowMessageInstr showMessageInstr = new ShowMessageInstr();
                                 showMessageInstr.setType(messageType);
                                 showMessageInstr.setBeginWithCap(true);
-                                if (messageType == TEXT)
-                                {
+                                if (messageType == TEXT) {
                                     showMessageInstr.setMessageExpr(message);
-                                }
-                                else
-                                {
+                                } else {
                                     // get constant and var
                                     String[] messParts = message.split("\\+");
-                                    if (messParts.length < 2)
-                                    {
+                                    if (messParts.length < 2) {
                                         log("В сообщении не найдена запятая, невозможно найти выражение => строка отброшена.");
                                         continue;
-                                    }
-                                    else if (messParts.length > 2)
-                                    {
+                                    } else if (messParts.length > 2) {
                                         log("В сообщении больше одной запятой, невозможно найти выражение => строка отброшена.");
                                         continue;
                                     }
@@ -236,8 +210,7 @@ public class LibLoadUtility extends JFrame
                                 // create procedure
                                 String procedureName = messageType == TEXT ? verb : verb + "Предмет";
                                 Procedure procedure = new Procedure(procedureName);
-                                if (messageType == EXPRESSION)
-                                {
+                                if (messageType == EXPRESSION) {
                                     // add parameter to procedure
                                     Parameter parameter = new Parameter();
                                     parameter.setName("предмет");
@@ -252,8 +225,7 @@ public class LibLoadUtility extends JFrame
                                 LiteralTemplateElement verbLit = new LiteralTemplateElement();
                                 verbLit.getSynonyms().add(verb);
                                 template.getElements().add(verbLit);
-                                if (messageType == EXPRESSION)
-                                {
+                                if (messageType == EXPRESSION) {
                                     // add object element
                                     ObjectTemplateElement itemTem = new ObjectTemplateElement();
                                     itemTem.setGramCase(VP);
@@ -269,12 +241,12 @@ public class LibLoadUtility extends JFrame
                                 action.getTemplates().add(template);
                                 action.getProcedureCall().setProcedure(procedure);
                                 library.actions.add(action);
-                                log("Добавлено действие \"{0}\" с шаблоном {1} и ссылкой на процу \"{2}\".", action.getName(), template,
-                                    action.getProcedureCall().getProcedure().getName());
+                                log("Добавлено действие \"{0}\" с шаблоном {1} и ссылкой на процу \"{2}\".",
+                                        action.getName(), template, action.getProcedureCall().getProcedure().getName());
                             }
                             log("\nФайл закончился.");
 
-                            //String libNewFile = "filled_" + selectedLib.getName();
+                            // String libNewFile = "filled_" + selectedLib.getName();
                             log("\nСохраняем библиотеку под именем {0}.", saveLibFile.getAbsolutePath());
                             OMManager.saveLib(library, saveLibFile);
                             log("Библиотека сохранёна.");
@@ -282,31 +254,25 @@ public class LibLoadUtility extends JFrame
                             log("Стоп.");
 
                             return null;
-                        }
-                        catch (Throwable e)
-                        {
+                        } catch (Throwable e) {
                             log("ОШИБКА!!! {0}\n{1}", e.toString(), Arrays.toString(e.getStackTrace()));
                             return null;
                         }
                     }
 
-                    private void log(String text, Object... args)
-                    {
+                    private void log(String text, Object... args) {
                         publish(MessageFormat.format(text, args));
                     }
 
                     @Override
-                    protected void process(List<String> chunks)
-                    {
-                        for (String text : chunks)
-                        {
+                    protected void process(List<String> chunks) {
+                        for (String text : chunks) {
                             logMessage(text);
                         }
                     }
 
                     @Override
-                    protected void done()
-                    {
+                    protected void done() {
                         // switch buttons on (stop - off)
                         selectTextFileButton.setEnabled(true);
                         selectLibButton.setEnabled(true);
@@ -327,70 +293,55 @@ public class LibLoadUtility extends JFrame
                 swingWorker.execute();
             }
         });
-        stopButton.addActionListener(new ActionListener()
-        {
+        stopButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 swingWorker.cancel(true);
             }
         });
-        clearLogButton.addActionListener(new ActionListener()
-        {
+        clearLogButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 Document document = logTextPane.getDocument();
-                try
-                {
+                try {
                     document.remove(0, document.getLength());
-                }
-                catch (BadLocationException ex)
-                {
+                } catch (BadLocationException ex) {
                     JOptionPane.showMessageDialog(LibLoadUtility.this, ex.getMessage());
                 }
             }
         });
     }
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         LibLoadUtility libLoadUtility = new LibLoadUtility();
         libLoadUtility.setVisible(true);
     }
 
-    private void logMessage(String text)
-    {
-        //logTextArea.append(text + "\n\r");
+    private void logMessage(String text) {
+        // logTextArea.append(text + "\n\r");
         Document document = logTextPane.getDocument();
-        try
-        {
+        try {
             document.insertString(document.getLength(), text + "\n\r", null);
-        }
-        catch (BadLocationException e)
-        {
+        } catch (BadLocationException e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
         }
     }
 
-    public void setTextFile(@NotNull File textFile)
-    {
+    public void setTextFile(@NotNull File textFile) {
         this.textFile = textFile;
 
         // update view
         textFileTextField.setText(textFile.getAbsolutePath());
     }
 
-    public void setLibFile(@NotNull File libFile)
-    {
+    public void setLibFile(@NotNull File libFile) {
         this.libFile = libFile;
 
         // update view
         libTextField.setText(libFile.getAbsolutePath());
     }
 
-    public void setSaveLibFile(@NotNull File saveLibFile)
-    {
+    public void setSaveLibFile(@NotNull File saveLibFile) {
         this.saveLibFile = saveLibFile;
 
         // update view

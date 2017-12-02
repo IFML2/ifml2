@@ -1,17 +1,17 @@
 package ifml2.vm.instructions;
 
-import ifml2.IFML2Exception;
-import ifml2.vm.RunningContext;
+import static java.lang.String.format;
+import static javax.xml.bind.annotation.XmlAccessType.NONE;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import static java.lang.String.format;
-import static javax.xml.bind.annotation.XmlAccessType.NONE;
+import ifml2.IFML2Exception;
+import ifml2.vm.RunningContext;
 
 @XmlRootElement(name = "showPicture")
 @XmlAccessorType(NONE)
@@ -56,15 +56,12 @@ public class ShowPictureInstruction extends Instruction {
     @Override
     public String toString() {
         String restrictions = "";
-        if (maxHeight > 0 || maxWidth > 0)
-        {
+        if (maxHeight > 0 || maxWidth > 0) {
             restrictions += " с ограничениями";
-            if (maxHeight > 0)
-            {
+            if (maxHeight > 0) {
                 restrictions += format(" по высоте %d", maxHeight);
             }
-            if (maxWidth > 0)
-            {
+            if (maxWidth > 0) {
                 restrictions += format(" по ширине %d", maxWidth);
             }
         }

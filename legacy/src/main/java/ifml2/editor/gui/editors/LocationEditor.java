@@ -1,5 +1,44 @@
 package ifml2.editor.gui.editors;
 
+import static ifml2.om.Location.ExitDirection.DOWN;
+import static ifml2.om.Location.ExitDirection.EAST;
+import static ifml2.om.Location.ExitDirection.NORTH;
+import static ifml2.om.Location.ExitDirection.NORTH_EAST;
+import static ifml2.om.Location.ExitDirection.NORTH_WEST;
+import static ifml2.om.Location.ExitDirection.SOUTH;
+import static ifml2.om.Location.ExitDirection.SOUTH_EAST;
+import static ifml2.om.Location.ExitDirection.SOUTH_WEST;
+import static ifml2.om.Location.ExitDirection.UP;
+import static ifml2.om.Location.ExitDirection.WEST;
+
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.swing.AbstractAction;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+import org.jetbrains.annotations.NotNull;
+
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.swing.DefaultEventListModel;
@@ -7,26 +46,15 @@ import ifml2.GUIUtils;
 import ifml2.IFML2Exception;
 import ifml2.editor.DataNotValidException;
 import ifml2.editor.gui.AbstractEditor;
-import ifml2.om.*;
-import org.jetbrains.annotations.NotNull;
+import ifml2.om.Attribute;
+import ifml2.om.Hook;
+import ifml2.om.Item;
+import ifml2.om.Location;
+import ifml2.om.Location.ExitDirection;
+import ifml2.om.Story;
+import ifml2.om.Word;
 
-import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.*;
-import java.awt.event.*;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-import static ifml2.om.Location.ExitDirection;
-import static ifml2.om.Location.ExitDirection.*;
-
-public class LocationEditor extends AbstractEditor<Location>
-{
+public class LocationEditor extends AbstractEditor<Location> {
     private static final String LOCATION_EDITOR_TITLE = "Локация";
     private JPanel contentPane;
     private JButton buttonOK;
@@ -55,8 +83,7 @@ public class LocationEditor extends AbstractEditor<Location>
     private JComboBox southEastCombo;
     private JComboBox southWestCombo;
     private JComboBox northWestCombo;
-    private Map<Location.ExitDirection, JComboBox> exitCombosMap = new HashMap<Location.ExitDirection, JComboBox>()
-    {
+    private Map<Location.ExitDirection, JComboBox> exitCombosMap = new HashMap<Location.ExitDirection, JComboBox>() {
         {
             put(NORTH, northCombo);
             put(NORTH_EAST, northEastCombo);
@@ -77,217 +104,172 @@ public class LocationEditor extends AbstractEditor<Location>
     private Location location;
     private Story.DataHelper storyDataHelper;
 
-    public LocationEditor(Window owner, Location location, final Story.DataHelper storyDataHelper)
-    {
+    public LocationEditor(Window owner, Location location, final Story.DataHelper storyDataHelper) {
         super(owner);
         this.storyDataHelper = storyDataHelper;
         initializeEditor(LOCATION_EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
 
         this.location = location;
 
-        addItemButton.setAction(new AbstractAction("Добавить...", GUIUtils.NEW_ELEMENT_ICON)
-        {
+        addItemButton.setAction(new AbstractAction("Добавить...", GUIUtils.NEW_ELEMENT_ICON) {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 Item item = new Item();
-                if (editItem(item))
-                {
+                if (editItem(item)) {
                     itemsClone.add(item);
                     updateItems();
                     itemsList.setSelectedValue(item, true);
                 }
             }
         });
-        editItemButton.setAction(new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON)
-        {
+        editItemButton.setAction(new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON) {
             {
                 setEnabled(false); // disabled at start
-                itemsList.addListSelectionListener(new ListSelectionListener()
-                {
+                itemsList.addListSelectionListener(new ListSelectionListener() {
                     @Override
-                    public void valueChanged(ListSelectionEvent e)
-                    {
+                    public void valueChanged(ListSelectionEvent e) {
                         setEnabled(!itemsList.isSelectionEmpty()); // depends on selection
                     }
                 });
             }
 
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 editItem((Item) itemsList.getSelectedValue());
             }
 
-
         });
-        delItemButton.setAction(new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
-        {
+        delItemButton.setAction(new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON) {
             {
                 setEnabled(false); // disabled at start
-                itemsList.addListSelectionListener(new ListSelectionListener()
-                {
+                itemsList.addListSelectionListener(new ListSelectionListener() {
                     @Override
-                    public void valueChanged(ListSelectionEvent e)
-                    {
+                    public void valueChanged(ListSelectionEvent e) {
                         setEnabled(!itemsList.isSelectionEmpty()); // depends on selection
                     }
                 });
             }
 
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 Item item = (Item) itemsList.getSelectedValue();
-                if (item != null)
-                {
-                    int answer = JOptionPane.showConfirmDialog(LocationEditor.this, "Вы уверены, что хотите удалить этот предмет?");
-                    if (answer == 0)
-                    {
+                if (item != null) {
+                    int answer = JOptionPane.showConfirmDialog(LocationEditor.this,
+                            "Вы уверены, что хотите удалить этот предмет?");
+                    if (answer == 0) {
                         itemsClone.remove(item);
                         updateItems();
                     }
                 }
             }
 
-
         });
-        editAttributesButton.setAction(new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON)
-        {
+        editAttributesButton.setAction(new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON) {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                ObjectAttributesEditor objectAttributesEditor = new ObjectAttributesEditor(LocationEditor.this, attributesClone,
-                        storyDataHelper);
-                if (objectAttributesEditor.showDialog())
-                {
+            public void actionPerformed(ActionEvent e) {
+                ObjectAttributesEditor objectAttributesEditor = new ObjectAttributesEditor(LocationEditor.this,
+                        attributesClone, storyDataHelper);
+                if (objectAttributesEditor.showDialog()) {
                     updateAttributes();
                 }
             }
         });
 
         // hooks
-        addHookButton.setAction(new AbstractAction("Добавить...", GUIUtils.ADD_ELEMENT_ICON)
-        {
+        addHookButton.setAction(new AbstractAction("Добавить...", GUIUtils.ADD_ELEMENT_ICON) {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 Hook hook = new Hook();
-                if (editHook(hook))
-                {
+                if (editHook(hook)) {
                     hooksClone.add(hook);
                 }
             }
         });
-        editHookButton.setAction(new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON)
-        {
+        editHookButton.setAction(new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON) {
             {
                 setEnabled(false); // initially disabled
-                hooksList.addListSelectionListener(new ListSelectionListener()
-                {
+                hooksList.addListSelectionListener(new ListSelectionListener() {
                     @Override
-                    public void valueChanged(ListSelectionEvent e)
-                    {
+                    public void valueChanged(ListSelectionEvent e) {
                         setEnabled(!hooksList.isSelectionEmpty()); // dependent from selection
                     }
                 });
             }
 
             @Override()
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 Hook selectedHook = (Hook) hooksList.getSelectedValue();
-                if (selectedHook != null)
-                {
+                if (selectedHook != null) {
                     editHook(selectedHook);
                 }
             }
 
-
         });
-        deleteHookButton.setAction(new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
-        {
+        deleteHookButton.setAction(new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON) {
             {
                 setEnabled(false); // initially disabled
-                hooksList.addListSelectionListener(new ListSelectionListener()
-                {
+                hooksList.addListSelectionListener(new ListSelectionListener() {
                     @Override
-                    public void valueChanged(ListSelectionEvent e)
-                    {
+                    public void valueChanged(ListSelectionEvent e) {
                         setEnabled(!hooksList.isSelectionEmpty()); // dependent from selection
                     }
                 });
             }
 
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 Hook selectedHook = (Hook) hooksList.getSelectedValue();
-                if (selectedHook != null &&              JOptionPane.showConfirmDialog(LocationEditor.this,
-                        "Вы действительно хотите удалить выбранный перехват?", "Удаление перехвата", JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
-                {
+                if (selectedHook != null && JOptionPane.showConfirmDialog(LocationEditor.this,
+                        "Вы действительно хотите удалить выбранный перехват?", "Удаление перехвата",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
                     hooksClone.remove(selectedHook);
                 }
             }
 
-
         });
 
-        itemsList.addMouseListener(new MouseAdapter()
-        {
+        itemsList.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e)
-            {
-                if (e.getClickCount() == 2)
-                {
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
                     Item item = (Item) itemsList.getSelectedValue();
-                    if (item != null)
-                    {
+                    if (item != null) {
                         editItem(item);
                     }
                 }
             }
         });
 
-        locationNameText.getDocument().addDocumentListener(new DocumentListener()
-        {
+        locationNameText.getDocument().addDocumentListener(new DocumentListener() {
             @Override
-            public void insertUpdate(DocumentEvent e)
-            {
+            public void insertUpdate(DocumentEvent e) {
                 updateId();
             }
 
             @Override
-            public void removeUpdate(DocumentEvent e)
-            {
+            public void removeUpdate(DocumentEvent e) {
                 updateId();
             }
 
             @Override
-            public void changedUpdate(DocumentEvent e)
-            {
-                //do nothing
+            public void changedUpdate(DocumentEvent e) {
+                // do nothing
             }
         });
 
-        locationIDText.addKeyListener(new KeyAdapter()
-        {
+        locationIDText.addKeyListener(new KeyAdapter() {
             @Override
-            public void keyTyped(KeyEvent e)
-            {
-                if (e.getKeyChar() != '\0')
-                {
+            public void keyTyped(KeyEvent e) {
+                if (e.getKeyChar() != '\0') {
                     toGenerateId = false;
                 }
             }
         });
 
         updateDictionaryLinks(storyDataHelper.getDictionary());
-        //TODO:dictWordCombo.setSelectedItem(location.getWord());
+        // TODO:dictWordCombo.setSelectedItem(location.getWord());
 
-        for (ExitDirection exitDirection : ExitDirection.values())
-        {
+        for (ExitDirection exitDirection : ExitDirection.values()) {
             JComboBox comboBox = exitCombosMap.get(exitDirection);
             comboBox.setModel(new GUIUtils.EventComboBoxModelWithNullElement<Location>(storyDataHelper.getLocations(),
                     location.getExit(exitDirection)));
@@ -308,16 +290,12 @@ public class LocationEditor extends AbstractEditor<Location>
 
         // set hooks
         hooksClone = GlazedLists.eventList(location.getHooks());
-        hooksList.addMouseListener(new MouseAdapter()
-        {
+        hooksList.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e)
-            {
-                if (e.getClickCount() == 2)
-                {
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
                     Hook selectedHook = (Hook) hooksList.getSelectedValue();
-                    if (selectedHook != null)
-                    {
+                    if (selectedHook != null) {
                         editHook(selectedHook);
                     }
                 }
@@ -326,60 +304,46 @@ public class LocationEditor extends AbstractEditor<Location>
         hooksList.setModel(new DefaultEventListModel<Hook>(hooksClone));
     }
 
-    private boolean editHook(Hook hook)
-    {
-        try
-        {
+    private boolean editHook(Hook hook) {
+        try {
             HookEditor hookEditor = new HookEditor(LocationEditor.this, hook, false, storyDataHelper);
-            if (hookEditor.showDialog())
-            {
+            if (hookEditor.showDialog()) {
                 hookEditor.updateData(hook);
                 return true;
             }
-        }
-        catch (IFML2Exception e)
-        {
+        } catch (IFML2Exception e) {
             GUIUtils.showErrorMessage(this, e);
         }
         return false;
     }
 
-    private void updateId()
-    {
-        if (toGenerateId)
-        {
+    private void updateId() {
+        if (toGenerateId) {
             locationIDText.setText(storyDataHelper.generateIdByName(locationNameText.getText(), Location.class));
         }
     }
 
-    private void updateAttributes()
-    {
+    private void updateAttributes() {
         attributesList.setListData(attributesClone.toArray());
     }
 
-    private void updateItems()
-    {
+    private void updateItems() {
         DefaultListModel itemsListModel = new DefaultListModel();
-        for (Item item : itemsClone)
-        {
+        for (Item item : itemsClone) {
             itemsListModel.addElement(item);
         }
         itemsList.setModel(itemsListModel);
     }
 
-    private void updateDictionaryLinks(HashMap<String, Word> dictionary)
-    {
+    private void updateDictionaryLinks(HashMap<String, Word> dictionary) {
         dictWordCombo.setModel(new DefaultComboBoxModel(dictionary.values().toArray()));
         dictWordCombo.insertItemAt(null, 0);
     }
 
-    private boolean editItem(Item item)
-    {
-        if (item != null)
-        {
+    private boolean editItem(Item item) {
+        if (item != null) {
             ItemEditor itemEditor = new ItemEditor(LocationEditor.this, item, storyDataHelper);
-            if (itemEditor.showDialog())
-            {
+            if (itemEditor.showDialog()) {
                 itemEditor.updateData(item);
                 return true;
             }
@@ -389,45 +353,38 @@ public class LocationEditor extends AbstractEditor<Location>
     }
 
     @Override
-    protected void validateData() throws DataNotValidException
-    {
+    protected void validateData() throws DataNotValidException {
         // check name
-        if (locationNameText.getText().trim().length() == 0)
-        {
+        if (locationNameText.getText().trim().length() == 0) {
             throw new DataNotValidException("У локации должно быть задано имя.", locationNameText);
         }
 
         // check id
         String id = locationIDText.getText().trim();
-        if (id.length() == 0)
-        {
+        if (id.length() == 0) {
             throw new DataNotValidException("У локации должен быть задан идентификатор.", locationIDText);
         }
 
         Object object = storyDataHelper.findObjectById(id);
-        if (object != null && !object.equals(location))
-        {
+        if (object != null && !object.equals(location)) {
             String className = null;
-            try
-            {
+            try {
                 className = storyDataHelper.getObjectClassName(object);
-            }
-            catch (IFML2Exception e)
-            {
+            } catch (IFML2Exception e) {
                 GUIUtils.showErrorMessage(this, e);
             }
             throw new DataNotValidException(
-                    "У локации должен быть уникальный идентификатор - не пересекаться с другими локациями, предметами и словарём.\n" +
-                    MessageFormat.format("Найден другой объект с тем же идентификатором: \"{0}\" типа \"{1}\".", object, className),
+                    "У локации должен быть уникальный идентификатор - не пересекаться с другими локациями, предметами и словарём.\n"
+                            + MessageFormat.format(
+                                    "Найден другой объект с тем же идентификатором: \"{0}\" типа \"{1}\".", object,
+                                    className),
                     locationIDText);
         }
     }
 
     @Override
-    public void updateData(@NotNull Location location)
-    {
-        for (ExitDirection exitDirection : ExitDirection.values())
-        {
+    public void updateData(@NotNull Location location) {
+        for (ExitDirection exitDirection : ExitDirection.values()) {
             JComboBox combo = exitCombosMap.get(exitDirection);
             location.setExit(exitDirection, (Location) combo.getSelectedItem());
         }
@@ -441,53 +398,27 @@ public class LocationEditor extends AbstractEditor<Location>
         location.setHooks(GlazedLists.eventList(hooksClone)); // rewrite data in EventList
     }
 
-
-    //region Item in location actions
+    // region Item in location actions
     /*
-    private class AddItemAction extends AbstractAction
-    {
-        private AddItemAction()
-        {
-            super("Добавить...");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            Item item = (Item) JOptionPane.showInputDialog(dialog, "Выберите добавляемый предмет", "Добавить предмет",
-                    JOptionPane.QUESTION_MESSAGE, null, story.items.values().toArray(), null);
-
-            if(item != null)
-            {
-                itemsClone.add(item);
-                updateItems();
-                itemsList.setSelectedValue(item, true);
-            }
-        }
-    }
-
-    private class DelItemAction extends AbstractAction
-    {
-        private DelItemAction()
-        {
-            super("Удалить");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            Item item = (Item) itemsList.getSelectedValue();
-            if(item != null)
-            {
-                int answer = JOptionPane.showConfirmDialog(dialog, "Вы уверены, что хотите удалить этот предмет из локации?");
-                if(answer == 0)
-                {
-                    itemsClone.remove(item);
-                    updateItems();
-                }
-            }
-        }
-    }
-    */
-    //endregion
+     * private class AddItemAction extends AbstractAction { private AddItemAction()
+     * { super("Добавить..."); }
+     * 
+     * @Override public void actionPerformed(ActionEvent e) { Item item = (Item)
+     * JOptionPane.showInputDialog(dialog, "Выберите добавляемый предмет",
+     * "Добавить предмет", JOptionPane.QUESTION_MESSAGE, null,
+     * story.items.values().toArray(), null);
+     * 
+     * if(item != null) { itemsClone.add(item); updateItems();
+     * itemsList.setSelectedValue(item, true); } } }
+     * 
+     * private class DelItemAction extends AbstractAction { private DelItemAction()
+     * { super("Удалить"); }
+     * 
+     * @Override public void actionPerformed(ActionEvent e) { Item item = (Item)
+     * itemsList.getSelectedValue(); if(item != null) { int answer =
+     * JOptionPane.showConfirmDialog(dialog,
+     * "Вы уверены, что хотите удалить этот предмет из локации?"); if(answer == 0) {
+     * itemsClone.remove(item); updateItems(); } } } }
+     */
+    // endregion
 }

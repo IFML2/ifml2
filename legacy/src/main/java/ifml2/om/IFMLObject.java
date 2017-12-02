@@ -1,26 +1,41 @@
 package ifml2.om;
 
+import static ifml2.om.xml.XmlSchemaConstants.IFML_OBJECT_ATTRIBUTES_ELEMENT;
+import static ifml2.om.xml.XmlSchemaConstants.IFML_OBJECT_ATTRIBUTE_ELEMENT;
+import static ifml2.om.xml.XmlSchemaConstants.IFML_OBJECT_ROLES_ELEMENT;
+import static ifml2.om.xml.XmlSchemaConstants.IFML_OBJECT_ROLE_ELEMENT;
+import static ifml2.om.xml.XmlSchemaConstants.ITEM_HOOKS_ELEMENT;
+import static ifml2.om.xml.XmlSchemaConstants.ITEM_HOOK_ELEMENT;
+import static ifml2.om.xml.XmlSchemaConstants.OBJECT_PROPERTIES_ELEMENT;
+import static ifml2.om.xml.XmlSchemaConstants.OBJECT_PROPERTY_ELEMENT;
+import static ifml2.om.xml.XmlSchemaConstants.OBJECT_WORDS_TAG;
+
+import java.text.MessageFormat;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlIDREF;
+
+import org.jetbrains.annotations.NotNull;
+
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
 import ifml2.IFML2Exception;
 import ifml2.IFMLEntity;
+import ifml2.om.Word.GramCase;
 import ifml2.vm.IFML2VMException;
 import ifml2.vm.SymbolResolver;
 import ifml2.vm.values.BooleanValue;
 import ifml2.vm.values.TextValue;
 import ifml2.vm.values.Value;
-import org.jetbrains.annotations.NotNull;
-
-import javax.xml.bind.annotation.*;
-import java.text.MessageFormat;
-
-import static ifml2.om.Word.GramCase;
-import static ifml2.om.xml.XmlSchemaConstants.*;
 
 @XmlAccessorType(XmlAccessType.NONE)
-public class IFMLObject extends IFMLEntity
-{
+public class IFMLObject extends IFMLEntity {
     private static final String NAME_PROPERTY_LITERAL = "имя";
     private static final String DESCRIPTION_PROPERTY_LITERAL = "описание";
 
@@ -55,8 +70,7 @@ public class IFMLObject extends IFMLEntity
     protected EventList<Attribute> attributes = new BasicEventList<>();
 
     @Override
-    public IFMLObject clone() throws CloneNotSupportedException
-    {
+    public IFMLObject clone() throws CloneNotSupportedException {
         IFMLObject clone = (IFMLObject) super.clone(); // clone flat fields
 
         // clone deeper
@@ -69,196 +83,156 @@ public class IFMLObject extends IFMLEntity
         return clone;
     }
 
-    public String getId()
-    {
+    public String getId() {
         return id;
     }
 
-    public void setId(String id)
-    {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public WordLinks getWordLinks()
-    {
+    public WordLinks getWordLinks() {
         return wordLinks;
     }
 
-    public void setWordLinks(@NotNull WordLinks wordLinks)
-    {
+    public void setWordLinks(@NotNull WordLinks wordLinks) {
         this.wordLinks = wordLinks;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public void setName(String name)
-    {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public String getDescription()
-    {
+    public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description)
-    {
+    public void setDescription(String description) {
         this.description = description;
     }
 
-    public EventList<Attribute> getAttributes()
-    {
+    public EventList<Attribute> getAttributes() {
         return attributes;
     }
 
-    public void setAttributes(EventList<Attribute> attributes)
-    {
+    public void setAttributes(EventList<Attribute> attributes) {
         this.attributes = attributes;
     }
 
-    public EventList<Role> getRoles()
-    {
+    public EventList<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(EventList<Role> roles)
-    {
+    public void setRoles(EventList<Role> roles) {
         this.roles = roles;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return name;
     }
 
-    public String getName(GramCase gramCase) throws IFML2Exception
-    {
-        if (wordLinks == null)
-        {
+    public String getName(GramCase gramCase) throws IFML2Exception {
+        if (wordLinks == null) {
             throw new IFML2Exception(MessageFormat.format("Ссылка на словарь пустая у объекта {0}!", name));
         }
         final Word mainWord = wordLinks.getMainWord();
-        if (mainWord == null)
-        {
+        if (mainWord == null) {
             throw new IFML2Exception(MessageFormat.format("Ссылка на главное слово пустая у объекта {0}!", name));
         }
 
         return mainWord.getFormByGramCase(gramCase);
     }
 
-    public Value getMemberValue(String propertyName, SymbolResolver symbolResolver) throws IFML2Exception
-    {
+    public Value getMemberValue(String propertyName, SymbolResolver symbolResolver) throws IFML2Exception {
         // test system properties
-        if (NAME_PROPERTY_LITERAL.equalsIgnoreCase(propertyName))
-        {
+        if (NAME_PROPERTY_LITERAL.equalsIgnoreCase(propertyName)) {
             return new TextValue(name);
         }
-        if (DESCRIPTION_PROPERTY_LITERAL.equalsIgnoreCase(propertyName))
-        {
+        if (DESCRIPTION_PROPERTY_LITERAL.equalsIgnoreCase(propertyName)) {
             return new TextValue(description);
         }
 
         // test gram cases
         GramCase caseEnum = GramCase.getValueByAbbr(propertyName);
-        if (caseEnum != null)
-        {
+        if (caseEnum != null) {
             return new TextValue(wordLinks.getMainWord().getFormByGramCase(caseEnum));
         }
 
         // test attributes
-        for (Attribute attribute : attributes)
-        {
-            if (attribute.getName().equalsIgnoreCase(propertyName))
-            {
+        for (Attribute attribute : attributes) {
+            if (attribute.getName().equalsIgnoreCase(propertyName)) {
                 return new BooleanValue(true);
             }
         }
 
         // test roles and properties
-        for (Role role : roles)
-        {
+        for (Role role : roles) {
             // test role as boolean
-            if (role.getName().equalsIgnoreCase(propertyName))
-            {
+            if (role.getName().equalsIgnoreCase(propertyName)) {
                 return new BooleanValue(true);
             }
 
             // test attributes of role
-            for (Attribute attribute : role.getRoleDefinition().getAttributes())
-            {
-                if (attribute.getName().equalsIgnoreCase(propertyName))
-                {
+            for (Attribute attribute : role.getRoleDefinition().getAttributes()) {
+                if (attribute.getName().equalsIgnoreCase(propertyName)) {
                     return new BooleanValue(true);
                 }
             }
 
             // test properties of role
-            for (Property property : role.getProperties())
-            {
-                if (property.getName().equalsIgnoreCase(propertyName))
-                {
+            for (Property property : role.getProperties()) {
+                if (property.getName().equalsIgnoreCase(propertyName)) {
                     return property.getValue();
                 }
             }
         }
 
         // test principal possibility of attribute
-        for (Attribute attribute : symbolResolver.getAttributeList())
-        {
-            if (attribute.getName().equalsIgnoreCase(propertyName))
-            {
+        for (Attribute attribute : symbolResolver.getAttributeList()) {
+            if (attribute.getName().equalsIgnoreCase(propertyName)) {
                 // there is such attribute but object hasn't it - take false and exit
                 return new BooleanValue(false);
             }
         }
 
         // test principal possibility of role
-        for (RoleDefinition roleDefinition : symbolResolver.getRoleDefinitionList())
-        {
-            if (roleDefinition.getName().equalsIgnoreCase(propertyName))
-            {
+        for (RoleDefinition roleDefinition : symbolResolver.getRoleDefinitionList()) {
+            if (roleDefinition.getName().equalsIgnoreCase(propertyName)) {
                 // there is such role but object hasn't it - take false and exit
                 return new BooleanValue(false);
             }
         }
 
-        throw new IFML2VMException("У объекта \"{0}\" нет свойства \"{1}\", а также в игре нет признаков и ролей с таким названием.", this,
+        throw new IFML2VMException(
+                "У объекта \"{0}\" нет свойства \"{1}\", а также в игре нет признаков и ролей с таким названием.", this,
                 propertyName);
     }
 
-    public Value tryGetMemberValue(String symbol, SymbolResolver symbolResolver)
-    {
-        try
-        {
+    public Value tryGetMemberValue(String symbol, SymbolResolver symbolResolver) {
+        try {
             return getMemberValue(symbol, symbolResolver);
-        }
-        catch (IFML2Exception e)
-        {
+        } catch (IFML2Exception e) {
             return null;
         }
     }
 
-    public Property findPropertyByName(String name)
-    {
+    public Property findPropertyByName(String name) {
         // search in local properties
-        for (Property property : properties)
-        {
-            if (property.getName().equalsIgnoreCase(name))
-            {
+        for (Property property : properties) {
+            if (property.getName().equalsIgnoreCase(name)) {
                 return property;
             }
         }
 
         // search in roles' properties
-        for (Role role : roles)
-        {
+        for (Role role : roles) {
             Property property = role.findPropertyByName(name);
-            if (property != null)
-            {
+            if (property != null) {
                 return property;
             }
         }
@@ -266,12 +240,9 @@ public class IFMLObject extends IFMLEntity
         return null;
     }
 
-    public Role findRoleByName(String name)
-    {
-        for (Role role : roles)
-        {
-            if (role.getName().equalsIgnoreCase(name))
-            {
+    public Role findRoleByName(String name) {
+        for (Role role : roles) {
+            if (role.getName().equalsIgnoreCase(name)) {
                 return role;
             }
         }
@@ -279,8 +250,7 @@ public class IFMLObject extends IFMLEntity
         return null;
     }
 
-    public void copyTo(IFMLObject ifmlObject) throws CloneNotSupportedException
-    {
+    public void copyTo(IFMLObject ifmlObject) throws CloneNotSupportedException {
         ifmlObject.setId(id);
         ifmlObject.setName(name);
         ifmlObject.setDescription(description);
@@ -291,18 +261,15 @@ public class IFMLObject extends IFMLEntity
         ifmlObject.setRoles(deepCloneEventList(roles, Role.class));
     }
 
-    public void setProperties(EventList<Property> properties)
-    {
+    public void setProperties(EventList<Property> properties) {
         this.properties = properties;
     }
 
-    public EventList<Hook> getHooks()
-    {
+    public EventList<Hook> getHooks() {
         return hooks;
     }
 
-    public void setHooks(EventList<Hook> hooks)
-    {
+    public void setHooks(EventList<Hook> hooks) {
         this.hooks = hooks;
     }
 }

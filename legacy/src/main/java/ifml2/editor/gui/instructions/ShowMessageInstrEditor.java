@@ -1,16 +1,22 @@
 package ifml2.editor.gui.instructions;
 
+import static ifml2.vm.instructions.ShowMessageInstr.Type.EXPRESSION;
+import static ifml2.vm.instructions.ShowMessageInstr.Type.TEXT;
+
+import java.awt.Window;
+import java.text.MessageFormat;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextArea;
+
+import org.jetbrains.annotations.NotNull;
+
 import ifml2.editor.IFML2EditorException;
 import ifml2.vm.instructions.Instruction;
 import ifml2.vm.instructions.ShowMessageInstr;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import java.awt.*;
-import java.text.MessageFormat;
-
-import static ifml2.vm.instructions.ShowMessageInstr.Type.EXPRESSION;
-import static ifml2.vm.instructions.ShowMessageInstr.Type.TEXT;
 
 public class ShowMessageInstrEditor extends AbstractInstrEditor
 {

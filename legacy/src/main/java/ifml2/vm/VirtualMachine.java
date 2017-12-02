@@ -1,179 +1,152 @@
 package ifml2.vm;
 
-import ifml2.IFML2Exception;
-import ifml2.SystemIdentifiers;
-import ifml2.engine.Engine;
-import ifml2.om.*;
-import ifml2.vm.instructions.Instruction;
-import ifml2.vm.values.BooleanValue;
-import ifml2.vm.values.EmptyValue;
-import ifml2.vm.values.Value;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import static ifml2.om.Procedure.SystemProcedureType.SHOW_LOCATION;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
-import static ifml2.om.Procedure.SystemProcedureType;
-import static ifml2.om.Procedure.SystemProcedureType.SHOW_LOCATION;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class VirtualMachine
-{
-    private final HashMap<String, Value> systemConstants = new HashMap<String, Value>()
-    {
+import ifml2.IFML2Exception;
+import ifml2.engine.Engine;
+import ifml2.om.Action;
+import ifml2.om.Hook;
+import ifml2.om.IFMLObject;
+import ifml2.om.InstructionList;
+import ifml2.om.Item;
+import ifml2.om.Location;
+import ifml2.om.Procedure;
+import ifml2.om.Procedure.SystemProcedureType;
+import ifml2.om.Story;
+import ifml2.om.Trigger;
+import ifml2.vm.instructions.Instruction;
+import ifml2.vm.values.BooleanValue;
+import ifml2.vm.values.EmptyValue;
+import ifml2.vm.values.Value;
+
+public class VirtualMachine {
+    private final Map<String, Value> systemConstants = new HashMap<String, Value>() {
         {
-            put(SystemIdentifiers.TRUE_BOOL_LITERAL, new BooleanValue(true));
-            put(SystemIdentifiers.FALSE_BOOL_LITERAL, new BooleanValue(false));
-            put(SystemIdentifiers.EMPTY_VALUE, new EmptyValue());
+            put(BooleanValue.TRUE, new BooleanValue(true));
+            put(BooleanValue.FALSE, new BooleanValue(false));
+            put(EmptyValue.LITERAL, new EmptyValue());
         }
     };
     private Engine engine;
-    private final HashMap<SystemProcedureType, Procedure> inheritedSystemProcedures = new HashMap<SystemProcedureType, Procedure>()
-    {
+    private final Map<SystemProcedureType, Procedure> inheritedSystemProcedures = new HashMap<SystemProcedureType, Procedure>() {
         @Override
-        public Procedure get(Object key)
-        {
+        public Procedure get(Object key) {
             // lazy initialization
-            if (!containsKey(key))
-            {
+            if (!containsKey(key)) {
                 Procedure inheritor = engine.getStory().getSystemInheritorProcedure((SystemProcedureType) key);
                 put((SystemProcedureType) key, inheritor);
                 return inheritor;
-            }
-            else
-            {
+            } else {
                 return super.get(key);
             }
         }
     };
 
-    public Engine getEngine()
-    {
+    public Engine getEngine() {
         return engine;
     }
 
-    public void setEngine(Engine engine)
-    {
+    public void setEngine(Engine engine) {
         this.engine = engine;
     }
 
-    public void runAction(@NotNull Action action, List<Variable> parameters) throws IFML2Exception
-    {
+    public void runAction(@NotNull Action action, List<Variable> parameters) throws IFML2Exception {
         runProcedure(action.getProcedureCall().getProcedure(), parameters);
     }
 
-    public void runProcedureWithoutParameters(@NotNull Procedure procedure) throws IFML2Exception
-    {
-        try
-        {
+    public void runProcedureWithoutParameters(@NotNull Procedure procedure) throws IFML2Exception {
+        try {
             RunningContext runningContext = RunningContext.CreateCallContext(this, procedure, null);
             runInstructionList(procedure.getProcedureBody(), runningContext);
-        }
-        catch (IFML2VMException e)
-        {
+        } catch (IFML2VMException e) {
             throw new IFML2VMException(e, "{0}\n  в процедуре \"{1}\"", e.getMessage(), procedure.getName());
         }
     }
 
-    public Value callProcedureWithParameters(@NotNull Procedure procedure, List<Variable> parameters) throws IFML2Exception
-    {
-        try
-        {
+    public Value callProcedureWithParameters(@NotNull Procedure procedure, List<Variable> parameters)
+            throws IFML2Exception {
+        try {
             RunningContext runningContext = RunningContext.CreateCallContext(this, procedure, parameters);
             runInstructionList(procedure.getProcedureBody(), runningContext);
             return runningContext.getReturnValue();
-        }
-        catch (IFML2VMException e)
-        {
+        } catch (IFML2VMException e) {
             throw new IFML2VMException(e, "{0}\n  в процедуре \"{1}\"", e.getMessage(), procedure.getName());
         }
     }
 
-    void runProcedure(@NotNull Procedure procedure, List<Variable> parameters) throws IFML2Exception
-    {
-        try
-        {
+    void runProcedure(@NotNull Procedure procedure, List<Variable> parameters) throws IFML2Exception {
+        try {
             RunningContext runningContext = RunningContext.CreateCallContext(this, procedure, parameters);
             runInstructionList(procedure.getProcedureBody(), runningContext);
-        }
-        catch (IFML2VMException e)
-        {
+        } catch (IFML2VMException e) {
             throw new IFML2VMException(e, "{0}\n  в процедуре \"{1}\"", e.getMessage(), procedure.getName());
         }
     }
 
-    public void runHook(@NotNull Hook hook, List<Variable> parameters) throws IFML2Exception
-    {
+    public void runHook(@NotNull Hook hook, List<Variable> parameters) throws IFML2Exception {
         RunningContext runningContext = RunningContext.CreateNewContext(this);
         runningContext.populateParameters(parameters);
         runInstructionList(hook.getInstructionList(), runningContext);
     }
 
-    public void runInstructionList(@NotNull InstructionList instructionList, @NotNull RunningContext runningContext) throws IFML2Exception
-    {
-        for (Instruction instruction : instructionList.getInstructions())
-        {
+    public void runInstructionList(@NotNull InstructionList instructionList, @NotNull RunningContext runningContext)
+            throws IFML2Exception {
+        for (Instruction instruction : instructionList.getInstructions()) {
             instruction.virtualMachine = this;
-            try
-            {
+            try {
                 instruction.run(runningContext);
-            }
-            catch (IFML2VMException e)
-            {
+            } catch (IFML2VMException e) {
                 throw new IFML2VMException(e, "{0}\n  в инструкции #{1} ({2})", e.getMessage(),
                         instructionList.getInstructions().indexOf(instruction) + 1, instruction.toString());
             }
         }
     }
 
-    public void showLocation(@Nullable Location location) throws IFML2Exception
-    {
-        if (location == null)
-        {
+    public void showLocation(@Nullable Location location) throws IFML2Exception {
+        if (location == null) {
             return;
         }
 
         // check if inherited
         Procedure inheritor = inheritedSystemProcedures.get(SHOW_LOCATION);
 
-        if (inheritor != null)
-        {
+        if (inheritor != null) {
             // inherited! run inheritor
             runProcedureWithoutParameters(inheritor);
-        }
-        else
-        {
+        } else {
             // not inherited! do as usual...
             outTextLn(location.getName());
             outTextLn(location.getDescription());
-            if (location.getItems().size() > 0)
-            {
+            if (location.getItems().size() > 0) {
                 String objectsList = convertObjectsToString(location.getItems());
                 outTextLn("А также тут {0}", objectsList);
             }
         }
     }
 
-    private String convertObjectsToString(List<Item> inventory)
-    {
+    private String convertObjectsToString(List<Item> inventory) {
         String result = "";
 
         Iterator<Item> iterator = inventory.iterator();
 
-        while (iterator.hasNext())
-        {
+        while (iterator.hasNext()) {
             String itemName = iterator.next().getName();
 
             if ("".equals(result)) // it's the first word
             {
                 result = itemName;
-            }
-            else if (iterator.hasNext()) // there is an another word after that
+            } else if (iterator.hasNext()) // there is an another word after that
             {
                 result += ", " + itemName;
-            }
-            else // it's the last word
+            } else // it's the last word
             {
                 result += " и " + itemName;
             }
@@ -184,20 +157,11 @@ public class VirtualMachine
         return result;
     }
 
-    public Value resolveSymbol(String symbol) throws IFML2VMException
-    {
-        String loweredSymbol = symbol.toLowerCase();
-
-        if (systemConstants.containsKey(loweredSymbol))
-        {
-            return systemConstants.get(loweredSymbol);
-        }
-
-        return engine.resolveSymbol(symbol);
+    public Value resolveSymbol(String symbol) throws IFML2VMException {
+        return systemConstants.getOrDefault(symbol.toLowerCase(), engine.resolveSymbol(symbol));
     }
 
-    public Value runTrigger(Trigger trigger, IFMLObject ifmlObject) throws IFML2Exception
-    {
+    public Value runTrigger(Trigger trigger, IFMLObject ifmlObject) throws IFML2Exception {
         RunningContext runningContext = RunningContext.CreateNewContext(this);
         runningContext.setDefaultObject(ifmlObject);
 
@@ -206,36 +170,30 @@ public class VirtualMachine
         return runningContext.getReturnValue();
     }
 
-    public void setCurrentLocation(Location location)
-    {
+    public void setCurrentLocation(Location location) {
         engine.setCurrentLocation(location);
     }
 
-    public Story getStory()
-    {
+    public Story getStory() {
         return engine.getStory();
     }
 
-    public void outTextLn(String text, Object... args)
-    {
+    public void outTextLn(String text, Object... args) {
         engine.outTextLn(text, args);
     }
 
-    public void outText(String text)
-    {
+    public void outText(String text) {
         engine.outText(text);
     }
 
-    public Variable searchGlobalVariable(String name)
-    {
+    public Variable searchGlobalVariable(String name) {
         return engine.searchGlobalVariable(name);
     }
 
     /**
      * Initializes (resets) virtual machine.
      */
-    public void init()
-    {
+    public void init() {
         inheritedSystemProcedures.clear();
     }
 

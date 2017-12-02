@@ -1,5 +1,16 @@
 package ifml2.editor.gui.instructions;
 
+import java.awt.Window;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
+import javax.swing.event.ChangeListener;
+
+import org.jetbrains.annotations.NotNull;
+
 import ca.odell.glazedlists.swing.DefaultEventComboBoxModel;
 import ifml2.editor.DataNotValidException;
 import ifml2.editor.IFML2EditorException;
@@ -7,14 +18,8 @@ import ifml2.om.Location;
 import ifml2.om.Story;
 import ifml2.vm.instructions.GoToLocInstruction;
 import ifml2.vm.instructions.Instruction;
-import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import javax.swing.event.ChangeListener;
-import java.awt.*;
-
-public class GoToLocInstrEditor extends AbstractInstrEditor
-{
+public class GoToLocInstrEditor extends AbstractInstrEditor {
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
@@ -23,8 +28,7 @@ public class GoToLocInstrEditor extends AbstractInstrEditor
     private JRadioButton locRadio;
     private JRadioButton exprRadio;
 
-    public GoToLocInstrEditor(Window owner, GoToLocInstruction instruction, Story.DataHelper storyDataHelper)
-    {
+    public GoToLocInstrEditor(Window owner, GoToLocInstruction instruction, Story.DataHelper storyDataHelper) {
         super(owner);
         initializeEditor(Instruction.getTitleFor(GoToLocInstruction.class), contentPane, buttonOK, buttonCancel);
 
@@ -37,8 +41,7 @@ public class GoToLocInstrEditor extends AbstractInstrEditor
         exprRadio.addChangeListener(radioChangeListener);
         locationsCombo.addActionListener(e -> {
             Location location = (Location) locationsCombo.getSelectedItem();
-            if (location != null)
-            {
+            if (location != null) {
                 locExprText.setText(location.getId());
             }
         });
@@ -54,46 +57,36 @@ public class GoToLocInstrEditor extends AbstractInstrEditor
         {
             locRadio.setSelected(true);
             locationsCombo.setSelectedItem(location);
-        }
-        else
-        {
+        } else {
             exprRadio.setSelected(true);
         }
         locExprText.setText(locationExpr);
     }
 
     @Override
-    protected Class<? extends Instruction> getInstrClass()
-    {
+    protected Class<? extends Instruction> getInstrClass() {
         return GoToLocInstruction.class;
     }
 
     @Override
-    public void getInstruction(@NotNull Instruction instruction) throws IFML2EditorException
-    {
+    public void getInstruction(@NotNull Instruction instruction) throws IFML2EditorException {
         updateData(instruction);
 
         GoToLocInstruction goToLocInstruction = (GoToLocInstruction) instruction;
-        if (locRadio.isSelected())
-        {
+        if (locRadio.isSelected()) {
             Location location = (Location) locationsCombo.getSelectedItem();
             goToLocInstruction.setLocationExpr(location.getId());
-        }
-        else
-        {
+        } else {
             goToLocInstruction.setLocationExpr(locExprText.getText());
         }
     }
 
     @Override
-    protected void validateData() throws DataNotValidException
-    {
-        if (locRadio.isSelected() && locationsCombo.getSelectedItem() == null)
-        {
+    protected void validateData() throws DataNotValidException {
+        if (locRadio.isSelected() && locationsCombo.getSelectedItem() == null) {
             throw new DataNotValidException("Не выбрана локация.", locationsCombo);
         }
-        if (exprRadio.isSelected() && "".equals(locExprText.getText().trim()))
-        {
+        if (exprRadio.isSelected() && "".equals(locExprText.getText().trim())) {
             throw new DataNotValidException("Не введено выражение.", locExprText);
         }
     }

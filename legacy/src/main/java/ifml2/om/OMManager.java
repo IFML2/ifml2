@@ -1,29 +1,42 @@
 package ifml2.om;
 
-import com.sun.xml.internal.bind.IDResolver;
-import ifml2.CommonConstants;
-import ifml2.CommonUtils;
-import ifml2.IFML2Exception;
-import ifml2.engine.saved.SavedGame;
-import ifml2.om.xml.xmladapters.LocationAdapter;
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
-
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.*;
-import javax.xml.bind.util.ValidationEventCollector;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Callable;
+
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.ValidationEvent;
+import javax.xml.bind.ValidationEventHandler;
+import javax.xml.bind.util.ValidationEventCollector;
+
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
+
+import com.sun.xml.internal.bind.IDResolver;
+
+import ifml2.CommonConstants;
+import ifml2.CommonUtils;
+import ifml2.IFML2Exception;
+import ifml2.engine.saved.SavedGame;
+import ifml2.om.xml.xmladapters.LocationAdapter;
 
 public class OMManager {
     public static final Logger LOG = LoggerFactory.getLogger(OMManager.class);

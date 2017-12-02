@@ -1,5 +1,23 @@
 package ifml2.editor.gui.editors;
 
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Collections;
+
+import javax.swing.AbstractAction;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+import org.jetbrains.annotations.NotNull;
+
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.swing.DefaultEventComboBoxModel;
@@ -9,20 +27,13 @@ import ifml2.editor.DataNotValidException;
 import ifml2.editor.IFML2EditorException;
 import ifml2.editor.gui.AbstractEditor;
 import ifml2.om.Action;
-import ifml2.om.*;
-import org.jetbrains.annotations.NotNull;
+import ifml2.om.Procedure;
+import ifml2.om.Restriction;
+import ifml2.om.Story;
+import ifml2.om.Template;
+import ifml2.om.Word;
 
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.Collections;
-
-public class ActionEditor extends AbstractEditor<Action>
-{
+public class ActionEditor extends AbstractEditor<Action> {
     private final EventList<Template> templatesClone;
     private final EventList<Restriction> restrictionsClone;
     private JPanel contentPane;
@@ -43,184 +54,151 @@ public class ActionEditor extends AbstractEditor<Action>
     private JButton delRestrictionButton;
     private Story.DataHelper storyDataHelper;
 
-    public ActionEditor(Window owner, @NotNull Action action, Story.DataHelper storyDataHelper)
-    {
+    public ActionEditor(Window owner, @NotNull Action action, Story.DataHelper storyDataHelper) {
         super(owner);
         this.storyDataHelper = storyDataHelper;
         initializeEditor("Действие", contentPane, buttonOK, buttonCancel);
 
         // init actions and listeners
-        addTemplateButton.setAction(new AbstractAction("Добавить...", GUIUtils.NEW_ELEMENT_ICON)
-        {
+        addTemplateButton.setAction(new AbstractAction("Добавить...", GUIUtils.NEW_ELEMENT_ICON) {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 Template template = new Template();
-                if (editTemplate(template))
-                {
+                if (editTemplate(template)) {
                     templatesClone.add(template);
                     templatesList.setSelectedValue(template, true);
                 }
             }
         });
-        editTemplateButton.setAction(new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON)
-        {
+        editTemplateButton.setAction(new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON) {
             {
                 setEnabled(false); // disabled at start
-                templatesList.addListSelectionListener(new ListSelectionListener()
-                {
+                templatesList.addListSelectionListener(new ListSelectionListener() {
                     @Override
-                    public void valueChanged(ListSelectionEvent e)
-                    {
+                    public void valueChanged(ListSelectionEvent e) {
                         setEnabled(!templatesList.isSelectionEmpty()); // depends on selection
                     }
                 });
             }
 
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 Template template = (Template) templatesList.getSelectedValue();
-                if (template != null)
-                {
+                if (template != null) {
                     editTemplate(template);
                 }
             }
         });
-        delTemplateButton.setAction(new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
-        {
+        delTemplateButton.setAction(new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON) {
             {
                 setEnabled(false); // disabled at start
-                templatesList.addListSelectionListener(new ListSelectionListener()
-                {
+                templatesList.addListSelectionListener(new ListSelectionListener() {
                     @Override
-                    public void valueChanged(ListSelectionEvent e)
-                    {
+                    public void valueChanged(ListSelectionEvent e) {
                         setEnabled(!templatesList.isSelectionEmpty()); // depends on selection
                     }
                 });
             }
 
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 if (JOptionPane.showConfirmDialog(ActionEditor.this, "Вы действительно хотите удалить этот шаблон?",
-                                                  "Удаление шаблона", JOptionPane.YES_NO_OPTION,
-                                                  JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
-                {
+                        "Удаление шаблона", JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
                     Template selectedAction = (Template) templatesList.getSelectedValue();
                     templatesClone.remove(selectedAction);
                 }
             }
         });
-        addRestrictionButton.setAction(new AbstractAction("Добавить...", GUIUtils.NEW_ELEMENT_ICON)
-        {
+        addRestrictionButton.setAction(new AbstractAction("Добавить...", GUIUtils.NEW_ELEMENT_ICON) {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 Restriction restriction = new Restriction();
-                if (editRestriction(restriction))
-                {
+                if (editRestriction(restriction)) {
                     restrictionsClone.add(restriction);
                     restrictionsList.setSelectedValue(restriction, true);
                 }
             }
         });
-        editRestrictionButton.setAction(new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON)
-        {
+        editRestrictionButton.setAction(new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON) {
             {
                 setEnabled(false); // disabled at start
-                restrictionsList.addListSelectionListener(new ListSelectionListener()
-                {
+                restrictionsList.addListSelectionListener(new ListSelectionListener() {
                     @Override
-                    public void valueChanged(ListSelectionEvent e)
-                    {
+                    public void valueChanged(ListSelectionEvent e) {
                         setEnabled(!restrictionsList.isSelectionEmpty()); // depends on selection
                     }
                 });
             }
 
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 Restriction restriction = (Restriction) restrictionsList.getSelectedValue();
-                if (restriction != null)
-                {
+                if (restriction != null) {
                     editRestriction(restriction);
                 }
             }
         });
-        delRestrictionButton.setAction(new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
-        {
+        delRestrictionButton.setAction(new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON) {
             {
                 setEnabled(false); // disabled at start
-                restrictionsList.addListSelectionListener(new ListSelectionListener()
-                {
+                restrictionsList.addListSelectionListener(new ListSelectionListener() {
                     @Override
-                    public void valueChanged(ListSelectionEvent e)
-                    {
+                    public void valueChanged(ListSelectionEvent e) {
                         setEnabled(!restrictionsList.isSelectionEmpty()); // depends on selection
                     }
                 });
             }
 
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 Restriction restriction = (Restriction) restrictionsList.getSelectedValue();
-                if (restriction != null &&
-                    GUIUtils.showDeleteConfirmDialog(ActionEditor.this, "ограничение", "ограничения", Word.Gender.NEUTER))
-                {
+                if (restriction != null && GUIUtils.showDeleteConfirmDialog(ActionEditor.this, "ограничение",
+                        "ограничения", Word.Gender.NEUTER)) {
                     restrictionsClone.remove(restriction);
                 }
             }
         });
-        upRestrictionButton.setAction(new AbstractAction("", GUIUtils.UP_ICON)
-        {
+        upRestrictionButton.setAction(new AbstractAction("", GUIUtils.UP_ICON) {
             {
                 setEnabled(false); // disabled at start
-                restrictionsList.addListSelectionListener(new ListSelectionListener()
-                {
+                restrictionsList.addListSelectionListener(new ListSelectionListener() {
                     @Override
-                    public void valueChanged(ListSelectionEvent e)
-                    {
+                    public void valueChanged(ListSelectionEvent e) {
                         setEnabled(restrictionsList.getSelectedIndex() > 0); // depends on selection
                     }
                 });
             }
 
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 int selIdx = restrictionsList.getSelectedIndex();
-                if (selIdx > 0)
-                {
+                if (selIdx > 0) {
                     Collections.swap(restrictionsClone, selIdx, selIdx - 1);
                     restrictionsList.setSelectedIndex(selIdx - 1);
                 }
             }
         });
-        downRestrictionButton.setAction(new AbstractAction("", GUIUtils.DOWN_ICON)
-        {
+        downRestrictionButton.setAction(new AbstractAction("", GUIUtils.DOWN_ICON) {
             {
                 setEnabled(false); // disabled at start
-                restrictionsList.addListSelectionListener(new ListSelectionListener()
-                {
+                restrictionsList.addListSelectionListener(new ListSelectionListener() {
                     @Override
-                    public void valueChanged(ListSelectionEvent e)
-                    {
-                        setEnabled(restrictionsList.getSelectedIndex() <
-                                   restrictionsList.getModel().getSize() - 1); // depends on selection and list length
+                    public void valueChanged(ListSelectionEvent e) {
+                        setEnabled(restrictionsList.getSelectedIndex() < restrictionsList.getModel().getSize() - 1); // depends
+                                                                                                                     // on
+                                                                                                                     // selection
+                                                                                                                     // and
+                                                                                                                     // list
+                                                                                                                     // length
                     }
                 });
             }
 
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 int selIdx = restrictionsList.getSelectedIndex();
-                if (selIdx < restrictionsClone.size() - 1)
-                {
+                if (selIdx < restrictionsClone.size() - 1) {
                     Collections.swap(restrictionsClone, selIdx, selIdx + 1);
                     restrictionsList.setSelectedIndex(selIdx + 1);
                 }
@@ -228,31 +206,23 @@ public class ActionEditor extends AbstractEditor<Action>
         });
 
         // listeners
-        templatesList.addMouseListener(new MouseAdapter()
-        {
+        templatesList.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e)
-            {
-                if (e.getClickCount() == 2)
-                {
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
                     Template template = (Template) templatesList.getSelectedValue();
-                    if (template != null)
-                    {
+                    if (template != null) {
                         editTemplate(template);
                     }
                 }
             }
         });
-        restrictionsList.addMouseListener(new MouseAdapter()
-        {
+        restrictionsList.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e)
-            {
-                if (e.getClickCount() == 2)
-                {
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
                     Restriction restriction = (Restriction) restrictionsList.getSelectedValue();
-                    if (restriction != null)
-                    {
+                    if (restriction != null) {
                         editRestriction(restriction);
                     }
                 }
@@ -260,8 +230,8 @@ public class ActionEditor extends AbstractEditor<Action>
         });
 
         // clone data
-        templatesClone = GlazedLists.eventList(action.getTemplates()); //todo is that really clones members???
-        restrictionsClone = GlazedLists.eventList(action.getRestrictions()); //todo is that really clones members???
+        templatesClone = GlazedLists.eventList(action.getTemplates()); // todo is that really clones members???
+        restrictionsClone = GlazedLists.eventList(action.getRestrictions()); // todo is that really clones members???
 
         // init form data
         nameText.setText(action.getName());
@@ -272,37 +242,27 @@ public class ActionEditor extends AbstractEditor<Action>
         restrictionsList.setModel(new DefaultEventListModel<Restriction>(restrictionsClone));
     }
 
-    private boolean editRestriction(Restriction restriction)
-    {
+    private boolean editRestriction(Restriction restriction) {
         RestrictionEditor restrictionEditor = new RestrictionEditor(this, restriction, storyDataHelper);
-        if (restrictionEditor.showDialog())
-        {
-            try
-            {
+        if (restrictionEditor.showDialog()) {
+            try {
                 restrictionEditor.updateData(restriction);
                 return true;
-            }
-            catch (IFML2EditorException e)
-            {
+            } catch (IFML2EditorException e) {
                 GUIUtils.showErrorMessage(this, e);
             }
         }
         return false;
     }
 
-    private boolean editTemplate(@NotNull Template template)
-    {
+    private boolean editTemplate(@NotNull Template template) {
         Procedure selectedProcedure = (Procedure) procedureCallCombo.getSelectedItem();
         TemplateEditor templateEditor = new TemplateEditor(this, template, selectedProcedure);
-        if (templateEditor.showDialog())
-        {
-            try
-            {
+        if (templateEditor.showDialog()) {
+            try {
                 templateEditor.updateData(template);
                 return true;
-            }
-            catch (IFML2EditorException e)
-            {
+            } catch (IFML2EditorException e) {
                 GUIUtils.showErrorMessage(this, e);
             }
         }
@@ -310,8 +270,7 @@ public class ActionEditor extends AbstractEditor<Action>
     }
 
     @Override
-    public void updateData(@NotNull Action data) throws IFML2EditorException
-    {
+    public void updateData(@NotNull Action data) throws IFML2EditorException {
         data.setName(nameText.getText());
         data.setDescription(descriptionText.getText());
 
@@ -325,10 +284,8 @@ public class ActionEditor extends AbstractEditor<Action>
     }
 
     @Override
-    protected void validateData() throws DataNotValidException
-    {
-        if (nameText.getText().trim().length() == 0)
-        {
+    protected void validateData() throws DataNotValidException {
+        if (nameText.getText().trim().isEmpty()) {
             throw new DataNotValidException("У действия должно быть имя!", nameText);
         }
     }

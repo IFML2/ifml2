@@ -1,5 +1,17 @@
 package ifml2.editor.gui.editors;
 
+import static ifml2.om.Word.Gender.FEMININE;
+import static ifml2.om.Word.Gender.MASCULINE;
+
+import java.awt.Window;
+
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import org.jetbrains.annotations.NotNull;
+
 import ifml2.GUIUtils;
 import ifml2.editor.DataNotValidException;
 import ifml2.editor.IFML2EditorException;
@@ -10,16 +22,8 @@ import ifml2.om.Parameter;
 import ifml2.om.Procedure;
 import ifml2.om.Story;
 import ifml2.vm.instructions.Instruction;
-import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
-
-import static ifml2.om.Word.Gender.FEMININE;
-import static ifml2.om.Word.Gender.MASCULINE;
-
-public class ProcedureEditor extends AbstractEditor<Procedure>
-{
+public class ProcedureEditor extends AbstractEditor<Procedure> {
     private static final String PROCEDURE_EDITOR_TITLE = "Процедура";
     protected ListEditForm<Parameter> paramsEditForm;
     private Procedure procedureClone;
@@ -31,21 +35,17 @@ public class ProcedureEditor extends AbstractEditor<Procedure>
     private Story.DataHelper storyDataHelper;
     private Procedure originalProcedure;
 
-    public ProcedureEditor(Window owner, @NotNull final Procedure procedure, Story.DataHelper storyDataHelper)
-    {
+    public ProcedureEditor(Window owner, @NotNull final Procedure procedure, Story.DataHelper storyDataHelper) {
         super(owner);
         initializeEditor(PROCEDURE_EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
 
         originalProcedure = procedure;
         this.storyDataHelper = storyDataHelper;
 
-        try
-        {
+        try {
             // clone data
             procedureClone = procedure.clone();
-        }
-        catch (CloneNotSupportedException e)
-        {
+        } catch (CloneNotSupportedException e) {
             GUIUtils.showErrorMessage(this, e);
         }
 
@@ -54,70 +54,57 @@ public class ProcedureEditor extends AbstractEditor<Procedure>
     }
 
     @Override
-    protected void validateData() throws DataNotValidException
-    {
+    protected void validateData() throws DataNotValidException {
         // check name for null
         String trimmedName = nameText.getText().trim();
 
-        if (trimmedName.length() == 0)
-        {
+        if (trimmedName.length() == 0) {
             throw new DataNotValidException("У процедуры должно быть задано имя.", nameText);
         }
 
         // check name for duplicates
         Procedure procedure = storyDataHelper.findProcedureById(trimmedName);
-        if (procedure != null && !procedure.equals(originalProcedure))
-        {
-            throw new DataNotValidException("У процедуры должно быть уникальное имя. Процедура с таким именем уже есть в истории.",
-                    nameText);
+        if (procedure != null && !procedure.equals(originalProcedure)) {
+            throw new DataNotValidException(
+                    "У процедуры должно быть уникальное имя. Процедура с таким именем уже есть в истории.", nameText);
         }
     }
 
-    private void bindData()
-    {
+    private void bindData() {
         nameText.setText(procedureClone.getName());
         paramsEditForm.bindData(procedureClone.getParameters());
         instructionsEditForm.bindData(procedureClone.getInstructions());
     }
 
     @Override
-    public void updateData(@NotNull Procedure data) throws IFML2EditorException
-    {
+    public void updateData(@NotNull Procedure data) throws IFML2EditorException {
         // copy data from form to procedureClone
         procedureClone.setName(nameText.getText());
 
-        try
-        {
+        try {
             // copy data from procedureClone to procedure
             procedureClone.copyTo(data);
-        }
-        catch (CloneNotSupportedException e)
-        {
+        } catch (CloneNotSupportedException e) {
             throw new IFML2EditorException("Ошибка при сохранении объекта: {0}", e.getMessage());
         }
     }
 
-    private void createUIComponents()
-    {
-        paramsEditForm = new ListEditForm<Parameter>(this, "параметр", "параметра", MASCULINE, Parameter.class)
-        {
+    private void createUIComponents() {
+        paramsEditForm = new ListEditForm<Parameter>(this, "параметр", "параметра", MASCULINE, Parameter.class) {
             @Override
-            protected Parameter createElement() throws Exception
-            {
-                String parameterName = JOptionPane.showInputDialog(ProcedureEditor.this, "Название нового параметра:", "Новый параметр",
-                        JOptionPane.QUESTION_MESSAGE);
+            protected Parameter createElement() throws Exception {
+                String parameterName = JOptionPane.showInputDialog(ProcedureEditor.this, "Название нового параметра:",
+                        "Новый параметр", JOptionPane.QUESTION_MESSAGE);
                 return parameterName != null && !"".equals(parameterName) ? new Parameter(parameterName) : null;
             }
 
             @Override
-            protected boolean editElement(Parameter selectedElement) throws Exception
-            {
-                if (selectedElement != null)
-                {
+            protected boolean editElement(Parameter selectedElement) throws Exception {
+                if (selectedElement != null) {
                     String parameterName = selectedElement.getName();
-                    parameterName = JOptionPane.showInputDialog(ProcedureEditor.this, "Название параметра:", parameterName);
-                    if (parameterName != null && !"".equals(parameterName))
-                    {
+                    parameterName = JOptionPane.showInputDialog(ProcedureEditor.this, "Название параметра:",
+                            parameterName);
+                    if (parameterName != null && !"".equals(parameterName)) {
                         selectedElement.setName(parameterName);
                         return true;
                     }
@@ -126,17 +113,14 @@ public class ProcedureEditor extends AbstractEditor<Procedure>
             }
         };
 
-        instructionsEditForm = new ListEditForm<Instruction>(this, "инструкцию", "инструкции", FEMININE, Instruction.class)
-        {
+        instructionsEditForm = new ListEditForm<Instruction>(this, "инструкцию", "инструкции", FEMININE,
+                Instruction.class) {
             @Override
-            protected Instruction createElement() throws Exception
-            {
+            protected Instruction createElement() throws Exception {
                 Instruction.Type instrType = EditorUtils.askInstructionType(ProcedureEditor.this);
-                if (instrType != null)
-                {
+                if (instrType != null) {
                     Instruction instruction = instrType.createInstrInstance();
-                    if (EditorUtils.showAssociatedEditor(owner, instruction, storyDataHelper))
-                    {
+                    if (EditorUtils.showAssociatedEditor(owner, instruction, storyDataHelper)) {
                         return instruction;
                     }
                 }
@@ -144,19 +128,16 @@ public class ProcedureEditor extends AbstractEditor<Procedure>
             }
 
             @Override
-            protected boolean editElement(Instruction selectedElement) throws Exception
-            {
-                return selectedElement != null && EditorUtils.showAssociatedEditor(owner, selectedElement, storyDataHelper);
+            protected boolean editElement(Instruction selectedElement) throws Exception {
+                return selectedElement != null
+                        && EditorUtils.showAssociatedEditor(owner, selectedElement, storyDataHelper);
             }
         };
     }
 
-    protected boolean hasParameter(@NotNull String name)
-    {
-        for (Parameter parameter : paramsEditForm.getClonedList())
-        {
-            if (name.equalsIgnoreCase(parameter.getName()))
-            {
+    protected boolean hasParameter(@NotNull String name) {
+        for (Parameter parameter : paramsEditForm.getClonedList()) {
+            if (name.equalsIgnoreCase(parameter.getName())) {
                 return true;
             }
         }

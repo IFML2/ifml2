@@ -1,39 +1,35 @@
 package ifml2.parser;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class IFML2ParsePhraseTooLong extends IFML2ParseException
-{
+public class IFML2ParsePhraseTooLong extends IFML2ParseException {
     private static final long serialVersionUID = 6741264251197068246L;
 
-    private ArrayList<Parser.FittedFormalElement> fittedFormalElements = new ArrayList<Parser.FittedFormalElement>();
-    private ArrayList<String> phraseRest = new ArrayList<String>();
+    private List<Parser.FittedFormalElement> fittedFormalElements = new ArrayList<>();
+    private List<String> phraseRest = new ArrayList<>();
 
-    public IFML2ParsePhraseTooLong(ArrayList<Parser.FittedFormalElement> fittedFormalElement, ArrayList<String> phraseRest, int usedWordsQty)
-    {
+    public IFML2ParsePhraseTooLong(ArrayList<Parser.FittedFormalElement> fittedFormalElement, List<String> phraseRest,
+            int usedWordsQty) {
         super("");
         this.setFittedFormalElements(fittedFormalElement);
         this.setPhraseRest(phraseRest);
         this.setUsedWords(usedWordsQty);
     }
 
-    public ArrayList<Parser.FittedFormalElement> getFittedFormalElements()
-    {
+    public List<Parser.FittedFormalElement> getFittedFormalElements() {
         return fittedFormalElements;
     }
 
-    public void setFittedFormalElements(ArrayList<Parser.FittedFormalElement> fittedFormalElements)
-    {
+    public void setFittedFormalElements(List<Parser.FittedFormalElement> fittedFormalElements) {
         this.fittedFormalElements = fittedFormalElements;
     }
 
-    public ArrayList<String> getPhraseRest()
-    {
+    public List<String> getPhraseRest() {
         return phraseRest;
     }
 
-    public void setPhraseRest(ArrayList<String> phraseRest)
-    {
+    public void setPhraseRest(List<String> phraseRest) {
         this.phraseRest = phraseRest;
     }
 }

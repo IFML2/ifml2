@@ -1,19 +1,23 @@
 package ifml2.engine.saved;
 
-import ifml2.IFML2Exception;
-import ifml2.engine.Engine;
-import ifml2.om.Item;
-import ifml2.om.Location;
-import ifml2.om.Story;
-import ifml2.vm.values.Value;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.bind.annotation.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import ifml2.IFML2Exception;
+import ifml2.engine.Engine;
+import ifml2.om.IFMLObject;
+import ifml2.om.Item;
+import ifml2.om.Story;
 
 @XmlRootElement(name = "saved-game")
 public class SavedGame {
@@ -52,75 +56,63 @@ public class SavedGame {
     }
 
     private static List<SavedItem> storeSavedItems(Story.DataHelper dataHelper) {
-        ArrayList<SavedItem> savedItems = new ArrayList<SavedItem>();
-        for (Item item : dataHelper.getItems()) {
-            savedItems.add(new SavedItem(item));
-        }
-        return savedItems;
+        return dataHelper.getItems().stream().map(SavedItem::new).collect(Collectors.toList());
     }
 
     private static List<String> storeInventory(@NotNull Engine.DataHelper dataHelper) {
-        ArrayList<String> itemIds = new ArrayList<String>();
-        for (Item item : dataHelper.getInventory()) {
-            itemIds.add(item.getId());
-        }
-        return itemIds;
+        return dataHelper.getInventory().stream().map(IFMLObject::getId).collect(Collectors.toList());
     }
 
     private static List<SavedVariable> storeSystemVariables(@NotNull Engine.DataHelper dataHelper) {
-        List<SavedVariable> vars = new ArrayList<SavedVariable>();
-        for (Map.Entry<String, Value> var : dataHelper.getSystemVariables().entrySet()) {
-            vars.add(new SavedVariable(var.getKey(), var.getValue().toLiteral()));
-        }
-        return vars;
+        return dataHelper.getSystemVariables().entrySet().stream()
+                .map(variable -> new SavedVariable(variable.getKey(), variable.getValue().toLiteral()))
+                .collect(Collectors.toList());
     }
 
     public static List<SavedVariable> storeGlobalVariables(@NotNull Engine.DataHelper dataHelper) {
-        List<SavedVariable> vars = new ArrayList<SavedVariable>();
-        for (Map.Entry<String, Value> var : dataHelper.getGlobalVariables().entrySet()) {
-            vars.add(new SavedVariable(var.getKey(), var.getValue().toLiteral()));
-        }
-        return vars;
+        return dataHelper.getGlobalVariables().entrySet().stream()
+                .map(variable -> new SavedVariable(variable.getKey(), variable.getValue().toLiteral()))
+                .collect(Collectors.toList());
     }
 
     public static List<SavedLocation> storeSavedLocations(@NotNull Story.DataHelper dataHelper) {
-        List<SavedLocation> savedLocations = new ArrayList<SavedLocation>();
-        for (Location location : dataHelper.getLocations()) {
-            savedLocations.add(new SavedLocation(location));
-        }
-        return savedLocations;
+        return dataHelper.getLocations().stream().map(SavedLocation::new).collect(Collectors.toList());
     }
 
     private static void restoreSystemVariables(@NotNull List<SavedVariable> systemVariables,
             @NotNull Engine.DataHelper dataHelper) throws IFML2Exception {
-        for (SavedVariable var : systemVariables) {
-            dataHelper.setSystemVariable(var.getName(), var.getValue());
-        }
+        systemVariables.forEach(variable -> {
+            try {
+                dataHelper.setGlobalVariable(variable.getName(), variable.getValue());
+            } catch (IFML2Exception e) {
+                // TODO: add logging
+            }
+        });
     }
 
     private static void restoreGlobalVariables(@NotNull List<SavedVariable> globalVariables,
             @NotNull Engine.DataHelper dataHelper) throws IFML2Exception {
-        for (SavedVariable var : globalVariables) {
-            dataHelper.setGlobalVariable(var.getName(), var.getValue());
-        }
+        globalVariables.forEach(variable -> {
+            try {
+                dataHelper.setGlobalVariable(variable.getName(), variable.getValue());
+            } catch (IFML2Exception e) {
+                // TODO: add logging
+            }
+        });
     }
 
     private static void restoreSavedLocations(@NotNull List<SavedLocation> savedLocationItems,
             @NotNull Story.DataHelper storyDataHelper) {
-        for (SavedLocation savedLocation : savedLocationItems) {
-            savedLocation.restore(storyDataHelper);
-        }
+        savedLocationItems.forEach(savedLocation -> savedLocation.restore(storyDataHelper));
     }
 
     private static void restoreSavedItems(List<SavedItem> savedItems, Story.DataHelper dataHelper) {
-        for (SavedItem savedItem : savedItems) {
-            savedItem.restore(dataHelper);
-        }
+        savedItems.forEach(savedItem -> savedItem.restore(dataHelper));
     }
 
     private static void restoreInventory(@NotNull List<String> itemIds, @NotNull Engine.DataHelper dataHelper,
             @NotNull Story.DataHelper storyDataHelper) {
-        ArrayList<Item> inventory = dataHelper.getInventory();
+        List<Item> inventory = dataHelper.getInventory();
         inventory.clear();
         for (String id : itemIds) {
             Item item = storyDataHelper.findItemById(id);

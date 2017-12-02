@@ -1,29 +1,26 @@
 package ifml2.om;
 
+import javax.xml.bind.annotation.XmlElement;
+
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
 
-import javax.xml.bind.annotation.XmlElement;
-
-public class LiteralTemplateElement extends TemplateElement
-{
+public class LiteralTemplateElement extends TemplateElement {
     @XmlElement(name = "synonym")
     private EventList<String> synonyms = new BasicEventList<String>();
-    public EventList<String> getSynonyms()
-    {
+
+    public EventList<String> getSynonyms() {
         return synonyms;
     }
 
-	@Override
-	public String toString()
-	{
-		return (synonyms != null ? getSimpleView() : "") + (parameter != null ? " => " + parameter : "");
-	}
+    @Override
+    public String toString() {
+        return (synonyms != null ? getSimpleView() : "") + (parameter != null ? " => " + parameter : "");
+    }
 
     @Override
-    public LiteralTemplateElement clone() throws CloneNotSupportedException
-    {
+    public LiteralTemplateElement clone() throws CloneNotSupportedException {
         // basic shallow copy
         LiteralTemplateElement clone = (LiteralTemplateElement) super.clone();
 
@@ -34,14 +31,11 @@ public class LiteralTemplateElement extends TemplateElement
     }
 
     @Override
-    public String getSimpleView()
-    {
+    public String getSimpleView() {
         String result = "";
 
-        for (String synonym : synonyms)
-        {
-            if(result.length() > 0)
-            {
+        for (String synonym : synonyms) {
+            if (result.length() > 0) {
                 result += " | ";
             }
 

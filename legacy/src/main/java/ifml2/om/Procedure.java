@@ -1,5 +1,17 @@
 package ifml2.om;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlEnumValue;
+import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.jetbrains.annotations.NotNull;
+
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ifml2.IFML2Exception;
@@ -9,14 +21,10 @@ import ifml2.vm.RunningContext;
 import ifml2.vm.Variable;
 import ifml2.vm.instructions.Instruction;
 import ifml2.vm.values.Value;
-import org.jetbrains.annotations.NotNull;
-
-import javax.xml.bind.annotation.*;
 
 @XmlRootElement(name = "procedure")
 @XmlAccessorType(XmlAccessType.NONE)
-public class Procedure extends IFMLEntity implements Cloneable
-{
+public class Procedure extends IFMLEntity implements Cloneable {
     @XmlAttribute(name = "inheritsSystemProcedure")
     private SystemProcedureType inheritsSystemProcedure = null;
     @XmlElementWrapper(name = "procedureVariables")
@@ -31,21 +39,16 @@ public class Procedure extends IFMLEntity implements Cloneable
     @XmlElement(name = "parameter")
     private EventList<Parameter> parameters = new BasicEventList<Parameter>();
 
-    public Procedure(String name)
-    {
+    public Procedure(String name) {
         this.name = name;
     }
 
-    public Procedure()
-    {
+    public Procedure() {
     }
 
-    public Parameter getParameterByName(String parameterName)
-    {
-        for (Parameter parameter : parameters)
-        {
-            if (parameter.getName().equalsIgnoreCase(parameterName))
-            {
+    public Parameter getParameterByName(String parameterName) {
+        for (Parameter parameter : parameters) {
+            if (parameter.getName().equalsIgnoreCase(parameterName)) {
                 return parameter;
             }
         }
@@ -53,44 +56,36 @@ public class Procedure extends IFMLEntity implements Cloneable
         return null;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public void setName(String name)
-    {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public SystemProcedureType getInheritsSystemProcedure()
-    {
+    public SystemProcedureType getInheritsSystemProcedure() {
         return inheritsSystemProcedure;
     }
 
-    public EventList<Parameter> getParameters()
-    {
+    public EventList<Parameter> getParameters() {
         return parameters;
     }
 
-    public EventList<ProcedureVariable> getVariables()
-    {
+    public EventList<ProcedureVariable> getVariables() {
         return variables;
     }
 
-    public InstructionList getProcedureBody()
-    {
+    public InstructionList getProcedureBody() {
         return procedureBody;
     }
 
-    public EventList<Instruction> getInstructions()
-    {
+    public EventList<Instruction> getInstructions() {
         return procedureBody.getInstructions();
     }
 
     @Override
-    public Procedure clone() throws CloneNotSupportedException
-    {
+    public Procedure clone() throws CloneNotSupportedException {
         Procedure clone = (Procedure) super.clone(); // clone flat fields
 
         // clone deeper
@@ -101,8 +96,7 @@ public class Procedure extends IFMLEntity implements Cloneable
         return clone;
     }
 
-    public void copyTo(Procedure procedure) throws CloneNotSupportedException
-    {
+    public void copyTo(Procedure procedure) throws CloneNotSupportedException {
         procedure.name = name;
         procedure.inheritsSystemProcedure = inheritsSystemProcedure;
         procedure.variables = deepCloneEventList(variables, ProcedureVariable.class);
@@ -111,26 +105,20 @@ public class Procedure extends IFMLEntity implements Cloneable
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return name;
     }
 
-    public Variable searchProcedureVariable(String name, RunningContext runningContext) throws IFML2Exception
-    {
-        if(name == null)
-        {
+    public Variable searchProcedureVariable(String name, RunningContext runningContext) throws IFML2Exception {
+        if (name == null) {
             return null;
         }
 
         String loweredName = name.toLowerCase();
 
-        for (ProcedureVariable procedureVariable : variables)
-        {
-            if (loweredName.equalsIgnoreCase(procedureVariable.getName()))
-            {
-                if(procedureVariable.getValue() == null)
-                {
+        for (ProcedureVariable procedureVariable : variables) {
+            if (loweredName.equalsIgnoreCase(procedureVariable.getName())) {
+                if (procedureVariable.getValue() == null) {
                     // init value
                     Value value = ExpressionCalculator.calculate(runningContext, procedureVariable.getInitialValue());
                     procedureVariable.setValue(value);
@@ -144,99 +132,82 @@ public class Procedure extends IFMLEntity implements Cloneable
     }
 
     @XmlEnum
-    public enum SystemProcedureType
-    {
+    public enum SystemProcedureType {
         @XmlEnumValue(value = "showLocation")
-        SHOW_LOCATION("Описать локацию"),
-        @XmlEnumValue(value = "parseErrorHandler")
+        SHOW_LOCATION("Описать локацию"), @XmlEnumValue(value = "parseErrorHandler")
         PARSE_ERROR_HANDLER("Обработка ошибок парсинга");
 
         private String name;
 
-        SystemProcedureType(String name)
-        {
+        SystemProcedureType(String name) {
             this.name = name;
         }
 
-        public String getName()
-        {
+        public String getName() {
             return name;
         }
     }
 
     @XmlAccessorType(XmlAccessType.NONE)
-    public static class FilledParameter
-    {
+    public static class FilledParameter {
         @XmlAttribute(name = "name")
         private String name;
         @XmlAttribute(name = "value")
         private String valueExpression;
 
         @SuppressWarnings("UnusedDeclaration")
-        public FilledParameter()
-        {
+        public FilledParameter() {
             // used for JAXB
         }
 
-        public FilledParameter(String name, String valueExpression)
-        {
+        public FilledParameter(String name, String valueExpression) {
             this.name = name;
             this.valueExpression = valueExpression;
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return name;
         }
 
-        public String getName()
-        {
+        public String getName() {
             return name;
         }
 
-        public String getValueExpression()
-        {
+        public String getValueExpression() {
             return valueExpression;
         }
 
-        public void setValueExpression(String valueExpression)
-        {
+        public void setValueExpression(String valueExpression) {
             this.valueExpression = valueExpression;
         }
     }
 
-    private class ProcedureVariableProxy extends Variable
-    {
+    private class ProcedureVariableProxy extends Variable {
         private ProcedureVariable procedureVariable;
 
-        public ProcedureVariableProxy(@NotNull ProcedureVariable procedureVariable)
-        {
+        public ProcedureVariableProxy(@NotNull ProcedureVariable procedureVariable) {
             super(procedureVariable.getName(), procedureVariable.getValue());
             this.procedureVariable = procedureVariable;
         }
 
         @Override
-        public Value getValue()
-        {
+        public Value getValue() {
             return procedureVariable.getValue();
         }
 
         @Override
-        public void setValue(Value value)
-        {
+        public void setValue(Value value) {
             procedureVariable.setValue(value);
         }
 
         @Override
-        public String getName()
-        {
+        public String getName() {
             return procedureVariable.getName();
         }
 
         @Override
-        public void setName(String name)
-        {
+        public void setName(String name) {
             throw new RuntimeException("Внутренняя ошибка: Запрещено менять имена переменных");
         }
     }

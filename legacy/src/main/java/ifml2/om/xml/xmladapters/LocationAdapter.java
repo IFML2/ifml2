@@ -1,37 +1,36 @@
 package ifml2.om.xml.xmladapters;
 
-import ifml2.om.Location;
-import org.jetbrains.annotations.NotNull;
-
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlIDREF;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-public class LocationAdapter extends XmlAdapter<LocationAdapter.AdaptedLocation, Location>
-{
+import org.jetbrains.annotations.NotNull;
+
+import ifml2.om.Location;
+
+public class LocationAdapter extends XmlAdapter<LocationAdapter.AdaptedLocation, Location> {
     @Override
-    public Location unmarshal(AdaptedLocation adaptedLocation) throws Exception
-    {
+    public Location unmarshal(AdaptedLocation adaptedLocation) throws Exception {
         return adaptedLocation;
     }
 
     @Override
-    public AdaptedLocation marshal(Location location) throws Exception
-    {
+    public AdaptedLocation marshal(Location location) throws Exception {
         return new AdaptedLocation(location);
     }
 
     @XmlAccessorType(XmlAccessType.NONE)
-    @XmlType(name="location")
-    public static class AdaptedLocation extends Location implements Cloneable
-    {
+    @XmlType(name = "location")
+    public static class AdaptedLocation extends Location implements Cloneable {
         /**
          * Override getExit() to yield exits from plain fields to HashMap
          */
         @Override
-        public Location getExit(ExitDirection exitDirection)
-        {
-            switch (exitDirection)
-            {
+        public Location getExit(ExitDirection exitDirection) {
+            switch (exitDirection) {
                 case NORTH:
                     return north;
                 case NORTH_EAST:
@@ -60,10 +59,9 @@ public class LocationAdapter extends XmlAdapter<LocationAdapter.AdaptedLocation,
         @Override
         /**
          * Override setExit() to set exits to plain fields from HashMap
-         */ public void setExit(ExitDirection exitDirection, Location location)
-        {
-            switch (exitDirection)
-            {
+         */
+        public void setExit(ExitDirection exitDirection, Location location) {
+            switch (exitDirection) {
                 case NORTH:
                     north = location;
                     break;
@@ -138,18 +136,15 @@ public class LocationAdapter extends XmlAdapter<LocationAdapter.AdaptedLocation,
         private Location down;
 
         @SuppressWarnings("UnusedDeclaration") // needed for JAXB
-        public AdaptedLocation()
-        {
+        public AdaptedLocation() {
         }
 
-        public AdaptedLocation(@NotNull Location location) throws CloneNotSupportedException
-        {
+        public AdaptedLocation(@NotNull Location location) throws CloneNotSupportedException {
             location.copyTo(this);
             fillFieldsFromLoc(location);
         }
 
-        private void fillFieldsFromLoc(Location location)
-        {
+        private void fillFieldsFromLoc(Location location) {
             north = location.getNorth();
             northEast = location.getExit(ExitDirection.NORTH_EAST);
             east = location.getEast();

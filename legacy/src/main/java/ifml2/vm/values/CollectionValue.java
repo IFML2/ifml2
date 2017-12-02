@@ -1,13 +1,13 @@
 package ifml2.vm.values;
 
-import ifml2.IFMLEntity;
-import ifml2.om.IFMLObject;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import static java.lang.String.format;
 
 import java.util.Iterator;
 import java.util.List;
 
-import static java.lang.String.format;
+import ifml2.IFMLEntity;
+import ifml2.om.IFMLObject;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class CollectionValue extends Value<List<? extends IFMLEntity>> {
     public CollectionValue(List<? extends IFMLEntity> value) {
@@ -31,8 +31,7 @@ public class CollectionValue extends Value<List<? extends IFMLEntity>> {
                     if (next instanceof IFMLObject) {
                         IFMLObject object = (IFMLObject) next;
                         return format("%s \"%s\"", object.getId(), object.getName());
-                    }
-                    else {
+                    } else {
                         return next.toString();
                     }
                 }
@@ -47,6 +46,6 @@ public class CollectionValue extends Value<List<? extends IFMLEntity>> {
 
     @Override
     public String toLiteral() {
-        throw new NotImplementedException(); //todo toLiteral
+        throw new NotImplementedException(); // todo toLiteral
     }
 }

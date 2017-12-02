@@ -27,7 +27,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.text.MessageFormat;
-import java.util.ArrayList;
+import java.util.List;
 
 import static ifml2.CommonConstants.RUSSIAN_PRODUCT_NAME;
 import static ifml2.GUIUtils.DIRECTORY_ICON;
@@ -574,9 +574,9 @@ public class Editor extends JFrame {
             protected boolean beforeDelete(Procedure selectedElement) throws Exception {
                 if (selectedElement != null) {
                     // search for usages in actions
-                    ArrayList<Action> affectedActionsList = story.getDataHelper()
+                    List<Action> affectedActionsList = story.getDataHelper()
                             .findActionsByProcedure(selectedElement);
-                    if (affectedActionsList.size() > 0) {
+                    if (!affectedActionsList.isEmpty()) {
                         String message = MessageFormat.format(
                                 "Это процедура вызывается в действиях:\n{0}\n" + "Поэтому она не может быть удалена.",
                                 affectedActionsList.toString());

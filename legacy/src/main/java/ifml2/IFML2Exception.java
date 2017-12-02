@@ -2,35 +2,30 @@ package ifml2;
 
 import java.text.MessageFormat;
 
-public class IFML2Exception extends Exception
-{
-    public IFML2Exception(String message)
-    {
+public class IFML2Exception extends Exception {
+    private static final long serialVersionUID = 1L;
+
+    public IFML2Exception(String message) {
         super(message);
     }
 
-    protected IFML2Exception()
-    {
+    protected IFML2Exception() {
         super();
     }
 
-    protected IFML2Exception(String message, Throwable cause)
-    {
+    protected IFML2Exception(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public IFML2Exception(Throwable cause)
-    {
+    public IFML2Exception(Throwable cause) {
         super("Произошла ошибка типа " + cause.getClass().toString(), cause);
     }
 
-    public IFML2Exception(String message, Object... arguments)
-    {
+    public IFML2Exception(String message, Object... arguments) {
         super(MessageFormat.format(message, arguments));
     }
 
-    public IFML2Exception(Throwable cause, String message, Object... arguments)
-    {
+    public IFML2Exception(Throwable cause, String message, Object... arguments) {
         super(MessageFormat.format(message, arguments), cause);
     }
 }

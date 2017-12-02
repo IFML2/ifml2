@@ -1,15 +1,19 @@
 package ifml2.om;
 
-import ca.odell.glazedlists.BasicEventList;
-import ca.odell.glazedlists.EventList;
+import static ifml2.om.xml.XmlSchemaConstants.LIBRARY_PROCEDURES_ELEMENT;
+import static ifml2.om.xml.XmlSchemaConstants.PROCEDURES_PROCEDURE_ELEMENT;
 
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static ifml2.om.xml.XmlSchemaConstants.LIBRARY_PROCEDURES_ELEMENT;
-import static ifml2.om.xml.XmlSchemaConstants.PROCEDURES_PROCEDURE_ELEMENT;
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
 
 @XmlRootElement(name = "library")
 public class Library {
@@ -34,7 +38,7 @@ public class Library {
     private String name;
 
     public Library() {
-        LOG.trace("Library() :: path = \"{0}\", name = \"{0}\"", path, name);
+        LOG.trace("Library() :: path = \"{}\", name = \"{}\"", path, name);
     }
 
     @XmlTransient
@@ -43,7 +47,7 @@ public class Library {
     }
 
     public void setPath(String path) {
-        LOG.trace("setPath(path = \"{0}\")", path);
+        LOG.trace("setPath(path = \"{}\")", path);
         this.path = path;
     }
 
@@ -53,7 +57,7 @@ public class Library {
     }
 
     public void setName(String name) {
-        LOG.trace("setName(name = \"{0}\")", name);
+        LOG.trace("setName(name = \"{}\")", name);
         this.name = name;
     }
 
@@ -71,35 +75,18 @@ public class Library {
     }
 
     public Attribute getAttributeByName(String name) {
-        if (name != null) {
-            for (Attribute attribute : attributes) {
-                if (name.equalsIgnoreCase(attribute.getName())) {
-                    return attribute;
-                }
-            }
-        }
-        return null;
+        return name == null ? null
+                : attributes.stream().filter(att -> name.equalsIgnoreCase(att.getName())).findFirst().orElse(null);
     }
 
     public Action getActionByName(String name) {
-        if (name != null) {
-            for (Action action : actions) {
-                if (name.equalsIgnoreCase(action.getName())) {
-                    return action;
-                }
-            }
-        }
-        return null;
+        return name == null ? null
+                : actions.stream().filter(act -> name.equalsIgnoreCase(act.getName())).findFirst().orElse(null);
     }
 
     public RoleDefinition getRoleDefinitionByName(String name) {
-        if (name != null) {
-            for (RoleDefinition roleDefinition : roleDefinitions) {
-                if (name.equalsIgnoreCase(roleDefinition.getName())) {
-                    return roleDefinition;
-                }
-            }
-        }
-        return null;
+        return name == null ? null
+                : roleDefinitions.stream().filter(roleDefinition -> name.equalsIgnoreCase(roleDefinition.getName()))
+                        .findFirst().orElse(null);
     }
 }
