@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -133,28 +134,21 @@ public class VirtualMachine {
     }
 
     private String convertObjectsToString(List<Item> inventory) {
-        String result = "";
+        StringBuilder result = new StringBuilder();
 
         Iterator<Item> iterator = inventory.iterator();
-
         while (iterator.hasNext()) {
             String itemName = iterator.next().getName();
 
-            if ("".equals(result)) // it's the first word
-            {
-                result = itemName;
-            } else if (iterator.hasNext()) // there is an another word after that
-            {
-                result += ", " + itemName;
-            } else // it's the last word
-            {
-                result += " и " + itemName;
+            if (result.length() == 0) { // it's the first word
+                result.append(itemName);
+            } else  {
+                result.append(iterator.hasNext() ? ", " : " и ").append(itemName);
             }
         }
+        result.append(".");
 
-        result += ".";
-
-        return result;
+        return result.toString();
     }
 
     public Value resolveSymbol(String symbol) throws IFML2VMException {

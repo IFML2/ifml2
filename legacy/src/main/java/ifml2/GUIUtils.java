@@ -139,22 +139,22 @@ public class GUIUtils {
         exception.printStackTrace();
         Logger LOG = LoggerFactory.getLogger(owner.getClass());
         LOG.error(exception.getMessage());
-        String errorMessage = "";
+        StringBuilder errorMessage = new StringBuilder();
         if (!(exception instanceof IFML2LoadXmlException) && exception.getCause() instanceof IFML2LoadXmlException) {
             exception = exception.getCause();
         }
         if (exception instanceof IFML2LoadXmlException) {
-            errorMessage += "В файле истории есть ошибки:";
+            errorMessage.append("В файле истории есть ошибки:");
             for (ValidationEvent validationEvent : ((IFML2LoadXmlException) exception).getEvents()) {
-                errorMessage += MessageFormat.format("\n\"{0}\" at {1},{2}", validationEvent.getMessage(),
-                        validationEvent.getLocator().getLineNumber(), validationEvent.getLocator().getColumnNumber());
+                errorMessage.append(MessageFormat.format("\n\"{0}\" at {1},{2}", validationEvent.getMessage(),
+                        validationEvent.getLocator().getLineNumber(), validationEvent.getLocator().getColumnNumber()));
             }
         } else {
             StringWriter stringWriter = new StringWriter();
             exception.printStackTrace(new PrintWriter(stringWriter));
-            errorMessage += stringWriter.toString();
+            errorMessage.append(stringWriter.toString());
         }
-        showMemoDialog(owner, "Произошла ошибка", errorMessage);
+        showMemoDialog(owner, "Произошла ошибка", errorMessage.toString());
     }
 
     public static class EventComboBoxModelWithNullElement<T> extends DefaultEventComboBoxModel<T> {

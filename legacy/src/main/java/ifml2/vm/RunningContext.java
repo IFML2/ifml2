@@ -46,21 +46,19 @@ public class RunningContext implements SymbolResolver {
 
         // fill parameters
         if (parameters != null) {
-            for (Variable parameter : parameters) {
+            parameters.forEach(parameter -> {
                 String name = parameter.getName();
                 if (name != null) {
                     String loweredName = name.toLowerCase();
                     runningContext.loweredLocalVariablesMap.put(loweredName, parameter);
                 }
-            }
+            });
         }
 
         // fill not set parameters as EmptyValue
-        for (Parameter parameter : contextProcedure.getParameters()) {
-            if (runningContext.searchLocalVariable(parameter.getName()) == null) {
-                runningContext.writeLocalVariable(new Variable(parameter.getName(), new EmptyValue()));
-            }
-        }
+        contextProcedure.getParameters().stream()
+                .filter(param -> runningContext.searchLocalVariable(param.getName()) == null)
+                .forEach(param -> runningContext.writeLocalVariable(new Variable(param.getName(), new EmptyValue())));
 
         return runningContext;
     }
@@ -72,10 +70,7 @@ public class RunningContext implements SymbolResolver {
         RunningContext runningContext = new RunningContext(parentRunningContext.virtualMachine);
 
         // copy local variables
-        Collection<Variable> localVariables = parentRunningContext.loweredLocalVariablesMap.values();
-        for (Variable variable : localVariables) {
-            runningContext.writeLocalVariable(variable);
-        }
+        parentRunningContext.loweredLocalVariablesMap.values().forEach(runningContext::writeLocalVariable);
 
         return runningContext;
     }
