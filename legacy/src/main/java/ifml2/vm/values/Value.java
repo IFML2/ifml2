@@ -1,12 +1,13 @@
 package ifml2.vm.values;
 
-import ifml2.IFMLEntity;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-
 import static ifml2.vm.values.Value.CompareResult.EQUAL;
 import static ifml2.vm.values.Value.CompareResult.NOT_APPLICABLE;
 import static ifml2.vm.values.Value.CompareResult.UNEQUAL;
+
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
+import ifml2.IFMLEntity;
 
 public abstract class Value<T> extends IFMLEntity implements Cloneable {
     protected T value;
@@ -20,7 +21,7 @@ public abstract class Value<T> extends IFMLEntity implements Cloneable {
 
     /**
      * Тип величины в понятном виде.
-     *
+     * 
      * @return название типа
      */
     public abstract String getTypeName();
@@ -36,8 +37,10 @@ public abstract class Value<T> extends IFMLEntity implements Cloneable {
             // одинаковые классы сравниваем напрямую через equals
             return equals(rightValue) ? EQUAL : UNEQUAL;
         } else if (rightValue instanceof EmptyValue) {
-            // если правое значение - пустота, то возвращаем равенство, если this тоже пустота
-            return this instanceof EmptyValue ? EQUAL : UNEQUAL; // irish principle (double check) - cause it's overridden in EmptyValue
+            // если правое значение - пустота, то возвращаем равенство, если this тоже
+            // пустота
+            return this instanceof EmptyValue ? EQUAL : UNEQUAL; // irish principle (double check) - cause it's
+                                                                 // overridden in EmptyValue
         }
         return NOT_APPLICABLE;
     }
@@ -83,10 +86,6 @@ public abstract class Value<T> extends IFMLEntity implements Cloneable {
     }
 
     public enum CompareResult {
-        EQUAL,
-        UNEQUAL,
-        LEFT_BIGGER,
-        RIGHT_BIGGER,
-        NOT_APPLICABLE
+        EQUAL, UNEQUAL, LEFT_BIGGER, RIGHT_BIGGER, NOT_APPLICABLE
     }
 }

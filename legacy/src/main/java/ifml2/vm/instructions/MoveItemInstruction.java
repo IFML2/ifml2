@@ -1,15 +1,16 @@
 package ifml2.vm.instructions;
 
+import java.text.MessageFormat;
+import java.util.List;
+
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import ifml2.CommonUtils;
 import ifml2.IFML2Exception;
 import ifml2.IFMLEntity;
 import ifml2.om.Item;
 import ifml2.vm.RunningContext;
-
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import java.text.MessageFormat;
-import java.util.List;
 
 @XmlRootElement(name = "moveItem")
 @IFML2Instruction(title = "Переместить предмет")
@@ -22,7 +23,8 @@ public class MoveItemInstruction extends Instruction {
         Item item = getItemFromExpression(itemExpr, runningContext, getTitle(), "предмет", false);
         assert item.getContainer() != null;
 
-        List<? extends IFMLEntity> collection = getCollectionFromExpression(toCollectionExpr, runningContext, getTitle(), "куда");
+        List<? extends IFMLEntity> collection = getCollectionFromExpression(toCollectionExpr, runningContext,
+                getTitle(), "куда");
 
         if (collection.contains(item)) {
             throw new IFML2Exception(CommonUtils.uppercaseFirstLetter(item.getName()) + " уже там.");

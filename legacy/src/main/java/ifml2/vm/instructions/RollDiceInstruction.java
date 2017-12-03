@@ -1,12 +1,13 @@
 package ifml2.vm.instructions;
 
-import ifml2.IFML2Exception;
-import ifml2.vm.RunningContext;
-import ifml2.vm.values.NumberValue;
+import java.util.Random;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.Random;
+
+import ifml2.IFML2Exception;
+import ifml2.vm.RunningContext;
+import ifml2.vm.values.NumberValue;
 
 @XmlRootElement(name = "rollDice")
 @IFML2Instruction(title = "Бросить кость")
@@ -26,10 +27,7 @@ public class RollDiceInstruction extends Instruction {
 
     @Override
     public String toString() {
-        return "Бросить кость " +
-                fromNumber +
-                " - " + toNumber +
-                " и сохранить выпавшую грань в " + varName;
+        return "Бросить кость " + fromNumber + " - " + toNumber + " и сохранить выпавшую грань в " + varName;
     }
 
     public int getFromNumber() {

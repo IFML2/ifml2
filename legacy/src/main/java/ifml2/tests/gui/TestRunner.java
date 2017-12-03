@@ -1,26 +1,34 @@
 package ifml2.tests.gui;
 
-import ifml2.CommonConstants;
-import ifml2.CommonUtils;
-import ifml2.GUIUtils;
-import ifml2.engine.EngineVersion;
-import ifml2.tests.IFMLTestPlan;
-import ifml2.tests.TestManager;
+import static ifml2.CommonConstants.RUSSIAN_PRODUCT_NAME;
+import static java.lang.String.format;
 
-import javax.swing.*;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.filechooser.FileFilter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 
-import static ifml2.CommonConstants.RUSSIAN_PRODUCT_NAME;
-import static java.lang.String.format;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.ListModel;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileFilter;
+
+import ifml2.CommonConstants;
+import ifml2.CommonUtils;
+import ifml2.GUIUtils;
+import ifml2.engine.EngineVersion;
+import ifml2.tests.IFMLTestPlan;
+import ifml2.tests.TestManager;
 
 public class TestRunner extends JFrame {
     private final TestManager testManager = new TestManager();
@@ -64,7 +72,8 @@ public class TestRunner extends JFrame {
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
                     for (ListDataListener listener : commandsListDataListeners) {
-                        listener.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, getSelectedTestSize()));
+                        listener.contentsChanged(
+                                new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, getSelectedTestSize()));
                     }
                 }
             }
@@ -148,7 +157,8 @@ public class TestRunner extends JFrame {
     }
 
     private void showError(Throwable exception) {
-        JOptionPane.showMessageDialog(this, "Произошла ошибка:\n" + exception.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, "Произошла ошибка:\n" + exception.getMessage(), "Ошибка",
+                JOptionPane.ERROR_MESSAGE);
     }
 
     private void loadTestsFromPaths(String[] testsToLoad) {
@@ -159,7 +169,8 @@ public class TestRunner extends JFrame {
                 if (testFile.exists()) {
                     files.add(testFile);
                 } else {
-                    throw new Exception(MessageFormat.format("Файл {0}, переданный в параметрах, не существует", fileToLoad));
+                    throw new Exception(
+                            MessageFormat.format("Файл {0}, переданный в параметрах, не существует", fileToLoad));
                 }
             }
             File[] filesArray = new File[files.size()];

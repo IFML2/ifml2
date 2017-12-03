@@ -1,12 +1,18 @@
 package ifml2.editor.gui.instructions;
 
+import java.awt.Window;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
+
+import org.jetbrains.annotations.NotNull;
+
 import ifml2.editor.IFML2EditorException;
 import ifml2.vm.instructions.Instruction;
 import ifml2.vm.instructions.RollDiceInstruction;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import java.awt.*;
 
 public class RollDiceInstrEditor extends AbstractInstrEditor {
     private static final String ROLL_DICE_EDITOR_TITLE = "Бросить кость";
@@ -22,7 +28,8 @@ public class RollDiceInstrEditor extends AbstractInstrEditor {
         initializeEditor(ROLL_DICE_EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
 
         // initialize and load spinners
-        fromSpinner.setModel(new SpinnerNumberModel(instruction.getFromNumber(), Integer.MIN_VALUE, Integer.MAX_VALUE, 1));
+        fromSpinner
+                .setModel(new SpinnerNumberModel(instruction.getFromNumber(), Integer.MIN_VALUE, Integer.MAX_VALUE, 1));
         toSpinner.setModel(new SpinnerNumberModel(instruction.getToNumber(), Integer.MIN_VALUE, Integer.MAX_VALUE, 1));
 
         // load var name

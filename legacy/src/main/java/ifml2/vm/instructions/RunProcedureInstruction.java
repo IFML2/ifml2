@@ -1,5 +1,15 @@
 package ifml2.vm.instructions;
 
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlIDREF;
+
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ifml2.IFML2Exception;
@@ -9,15 +19,6 @@ import ifml2.vm.IFML2VMException;
 import ifml2.vm.RunningContext;
 import ifml2.vm.Variable;
 import ifml2.vm.values.Value;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlIDREF;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 @XmlAccessorType(XmlAccessType.NONE)
 @IFML2Instruction(title = "Выполнить процедуру")
@@ -34,8 +35,9 @@ public class RunProcedureInstruction extends Instruction {
 
     @Override
     public String toString() {
-        String returnMessage = returnToVar != null && !returnToVar.isEmpty() ? MessageFormat
-                .format(" и вернуть результат в переменную \"{0}\"", returnToVar) : "";
+        String returnMessage = returnToVar != null && !returnToVar.isEmpty()
+                ? MessageFormat.format(" и вернуть результат в переменную \"{0}\"", returnToVar)
+                : "";
         return MessageFormat.format("Вызвать процедуру \"{0}\"{1}", procedure, returnMessage);
     }
 
@@ -50,7 +52,8 @@ public class RunProcedureInstruction extends Instruction {
                 try {
                     value = ExpressionCalculator.calculate(runningContext, valueExpression);
                 } catch (IFML2Exception e) {
-                    throw new IFML2VMException(e, "{0}\n  при вычислении значения ({1}) параметра {2}", e.getMessage(), valueExpression, name);
+                    throw new IFML2VMException(e, "{0}\n  при вычислении значения ({1}) параметра {2}", e.getMessage(),
+                            valueExpression, name);
                 }
                 parameters.add(new Variable(name, value));
             }

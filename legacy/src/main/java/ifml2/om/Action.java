@@ -1,7 +1,7 @@
 package ifml2.om;
 
-import ca.odell.glazedlists.BasicEventList;
-import ca.odell.glazedlists.EventList;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -10,7 +10,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlIDREF;
-import java.util.ArrayList;
+
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class Action {
@@ -70,7 +72,7 @@ public class Action {
     }
 
     public Object[] getAllObjectParameters() {
-        ArrayList<Object> parameters = new ArrayList<Object>();
+        List<Object> parameters = new ArrayList<>();
 
         for (Template template : templates) {
             for (TemplateElement element : template.getElements()) {

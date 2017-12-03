@@ -1,0 +1,1476 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<library xmlns="http://toysoft.narod.ru/IFML2Schema" name="Базовая библиотека">
+    <attribute-definitions>
+        <attribute-definition name="частьПейзажа"
+                              description="Определяет, пропускать ли упоминание предмета при описании локации."/>
+        <attribute-definition name="недоступен"
+                              description="Определяет возможность взятия и манипуляции с предметом."/>
+        <attribute-definition name="жидкий"
+                              description="Определяет, может ли предмет быть налит, вылит или выпит."/>
+        <attribute-definition name="горючий" description="Определяет, может ли предмет гореть."/>
+        <attribute-definition name="хрупкий" description="Определяет, может ли предмет быть сломан или разбит."/>
+        <attribute-definition name="прикреплён"
+                              description="Определяет, прикреплён ли предмет к чему-либо, чтобы его откреплять (отрезать)."/>
+        <attribute-definition name="тяжёлый" description="Определяет, что предмет слишком тяжёл для переноски."/>
+    </attribute-definitions>
+
+    <role-definitions>
+        <role-definition name="поверхность"
+                         description="Означает, что предмет является поверхностью и может держать на себе предметы.">
+            <properties>
+                <property name="предметыСверху" description="Коллекция предметов, лежащих на поверхности." type="collection"/>
+            </properties>
+            <triggers>
+                <trigger type="getAccessibleContent">
+                    <instructions>
+                        <!-- Предметы на поверхности всегда доступны, просто возвращаем коллекцию -->
+                        <return position="1" value="предметыСверху"/>
+                    </instructions>
+                </trigger>
+            </triggers>
+        </role-definition>
+
+        <role-definition name="контейнер" description="Означает, что предмет является контейнером и может содержать в себе предметы.">
+            <properties>
+                <property name="предметыВнутри" type="collection" description="Коллекция предметов, находящихся внутри."/>
+            </properties>
+            <triggers>
+                <trigger type="getAccessibleContent">
+                    <instructions>
+                        <!-- Если предмет открываемый, он может быть закрыт и скрывать предметы -->
+                        <if position="1" condition="открываемый">
+                            <then>
+                                <!-- Если контейнер открыт, показываем предметы, если нет, то не показываем -->
+                                <if position="1" condition="открыт">
+                                    <then>
+                                        <return position="1" value="предметыВнутри"/>
+                                    </then>
+                                    <else>
+                                        <!-- Если закрыт, ничего не возвращаем -->
+                                    </else>
+                                </if>
+                            </then>
+                            <else>
+                                <!-- Не "открываемый" контейнер всегда открыт - просто возвращаем коллекцию -->
+                                <return position="1" value="предметыВнутри"/>
+                            </else>
+                        </if>
+                    </instructions>
+                </trigger>
+            </triggers>
+        </role-definition>
+
+        <role-definition name="открываемый" description="Означает, что предмет можно открыть и закрыть.">
+            <properties>
+                <property name="открыт" type="logic" value="нет" description="Открыт ли контейнер."/>
+            </properties>
+        </role-definition>
+
+        <role-definition name="читаемый" description="Означает, что предмет можно прочитать.">
+            <properties>
+                <property name="текст" type="text"/>
+            </properties>
+        </role-definition>
+
+        <role-definition name="съедобный" description="Означает, что предмет можно съесть.">
+            <!-- Здесь пока ничего -->
+        </role-definition>
+
+        <role-definition name="надеваемый" description="Означает, что предмет можно надеть на себя (и снять).">
+            <properties>
+                <property name="надет" type="logic"/>
+            </properties>
+        </role-definition>
+    </role-definitions>
+
+    <actions>
+        <action name="осмотреться" description="Осмотреться вокруг (выдаёт описание текущей локации)">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>осмотреться</synonym>
+                        <synonym>осм</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="ОписатьТекущуюЛокацию"/>
+        </action>
+        <action name="осмотреть" description="Осмотреть предмет">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>осмотреть</synonym>
+                        <synonym>осм</synonym>
+                        <synonym>исследовать</synonym>
+                    </literalElement>
+                    <objectElement position="2" case="vp" parameter="предмет"/>
+                </template>
+            </templates>
+            <procedureCall procedure="Описать"/>
+        </action>
+
+        <action name="идти на север" description="Переходит в локацию на севере">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>идти на север</synonym>
+                        <synonym>север</synonym>
+                        <synonym>с</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="ПерейтиНаСевер"/>
+        </action>
+        <action name="идти на северо-восток" description="Переходит в локацию на северо-востоке">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>идти на северо-восток</synonym>
+                        <synonym>северо-восток</synonym>
+                        <synonym>св</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="ПерейтиНаСевероВосток"/>
+        </action>
+        <action name="идти на восток" description="Переходит в локацию на востоке">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>идти на восток</synonym>
+                        <synonym>восток</synonym>
+                        <synonym>в</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="ПерейтиНаВосток"/>
+        </action>
+        <action name="идти на юго-восток" description="Переходит в локацию на юго-востоке">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>идти на юго-восток</synonym>
+                        <synonym>юго-восток</synonym>
+                        <synonym>юв</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="ПерейтиНаЮгоВосток"/>
+        </action>
+        <action name="идти на юг" description="Переходит в локацию на юге">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>идти на юг</synonym>
+                        <synonym>юг</synonym>
+                        <synonym>ю</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="ПерейтиНаЮг"/>
+        </action>
+        <action name="идти на юго-запад" description="Переходит в локацию на юго-западе">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>идти на юго-запад</synonym>
+                        <synonym>юго-запад</synonym>
+                        <synonym>юз</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="ПерейтиНаЮгоЗапад"/>
+        </action>
+        <action name="идти на запад" description="Переходит в локацию на запад">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>идти на запад</synonym>
+                        <synonym>запад</synonym>
+                        <synonym>з</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="ПерейтиНаЗапад"/>
+        </action>
+        <action name="идти на северо-запад" description="Переходит в локацию на северо-запад">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>идти на северо-запад</synonym>
+                        <synonym>северо-запад</synonym>
+                        <synonym>сз</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="ПерейтиНаСевероЗапад"/>
+        </action>
+        <action name="идти вниз" description="Переходит в локацию вниз">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>идти вниз</synonym>
+                        <synonym>спуститься вниз</synonym>
+                        <synonym>спуститься</synonym>
+                        <synonym>вниз</synonym>
+                        <synonym>вн</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="ПерейтиВниз"/>
+        </action>
+        <action name="идти наверх" description="Переходит в локацию наверх">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>идти наверх</synonym>
+                        <synonym>подняться наверх</synonym>
+                        <synonym>подняться</synonym>
+                        <synonym>наверх</synonym>
+                        <synonym>вверх</synonym>
+                        <synonym>вв</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="ПерейтиНаверх"/>
+        </action>
+
+        <action name="инвентарий" description="Выдать инвентарий">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>инвентарий</synonym>
+                        <synonym>инвентарь</synonym>
+                        <synonym>инв</synonym>
+                        <synonym>и</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="ПоказатьИнвентарь"/>
+        </action>
+
+        <action name="взять" description="Взять предмет">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>взять</synonym>
+                        <synonym>схватить</synonym>
+                        <synonym>поднять</synonym>
+                        <synonym>достать</synonym>
+                    </literalElement>
+                    <objectElement position="2" case="vp" parameter="предмет"/>
+                </template>
+            </templates>
+            <restrictions>
+                <restriction condition="предмет.прикреплён">
+                    <reaction>
+                        <showMessage type="text" message="Прикреплено надёжно."/>
+                    </reaction>
+                </restriction>
+                <restriction condition="предмет.недоступен">
+                    <reaction>
+                        <showMessage type="expression"
+                                     message="'В этих условиях, либо из этого положения, либо в данный момент взять и что-либо сделать с(о) ' + предмет.тп + ' невозможно.'"/>
+                    </reaction>
+                </restriction>
+                <restriction condition="предмет.частьПейзажа">
+                    <reaction>
+                        <showMessage type="expression" beginWithCap="true"
+                                     message="предмет.вп + ' взять невозможно ни при каких условиях.'"/>
+                    </reaction>
+                </restriction>
+                <restriction condition="предмет в инвентарий">
+                    <reaction>
+                        <showMessage type="expression" message="предмет.имя + ' уже у Вас.'" beginWithCap="true"/>
+                    </reaction>
+                </restriction>
+                <restriction condition="предмет.тяжёлый">
+                    <reaction>
+                        <showMessage type="expression" message="предмет.имя + ' слишком тяжёлый.'" beginWithCap="true"/>
+                    </reaction>
+                </restriction>
+            </restrictions>
+            <procedureCall procedure="ВзятьПредмет"/>
+        </action>
+
+        <action name="взять всё">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>взять</synonym>
+                        <synonym>схватить</synonym>
+                        <synonym>поднять</synonym>
+                        <synonym>достать</synonym>
+                    </literalElement>
+                    <literalElement position="2">
+                        <synonym>всё</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="ВзятьВсё"/>
+        </action>
+
+        <action name="выбросить" description="Выбросить предмет">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>бросить</synonym>
+                        <synonym>выбросить</synonym>
+                        <synonym>кинуть</synonym>
+                    </literalElement>
+                    <objectElement position="2" case="vp" parameter="предмет"/>
+                </template>
+            </templates>
+            <restrictions>
+                <restriction condition="не предмет в инвентарь">
+                    <reaction>
+                        <showMessage position="1" type="expression" message="'У Вас нет ' + предмет.рп + '.'"/>
+                    </reaction>
+                </restriction>
+            </restrictions>
+            <procedureCall procedure="ВыброситьПредмет"/>
+        </action>
+
+        <action name="сесть" description="Сесть">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>сидеть</synonym>
+                        <synonym>сесть</synonym>
+                        <synonym>присесть</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="Сесть"/>
+        </action>
+        <action name="курить" description="Курить">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>курить</synonym>
+                        <synonym>закурить</synonym>
+                        <synonym>перекур</synonym>
+                        <synonym>курить</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="Курить"/>
+        </action>
+        <action name="думать" description="Думать">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>думать</synonym>
+                        <synonym>подумать</synonym>
+                        <synonym>задуматься</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="Думать"/>
+        </action>
+        <action name="свистеть" description="Свистеть">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>свистнуть</synonym>
+                        <synonym>свистеть</synonym>
+                        <synonym>засвистеть</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="Свистеть"/>
+        </action>
+        <action name="лежать" description="Лечь">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>лежать</synonym>
+                        <synonym>лечь</synonym>
+                        <synonym>прилечь</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="Лечь"/>
+        </action>
+        <action name="петь" description="Петь">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>петь</synonym>
+                        <synonym>спеть</synonym>
+                        <synonym>запеть</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="Петь"/>
+        </action>
+        <action name="ползти" description="Ползти">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>ползти</synonym>
+                        <synonym>ползи</synonym>
+                        <synonym>ползать</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="Ползти"/>
+        </action>
+        <action name="кричать" description="Кричать">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>кричать</synonym>
+                        <synonym>закричать</synonym>
+                        <synonym>крикнуть</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="Кричать"/>
+        </action>
+        <action name="лететь" description="Лететь">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>лететь</synonym>
+                        <synonym>полететь</synonym>
+                        <synonym>летать</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="Лететь"/>
+        </action>
+        <action name="плевать" description="Плевать">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>плевать</synonym>
+                        <synonym>плюнуть</synonym>
+                        <synonym>наплевать</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="Плевать"/>
+        </action>
+        <action name="прыгать" description="Прыгать">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>прыгать</synonym>
+                        <synonym>запрыгать</synonym>
+                        <synonym>прыгнуть</synonym>
+                        <synonym>подпрыгнуть</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="Прыгать"/>
+        </action>
+        <action name="чесать" description="Чесать">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>чесать</synonym>
+                        <synonym>чесаться</synonym>
+                        <synonym>почесаться</synonym>
+                        <synonym>почесать</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="Чесать"/>
+        </action>
+        <action name="трогать [что]" description="Трогать предмет">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>трогать</synonym>
+                        <synonym>потрогать</synonym>
+                    </literalElement>
+                    <objectElement position="2" case="vp" parameter="предмет"/>
+                </template>
+            </templates>
+            <procedureCall procedure="ТрогатьПредмет"/>
+        </action>
+        <action name="пинать [что]" description="Пинать предмет">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>пинать</synonym>
+                        <synonym>пнуть</synonym>
+                    </literalElement>
+                    <objectElement position="2" case="vp" parameter="предмет"/>
+                </template>
+            </templates>
+            <procedureCall procedure="ПинатьПредмет"/>
+        </action>
+        <action name="слушать" description="Слушать">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>слушать</synonym>
+                        <synonym>прислушаться</synonym>
+                        <synonym>навострить уши</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="Слушать"/>
+        </action>
+        <action name="танцевать" description="Танцевать">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>танцевать</synonym>
+                        <synonym>плясать</synonym>
+                        <synonym>сплясать</synonym>
+                        <synonym>станцевать</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="Танцевать"/>
+        </action>
+        <action name="молиться" description="Молиться">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>молиться</synonym>
+                        <synonym>помолиться</synonym>
+                        <synonym>молить бога</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="Молиться"/>
+        </action>
+        <action name="спать" description="Спать">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>спать</synonym>
+                        <synonym>поспать</synonym>
+                        <synonym>заснуть</synonym>
+                        <synonym>уснуть</synonym>
+                        <synonym>вздремнуть</synonym>
+                        <synonym>дремать</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="Спать"/>
+        </action>
+        <action name="нюхать [что]" description="Нюхать предмет">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>нюхать</synonym>
+                        <synonym>понюхать</synonym>
+                    </literalElement>
+                    <objectElement position="2" case="vp" parameter="предмет"/>
+                </template>
+            </templates>
+            <procedureCall procedure="НюхатьПредмет"/>
+        </action>
+        <action name="выпить [что]" description="Выпить предмет">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>выпить</synonym>
+                        <synonym>пить</synonym>
+                    </literalElement>
+                    <objectElement position="2" case="vp" parameter="предмет"/>
+                </template>
+            </templates>
+            <procedureCall procedure="ВыпитьПредмет"/>
+        </action>
+        <action name="съесть" description="Съесть предмет">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>съесть</synonym>
+                        <synonym>есть</synonym>
+                        <synonym>сожрать</synonym>
+                        <synonym>жрать</synonym>
+                    </literalElement>
+                    <objectElement position="2" case="vp" parameter="предмет"/>
+                </template>
+            </templates>
+            <restrictions>
+                <restriction condition="предмет.недоступен">
+                    <reaction>
+                        <showMessage position="1" type="expression"
+                                     message="'В этих условиях, либо из этого положения, либо в данный момент взять и что-либо сделать с(о) ' + предмет.тп + ' невозможно.'"/>
+                    </reaction>
+                </restriction>
+                <restriction condition="не предмет.съедобный">
+                    <reaction>
+                        <showMessage position="1" type="text" message="Не съедобно."/>
+                    </reaction>
+                </restriction>
+            </restrictions>
+            <procedureCall procedure="СъестьПредмет"/>
+        </action>
+
+        <action name="зажечь [что]" description="Зажечь предмет">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>жечь</synonym>
+                        <synonym>зажечь</synonym>
+                        <synonym>поджечь</synonym>
+                        <synonym>запалить</synonym>
+                    </literalElement>
+                    <objectElement position="2" case="vp" parameter="предмет"/>
+                </template>
+            </templates>
+            <restrictions>
+                <restriction condition="предмет.недоступен">
+                    <reaction>
+                        <showMessage position="1" type="expression"
+                                     message="'В этих условиях, либо из этого положения, либо в данный момент взять и что-либо сделать с(о) ' + предмет.тп + ' невозможно.'"/>
+                    </reaction>
+                </restriction>
+                <restriction condition="не предмет.горючий">
+                    <reaction>
+                        <showMessage position="1" type="text" message="Не горит."/>
+                    </reaction>
+                </restriction>
+            </restrictions>
+            <procedureCall procedure="ЗажечьПредмет"/>
+        </action>
+
+        <action name="сломать [что]" description="Сломать предмет">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>сломать</synonym>
+                        <synonym>поломать</synonym>
+                        <synonym>разбить</synonym>
+                        <synonym>раздолбать</synonym>
+                    </literalElement>
+                    <objectElement position="2" case="vp" parameter="предмет"/>
+                </template>
+            </templates>
+            <procedureCall procedure="СломатьПредмет"/>
+        </action>
+        <action name="читать" description="Читать предмет">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>читать</synonym>
+                        <synonym>прочитать</synonym>
+                        <synonym>прочесть</synonym>
+                    </literalElement>
+                    <objectElement position="2" case="vp" parameter="предмет"/>
+                </template>
+            </templates>
+            <restrictions>
+                <restriction condition="предмет.недоступен">
+                    <reaction>
+                        <showMessage position="1" type="text" message="Это невозможно. Предмет недоступен."/>
+                    </reaction>
+                </restriction>
+                <restriction condition="не предмет.читаемый">
+                    <reaction>
+                        <showMessage position="1" type="expression" message="'На ' + предмет.пп + ' ничего не написано.'"/>
+                    </reaction>
+                </restriction>
+            </restrictions>
+            <procedureCall procedure="ЧитатьПредмет"/>
+        </action>
+        <action name="пробовать [что]" description="Пробовать предмет">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>пробовать</synonym>
+                        <synonym>попробовать</synonym>
+                        <synonym>пытаться</synonym>
+                        <synonym>попытаться</synonym>
+                    </literalElement>
+                    <objectElement position="2" case="vp" parameter="предмет"/>
+                </template>
+            </templates>
+            <procedureCall procedure="ПробоватьПредмет"/>
+        </action>
+
+        <!-- Положить -->
+        <action name="положить" description="положить [ВП] в(о) [ВП] / положить [ВП] на [ВП]">
+            <templates>
+                <template>
+                    <!-- Положить на/в/во что-то -->
+                    <literalElement position="1">
+                        <synonym>положить</synonym>
+                        <synonym>поставить</synonym>
+                        <synonym>поместить</synonym>
+                        <synonym>водрузить</synonym>
+                    </literalElement>
+                    <objectElement position="2" case="vp" parameter="чтоПоложить"/>
+                    <literalElement position="3" parameter="предлог">
+                        <synonym>во</synonym>
+                        <synonym>в</synonym>
+                        <synonym>на</synonym>
+                    </literalElement>
+                    <objectElement position="4" case="vp" parameter="кудаПоложить"/>
+                </template>
+            </templates>
+            <restrictions>
+                <restriction condition="чтоПоложить.недоступен">
+                    <reaction>
+                        <showMessage position="1" type="text" message="Это невозможно. Предмет недоступен."/>
+                    </reaction>
+                </restriction>
+                <!-- todo redo in case of lazy evaluation -->
+                <!--restriction condition="чтоПоложить.надеваемый и чтоПоложить.надет">
+                    <reaction>
+                        <showMessage type="expression" message="чтоПоложить.ип + ' надет(а,о). Сначала нужно снять.'" beginWithCap="true"/>
+                    </reaction>
+                </restriction-->
+                <restriction condition="предлог = 'на' и не кудаПоложить.поверхность">
+                    <reaction>
+                        <showMessage position="1" type="expression"
+                                     message="'На ' + кудаПоложить.ВП + ' нельзя ничего класть.'"/>
+                    </reaction>
+                </restriction>
+                <!-- todo переписать, когда будет ИЛИ -->
+                <restriction condition="предлог = 'в' и не кудаПоложить.контейнер">
+                    <reaction>
+                        <showMessage position="1" type="expression"
+                                     message="'В ' + кудаПоложить.ВП + ' нельзя ничего класть.'"/>
+                    </reaction>
+                </restriction>
+                <restriction condition="предлог = 'во' и не кудаПоложить.контейнер">
+                    <reaction>
+                        <showMessage position="1" type="expression"
+                                     message="'В ' + кудаПоложить.ВП + ' нельзя ничего класть.'"/>
+                    </reaction>
+                </restriction>
+            </restrictions>
+            <procedureCall procedure="Положить"/>
+        </action>
+
+        <!-- Открыть -->
+        <action name="открыть" description="Открыть [ВП]">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>открыть</synonym>
+                    </literalElement>
+                    <objectElement position="2" case="vp" parameter="чтоОткрыть"/>
+                </template>
+            </templates>
+            <restrictions>
+                <restriction condition="не чтоОткрыть.открываемый">
+                    <reaction>
+                        <showMessage position="1" type="expression" message="чтоОткрыть.имя + ' невозможно открыть.'"
+                                     beginWithCap="true" carriageReturn="true"/>
+                    </reaction>
+                </restriction>
+                <restriction
+                        condition="чтоОткрыть.открыт">  <!-- Ограничение обязательно идёт после проверки на роль "открываемый"! -->
+                    <reaction>
+                        <showMessage type="expression" message="чтоОткрыть.ИП + ' уже открыт.'" beginWithCap="true"/>
+                    </reaction>
+                </restriction>
+            </restrictions>
+            <procedureCall procedure="ОткрытьПредмет"/>
+        </action>
+
+        <!-- Закрыть -->
+        <action name="закрыть" description="Закрыть [ВП]">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>закрыть</synonym>
+                    </literalElement>
+                    <objectElement position="2" case="vp" parameter="чтоЗакрыть"/>
+                </template>
+            </templates>
+            <restrictions>
+                <restriction condition="не чтоЗакрыть.открываемый">
+                    <reaction>
+                        <showMessage position="1" type="expression" message="чтоЗакрыть.имя + ' невозможно закрыть.'"
+                                     beginWithCap="true" carriageReturn="true"/>
+                    </reaction>
+                </restriction>
+                <restriction
+                        condition="не чтоЗакрыть.открыт">  <!-- Ограничение обязательно идёт после проверки на роль "открываемый"! -->
+                    <reaction>
+                        <showMessage type="expression" message="чтоЗакрыть.ИП + ' уже закрыт.'" beginWithCap="true"/>
+                    </reaction>
+                </restriction>
+            </restrictions>
+            <procedureCall procedure="ЗакрытьПредмет"/>
+        </action>
+
+        <!-- Надеть -->
+        <action name="надеть" description="надеть [ВП]">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>надеть</synonym>
+                    </literalElement>
+                    <objectElement position="2" case="vp" parameter="предмет"/>
+                </template>
+            </templates>
+            <restrictions>
+                <restriction condition="не предмет.надеваемый">
+                    <reaction>
+                        <showMessage type="expression" message="предмет.вп + ' невозможно надеть.'" beginWithCap="true"/>
+                    </reaction>
+                </restriction>
+                <restriction condition="предмет.надет">
+                    <reaction>
+                        <showMessage type="text" message="Это уже надето."/>
+                    </reaction>
+                </restriction>
+                <restriction condition="не предмет в инвентарий">
+                    <reaction>
+                        <showMessage type="expression" message="предмет.ип + ' не в инвентаре.'" beginWithCap="true"/>
+                    </reaction>
+                </restriction>
+            </restrictions>
+            <procedureCall procedure="НадетьПредмет"/>
+        </action>
+
+        <!-- Снять -->
+        <action name="снять" description="снять [ВП]">
+            <templates>
+                <template>
+                    <literalElement position="1">
+                        <synonym>снять</synonym>
+                    </literalElement>
+                    <objectElement position="2" case="vp" parameter="предмет"/>
+                </template>
+            </templates>
+            <restrictions>
+                <restriction condition="не предмет.надеваемый">
+                    <reaction>
+                        <showMessage type="expression" message="предмет.вп + ' невозможно ни надеть, ни снять.'" beginWithCap="true"/>
+                    </reaction>
+                </restriction>
+                <restriction condition="не предмет.надет">
+                    <reaction>
+                        <showMessage type="text" message="Это не надето."/>
+                    </reaction>
+                </restriction>
+                <!-- TODO А тут есть проблемка: надо переделать так, чтобы надетость относилась к любому персонажу, а не только к игроку. -->
+                <!--restriction condition="не предмет в инвентарий">
+                    <reaction>
+                        <showMessage type="expression" message="предмет.ип + ' не в инвентаре.'" beginWithCap="true"/>
+                    </reaction>
+                </restriction-->
+            </restrictions>
+            <procedureCall procedure="СнятьПредмет"/>
+        </action>
+    </actions>
+
+    <!-- Процедуры обработки действий -->
+    <procedures>
+        <procedure name="ОписатьТекущуюЛокацию" inheritsSystemProcedure="showLocation">
+            <procedureBody>
+                <showMessage position="1" type="expression" message="ТекущаяЛокация.Имя"/>
+                <showMessage position="2" type="expression" message="ТекущаяЛокация.Описание"/>
+                <loop position="3" collection="ТекущаяЛокация.Предметы" element="предмет"
+                      condition="не предмет.частьПейзажа">
+                    <alone>
+                        <showMessage position="1" type="expression" message="'Здесь ' + предмет.имя + '.'"
+                                     carriageReturn="true"/>
+                    </alone>
+                    <first>
+                        <showMessage position="1" type="expression" message="'Здесь ' + предмет.имя"
+                                     carriageReturn="false"/>
+                    </first>
+                    <next>
+                        <showMessage position="1" type="expression" message="', ' + предмет.имя"
+                                     carriageReturn="false"/>
+                    </next>
+                    <last>
+                        <showMessage position="1" type="expression" message="' и ' + предмет.имя + '.'"
+                                     carriageReturn="true"/>
+                    </last>
+                </loop>
+            </procedureBody>
+        </procedure>
+
+        <!-- Описать предмет -->
+        <procedure name="Описать">
+            <parameters>
+                <parameter name="предмет"/>
+            </parameters>
+            <procedureBody>
+                <if condition="предмет.открываемый">
+                    <then>
+                        <if condition="предмет.открыт">
+                            <then>
+                                <showMessage type="text" message="(открыто)" carriageReturn="true"/>
+                            </then>
+                            <else>
+                                <showMessage type="text" message="(закрыто)" carriageReturn="true"/>
+                            </else>
+                        </if>
+                    </then>
+                </if>
+                <if condition="предмет.надеваемый">
+                    <then>
+                        <if condition="предмет.надет">
+                            <then>
+                                <showMessage type="text" message="(надето)" carriageReturn="true"/>
+                            </then>
+                        </if>
+                    </then>
+                </if>
+                <if condition="предмет.описание = ''">
+                    <then>
+                        <showMessage position="1" type="text" message="Ничего особенного."/>
+                    </then>
+                    <else>
+                        <showMessage position="1" type="expression" message="предмет.описание"/>
+                    </else>
+                </if>
+                <if condition="предмет.поверхность">
+                    <then>
+                        <loop position="1" collection="предмет.предметыСверху" element="предметСверху">
+                            <alone>
+                                <showMessage position="1" type="expression" message="'Сверху ' + предметСверху.имя + '.'"
+                                             carriageReturn="true"/>
+                            </alone>
+                            <first>
+                                <showMessage position="1" type="expression" message="'Сверху ' + предметСверху.имя"
+                                             carriageReturn="false"/>
+                            </first>
+                            <next>
+                                <showMessage position="1" type="expression" message="', ' + предметСверху.имя"
+                                             carriageReturn="false"/>
+                            </next>
+                            <last>
+                                <showMessage position="1" type="expression" message="' и ' + предметСверху.имя + '.'"
+                                             carriageReturn="true"/>
+                            </last>
+                        </loop>
+                    </then>
+                </if>
+                <if condition="предмет.контейнер">
+                    <then>
+                        <if condition="предмет.открываемый">
+                            <then>
+                                <if condition="предмет.открыт">
+                                    <then>
+                                        <!-- предмет открываемый, поэтому предметы видно, если только он открыт -->
+                                        <loop collection="предмет.предметыВнутри" element="предметВнутри">
+                                            <empty>
+                                                <showMessage position="1" type="text" message="Внутри ничего нет." carriageReturn="true"/>
+                                            </empty>
+                                            <alone>
+                                                <showMessage position="1" type="expression" message="'Внутри ' + предметВнутри.имя + '.'"
+                                                             carriageReturn="true"/>
+                                            </alone>
+                                            <first>
+                                                <showMessage position="1" type="expression" message="'Внутри ' + предметВнутри.имя"
+                                                             carriageReturn="false"/>
+                                            </first>
+                                            <next>
+                                                <showMessage position="1" type="expression" message="', ' + предметВнутри.имя"
+                                                             carriageReturn="false"/>
+                                            </next>
+                                            <last>
+                                                <showMessage position="1" type="expression" message="' и ' + предметВнутри.имя + '.'"
+                                                             carriageReturn="true"/>
+                                            </last>
+                                        </loop>
+                                    </then>
+                                </if>
+                            </then>
+                            <else>
+                                <!-- предмет не открываемый, поэтому он по логике открыт всегда -->
+                                <loop collection="предмет.предметыВнутри" element="предметВнутри">
+                                    <empty>
+                                        <showMessage position="1" type="text" message="Внутри ничего нет." carriageReturn="true"/>
+                                    </empty>
+                                    <alone>
+                                        <showMessage position="1" type="expression" message="'Внутри ' + предметВнутри.имя + '.'"
+                                                     carriageReturn="true"/>
+                                    </alone>
+                                    <first>
+                                        <showMessage position="1" type="expression" message="'Внутри ' + предметВнутри.имя"
+                                                     carriageReturn="false"/>
+                                    </first>
+                                    <next>
+                                        <showMessage position="1" type="expression" message="', ' + предметВнутри.имя"
+                                                     carriageReturn="false"/>
+                                    </next>
+                                    <last>
+                                        <showMessage position="1" type="expression" message="' и ' + предметВнутри.имя + '.'"
+                                                     carriageReturn="true"/>
+                                    </last>
+                                </loop>
+                            </else>
+                        </if>
+                    </then>
+                </if>
+            </procedureBody>
+        </procedure>
+        <procedure name="ПерейтиНаСевер">
+            <procedureBody>
+                <goToLoc position="1" location="ТекущаяЛокация.Север"/>
+            </procedureBody>
+        </procedure>
+        <procedure name="ПерейтиНаСевероВосток">
+            <procedureBody>
+                <goToLoc position="1" location="ТекущаяЛокация.СевероВосток"/>
+            </procedureBody>
+        </procedure>
+        <procedure name="ПерейтиНаВосток">
+            <procedureBody>
+                <goToLoc position="1" location="ТекущаяЛокация.Восток"/>
+            </procedureBody>
+        </procedure>
+        <procedure name="ПерейтиНаЮгоВосток">
+            <procedureBody>
+                <goToLoc position="1" location="ТекущаяЛокация.ЮгоВосток"/>
+            </procedureBody>
+        </procedure>
+        <procedure name="ПерейтиНаЮг">
+            <procedureBody>
+                <goToLoc position="1" location="ТекущаяЛокация.Юг"/>
+            </procedureBody>
+        </procedure>
+        <procedure name="ПерейтиНаЮгоЗапад">
+            <procedureBody>
+                <goToLoc position="1" location="ТекущаяЛокация.ЮгоЗапад"/>
+            </procedureBody>
+        </procedure>
+        <procedure name="ПерейтиНаЗапад">
+            <procedureBody>
+                <goToLoc position="1" location="ТекущаяЛокация.Запад"/>
+            </procedureBody>
+        </procedure>
+        <procedure name="ПерейтиНаСевероЗапад">
+            <procedureBody>
+                <goToLoc position="1" location="ТекущаяЛокация.СевероЗапад"/>
+            </procedureBody>
+        </procedure>
+        <procedure name="ПерейтиНаверх">
+            <procedureBody>
+                <goToLoc position="1" location="ТекущаяЛокация.Верх"/>
+            </procedureBody>
+        </procedure>
+        <procedure name="ПерейтиВниз">
+            <procedureBody>
+                <goToLoc position="1" location="ТекущаяЛокация.Низ"/>
+            </procedureBody>
+        </procedure>
+        <procedure name="ПоказатьИнвентарь">
+            <procedureBody>
+                <loop position="2" collection="Инвентарий" element="предмет">
+                    <empty>
+                        <showMessage position="1" type="text" message="А у Вас ничего нет."/>
+                    </empty>
+                    <alone>
+                        <showMessage position="1" type="expression"
+                                     message="'У Вас при себе ' + предмет.имя + '.'" carriageReturn="true"/>
+                    </alone>
+                    <first>
+                        <showMessage position="1" type="expression" message="'У Вас при себе ' + предмет.имя"
+                                     carriageReturn="false"/>
+                    </first>
+                    <next>
+                        <showMessage position="1" type="expression" message="', ' + предмет.имя"
+                                     carriageReturn="false"/>
+                        <!--todo выводить статус открытости при описании в инвентаре
+                        сейчас не выводится, потому что для каждого вывода предмета придётся оборачивать условиями
+                        нужно или 1) вызывать процу/функцию, которая будет выводить предмет с условиями,
+                        или 2) реализовать механизм (тригеров?), чтобы каждый предмет мог управлять текстом своего упоминания в списках и проч
+
+                        <ifml2:if condition="предмет.открываемый">
+                            <ifml2:then>
+                                <ifml2:if condition="предмет.открыт">
+                                    <ifml2:then>
+                                        <ifml2:showMessage message=" (открыт)" type="text" carriageReturn="false"/>
+                                    </ifml2:then>
+                                    <ifml2:else>
+                                        <ifml2:showMessage message=" (закрыт)" type="text" carriageReturn="false"/>
+                                    </ifml2:else>
+                                </ifml2:if>
+                            </ifml2:then>
+                        </ifml2:if>-->
+                    </next>
+                    <last>
+                        <showMessage position="1" type="expression" message="' и ' + предмет.имя + '.'"
+                                     carriageReturn="true"/>
+                    </last>
+                </loop>
+            </procedureBody>
+        </procedure>
+
+        <procedure name="ВзятьПредмет">
+            <parameters>
+                <parameter name="предмет"/>
+            </parameters>
+            <procedureBody>
+                <moveItem position="1" item="предмет" to="инвентарий"/>
+                <showMessage position="2" type="expression" message="'Вы взяли ' + предмет.ВП + '.'"/>
+            </procedureBody>
+        </procedure>
+
+        <procedure name="ВзятьВсё">
+            <procedureBody>
+                <!--todo не брать надетые предметы!-->
+                <loop position="1" collection="ТекущаяЛокация.Предметы" element="предмет"
+                      condition="не предмет.частьПейзажа и не предмет.недоступен и не предмет.прикреплён и не предмет.тяжёлый">
+                    <empty>
+                        <showMessage position="1" type="text" message="Тут нечего нельзя взять."/>
+                    </empty>
+                    <next>
+                        <!-- todo заменить на вызов проц-ы Взять-->
+                        <moveItem position="1" item="предмет" to="инвентарий"/>
+                        <showMessage position="2" type="expression" message="'Вы взяли ' + предмет.вп + '.'"/>
+                    </next>
+                </loop>
+            </procedureBody>
+        </procedure>
+
+        <procedure name="ВыброситьПредмет">
+            <parameters>
+                <parameter name="предмет"/>
+            </parameters>
+            <procedureBody>
+                <if condition="предмет.надеваемый">
+                    <then>
+                        <if condition="предмет.надет">
+                            <then>
+                                <setProperty object="предмет" name="надет" value="нет"/>
+                                <showMessage type="expression" message="'Сначала вы сняли ' + предмет.вп + '.'" carriageReturn="true"/>
+                            </then>
+                        </if>
+                    </then>
+                </if>
+                <moveItem item="предмет" to="ТекущаяЛокация.Предметы"/>
+                <showMessage type="expression" message="'Вы выбросили ' + предмет.вп + '.'"/>
+            </procedureBody>
+        </procedure>
+
+        <procedure name="Сесть">
+            <procedureVariables>
+                <procedureVariable name="счётчик" initialValue="1"/>
+            </procedureVariables>
+            <procedureBody>
+                <showMessage position="1" type="text" message="Сижу, и что дальше?"/>
+                <!--ifml2:showMessage position="2" type="expression" message="'Счётчик = ' + счётчик"/-->
+                <if position="3" condition="счётчик = 1">
+                    <then>
+                        <!--ifml2:showMessage position="1" type="text" message="Cчётчик = 1!"/-->
+                    </then>
+                </if>
+                <var position="4" name="счётчик" value="счётчик + 1"/>
+                <!--ifml2:showMessage position="5" type="expression" message="'Счётчик = ' + счётчик"/-->
+                <var position="6" name="локальная" value="2"/>
+                <var position="7" name="локальная" value="локальная + 1"/>
+                <!--ifml2:showMessage position="8" type="expression" message="'Локальная = ' + локальная"/-->
+            </procedureBody>
+        </procedure>
+        <procedure name="Курить">
+            <procedureBody>
+                <showMessage position="1" type="text"
+                             message="Минздрав предупреждает - Курение опасно для Вашего здоровья."/>
+            </procedureBody>
+        </procedure>
+        <procedure name="Думать">
+            <procedureBody>
+                <showMessage position="1" type="text"
+                             message="Ничего в голову не лезет, разве что: - Направо пойдешь - женатому быть, налево пойдешь - богатому быть, прямо - пойдешь - убитому быть. Вот где-то еще коня можно потерять. Только камня с надписью никакого нет. И где тут лево, где право не понять."/>
+            </procedureBody>
+        </procedure>
+        <procedure name="Свистеть">
+            <procedureBody>
+                <showMessage position="1" type="text" message="Не свисти - денег не будет."/>
+            </procedureBody>
+        </procedure>
+        <procedure name="Лечь">
+            <procedureBody>
+                <showMessage position="1" type="text" message="Кто много лежит, тот бока отлежит."/>
+            </procedureBody>
+        </procedure>
+        <procedure name="Петь">
+            <procedureBody>
+                <showMessage position="1" type="text" message="Сначала научись говорить, а петь потом будешь."/>
+            </procedureBody>
+        </procedure>
+        <procedure name="Ползти">
+            <procedureBody>
+                <showMessage position="1" type="text" message="Рожденный летать ползать не желает."/>
+            </procedureBody>
+        </procedure>
+        <procedure name="Кричать">
+            <procedureBody>
+                <showMessage position="1" type="text" message="А-а-а-а-а!!! Громче не могу."/>
+            </procedureBody>
+        </procedure>
+        <procedure name="Лететь">
+            <procedureBody>
+                <showMessage position="1" type="text"
+                             message="Дивлюсь я на небо,&#xD;&#xA;та й думку гадаю:&#xD;&#xA;Чому я не сокіл, &#xD;&#xA;чому не літаю,&#xD;&#xA;Чому мені, Боже, &#xD;&#xA;ти крилець не дав?&#xD;&#xA;Я б землю покинув &#xD;&#xA;і в небо злітав."/>
+            </procedureBody>
+        </procedure>
+        <procedure name="Плевать">
+            <procedureBody>
+                <showMessage position="1" type="text" message="Это не эстетично и не гигиенично."/>
+            </procedureBody>
+        </procedure>
+        <procedure name="Прыгать">
+            <procedureBody>
+                <showMessage position="1" type="text" message="Прежде, чем прыгать, научись ползать."/>
+            </procedureBody>
+        </procedure>
+        <procedure name="Чесать">
+            <procedureBody>
+                <showMessage position="1" type="text"
+                             message="Чешем кудри, чешет русы&#xD;&#xA;Частым гребнем-гребешком."/>
+            </procedureBody>
+        </procedure>
+        <procedure name="ПинатьПредмет">
+            <procedureBody>
+                <showMessage position="1" type="expression"
+                             message="'Вы пнули ' + предмет.вп + ', но, как говорил великий и мудрый Ким Ир Сен, если в гневе пнешь камень, то только ноге больно.'"/>
+            </procedureBody>
+        </procedure>
+        <procedure name="Слушать">
+            <procedureBody>
+                <showMessage position="1" type="text" message="Не слышны в саду даже шорохи,..."/>
+            </procedureBody>
+        </procedure>
+        <procedure name="Танцевать">
+            <procedureBody>
+                <showMessage position="1" type="text"
+                             message="Учился читать да писать, а научился петь да плясать? Некогда плясать, когда гроб станут тесать."/>
+            </procedureBody>
+        </procedure>
+        <procedure name="Молиться">
+            <procedureBody>
+                <showMessage position="1" type="text"
+                             message="Отче наш, Иже еси на Небесех!&#xD;&#xA;Да святится имя Твое, &#xD;&#xA;да приидет Царствие Твое,&#xD;&#xA;да будет воля Твоя, яко на Небеси и на земли.&#xD;&#xA;Хлеб наш насущный даждь нам днесь; &#xD;&#xA;и остави нам долги наша, якоже и мы оставляем должником нашим; &#xD;&#xA;и не введи нас во искушение,&#xD;&#xA;но избави нас от лукавого, &#xD;&#xA;Яко Твое есть Царство, и сила, и слава во веки. Аминь."/>
+            </procedureBody>
+        </procedure>
+        <procedure name="Спать">
+            <procedureBody>
+                <showMessage position="1" type="text" message="Сон не берет, дрема не клонит, еда на ум нейдет."/>
+            </procedureBody>
+        </procedure>
+        <procedure name="ТрогатьПредмет">
+            <procedureBody>
+                <showMessage position="1" type="expression"
+                             message="'Вы потрогали ' + предмет.вп + '. Этот предмет на ощупь такой, каким и должнен быть.'"/>
+            </procedureBody>
+        </procedure>
+        <procedure name="НюхатьПредмет">
+            <procedureBody>
+                <showMessage position="1" type="expression"
+                             message="'Вы понюхали ' + предмет.вп + '. Запах такой, каким и должен быть.'"/>
+            </procedureBody>
+        </procedure>
+
+        <procedure name="ЗажечьПредмет">
+            <parameters>
+                <parameter name="предмет"/>
+            </parameters>
+            <procedureBody>
+                <showMessage position="1" type="expression" message="'Вы зажгли ' + предмет.вп + '.'"/>
+            </procedureBody>
+        </procedure>
+
+        <procedure name="ВыпитьПредмет">
+            <parameters>
+                <parameter name="предмет"/>
+            </parameters>
+            <procedureBody>
+                <if position="1" condition="предмет.недоступен">
+                    <then>
+                        <showMessage position="1" type="text" beginWithCap="true"
+                                     message="Это невозможно. Предмет недоступен."/>
+                    </then>
+                    <else>
+                        <if position="1" condition="предмет.жидкий">
+                            <then>
+                                <showMessage position="1" type="expression" beginWithCap="true"
+                                             message="'Вы выпили ' + предмет.вп + '.'"/>
+                            </then>
+                            <else>
+                                <showMessage position="1" type="expression"
+                                             message="'Это невозможно.' + предмет.вп + ' не пьют.'"/>
+                            </else>
+                        </if>
+                    </else>
+                </if>
+            </procedureBody>
+        </procedure>
+        <procedure name="СъестьПредмет">
+            <parameters>
+                <parameter name="предмет"/>
+            </parameters>
+            <procedureBody>
+                <showMessage position="1" type="expression" beginWithCap="true"
+                             message="'Вы съели ' + предмет.вп + '.'"/>
+                <moveItem position="2" item="предмет" to="пустота"/>
+            </procedureBody>
+        </procedure>
+        <procedure name="СломатьПредмет">
+            <parameters>
+                <parameter name="предмет"/>
+            </parameters>
+            <procedureBody>
+                <if position="1" condition="предмет.недоступен">
+                    <then>
+                        <showMessage position="1" type="text" beginWithCap="true"
+                                     message="Это невозможно. Предмет недоступен."/>
+                    </then>
+                    <else>
+                        <if position="1" condition="предмет.хрупкий">
+                            <then>
+                                <showMessage position="1" type="expression" beginWithCap="true"
+                                             message="'Вы раздолбали ' + предмет.вп + '.'"/>
+                            </then>
+                            <else>
+                                <showMessage position="1" type="text" message="Это сломать невозможно."/>
+                            </else>
+                        </if>
+                    </else>
+                </if>
+            </procedureBody>
+        </procedure>
+        <procedure name="ЧитатьПредмет">
+            <parameters>
+                <parameter name="предмет"/>
+            </parameters>
+            <procedureBody>
+                <showMessage position="1" type="expression" message="'&quot;' + предмет.текст + '&quot;'"/>
+            </procedureBody>
+        </procedure>
+        <procedure name="ПробоватьПредмет">
+            <parameters>
+                <parameter name="предмет"/>
+            </parameters>
+            <procedureBody>
+                <if position="1" condition="предмет.недоступен">
+                    <then>
+                        <showMessage position="1" type="text" beginWithCap="true"
+                                     message="Это невозможно. Предмет недоступен."/>
+                    </then>
+                    <else>
+                        <showMessage position="1" type="text"
+                                     message="Конечно, попытка не пытка, но чего пробовать-то? Смелее. Решили что-то сделать, делайте. Вдруг, прокатит?"/>
+                    </else>
+                </if>
+            </procedureBody>
+        </procedure>
+
+        <!-- Положить предмет [в/во/на предмет]-->
+        <procedure name="Положить">
+            <parameters>
+                <parameter name="чтоПоложить"/>
+                <parameter name="предлог"/>
+                <parameter name="кудаПоложить"/>
+            </parameters>
+            <procedureBody>
+                <if condition="предлог = 'на'">
+                    <then>
+                        <moveItem item="чтоПоложить" to="кудаПоложить.предметыСверху"/>
+                        <showMessage type="expression"
+                                     message="'Вы положили ' + чтоПоложить.вп + ' ' + предлог + ' ' + кудаПоложить.вп + '.'"/>
+                    </then>
+                </if>
+                <if condition="предлог = 'в' или предлог = 'во'">
+                    <then>
+                        <var name="можноЛиКласть" value="да"/>
+
+                        <if condition="кудаПоложить.открываемый">
+                            <then>
+                                <if condition="не кудаПоложить.открыт">
+                                    <then>
+                                        <showMessage type="expression" beginWithCap="true" message="кудаПоложить + ' закрыт.'"/>
+                                        <var name="можноЛиКласть" value="нет"/>
+                                    </then>
+                                </if>
+                            </then>
+                        </if>
+
+                        <if condition="можноЛиКласть">
+                            <then>
+                                <moveItem item="чтоПоложить" to="кудаПоложить.предметыВнутри"/>
+                                <showMessage type="expression"
+                                             message="'Вы положили ' + чтоПоложить.вп + ' ' + предлог + ' ' + кудаПоложить.вп + '.'"/>
+                            </then>
+                        </if>
+                    </then>
+                </if>
+            </procedureBody>
+        </procedure>
+
+        <!-- Открыть предмет -->
+        <procedure name="ОткрытьПредмет">
+            <parameters>
+                <parameter name="чтоОткрыть"/>
+            </parameters>
+            <procedureBody>
+                <setProperty position="1" object="чтоОткрыть" name="открыт" value="да"/>
+                <showMessage position="2" type="expression"
+                             message="'Вы открыли ' + чтоОткрыть.ВП + '.'"/>
+                <if position="3" condition="чтоОткрыть.контейнер">
+                    <then>
+                        <!--TODO: сделать процу, выводящую список из коллекции через запятую, с выводом предваряющего слова
+                            TODO: also сделать вызов других процедур-->
+                        <!--TODO: добавить в loop секции before и after с аттрибутом типа runAlsoIfNull-->
+                        <loop position="1" collection="чтоОткрыть.предметыВнутри"
+                              element="предмет">
+                            <empty>
+                                <showMessage position="1" type="text" message="Внутри ничего нет." carriageReturn="true"/>
+                            </empty>
+                            <alone>
+                                <showMessage position="1" type="expression" message="'Внутри ' + предмет.имя + '.'"
+                                             carriageReturn="true"/>
+                            </alone>
+                            <first>
+                                <showMessage position="1" type="expression" message="'Внутри ' + предмет.имя"
+                                             carriageReturn="false"/>
+                            </first>
+                            <next>
+                                <showMessage position="1" type="expression"
+                                             message="', ' + предмет.имя" carriageReturn="false"/>
+                            </next>
+                            <last>
+                                <showMessage position="1" type="expression" message="' и ' + предмет.имя + '.'" carriageReturn="true"/>
+                            </last>
+                        </loop>
+                    </then>
+                </if>
+            </procedureBody>
+        </procedure>
+
+        <!-- Закрыть предмет -->
+        <procedure name="ЗакрытьПредмет">
+            <parameters>
+                <parameter name="чтоЗакрыть"/>
+            </parameters>
+            <procedureBody>
+                <setProperty position="1" object="чтоЗакрыть" name="открыт" value="нет"/>
+                <showMessage position="2" type="expression"
+                             message="'Вы закрыли ' + чтоЗакрыть.ВП + '.'"/>
+            </procedureBody>
+        </procedure>
+
+        <!-- Надеть предмет -->
+        <procedure name="НадетьПредмет">
+            <parameters>
+                <parameter name="предмет"/>
+            </parameters>
+            <procedureBody>
+                <setProperty object="предмет" name="надет" value="да"/>
+                <showMessage type="expression" message="'Вы надели ' + предмет.вп + '.'"/>
+            </procedureBody>
+        </procedure>
+
+        <!-- Снять предмет -->
+        <procedure name="СнятьПредмет">
+            <parameters>
+                <parameter name="предмет"/>
+            </parameters>
+            <procedureBody>
+                <setProperty object="предмет" name="надет" value="нет"/>
+                <showMessage type="expression" message="'Вы сняли ' + предмет.вп + '.'"/>
+            </procedureBody>
+        </procedure>
+    </procedures>
+</library>

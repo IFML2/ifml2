@@ -1,26 +1,35 @@
 package ifml2.editor.gui;
 
-import ifml2.GUIUtils;
-import ifml2.editor.DataNotValidException;
-import ifml2.editor.IFML2EditorException;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.KeyStroke;
+
+import org.jetbrains.annotations.NotNull;
+
+import ifml2.GUIUtils;
+import ifml2.editor.DataNotValidException;
+import ifml2.editor.IFML2EditorException;
+
 /**
  * Common abstract ancestor for all editors.<br/>
- * <b>Usage:</b>
- * Create descendant JDialog with needed type. In constructor first of all call super(owner) and  initializeEditor().
- * Implement updateData() where fill data object with data from editor.
- * Implement validateData() if you need validation.
+ * <b>Usage:</b> Create descendant JDialog with needed type. In constructor
+ * first of all call super(owner) and initializeEditor(). Implement updateData()
+ * where fill data object with data from editor. Implement validateData() if you
+ * need validation.
  *
- * @param <T> Edited object type.
+ * @param <T>
+ *            Edited object type.
  */
 public abstract class AbstractEditor<T> extends JDialog {
     private boolean isOk;
@@ -32,12 +41,17 @@ public abstract class AbstractEditor<T> extends JDialog {
     /**
      * Initialize editor.
      *
-     * @param editorTitle       editor title.
-     * @param editorContentPane editor main JPanel.
-     * @param buttonOK          editor OK button.
-     * @param buttonCancel      editor Cancel button.
+     * @param editorTitle
+     *            editor title.
+     * @param editorContentPane
+     *            editor main JPanel.
+     * @param buttonOK
+     *            editor OK button.
+     * @param buttonCancel
+     *            editor Cancel button.
      */
-    protected void initializeEditor(String editorTitle, @NotNull JPanel editorContentPane, JButton buttonOK, JButton buttonCancel) {
+    protected void initializeEditor(String editorTitle, @NotNull JPanel editorContentPane, JButton buttonOK,
+            JButton buttonCancel) {
         setTitle(editorTitle);
 
         setContentPane(editorContentPane);
@@ -78,8 +92,9 @@ public abstract class AbstractEditor<T> extends JDialog {
     }
 
     /**
-     * Validate input date in case of pressing OK button. Returns true by default. Override for custom logic.
-     * Overriding: if data is incorrect throw DataNotValidException.
+     * Validate input date in case of pressing OK button. Returns true by default.
+     * Override for custom logic. Overriding: if data is incorrect throw
+     * DataNotValidException.
      *
      * @see DataNotValidException
      */
@@ -88,10 +103,13 @@ public abstract class AbstractEditor<T> extends JDialog {
     }
 
     /**
-     * Call this method to get edited data. Custom method should write data in given variable 'data'.
+     * Call this method to get edited data. Custom method should write data in given
+     * variable 'data'.
      *
-     * @param data object what should be filled with edited data.
-     * @throws IFML2EditorException if something goes wrong.
+     * @param data
+     *            object what should be filled with edited data.
+     * @throws IFML2EditorException
+     *             if something goes wrong.
      */
     public abstract void updateData(@NotNull T data) throws IFML2EditorException;
 

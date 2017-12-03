@@ -1,5 +1,20 @@
 package ifml2.editor.gui.editors;
 
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.util.HashMap;
+
+import javax.swing.AbstractAction;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+import org.jetbrains.annotations.NotNull;
+
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ifml2.GUIUtils;
@@ -9,14 +24,6 @@ import ifml2.editor.gui.EditorUtils;
 import ifml2.om.Procedure;
 import ifml2.om.Story;
 import ifml2.vm.instructions.Instruction;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.util.HashMap;
 
 public class ProceduresEditor extends AbstractEditor<HashMap<String, Procedure>> {
     private JPanel contentPane;
@@ -42,8 +49,9 @@ public class ProceduresEditor extends AbstractEditor<HashMap<String, Procedure>>
                 return;
             }
 
-            if (JOptionPane.showConfirmDialog(ProceduresEditor.this, "Вы действительно хотите удалить процедуру " + procedure.getName() + "?",
-                    "Удаление процедуры", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            if (JOptionPane.showConfirmDialog(ProceduresEditor.this,
+                    "Вы действительно хотите удалить процедуру " + procedure.getName() + "?", "Удаление процедуры",
+                    JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                 procedures.remove(procedure);
                 updateAllData();
             }
@@ -74,12 +82,14 @@ public class ProceduresEditor extends AbstractEditor<HashMap<String, Procedure>>
             }
         }
     };
-    private final AbstractAction editInstructionAction = new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON) {
+    private final AbstractAction editInstructionAction = new AbstractAction("Редактировать...",
+            GUIUtils.EDIT_ELEMENT_ICON) {
         @Override
         public void actionPerformed(ActionEvent e) {
             Instruction instruction = (Instruction) instructionsList.getSelectedValue();
 
-            if (instruction != null && EditorUtils.showAssociatedEditor(ProceduresEditor.this, instruction, storyDataHelper)) {
+            if (instruction != null
+                    && EditorUtils.showAssociatedEditor(ProceduresEditor.this, instruction, storyDataHelper)) {
                 updateSelectedProcedure();
             }
         }
@@ -90,9 +100,10 @@ public class ProceduresEditor extends AbstractEditor<HashMap<String, Procedure>>
             Procedure procedure = (Procedure) proceduresList.getSelectedValue();
             Instruction instruction = (Instruction) instructionsList.getSelectedValue();
 
-            if (procedure != null && instruction != null &&
-                    JOptionPane.showConfirmDialog(ProceduresEditor.this, "Вы действительно хотите удалить выбраную инструкцию?",
-                            "Удаление инструкции", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            if (procedure != null && instruction != null
+                    && JOptionPane.showConfirmDialog(ProceduresEditor.this,
+                            "Вы действительно хотите удалить выбраную инструкцию?", "Удаление инструкции",
+                            JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                 procedure.getInstructions().remove(instruction);
             }
         }

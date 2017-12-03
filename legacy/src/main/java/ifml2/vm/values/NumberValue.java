@@ -1,12 +1,13 @@
 package ifml2.vm.values;
 
-import ifml2.vm.IFML2ExpressionException;
-import org.jetbrains.annotations.NotNull;
-
 import static ifml2.vm.values.Value.CompareResult.EQUAL;
 import static ifml2.vm.values.Value.CompareResult.LEFT_BIGGER;
 import static ifml2.vm.values.Value.CompareResult.RIGHT_BIGGER;
 import static ifml2.vm.values.Value.Operation.ADD;
+
+import org.jetbrains.annotations.NotNull;
+
+import ifml2.vm.IFML2ExpressionException;
 
 public class NumberValue extends Value<Double> implements IAddableValue {
     public NumberValue(double value) {

@@ -51,7 +51,6 @@ public class FormalElement {
     }
 
     public enum Type {
-        LITERAL,
-        OBJECT
+        LITERAL, OBJECT
     }
 }

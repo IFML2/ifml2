@@ -1,5 +1,23 @@
 package ifml2.om;
 
+import static ifml2.om.Trigger.Type.GET_ACCESSIBLE_CONTENT;
+import static ifml2.om.xml.XmlSchemaConstants.ITEM_STARTING_POSITION_ELEMENT;
+import static ifml2.om.xml.XmlSchemaConstants.STARTING_POSITION_INVENTORY_ELEMENT;
+
+import java.util.List;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlIDREF;
+import javax.xml.bind.annotation.XmlTransient;
+
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
@@ -10,22 +28,6 @@ import ifml2.vm.SymbolResolver;
 import ifml2.vm.VirtualMachine;
 import ifml2.vm.values.CollectionValue;
 import ifml2.vm.values.Value;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlIDREF;
-import javax.xml.bind.annotation.XmlTransient;
-import java.util.List;
-
-import static ifml2.om.Trigger.Type.GET_ACCESSIBLE_CONTENT;
-import static ifml2.om.xml.XmlSchemaConstants.ITEM_STARTING_POSITION_ELEMENT;
-import static ifml2.om.xml.XmlSchemaConstants.STARTING_POSITION_INVENTORY_ELEMENT;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class Item extends IFMLObject implements Cloneable {
@@ -54,7 +56,8 @@ public class Item extends IFMLObject implements Cloneable {
     /**
      * Copies all field of item but container.
      *
-     * @param item item to copy to
+     * @param item
+     *            item to copy to
      * @throws CloneNotSupportedException
      */
     public void copyTo(@NotNull Item item) throws CloneNotSupportedException {
@@ -70,7 +73,8 @@ public class Item extends IFMLObject implements Cloneable {
     /**
      * Just runs appropriate trigger
      *
-     * @param virtualMachine Virtual Machine
+     * @param virtualMachine
+     *            Virtual Machine
      * @return Value returned by trigger
      */
     public Value getAccessibleContent(VirtualMachine virtualMachine) throws IFML2Exception {

@@ -1,22 +1,24 @@
 package ifml2.engine.saved;
 
-import ifml2.om.Item;
-import ifml2.om.Location;
-import ifml2.om.Story;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ifml2.om.Item;
+import ifml2.om.Location;
+import ifml2.om.Story;
 
 public class SavedLocation {
     private static final Logger LOG = LoggerFactory.getLogger(SavedLocation.class);
     @XmlAttribute(name = "id")
     private String id;
 
-    private List<String> items = new ArrayList<String>();
+    private List<String> items = new ArrayList<>();
 
     @SuppressWarnings("UnusedDeclaration")
     public SavedLocation() {

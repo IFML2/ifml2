@@ -1,15 +1,15 @@
 package ifml2.vm.instructions;
 
-import ifml2.CommonUtils;
-import ifml2.IFML2Exception;
-import ifml2.vm.ExpressionCalculator;
-import ifml2.vm.RunningContext;
-
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import ifml2.CommonUtils;
+import ifml2.IFML2Exception;
+import ifml2.vm.ExpressionCalculator;
+import ifml2.vm.RunningContext;
 
 @XmlRootElement(name = "showMessage")
 @IFML2Instruction(title = "Вывести сообщение")
@@ -88,8 +88,7 @@ public class ShowMessageInstr extends Instruction {
     @XmlType(namespace = "ShowMessageInstr")
     public enum Type {
         @XmlEnumValue(value = "text")
-        TEXT,
-        @XmlEnumValue(value = "expression")
+        TEXT, @XmlEnumValue(value = "expression")
         EXPRESSION
     }
 }

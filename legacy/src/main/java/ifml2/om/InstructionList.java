@@ -1,5 +1,10 @@
 package ifml2.om;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElements;
+
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ifml2.vm.instructions.GoToLocInstruction;
@@ -15,15 +20,9 @@ import ifml2.vm.instructions.SetVarInstruction;
 import ifml2.vm.instructions.ShowMessageInstr;
 import ifml2.vm.instructions.ShowPictureInstruction;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElements;
-
 @XmlAccessorType(XmlAccessType.NONE)
 public class InstructionList implements Cloneable {
-    @XmlElements({
-            @XmlElement(name = "goToLoc", type = GoToLocInstruction.class),
+    @XmlElements({ @XmlElement(name = "goToLoc", type = GoToLocInstruction.class),
             @XmlElement(name = "showMessage", type = ShowMessageInstr.class),
             @XmlElement(name = "if", type = IfInstruction.class),
             @XmlElement(name = "loop", type = LoopInstruction.class),
@@ -33,8 +32,7 @@ public class InstructionList implements Cloneable {
             @XmlElement(name = "moveItem", type = MoveItemInstruction.class),
             @XmlElement(name = "rollDice", type = RollDiceInstruction.class),
             @XmlElement(name = "runProcedure", type = RunProcedureInstruction.class),
-            @XmlElement(name = "showPicture", type = ShowPictureInstruction.class)
-    })
+            @XmlElement(name = "showPicture", type = ShowPictureInstruction.class) })
     private EventList<Instruction> instructions = new BasicEventList<>(); // InstructionList controls its instructions
 
     public EventList<Instruction> getInstructions() {

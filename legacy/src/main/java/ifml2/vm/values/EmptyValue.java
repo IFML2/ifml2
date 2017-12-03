@@ -1,18 +1,20 @@
 package ifml2.vm.values;
 
-import org.jetbrains.annotations.NotNull;
-
 import static ifml2.vm.values.Value.CompareResult.EQUAL;
 import static ifml2.vm.values.Value.CompareResult.UNEQUAL;
+
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Empty value
  */
 public class EmptyValue extends Value {
 
+    public static final String LITERAL = "пусто";
+
     @Override
     public String getTypeName() {
-        return "пусто";
+        return LITERAL;
     }
 
     @Override
@@ -22,7 +24,7 @@ public class EmptyValue extends Value {
 
     @Override
     public String toLiteral() {
-        return "пусто";
+        return LITERAL;
     }
 
     @Override

@@ -1,11 +1,11 @@
 package ifml2.vm.instructions;
 
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import ifml2.IFML2Exception;
 import ifml2.om.Location;
 import ifml2.vm.RunningContext;
-
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "goToLoc")
 @IFML2Instruction(title = "Перейти в локацию")

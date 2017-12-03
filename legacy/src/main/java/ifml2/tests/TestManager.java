@@ -1,18 +1,19 @@
 package ifml2.tests;
 
-import ifml2.IFML2Exception;
-import ifml2.engine.Engine;
-import ifml2.engine.featureproviders.text.IOutputPlainTextProvider;
+import java.io.File;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import java.io.File;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Date;
+
+import ifml2.IFML2Exception;
+import ifml2.engine.Engine;
+import ifml2.engine.featureproviders.text.IOutputPlainTextProvider;
 
 public class TestManager {
     private IOutputPlainTextProvider outputPlainTextProvider;
@@ -45,7 +46,8 @@ public class TestManager {
 
     private void fireTestsListListeners() {
         for (ListDataListener listDataListener : testsListDataListeners) {
-            listDataListener.contentsChanged(new ListDataEvent(testPlans, ListDataEvent.CONTENTS_CHANGED, 0, testPlans.size() - 1));
+            listDataListener.contentsChanged(
+                    new ListDataEvent(testPlans, ListDataEvent.CONTENTS_CHANGED, 0, testPlans.size() - 1));
         }
     }
 
@@ -69,8 +71,9 @@ public class TestManager {
         this.outputPlainTextProvider = outputPlainTextProvider;
 
         log("=== Запуск тестов ===");
-        String[] outText = {""};
-        Engine engine = new Engine((IOutputPlainTextProvider) text -> outText[0] += ((outText[0].length() > 0) ? '\n' : "") + text);
+        String[] outText = { "" };
+        Engine engine = new Engine(
+                (IOutputPlainTextProvider) text -> outText[0] += ((outText[0].length() > 0) ? '\n' : "") + text);
 
         int plansSuccess = 0;
         for (IFMLTestPlan testPlan : getTestPlans()) {
@@ -91,8 +94,9 @@ public class TestManager {
                     engine.executeGamerCommand(testIteration.command);
 
                     String outString = outText[0].trim();
-                    //outString = outString.replaceAll("\t|\n|\r", "");
-                    String answer = (testIteration.answer != null) ? testIteration.answer.trim()/*.replaceAll("\t|\n|\r", "")*/ : "";
+                    // outString = outString.replaceAll("\t|\n|\r", "");
+                    String answer = (testIteration.answer != null) ? testIteration.answer.trim()
+                            /* .replaceAll("\t|\n|\r", "") */ : "";
                     if (answer.equalsIgnoreCase(outString)) {
                         cmdSuccess++;
                         log("Ответ ожидаемый.");

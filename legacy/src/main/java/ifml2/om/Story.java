@@ -1,5 +1,32 @@
 package ifml2.om;
 
+import static ifml2.om.xml.XmlSchemaConstants.ITEMS_ITEM_ELEMENT;
+import static ifml2.om.xml.XmlSchemaConstants.LOCATIONS_LOCATION_ELEMENT;
+import static ifml2.om.xml.XmlSchemaConstants.PROCEDURES_PROCEDURE_ELEMENT;
+import static ifml2.om.xml.XmlSchemaConstants.STORY_ITEMS_ELEMENT;
+import static ifml2.om.xml.XmlSchemaConstants.STORY_LOCATIONS_ELEMENT;
+import static ifml2.om.xml.XmlSchemaConstants.STORY_PROCEDURES_ELEMENT;
+
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import org.jetbrains.annotations.NotNull;
+
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
@@ -11,37 +38,13 @@ import ifml2.om.Procedure.SystemProcedureType;
 import ifml2.om.xml.xmladapters.DictionaryAdapter;
 import ifml2.om.xml.xmladapters.LocationAdapter;
 import ifml2.om.xml.xmladapters.UsedLibrariesAdapter;
-import org.jetbrains.annotations.NotNull;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-
-import static ifml2.om.xml.XmlSchemaConstants.ITEMS_ITEM_ELEMENT;
-import static ifml2.om.xml.XmlSchemaConstants.LOCATIONS_LOCATION_ELEMENT;
-import static ifml2.om.xml.XmlSchemaConstants.PROCEDURES_PROCEDURE_ELEMENT;
-import static ifml2.om.xml.XmlSchemaConstants.STORY_ITEMS_ELEMENT;
-import static ifml2.om.xml.XmlSchemaConstants.STORY_LOCATIONS_ELEMENT;
-import static ifml2.om.xml.XmlSchemaConstants.STORY_PROCEDURES_ELEMENT;
 
 @XmlRootElement(name = "story")
 @XmlAccessorType(XmlAccessType.NONE)
 public class Story {
     @XmlTransient
-    private static HashMap<Class, String> CLASSES_NAMES = new HashMap<Class, String>() {
+    private static Map<Class, String> CLASSES_NAMES = new HashMap() {
         {
             put(Location.class, Location.getClassName());
             put(Item.class, Item.getClassName());
@@ -81,7 +84,8 @@ public class Story {
     /**
      * objectsHeap holds all game object - locations and items
      */
-    private HashMap<String, IFMLObject> objectsHeap = new HashMap<>(); // todo subscribe objectsHeap to locations and items updates
+    private HashMap<String, IFMLObject> objectsHeap = new HashMap<>(); // todo subscribe objectsHeap to locations and
+                                                                       // items updates
     // todo subscribe all objects to attributes change
     @XmlElementWrapper(name = "actions")
     @XmlElement(name = "action")
@@ -100,7 +104,8 @@ public class Story {
                 // delete from items
                 for (Item item : items) {
                     EventList<Location> startLocations = item.getStartingPosition().getLocations();
-                    startLocations.stream().filter(startLocation -> !locList.contains(startLocation)).forEach(startLocations::remove);
+                    startLocations.stream().filter(startLocation -> !locList.contains(startLocation))
+                            .forEach(startLocations::remove);
                 }
 
                 // delete from locations
@@ -167,15 +172,18 @@ public class Story {
 
     @Override
     public Story clone() throws CloneNotSupportedException {
-        //noinspection UnnecessaryLocalVariable
+        // noinspection UnnecessaryLocalVariable
         Story clone = (Story) super.clone(); // todo check subscriptions made in anonymous constructor
-       /* clone.actions = GlazedLists.eventList(actions);
-        clone.dictionary = new HashMap<String, Word>(dictionary);
-        clone.items = GlazedLists.eventList(items);
-        clone.libraries = GlazedLists.eventList(libraries);
-        clone.locations = GlazedLists.eventList(locations);
-        clone.objectsHeap = new HashMap<String, IFMLObject>(objectsHeap);*/
-        //todo FULL COPY of objects! they all are OWN! that's why they should be copied not just links
+        /*
+         * clone.actions = GlazedLists.eventList(actions); clone.dictionary = new
+         * HashMap<String, Word>(dictionary); clone.items =
+         * GlazedLists.eventList(items); clone.libraries =
+         * GlazedLists.eventList(libraries); clone.locations =
+         * GlazedLists.eventList(locations); clone.objectsHeap = new HashMap<String,
+         * IFMLObject>(objectsHeap);
+         */
+        // todo FULL COPY of objects! they all are OWN! that's why they should be copied
+        // not just links
         return clone;
     }
 
@@ -314,9 +322,11 @@ public class Story {
         }
 
         /**
-         * Tries to find location by id. Id shouldn't be null. If finds returns it, else returns null.
+         * Tries to find location by id. Id shouldn't be null. If finds returns it, else
+         * returns null.
          *
-         * @param id Location id.
+         * @param id
+         *            Location id.
          * @return Location if finds and null otherwise.
          */
         public Location findLocationById(@NotNull String id) {
@@ -355,7 +365,8 @@ public class Story {
 
             String classedId = camelCaseId;
 
-            // adding type postfix for more uniqueness (avoiding JAXB collection typing bug JAXB-546)
+            // adding type postfix for more uniqueness (avoiding JAXB collection typing bug
+            // JAXB-546)
             if (Location.class.equals(forClass)) {
                 classedId += "Лок";
             } else if (Item.class.equals(forClass)) {
@@ -388,7 +399,8 @@ public class Story {
         /**
          * Returns object by ID
          *
-         * @param id object id
+         * @param id
+         *            object id
          * @return object if found, null otherwise
          */
         public Object findObjectById(String id) {
@@ -431,9 +443,11 @@ public class Story {
         }
 
         /**
-         * Tries to find item by id. Id shouldn't be null. If finds returns it, else returns null.
+         * Tries to find item by id. Id shouldn't be null. If finds returns it, else
+         * returns null.
          *
-         * @param id Item id.
+         * @param id
+         *            Item id.
          * @return Item if finds and null otherwise.
          */
         public Item findItemById(@NotNull String id) {
@@ -449,32 +463,14 @@ public class Story {
             return null;
         }
 
-        /**
-         * Searches libraries list for the library by its path.
-         *
-         * @param libraries Libraries list.
-         * @param library   Library to find by path.
-         * @return true if the same library is found and false otherwise.
-         */
         public boolean isLibListContainsLib(List<Library> libraries, Library library) {
-            for (Library lib : libraries) {
-                if (lib.getPath().equalsIgnoreCase(library.getPath())) {
-                    return true;
-                }
-            }
-
-            return false;
+            return libraries.stream().filter(lib -> lib.getPath().equalsIgnoreCase(library.getPath())).findFirst()
+                    .isPresent();
         }
 
-        /**
-         * Find actions where procedure is called
-         *
-         * @param procedure procedure for search
-         * @return list of affected actions
-         */
         @NotNull
-        public ArrayList<Action> findActionsByProcedure(@NotNull Procedure procedure) {
-            ArrayList<Action> results = new ArrayList<>();
+        public List<Action> findActionsByProcedure(@NotNull Procedure procedure) {
+            List<Action> results = new ArrayList<>();
 
             for (Action action : actions) {
                 Action.ProcedureCall procedureCall = action.getProcedureCall();
@@ -486,7 +482,8 @@ public class Story {
         }
 
         /**
-         * Returns all role definitions in story and libraries. List is copied to prevent modification.
+         * Returns all role definitions in story and libraries. List is copied to
+         * prevent modification.
          *
          * @return copied list of all role definitions
          */

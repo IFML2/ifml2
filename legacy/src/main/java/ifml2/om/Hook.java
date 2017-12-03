@@ -1,7 +1,5 @@
 package ifml2.om;
 
-import ifml2.IFMLEntity;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -10,6 +8,8 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlType;
+
+import ifml2.IFMLEntity;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class Hook extends IFMLEntity {
@@ -74,10 +74,8 @@ public class Hook extends IFMLEntity {
     @XmlType(namespace = "Hook")
     public enum Type {
         @XmlEnumValue(value = "before")
-        BEFORE(0, "до"),
-        @XmlEnumValue(value = "after")
-        AFTER(1, "после"),
-        @XmlEnumValue(value = "instead")
+        BEFORE(0, "до"), @XmlEnumValue(value = "after")
+        AFTER(1, "после"), @XmlEnumValue(value = "instead")
         INSTEAD(2, "вместо");
         public final int sortValue;
         private String ruName;

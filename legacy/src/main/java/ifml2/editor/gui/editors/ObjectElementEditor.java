@@ -1,5 +1,17 @@
 package ifml2.editor.gui.editors;
 
+import java.awt.Window;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+
+import org.jetbrains.annotations.NotNull;
+
 import ca.odell.glazedlists.swing.DefaultEventComboBoxModel;
 import ifml2.GUIUtils;
 import ifml2.editor.DataNotValidException;
@@ -9,12 +21,6 @@ import ifml2.om.ObjectTemplateElement;
 import ifml2.om.Parameter;
 import ifml2.om.Procedure;
 import ifml2.om.Word;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 
 public class ObjectElementEditor extends AbstractEditor<ObjectTemplateElement> {
     private static final String EDITOR_TITLE = "Объект";

@@ -1,12 +1,16 @@
 package ifml2.editor.gui.instructions;
 
+import java.awt.Window;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import org.jetbrains.annotations.NotNull;
+
 import ifml2.editor.IFML2EditorException;
 import ifml2.vm.instructions.Instruction;
 import ifml2.vm.instructions.ReturnInstruction;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import java.awt.*;
 
 public class ReturnInstrEditor extends AbstractInstrEditor {
     private JPanel contentPane;

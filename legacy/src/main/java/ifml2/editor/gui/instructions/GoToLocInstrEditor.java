@@ -1,5 +1,16 @@
 package ifml2.editor.gui.instructions;
 
+import java.awt.Window;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
+import javax.swing.event.ChangeListener;
+
+import org.jetbrains.annotations.NotNull;
+
 import ca.odell.glazedlists.swing.DefaultEventComboBoxModel;
 import ifml2.editor.DataNotValidException;
 import ifml2.editor.IFML2EditorException;
@@ -7,11 +18,6 @@ import ifml2.om.Location;
 import ifml2.om.Story;
 import ifml2.vm.instructions.GoToLocInstruction;
 import ifml2.vm.instructions.Instruction;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import javax.swing.event.ChangeListener;
-import java.awt.*;
 
 public class GoToLocInstrEditor extends AbstractInstrEditor {
     private JPanel contentPane;

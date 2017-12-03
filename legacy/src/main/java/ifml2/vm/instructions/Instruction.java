@@ -1,5 +1,12 @@
 package ifml2.vm.instructions;
 
+import java.text.MessageFormat;
+import java.util.List;
+
+import javax.xml.bind.annotation.XmlTransient;
+
+import org.jetbrains.annotations.NotNull;
+
 import ca.odell.glazedlists.BasicEventList;
 import ifml2.IFML2Exception;
 import ifml2.IFMLEntity;
@@ -24,27 +31,23 @@ import ifml2.vm.values.BooleanValue;
 import ifml2.vm.values.CollectionValue;
 import ifml2.vm.values.ObjectValue;
 import ifml2.vm.values.Value;
-import org.jetbrains.annotations.NotNull;
-
-import javax.xml.bind.annotation.XmlTransient;
-import java.text.MessageFormat;
-import java.util.List;
 
 public abstract class Instruction implements Cloneable {
-    /*@XmlAttribute(name = "position")
-    public int position;*/
+    /*
+     * @XmlAttribute(name = "position") public int position;
+     */
     @XmlTransient
     public VirtualMachine virtualMachine; // links
 
-    private static void validateParameterForNull(String parameterValue, String instructionTitle,
-                                                 Object parameterName) throws IFML2VMException {
+    private static void validateParameterForNull(String parameterValue, String instructionTitle, Object parameterName)
+            throws IFML2VMException {
         if (parameterValue == null || "".equals(parameterValue)) {
             throw new IFML2VMException("Параметр {0} не задан у инструкции [{1}]", parameterName, instructionTitle);
         }
     }
 
-    protected static <T> List<T> convertToClassedList(List<? extends IFMLEntity> unknownList,
-                                                      Class<T> convertingClass) throws IFML2VMException {
+    protected static <T> List<T> convertToClassedList(List<? extends IFMLEntity> unknownList, Class<T> convertingClass)
+            throws IFML2VMException {
         List<T> ifmlObjects = new BasicEventList<>();
         for (Object obj : unknownList) {
             if (convertingClass.isInstance(obj)) {
@@ -68,14 +71,15 @@ public abstract class Instruction implements Cloneable {
 
     abstract public void run(RunningContext runningContext) throws IFML2Exception;
 
-    protected IFMLObject getObjectFromExpression(String expression, RunningContext runningContext, String instructionTitle,
-                                                 Object parameterName, boolean objectCanBeNull) throws IFML2Exception {
+    protected IFMLObject getObjectFromExpression(String expression, RunningContext runningContext,
+            String instructionTitle, Object parameterName, boolean objectCanBeNull) throws IFML2Exception {
         validateParameterForNull(expression, instructionTitle, parameterName);
 
         Value itemValue = ExpressionCalculator.calculate(runningContext, expression);
 
         if (!(itemValue instanceof ObjectValue)) {
-            throw new IFML2VMException("Тип выражения ({0}) – не Объект у инструкции [{1}]", expression, instructionTitle);
+            throw new IFML2VMException("Тип выражения ({0}) – не Объект у инструкции [{1}]", expression,
+                    instructionTitle);
         }
 
         IFMLObject object = ((ObjectValue) itemValue).getValue();
@@ -88,57 +92,63 @@ public abstract class Instruction implements Cloneable {
         return object;
     }
 
-    protected Item getItemFromExpression(String expression, RunningContext runningContext, String instructionTitle, Object parameterName,
-                                         boolean objectCanBeNull) throws IFML2Exception {
-        IFMLObject object = getObjectFromExpression(expression, runningContext, instructionTitle, parameterName, objectCanBeNull);
+    protected Item getItemFromExpression(String expression, RunningContext runningContext, String instructionTitle,
+            Object parameterName, boolean objectCanBeNull) throws IFML2Exception {
+        IFMLObject object = getObjectFromExpression(expression, runningContext, instructionTitle, parameterName,
+                objectCanBeNull);
 
         if (objectCanBeNull && object == null) {
             return null;
         }
 
         if (!(object instanceof Item)) {
-            throw new IFML2VMException("Тип выражения ({0}) – не Предмет у инструкции {1}", expression, instructionTitle);
+            throw new IFML2VMException("Тип выражения ({0}) – не Предмет у инструкции {1}", expression,
+                    instructionTitle);
         }
 
         return (Item) object;
     }
 
-    protected Location getLocationFromExpression(String expression, RunningContext runningContext, String instructionTitle,
-                                                 Object parameterName, boolean objectCanBeNull) throws IFML2Exception {
-        IFMLObject object = getObjectFromExpression(expression, runningContext, instructionTitle, parameterName, objectCanBeNull);
+    protected Location getLocationFromExpression(String expression, RunningContext runningContext,
+            String instructionTitle, Object parameterName, boolean objectCanBeNull) throws IFML2Exception {
+        IFMLObject object = getObjectFromExpression(expression, runningContext, instructionTitle, parameterName,
+                objectCanBeNull);
 
         if (objectCanBeNull && object == null) {
             return null;
         }
 
         if (!(object instanceof Location)) {
-            throw new IFML2VMException("Тип выражения ({0}) – не Локация у инструкции {1}", expression, instructionTitle);
+            throw new IFML2VMException("Тип выражения ({0}) – не Локация у инструкции {1}", expression,
+                    instructionTitle);
         }
 
         return (Location) object;
     }
 
     boolean getBooleanFromExpression(String expression, RunningContext runningContext, String instructionTitle,
-                                     Object parameterName) throws IFML2Exception {
+            Object parameterName) throws IFML2Exception {
         validateParameterForNull(expression, instructionTitle, parameterName);
 
         Value boolValue = ExpressionCalculator.calculate(runningContext, expression);
 
         if (!(boolValue instanceof BooleanValue)) {
-            throw new IFML2VMException("Тип выражения ({0}) – не Логическое у инструкции [{1}]", expression, instructionTitle);
+            throw new IFML2VMException("Тип выражения ({0}) – не Логическое у инструкции [{1}]", expression,
+                    instructionTitle);
         }
 
         return ((BooleanValue) boolValue).getValue();
     }
 
     protected List<? extends IFMLEntity> getCollectionFromExpression(String expression, RunningContext runningContext,
-                                                                     String instructionTitle, Object parameterName) throws IFML2Exception {
+            String instructionTitle, Object parameterName) throws IFML2Exception {
         validateParameterForNull(expression, instructionTitle, parameterName);
 
         Value collectionValue = ExpressionCalculator.calculate(runningContext, expression);
 
         if (!(collectionValue instanceof CollectionValue)) {
-            throw new IFML2VMException("Тип выражения ({0}) – не Коллекция у инструкции [{1}]", expression, instructionTitle);
+            throw new IFML2VMException("Тип выражения ({0}) – не Коллекция у инструкции [{1}]", expression,
+                    instructionTitle);
         }
 
         return ((CollectionValue) collectionValue).getValue();
@@ -150,17 +160,16 @@ public abstract class Instruction implements Cloneable {
     }
 
     public enum Type {
-        SHOW_MESSAGE(ShowMessageInstr.class, ShowMessageInstrEditor.class),
-        GO_TO_LOCATION(GoToLocInstruction.class, GoToLocInstrEditor.class),
-        IF(IfInstruction.class, IfInstrEditor.class),
-        LOOP(LoopInstruction.class, null), //todo LoopInstruction Editor
-        SET_VAR(SetVarInstruction.class, SetVarInstrEditor.class),
-        MOVE_ITEM(MoveItemInstruction.class, MoveItemInstrEditor.class),
-        ROLL_DICE(RollDiceInstruction.class, RollDiceInstrEditor.class),
-        SET_PROPERTY(SetPropertyInstruction.class, null), // todo SetPropertyInstruction Editor
-        RUN_PROCEDURE(RunProcedureInstruction.class, RunProcedureInstrEditor.class),
-        RETURN(ReturnInstruction.class, ReturnInstrEditor.class),
-        SHOW_PICTURE(ShowPictureInstruction.class, ShowPictureInstrEditor.class);
+        SHOW_MESSAGE(ShowMessageInstr.class, ShowMessageInstrEditor.class), GO_TO_LOCATION(GoToLocInstruction.class,
+                GoToLocInstrEditor.class), IF(IfInstruction.class,
+                        IfInstrEditor.class), LOOP(LoopInstruction.class, null), // todo LoopInstruction Editor
+        SET_VAR(SetVarInstruction.class, SetVarInstrEditor.class), MOVE_ITEM(MoveItemInstruction.class,
+                MoveItemInstrEditor.class), ROLL_DICE(RollDiceInstruction.class,
+                        RollDiceInstrEditor.class), SET_PROPERTY(SetPropertyInstruction.class, null), // todo
+                                                                                                      // SetPropertyInstruction
+                                                                                                      // Editor
+        RUN_PROCEDURE(RunProcedureInstruction.class, RunProcedureInstrEditor.class), RETURN(ReturnInstruction.class,
+                ReturnInstrEditor.class), SHOW_PICTURE(ShowPictureInstruction.class, ShowPictureInstrEditor.class);
 
         private Class<? extends Instruction> instrClass;
         private String title;
@@ -181,18 +190,22 @@ public abstract class Instruction implements Cloneable {
         /**
          * Returns enum item by Instruction subclass.
          *
-         * @param instructionClass instruction subclass.
+         * @param instructionClass
+         *            instruction subclass.
          * @return Type item.
-         * @throws IFML2Exception if there is no enum item for specified class.
+         * @throws IFML2Exception
+         *             if there is no enum item for specified class.
          */
-        public static Type getItemByClass(@NotNull Class<? extends Instruction> instructionClass) throws IFML2Exception {
+        public static Type getItemByClass(@NotNull Class<? extends Instruction> instructionClass)
+                throws IFML2Exception {
             for (Type type : Type.values()) {
                 if (type.instrClass.equals(instructionClass)) {
                     return type;
                 }
             }
 
-            throw new IFML2Exception(MessageFormat.format("No enum element associated with class {0}", instructionClass));
+            throw new IFML2Exception(
+                    MessageFormat.format("No enum element associated with class {0}", instructionClass));
         }
 
         @Override

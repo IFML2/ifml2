@@ -1,5 +1,19 @@
 package ifml2.editor.gui.editors;
 
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.util.Arrays;
+import java.util.Vector;
+
+import javax.swing.AbstractAction;
+import javax.swing.JButton;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+
+import org.jetbrains.annotations.NotNull;
+
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.swing.DefaultEventListModel;
@@ -8,14 +22,6 @@ import ifml2.editor.gui.AbstractEditor;
 import ifml2.om.Attribute;
 import ifml2.om.Library;
 import ifml2.om.Story;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.util.Arrays;
-import java.util.Vector;
 
 public class ObjectAttributesEditor extends AbstractEditor<EventList<Attribute>> {
     private JPanel contentPane;
@@ -30,7 +36,8 @@ public class ObjectAttributesEditor extends AbstractEditor<EventList<Attribute>>
 
     private EventList<Attribute> attributesClone = null;
 
-    public ObjectAttributesEditor(Window owner, @NotNull EventList<Attribute> attributes, @NotNull Story.DataHelper storyDataHelper) {
+    public ObjectAttributesEditor(Window owner, @NotNull EventList<Attribute> attributes,
+            @NotNull Story.DataHelper storyDataHelper) {
         super(owner);
         initializeEditor(OBJECT_ATTRIBUTES_EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
 
@@ -72,7 +79,7 @@ public class ObjectAttributesEditor extends AbstractEditor<EventList<Attribute>>
 
         // set all attributes (static table model!)
         Vector<Vector<Object>> data = new Vector<Vector<Object>>();
-        //TODO: iterate through story attributes
+        // TODO: iterate through story attributes
         // iterate through libs attributes
         for (Library library : storyDataHelper.getLibraries()) {
             for (Attribute attribute : library.attributes) {
@@ -83,12 +90,13 @@ public class ObjectAttributesEditor extends AbstractEditor<EventList<Attribute>>
                 data.add(line);
             }
         }
-        allAttrsTable.setModel(new DefaultTableModel(data, new Vector<String>(Arrays.asList("Библиотека", "Признак", "Описание"))) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        });
+        allAttrsTable.setModel(
+                new DefaultTableModel(data, new Vector<String>(Arrays.asList("Библиотека", "Признак", "Описание"))) {
+                    @Override
+                    public boolean isCellEditable(int row, int column) {
+                        return false;
+                    }
+                });
     }
 
     @Override

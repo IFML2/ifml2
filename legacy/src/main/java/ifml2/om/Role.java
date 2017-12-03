@@ -1,9 +1,8 @@
 package ifml2.om;
 
-import ca.odell.glazedlists.BasicEventList;
-import ca.odell.glazedlists.EventList;
-import ifml2.IFMLEntity;
-import org.jetbrains.annotations.NotNull;
+import static ifml2.om.xml.XmlSchemaConstants.ROLE_NAME_ATTRIBUTE;
+import static ifml2.om.xml.XmlSchemaConstants.ROLE_PROPERTIES_ELEMENT;
+import static ifml2.om.xml.XmlSchemaConstants.ROLE_PROPERTY_ELEMENT;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -12,9 +11,11 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlIDREF;
 
-import static ifml2.om.xml.XmlSchemaConstants.ROLE_NAME_ATTRIBUTE;
-import static ifml2.om.xml.XmlSchemaConstants.ROLE_PROPERTIES_ELEMENT;
-import static ifml2.om.xml.XmlSchemaConstants.ROLE_PROPERTY_ELEMENT;
+import org.jetbrains.annotations.NotNull;
+
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
+import ifml2.IFMLEntity;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class Role extends IFMLEntity {

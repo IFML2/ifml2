@@ -1,5 +1,18 @@
 package ifml2.editor.gui;
 
+import java.awt.Dialog;
+import java.awt.event.ActionEvent;
+import java.util.Collections;
+
+import javax.swing.JButton;
+import javax.swing.JInternalFrame;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+import org.jetbrains.annotations.NotNull;
+
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ifml2.GUIUtils;
@@ -7,14 +20,6 @@ import ifml2.om.InstructionList;
 import ifml2.om.Story;
 import ifml2.om.Word;
 import ifml2.vm.instructions.Instruction;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.util.Collections;
 
 public class InstructionsEditForm extends JInternalFrame {
     private JPanel contentPane;
@@ -32,7 +37,8 @@ public class InstructionsEditForm extends JInternalFrame {
         setContentPane(contentPane);
     }
 
-    public void init(final Dialog owner, @NotNull InstructionList instructionList, @NotNull Story.DataHelper dataHelper) throws CloneNotSupportedException {
+    public void init(final Dialog owner, @NotNull InstructionList instructionList, @NotNull Story.DataHelper dataHelper)
+            throws CloneNotSupportedException {
         this.owner = owner;
         this.storyDataHelper = dataHelper;
         instructionListClone = instructionList.clone();
@@ -147,8 +153,8 @@ public class InstructionsEditForm extends JInternalFrame {
         });
     }
 
-    /*public void saveInstructions(@NotNull InstructionList instructionList)
-    {
-        instructionList.replaceInstructions(instructionListClone);
-    }*/
+    /*
+     * public void saveInstructions(@NotNull InstructionList instructionList) {
+     * instructionList.replaceInstructions(instructionListClone); }
+     */
 }

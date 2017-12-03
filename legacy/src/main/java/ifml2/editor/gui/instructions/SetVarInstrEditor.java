@@ -1,13 +1,17 @@
 package ifml2.editor.gui.instructions;
 
+import java.awt.Window;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import org.jetbrains.annotations.NotNull;
+
 import ifml2.editor.DataNotValidException;
 import ifml2.editor.IFML2EditorException;
 import ifml2.vm.instructions.Instruction;
 import ifml2.vm.instructions.SetVarInstruction;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import java.awt.*;
 
 public class SetVarInstrEditor extends AbstractInstrEditor {
     private static final String SET_VAR_EDITOR_TITLE = Instruction.getTitleFor(SetVarInstruction.class);
@@ -21,26 +25,17 @@ public class SetVarInstrEditor extends AbstractInstrEditor {
         super(owner);
         initializeEditor(SET_VAR_EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
 
-        /*nameText.getDocument().addDocumentListener(new DocumentListener()
-        {
-            @Override
-            public void insertUpdate(DocumentEvent e)
-            {
-                updateScope();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e)
-            {
-                updateScope();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e)
-            {
-                *//* do nothing *//*
-            }
-        });*/
+        /*
+         * nameText.getDocument().addDocumentListener(new DocumentListener() {
+         * 
+         * @Override public void insertUpdate(DocumentEvent e) { updateScope(); }
+         * 
+         * @Override public void removeUpdate(DocumentEvent e) { updateScope(); }
+         * 
+         * @Override public void changedUpdate(DocumentEvent e) {
+         *//* do nothing *//*
+                            * } });
+                            */
 
         // -- init form data --
 
@@ -48,11 +43,12 @@ public class SetVarInstrEditor extends AbstractInstrEditor {
         valueText.setText(instruction.getValue());
     }
 
-    /*private void updateScope()
-    {
-        Variable.VariableScope variableScope = runningContext.getVariableScopeByName(nameText.getText().trim());
-        typeLabel.setText(variableScope != null ? variableScope.toString() : "локальная");
-    }*/
+    /*
+     * private void updateScope() { Variable.VariableScope variableScope =
+     * runningContext.getVariableScopeByName(nameText.getText().trim());
+     * typeLabel.setText(variableScope != null ? variableScope.toString() :
+     * "локальная"); }
+     */
 
     @Override
     protected Class<? extends Instruction> getInstrClass() {

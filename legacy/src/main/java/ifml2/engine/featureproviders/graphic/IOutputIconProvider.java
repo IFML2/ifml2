@@ -1,8 +1,8 @@
 package ifml2.engine.featureproviders.graphic;
 
-import ifml2.engine.featureproviders.IPlayerFeatureProvider;
+import javax.swing.Icon;
 
-import javax.swing.*;
+import ifml2.engine.featureproviders.IPlayerFeatureProvider;
 
 /**
  * Output Icon provider.
@@ -10,8 +10,9 @@ import javax.swing.*;
 public interface IOutputIconProvider extends IPlayerFeatureProvider {
     /**
      * Outputs Icon.
-     *
-     * @param icon icon to output.
+     * 
+     * @param icon
+     *            icon to output.
      */
     void outputIcon(Icon icon);
 }

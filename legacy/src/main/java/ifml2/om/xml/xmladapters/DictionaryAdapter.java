@@ -1,11 +1,12 @@
 package ifml2.om.xml.xmladapters;
 
-import ifml2.om.Word;
-import ifml2.om.xml.xmlobjects.XmlDictionary;
-
-import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import javax.xml.bind.annotation.adapters.XmlAdapter;
+
+import ifml2.om.Word;
+import ifml2.om.xml.xmlobjects.XmlDictionary;
 
 public class DictionaryAdapter extends XmlAdapter<XmlDictionary, HashMap<String, Word>> {
     @Override

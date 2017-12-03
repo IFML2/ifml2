@@ -22,8 +22,8 @@ public class IFML2ParseException extends IFML2Exception {
     }
 
     public boolean isMoreFull(IFML2ParseException exception, int currentTemplateSize) {
-        return usedWords > exception.getUsedWords() ||
-                usedWords == exception.getUsedWords() && templateSize > currentTemplateSize;
+        return usedWords > exception.getUsedWords()
+                || usedWords == exception.getUsedWords() && templateSize > currentTemplateSize;
     }
 
     public int getUsedWords() {

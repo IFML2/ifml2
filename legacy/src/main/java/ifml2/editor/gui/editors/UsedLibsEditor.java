@@ -1,5 +1,22 @@
 package ifml2.editor.gui.editors;
 
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.io.File;
+import java.util.List;
+
+import javax.swing.AbstractAction;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileView;
+
+import org.jetbrains.annotations.NotNull;
+
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.swing.DefaultEventListModel;
@@ -12,15 +29,6 @@ import ifml2.editor.gui.AbstractEditor;
 import ifml2.om.Library;
 import ifml2.om.OMManager;
 import ifml2.om.Story;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileView;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.io.File;
-import java.util.List;
 
 public class UsedLibsEditor extends AbstractEditor<List<Library>> {
     public static final String USED_LIBS_EDITOR_TITLE = "Используемые библиотеки";
@@ -33,10 +41,11 @@ public class UsedLibsEditor extends AbstractEditor<List<Library>> {
 
     private EventList<Library> librariesClone;
 
-    /* todo editor is transactional, but it reassigns libs in updateData()
-    * now it will be working ?
-    * other objects links to previous libs and reassign should be more smart - retain previous libs - we can compare them
-    * */
+    /*
+     * todo editor is transactional, but it reassigns libs in updateData() now it
+     * will be working ? other objects links to previous libs and reassign should be
+     * more smart - retain previous libs - we can compare them
+     */
 
     public UsedLibsEditor(Window owner, final EventList<Library> libraries, final Story.DataHelper storyDataHelper) {
         super(owner);
@@ -53,7 +62,8 @@ public class UsedLibsEditor extends AbstractEditor<List<Library>> {
 
                 @Override
                 public boolean accept(File file) {
-                    return file.isDirectory() || file.getName().toLowerCase().endsWith(CommonConstants.LIBRARY_EXTENSION);
+                    return file.isDirectory()
+                            || file.getName().toLowerCase().endsWith(CommonConstants.LIBRARY_EXTENSION);
                 }
             });
 
@@ -74,8 +84,8 @@ public class UsedLibsEditor extends AbstractEditor<List<Library>> {
                     if (!storyDataHelper.isLibListContainsLib(librariesClone, library)) {
                         librariesClone.add(library);
                     } else {
-                        JOptionPane.showMessageDialog(UsedLibsEditor.this, "В списке уже есть эта библиотека", "Уже есть",
-                                JOptionPane.WARNING_MESSAGE);
+                        JOptionPane.showMessageDialog(UsedLibsEditor.this, "В списке уже есть эта библиотека",
+                                "Уже есть", JOptionPane.WARNING_MESSAGE);
                     }
                 } catch (IFML2Exception error) {
                     JOptionPane.showMessageDialog(UsedLibsEditor.this,
@@ -102,8 +112,9 @@ public class UsedLibsEditor extends AbstractEditor<List<Library>> {
             public void actionPerformed(ActionEvent e) {
                 Library usedLib = (Library) usedLibsList.getSelectedValue();
                 if (usedLib != null) {
-                    if (JOptionPane.showConfirmDialog(UsedLibsEditor.this, "Вы уверены, что не хотите больше использовать эту библиотеку?",
-                            "Удаление библиотеки", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                    if (JOptionPane.showConfirmDialog(UsedLibsEditor.this,
+                            "Вы уверены, что не хотите больше использовать эту библиотеку?", "Удаление библиотеки",
+                            JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                         librariesClone.remove(usedLib);
                     }
                 }

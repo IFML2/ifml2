@@ -1,5 +1,21 @@
 package ifml2.editor.gui.editors;
 
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Collections;
+
+import javax.swing.AbstractAction;
+import javax.swing.JButton;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+import org.jetbrains.annotations.NotNull;
+
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ifml2.GUIUtils;
@@ -8,16 +24,6 @@ import ifml2.editor.gui.EditorUtils;
 import ifml2.om.InstructionList;
 import ifml2.om.Story;
 import ifml2.vm.instructions.Instruction;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.Collections;
 
 public class InstructionsEditor extends AbstractEditor<InstructionList> {
     private JPanel contentPane;
@@ -48,8 +54,9 @@ public class InstructionsEditor extends AbstractEditor<InstructionList> {
     private final AbstractAction delInstrAction = new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON) {
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (JOptionPane.showConfirmDialog(InstructionsEditor.this, "Вы действительно хотите удалить выбранную инструкцию?",
-                    "Удаление инструкции", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+            if (JOptionPane.showConfirmDialog(InstructionsEditor.this,
+                    "Вы действительно хотите удалить выбранную инструкцию?", "Удаление инструкции",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
                 Instruction selectedInstr = (Instruction) instructionsList.getSelectedValue();
                 if (selectedInstr != null) {
                     instructionListClone.getInstructions().remove(selectedInstr);
@@ -79,7 +86,8 @@ public class InstructionsEditor extends AbstractEditor<InstructionList> {
         }
     };
 
-    public InstructionsEditor(Window owner, final InstructionList instructionList, final Story.DataHelper storyDataHelper) {
+    public InstructionsEditor(Window owner, final InstructionList instructionList,
+            final Story.DataHelper storyDataHelper) {
         super(owner);
         this.storyDataHelper = storyDataHelper;
         initializeEditor(INSTR_EDITOR_TITLE, contentPane, buttonOK, buttonCancel);

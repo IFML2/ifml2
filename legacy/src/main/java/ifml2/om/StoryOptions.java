@@ -1,8 +1,6 @@
 package ifml2.om;
 
-import ca.odell.glazedlists.BasicEventList;
-import ca.odell.glazedlists.EventList;
-import ifml2.vm.instructions.SetVarInstruction;
+import static javax.xml.bind.annotation.XmlAccessType.NONE;
 
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -10,7 +8,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlIDREF;
 
-import static javax.xml.bind.annotation.XmlAccessType.NONE;
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
+import ifml2.vm.instructions.SetVarInstruction;
 
 @XmlAccessorType(NONE)
 public class StoryOptions {

@@ -1,22 +1,31 @@
 package ifml2;
 
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.Window;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.text.MessageFormat;
+
+import javax.swing.AbstractAction;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.xml.bind.ValidationEvent;
+
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.swing.DefaultEventComboBoxModel;
 import ifml2.editor.gui.ShowMemoDialog;
 import ifml2.om.IFML2LoadXmlException;
 import ifml2.om.Word;
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.xml.bind.ValidationEvent;
-import java.awt.*;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.text.MessageFormat;
 
 public class GUIUtils {
     private static final String IFML2_EDITOR_GUI_IMAGES = "/ifml2/editor/gui/images/";
@@ -124,22 +133,22 @@ public class GUIUtils {
         exception.printStackTrace();
         Logger LOG = LoggerFactory.getLogger(owner.getClass());
         LOG.error(exception.getMessage());
-        String errorMessage = "";
+        StringBuilder errorMessage = new StringBuilder();
         if (!(exception instanceof IFML2LoadXmlException) && exception.getCause() instanceof IFML2LoadXmlException) {
             exception = exception.getCause();
         }
         if (exception instanceof IFML2LoadXmlException) {
-            errorMessage += "В файле истории есть ошибки:";
+            errorMessage.append("В файле истории есть ошибки:");
             for (ValidationEvent validationEvent : ((IFML2LoadXmlException) exception).getEvents()) {
-                errorMessage += MessageFormat.format("\n\"{0}\" at {1},{2}", validationEvent.getMessage(),
-                        validationEvent.getLocator().getLineNumber(), validationEvent.getLocator().getColumnNumber());
+                errorMessage.append(MessageFormat.format("\n\"{0}\" at {1},{2}", validationEvent.getMessage(),
+                        validationEvent.getLocator().getLineNumber(), validationEvent.getLocator().getColumnNumber()));
             }
         } else {
             StringWriter stringWriter = new StringWriter();
             exception.printStackTrace(new PrintWriter(stringWriter));
-            errorMessage += stringWriter.toString();
+            errorMessage.append(stringWriter.toString());
         }
-        showMemoDialog(owner, "Произошла ошибка", errorMessage);
+        showMemoDialog(owner, "Произошла ошибка", errorMessage.toString());
     }
 
     public static class EventComboBoxModelWithNullElement<T> extends DefaultEventComboBoxModel<T> {

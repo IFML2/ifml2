@@ -1,8 +1,8 @@
 package ifml2.om;
 
-import ifml2.IFML2Exception;
-
 import javax.xml.bind.ValidationEvent;
+
+import ifml2.IFML2Exception;
 
 public class IFML2LoadXmlException extends IFML2Exception {
     private ValidationEvent[] events;

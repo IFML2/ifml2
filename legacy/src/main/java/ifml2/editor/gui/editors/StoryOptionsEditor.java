@@ -1,5 +1,18 @@
 package ifml2.editor.gui.editors;
 
+import static ifml2.om.Word.Gender.FEMININE;
+
+import java.awt.Window;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
+import org.jetbrains.annotations.NotNull;
+
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
 import ifml2.GUIUtils.EventComboBoxModelWithNullElement;
@@ -11,12 +24,6 @@ import ifml2.om.Procedure;
 import ifml2.om.Story;
 import ifml2.om.StoryOptions;
 import ifml2.vm.instructions.SetVarInstruction;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import java.awt.*;
-
-import static ifml2.om.Word.Gender.FEMININE;
 
 public class StoryOptionsEditor extends AbstractEditor<StoryOptions> {
     private final static String STORY_OPTIONS_EDITOR_FORM_NAME = "Настройка истории";
@@ -65,7 +72,8 @@ public class StoryOptionsEditor extends AbstractEditor<StoryOptions> {
         descriptionTextArea.setText(storyDescription.getDescription());
 
         // set disables
-        StoryOptions.SystemCommandsDisableOption systemCommandsDisableOption = storyOptions.getSystemCommandsDisableOption();
+        StoryOptions.SystemCommandsDisableOption systemCommandsDisableOption = storyOptions
+                .getSystemCommandsDisableOption();
         disHelpCheck.setSelected(systemCommandsDisableOption.isDisableHelp());
         disDebugCheck.setSelected(systemCommandsDisableOption.isDisableDebug());
     }
@@ -92,12 +100,13 @@ public class StoryOptionsEditor extends AbstractEditor<StoryOptions> {
     }
 
     private void createUIComponents() {
-        globalVarListEditForm = new ListEditForm<SetVarInstruction>(this, "глобальную переменную", "глобальной переменной", FEMININE,
-                SetVarInstruction.class) {
+        globalVarListEditForm = new ListEditForm<SetVarInstruction>(this, "глобальную переменную",
+                "глобальной переменной", FEMININE, SetVarInstruction.class) {
             @Override
             protected SetVarInstruction createElement() throws Exception {
                 SetVarInstruction setVarInstruction = new SetVarInstruction();
-                return EditorUtils.showAssociatedEditor(StoryOptionsEditor.this, setVarInstruction, storyDataHelper) ? setVarInstruction
+                return EditorUtils.showAssociatedEditor(StoryOptionsEditor.this, setVarInstruction, storyDataHelper)
+                        ? setVarInstruction
                         : null;
 
             }

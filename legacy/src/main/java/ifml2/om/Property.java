@@ -1,5 +1,17 @@
 package ifml2.om;
 
+import static ifml2.om.xml.XmlSchemaConstants.PROPERTY_COLLECTION_ITEM_ELEMENT;
+import static ifml2.om.xml.XmlSchemaConstants.PROPERTY_NAME_ATTRIBUTE;
+import static ifml2.om.xml.XmlSchemaConstants.PROPERTY_VALUE_ATTRIBUTE;
+
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlIDREF;
+import javax.xml.bind.annotation.XmlTransient;
+
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
@@ -13,22 +25,10 @@ import ifml2.vm.values.NumberValue;
 import ifml2.vm.values.TextValue;
 import ifml2.vm.values.Value;
 
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlIDREF;
-import javax.xml.bind.annotation.XmlTransient;
-
-import static ifml2.om.xml.XmlSchemaConstants.PROPERTY_COLLECTION_ITEM_ELEMENT;
-import static ifml2.om.xml.XmlSchemaConstants.PROPERTY_NAME_ATTRIBUTE;
-import static ifml2.om.xml.XmlSchemaConstants.PROPERTY_VALUE_ATTRIBUTE;
-
 @XmlAccessorType(XmlAccessType.NONE)
 public class Property extends IFMLEntity {
     @XmlAttribute(name = PROPERTY_NAME_ATTRIBUTE)
-    private String name; //can't load as IDREF because this name isn't unique
+    private String name; // can't load as IDREF because this name isn't unique
 
     @XmlTransient
     private Role parentRole; // reference
@@ -52,7 +52,7 @@ public class Property extends IFMLEntity {
         this.parentRole = parentRole;
         valueExpression = propertyDefinition.getValue();
 
-        //parentRole.getProperties().add(this); //it's bad!
+        // parentRole.getProperties().add(this); //it's bad!
     }
 
     @Override
@@ -73,8 +73,10 @@ public class Property extends IFMLEntity {
     /**
      * JAXB afterUnmarshal listener
      *
-     * @param unmarshaller Unmarshaller
-     * @param parent       Parent, should be Role
+     * @param unmarshaller
+     *            Unmarshaller
+     * @param parent
+     *            Parent, should be Role
      */
     @SuppressWarnings("UnusedDeclaration")
     private void afterUnmarshal(final Unmarshaller unmarshaller, final Object parent) {
@@ -91,9 +93,11 @@ public class Property extends IFMLEntity {
     }
 
     /**
-     * Gets primary expressions (valueExpression and collectionItems) and evaluates it to value considering type
+     * Gets primary expressions (valueExpression and collectionItems) and evaluates
+     * it to value considering type
      *
-     * @param runningContext Running context
+     * @param runningContext
+     *            Running context
      */
     public void evaluateFromPrimaryExpression(RunningContext runningContext) throws IFML2Exception {
         // get PropertyDefinition
@@ -102,7 +106,7 @@ public class Property extends IFMLEntity {
         switch (propertyDefinition.getType()) {
             case COLLECTION:
                 value = new CollectionValue(collectionItems);
-                //set parent to items
+                // set parent to items
                 for (IFMLObject ifmlObject : collectionItems) {
                     if (ifmlObject instanceof Item) {
                         ((Item) ifmlObject).setContainer(collectionItems);
@@ -113,8 +117,8 @@ public class Property extends IFMLEntity {
             case LOGIC:
                 Value logicValue = ExpressionCalculator.calculate(runningContext, valueExpression);
                 if (!(logicValue instanceof BooleanValue)) {
-                    throw new IFML2Exception("Выражение \"{0}\" для свойства \"{1}\" не логического типа", valueExpression,
-                            propertyDefinition.getName());
+                    throw new IFML2Exception("Выражение \"{0}\" для свойства \"{1}\" не логического типа",
+                            valueExpression, propertyDefinition.getName());
                 }
                 value = logicValue;
                 break;
@@ -122,8 +126,8 @@ public class Property extends IFMLEntity {
             case NUMBER:
                 Value numberValue = ExpressionCalculator.calculate(runningContext, valueExpression);
                 if (!(numberValue instanceof NumberValue)) {
-                    throw new IFML2Exception("Выражение \"{0}\" для свойства \"{1}\" не числового типа", valueExpression,
-                            propertyDefinition.getName());
+                    throw new IFML2Exception("Выражение \"{0}\" для свойства \"{1}\" не числового типа",
+                            valueExpression, propertyDefinition.getName());
                 }
                 value = numberValue;
                 break;
@@ -131,8 +135,8 @@ public class Property extends IFMLEntity {
             case TEXT:
                 Value textValue = ExpressionCalculator.calculate(runningContext, valueExpression);
                 if (!(textValue instanceof TextValue)) {
-                    throw new IFML2Exception("Выражение \"{0}\" для свойства \"{1}\" не текстового типа", valueExpression,
-                            propertyDefinition.getName());
+                    throw new IFML2Exception("Выражение \"{0}\" для свойства \"{1}\" не текстового типа",
+                            valueExpression, propertyDefinition.getName());
                 }
                 value = textValue;
                 break;
@@ -144,7 +148,7 @@ public class Property extends IFMLEntity {
 
     @Override
     public String toString() {
-        return name; /*MessageFormat.format("Свойство \"{0}\" = {1}", name, value);*/
+        return name; /* MessageFormat.format("Свойство \"{0}\" = {1}", name, value); */
     }
 
     public PropertyDefinition findDefinition() {

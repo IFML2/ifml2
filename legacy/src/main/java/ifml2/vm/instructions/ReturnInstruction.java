@@ -1,15 +1,16 @@
 package ifml2.vm.instructions;
 
-import ifml2.IFML2Exception;
-import ifml2.vm.ExpressionCalculator;
-import ifml2.vm.RunningContext;
-import ifml2.vm.values.Value;
+import java.text.MessageFormat;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.text.MessageFormat;
+
+import ifml2.IFML2Exception;
+import ifml2.vm.ExpressionCalculator;
+import ifml2.vm.RunningContext;
+import ifml2.vm.values.Value;
 
 @XmlRootElement(name = "return")
 @XmlAccessorType(XmlAccessType.NONE)

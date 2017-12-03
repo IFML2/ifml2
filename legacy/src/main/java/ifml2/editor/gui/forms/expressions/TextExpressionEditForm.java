@@ -1,10 +1,13 @@
 package ifml2.editor.gui.forms.expressions;
 
-import javax.swing.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextArea;
 
 public class TextExpressionEditForm extends ExpressionEditForm {
     private final String textLiteralRegEx = "'([^']*)'";

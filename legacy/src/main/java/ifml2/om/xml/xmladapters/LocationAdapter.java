@@ -1,14 +1,15 @@
 package ifml2.om.xml.xmladapters;
 
-import ifml2.om.Location;
-import org.jetbrains.annotations.NotNull;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
+
+import org.jetbrains.annotations.NotNull;
+
+import ifml2.om.Location;
 
 public class LocationAdapter extends XmlAdapter<LocationAdapter.AdaptedLocation, Location> {
     @Override
@@ -58,7 +59,8 @@ public class LocationAdapter extends XmlAdapter<LocationAdapter.AdaptedLocation,
         @Override
         /**
          * Override setExit() to set exits to plain fields from HashMap
-         */ public void setExit(ExitDirection exitDirection, Location location) {
+         */
+        public void setExit(ExitDirection exitDirection, Location location) {
             switch (exitDirection) {
                 case NORTH:
                     north = location;

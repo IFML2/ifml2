@@ -95,12 +95,14 @@
                       <component id="43d76" class="javax.swing.JButton" binding="addProcedureButton">
                         <constraints/>
                         <properties>
+                          <icon value="ifml2/editor/gui/images/New24.gif"/>
                           <text value="Новая..."/>
                         </properties>
                       </component>
                       <component id="d00eb" class="javax.swing.JButton" binding="delProcedureButton">
                         <constraints/>
                         <properties>
+                          <icon value="ifml2/editor/gui/images/Delete24.gif"/>
                           <text value="&amp;Удалить..."/>
                         </properties>
                       </component>
@@ -143,18 +145,21 @@
                       <component id="95fa5" class="javax.swing.JButton" binding="addInstructionButton">
                         <constraints/>
                         <properties>
+                          <icon value="ifml2/editor/gui/images/New24.gif"/>
                           <text value="Новая..."/>
                         </properties>
                       </component>
                       <component id="dc318" class="javax.swing.JButton" binding="editInstructionButton">
                         <constraints/>
                         <properties>
+                          <icon value="ifml2/editor/gui/images/Edit24.gif"/>
                           <text value="Редактировать..."/>
                         </properties>
                       </component>
                       <component id="3564" class="javax.swing.JButton" binding="delInstructionButton">
                         <constraints/>
                         <properties>
+                          <icon value="ifml2/editor/gui/images/Delete24.gif"/>
                           <text value="Удалить..."/>
                         </properties>
                       </component>

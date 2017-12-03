@@ -1,22 +1,32 @@
 package ifml2.editor.gui.editors;
 
-import ifml2.GUIUtils;
-import ifml2.editor.IFML2EditorException;
-import ifml2.om.Word;
-
-import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.text.Document;
-import java.awt.*;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.HashMap;
+
+import javax.swing.AbstractAction;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.text.Document;
+
+import ifml2.GUIUtils;
+import ifml2.editor.IFML2EditorException;
+import ifml2.om.Word;
 
 public class DictionaryEditor extends JDialog {
     private JPanel contentPane;
@@ -71,7 +81,6 @@ public class DictionaryEditor extends JDialog {
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-
         dictList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -100,7 +109,7 @@ public class DictionaryEditor extends JDialog {
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                //do nothing
+                // do nothing
             }
         };
 
@@ -129,8 +138,8 @@ public class DictionaryEditor extends JDialog {
                 if (newWordIp != null && !"".equals(newWordIp)) {
                     Word word = new Word(newWordIp);
                     if (dictionary.containsKey(newWordIp)) {
-                        JOptionPane.showMessageDialog(DictionaryEditor.this, DUPLICATED_WORD_ERROR_MESSAGE, DUPLICATED_WORD_ERROR_DIALOG_TITLE,
-                                JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(DictionaryEditor.this, DUPLICATED_WORD_ERROR_MESSAGE,
+                                DUPLICATED_WORD_ERROR_DIALOG_TITLE, JOptionPane.ERROR_MESSAGE);
                         dictList.setSelectedValue(dictionary.get(newWordIp), true);
                         return;
                     }

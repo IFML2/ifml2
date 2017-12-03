@@ -1,5 +1,22 @@
 package ifml2.editor.gui.instructions;
 
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+
+import javax.swing.AbstractAction;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.swing.DefaultEventComboBoxModel;
@@ -11,16 +28,6 @@ import ifml2.om.Procedure;
 import ifml2.om.Story;
 import ifml2.vm.instructions.Instruction;
 import ifml2.vm.instructions.RunProcedureInstruction;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.*;
-import java.awt.event.ActionEvent;
 
 public class RunProcedureInstrEditor extends AbstractInstrEditor {
     private static final String RUN_PROCEDURE_EDITOR_TITLE = "Вызвать процедуру";
@@ -34,7 +41,8 @@ public class RunProcedureInstrEditor extends AbstractInstrEditor {
     @Nullable
     private EventList<Procedure.FilledParameter> filledParameters;
 
-    public RunProcedureInstrEditor(Window owner, final RunProcedureInstruction runProcedureInstruction, Story.DataHelper storyDataHelper) {
+    public RunProcedureInstrEditor(Window owner, final RunProcedureInstruction runProcedureInstruction,
+            Story.DataHelper storyDataHelper) {
         super(owner);
         initializeEditor(RUN_PROCEDURE_EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
 
@@ -70,7 +78,8 @@ public class RunProcedureInstrEditor extends AbstractInstrEditor {
                         Procedure.FilledParameter parameterByName = runProcedureInstruction.getParameterByName(name);
                         // if there are parameters in edited instruction then get them, else take empty
                         if (parameterByName != null) {
-                            filledParameters.add(new Procedure.FilledParameter(name, parameterByName.getValueExpression()));
+                            filledParameters
+                                    .add(new Procedure.FilledParameter(name, parameterByName.getValueExpression()));
                         } else {
                             filledParameters.add(new Procedure.FilledParameter(name, ""));
                         }
@@ -83,7 +92,8 @@ public class RunProcedureInstrEditor extends AbstractInstrEditor {
                 paramValueText.setText(null);
             }
         });
-        procedureCombo.setModel(new DefaultEventComboBoxModel<Procedure>(storyDataHelper.getProcedures())); // load procedures
+        procedureCombo.setModel(new DefaultEventComboBoxModel<Procedure>(storyDataHelper.getProcedures())); // load
+                                                                                                            // procedures
         procedureCombo.setSelectedItem(runProcedureInstruction.getProcedure()); // select procedure
 
         paramValueText.getDocument().addDocumentListener(new DocumentListener() {

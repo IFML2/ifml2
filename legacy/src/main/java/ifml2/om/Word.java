@@ -1,6 +1,6 @@
 package ifml2.om;
 
-import ifml2.IFMLEntity;
+import java.util.ArrayList;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -10,7 +10,8 @@ import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import java.util.ArrayList;
+
+import ifml2.IFMLEntity;
 
 @XmlRootElement(name = "word")
 @XmlAccessorType(XmlAccessType.NONE)
@@ -104,16 +105,11 @@ public class Word extends IFMLEntity {
     @XmlEnum
     public enum GramCase {
         @XmlEnumValue(value = "ip")
-        IP("ИП", "кто (что)"),
-        @XmlEnumValue(value = "rp")
-        RP("РП", "кого (чего)"),
-        @XmlEnumValue(value = "dp")
-        DP("ДП", "кому (чему)"),
-        @XmlEnumValue(value = "vp")
-        VP("ВП", "кого (что)"),
-        @XmlEnumValue(value = "tp")
-        TP("ТП", "кем (чем)"),
-        @XmlEnumValue(value = "pp")
+        IP("ИП", "кто (что)"), @XmlEnumValue(value = "rp")
+        RP("РП", "кого (чего)"), @XmlEnumValue(value = "dp")
+        DP("ДП", "кому (чему)"), @XmlEnumValue(value = "vp")
+        VP("ВП", "кого (что)"), @XmlEnumValue(value = "tp")
+        TP("ТП", "кем (чем)"), @XmlEnumValue(value = "pp")
         PP("ПП", "ком (чём)");
 
         @XmlTransient
@@ -150,8 +146,6 @@ public class Word extends IFMLEntity {
     }
 
     public enum Gender {
-        MASCULINE,
-        FEMININE,
-        NEUTER
+        MASCULINE, FEMININE, NEUTER
     }
 }

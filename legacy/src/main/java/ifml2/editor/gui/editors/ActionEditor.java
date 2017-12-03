@@ -1,5 +1,23 @@
 package ifml2.editor.gui.editors;
 
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Collections;
+
+import javax.swing.AbstractAction;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+import org.jetbrains.annotations.NotNull;
+
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.swing.DefaultEventComboBoxModel;
@@ -14,16 +32,6 @@ import ifml2.om.Restriction;
 import ifml2.om.Story;
 import ifml2.om.Template;
 import ifml2.om.Word;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.Collections;
 
 public class ActionEditor extends AbstractEditor<Action> {
     private final EventList<Template> templatesClone;
@@ -145,8 +153,8 @@ public class ActionEditor extends AbstractEditor<Action> {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Restriction restriction = (Restriction) restrictionsList.getSelectedValue();
-                if (restriction != null &&
-                        GUIUtils.showDeleteConfirmDialog(ActionEditor.this, "ограничение", "ограничения", Word.Gender.NEUTER)) {
+                if (restriction != null && GUIUtils.showDeleteConfirmDialog(ActionEditor.this, "ограничение",
+                        "ограничения", Word.Gender.NEUTER)) {
                     restrictionsClone.remove(restriction);
                 }
             }
@@ -177,8 +185,12 @@ public class ActionEditor extends AbstractEditor<Action> {
                 restrictionsList.addListSelectionListener(new ListSelectionListener() {
                     @Override
                     public void valueChanged(ListSelectionEvent e) {
-                        setEnabled(restrictionsList.getSelectedIndex() <
-                                restrictionsList.getModel().getSize() - 1); // depends on selection and list length
+                        setEnabled(restrictionsList.getSelectedIndex() < restrictionsList.getModel().getSize() - 1); // depends
+                                                                                                                     // on
+                                                                                                                     // selection
+                                                                                                                     // and
+                                                                                                                     // list
+                                                                                                                     // length
                     }
                 });
             }
@@ -218,8 +230,8 @@ public class ActionEditor extends AbstractEditor<Action> {
         });
 
         // clone data
-        templatesClone = GlazedLists.eventList(action.getTemplates()); //todo is that really clones members???
-        restrictionsClone = GlazedLists.eventList(action.getRestrictions()); //todo is that really clones members???
+        templatesClone = GlazedLists.eventList(action.getTemplates()); // todo is that really clones members???
+        restrictionsClone = GlazedLists.eventList(action.getRestrictions()); // todo is that really clones members???
 
         // init form data
         nameText.setText(action.getName());
@@ -273,7 +285,7 @@ public class ActionEditor extends AbstractEditor<Action> {
 
     @Override
     protected void validateData() throws DataNotValidException {
-        if (nameText.getText().trim().length() == 0) {
+        if (nameText.getText().trim().isEmpty()) {
             throw new DataNotValidException("У действия должно быть имя!", nameText);
         }
     }

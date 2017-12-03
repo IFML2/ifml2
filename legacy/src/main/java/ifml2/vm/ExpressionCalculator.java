@@ -1,5 +1,19 @@
 package ifml2.vm;
 
+import static ifml2.vm.ExpressionCalculator.Context.OPERAND;
+import static ifml2.vm.ExpressionCalculator.Context.OPERATOR;
+import static ifml2.vm.ExpressionCalculator.Context.START;
+import static java.lang.String.format;
+
+import java.io.IOException;
+import java.io.StreamTokenizer;
+import java.io.StringReader;
+import java.util.Collection;
+import java.util.Stack;
+
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 import ifml2.IFML2Exception;
 import ifml2.om.IFMLObject;
 import ifml2.vm.values.BooleanValue;
@@ -11,19 +25,6 @@ import ifml2.vm.values.ObjectValue;
 import ifml2.vm.values.SymbolValue;
 import ifml2.vm.values.TextValue;
 import ifml2.vm.values.Value;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
-import java.io.StreamTokenizer;
-import java.io.StringReader;
-import java.util.Collection;
-import java.util.Stack;
-
-import static ifml2.vm.ExpressionCalculator.Context.OPERAND;
-import static ifml2.vm.ExpressionCalculator.Context.OPERATOR;
-import static ifml2.vm.ExpressionCalculator.Context.START;
-import static java.lang.String.format;
 
 public class ExpressionCalculator {
     private static final char GET_PROPERTY_OPERATOR = '.';
@@ -79,7 +80,8 @@ public class ExpressionCalculator {
                             switch (context) {
                                 case OPERAND:
                                     // NOT can't follow operand!
-                                    throw new IFML2ExpressionException("Ошибка в выражении: НЕ не может следовать за операндом");
+                                    throw new IFML2ExpressionException(
+                                            "Ошибка в выражении: НЕ не может следовать за операндом");
                                 default:
                                     calculationStack.pushOperator(Operation.NOT);
                                     context = OPERATOR;
@@ -120,7 +122,8 @@ public class ExpressionCalculator {
                             switch (context) {
                                 case OPERAND:
                                     throw new IFML2ExpressionException(
-                                            "Ошибка в выражении: идентификатор \"{0}\" не может следовать за другим операндом", tokenizer.sval);
+                                            "Ошибка в выражении: идентификатор \"{0}\" не может следовать за другим операндом",
+                                            tokenizer.sval);
                                 default:
                                     calculationStack.pushSymbol(tokenizer.sval);
                                     context = OPERAND;
@@ -132,7 +135,8 @@ public class ExpressionCalculator {
                     case StreamTokenizer.TT_NUMBER:
                         switch (context) {
                             case OPERAND:
-                                throw new IFML2ExpressionException("Ошибка в выражении: число \"{0}\" не может следовать за другим операндом",
+                                throw new IFML2ExpressionException(
+                                        "Ошибка в выражении: число \"{0}\" не может следовать за другим операндом",
                                         tokenizer.nval);
                             default:
                                 calculationStack.pushNumericLiteral(tokenizer.nval);
@@ -145,7 +149,8 @@ public class ExpressionCalculator {
                     case SINGLE_QUOTE_CHAR:
                         switch (context) {
                             case OPERAND:
-                                throw new IFML2ExpressionException("Ошибка в выражении: текст \"{0}\" не может следовать за другим операндом",
+                                throw new IFML2ExpressionException(
+                                        "Ошибка в выражении: текст \"{0}\" не может следовать за другим операндом",
                                         tokenizer.sval);
                             default:
                                 calculationStack.pushTextLiteral(tokenizer.sval);
@@ -180,7 +185,8 @@ public class ExpressionCalculator {
                                     context = OPERATOR;
                                     break;
                                 default:
-                                    throw new IFML2ExpressionException("Ошибка в выражении: {0} может следовать только за операндом",
+                                    throw new IFML2ExpressionException(
+                                            "Ошибка в выражении: {0} может следовать только за операндом",
                                             NOT_EQUAL_OPERATOR);
                             }
                         } else {
@@ -200,7 +206,8 @@ public class ExpressionCalculator {
                         switch (context) {
                             case START:
                             case OPERATOR:
-                                // it can be only negative number at start ow after operator (todo consider unary minus)
+                                // it can be only negative number at start ow after operator (todo consider
+                                // unary minus)
                                 nextToken = tokenizer.nextToken(); // check that next token is number
                                 if (nextToken == StreamTokenizer.TT_NUMBER) {
                                     // consume it both as negative number
@@ -209,7 +216,8 @@ public class ExpressionCalculator {
                                 } else {
                                     tokenizer.pushBack(); // return token back
                                     // fail
-                                    throw new IFML2ExpressionException("Ошибка в выражении: унарный минус \"{0}\" может быть только перед числом",
+                                    throw new IFML2ExpressionException(
+                                            "Ошибка в выражении: унарный минус \"{0}\" может быть только перед числом",
                                             SUBTRACT_OPERATOR);
                                 }
                                 break;
@@ -222,7 +230,8 @@ public class ExpressionCalculator {
                         break;
 
                     default:
-                        throw new IFML2ExpressionException("Ошибка в выражении \"{0}\" - неизвестный токен \"{1}\"", expression, token);
+                        throw new IFML2ExpressionException("Ошибка в выражении \"{0}\" - неизвестный токен \"{1}\"",
+                                expression, token);
                 }
             }
         } catch (IOException e) {
@@ -236,32 +245,26 @@ public class ExpressionCalculator {
      * What is just happened
      */
     enum Context {
-        START,
-        OPERATOR,
-        OPERAND
+        START, OPERATOR, OPERAND
     }
     /*
-    TODO: ??? 27.02.2016 переименовать в BINARY_OPERATOR, добавить UNARY_RIGHT_OPERATOR,
-    запретить после UNARY_RIGHT любой оператор ??? (он ждёт операнд справа), а после BINARY запретить только BINARY (следующий ждёт слева операнд...)
-    */
+     * TODO: ??? 27.02.2016 переименовать в BINARY_OPERATOR, добавить
+     * UNARY_RIGHT_OPERATOR, запретить после UNARY_RIGHT любой оператор ??? (он ждёт
+     * операнд справа), а после BINARY запретить только BINARY (следующий ждёт слева
+     * операнд...)
+     */
 
     private enum OperationType {
-        UNARY_RIGHT,
-        BINARY
+        UNARY_RIGHT, BINARY
     }
 
     private enum Operation {
-        GET_PROPERTY(GET_PROPERTY_OPERATOR, 100),
-        IN(IN_OPERATOR, OperationType.BINARY, 50),
-        NOT(NOT_OPERATOR, OperationType.UNARY_RIGHT, 40),
-        ADD(ADD_OPERATOR, 30),
-        SUBTRACT(SUBTRACT_OPERATOR, 30),
-        COMPARE_EQUALITY(EQUALITY_OPERATOR, 20),
-        COMPARE_NOT_EQUALITY(NOT_EQUAL_OPERATOR, OperationType.BINARY, 20),
-        COMPARE_GREATER(GREATER_OPERATOR, 20),
-        COMPARE_LESSER(LESSER_OPERATOR, 20),
-        AND(AND_OPERATOR, OperationType.BINARY, 10),
-        OR(OR_OPERATOR, OperationType.BINARY, 5);
+        GET_PROPERTY(GET_PROPERTY_OPERATOR, 100), IN(IN_OPERATOR, OperationType.BINARY, 50), NOT(NOT_OPERATOR,
+                OperationType.UNARY_RIGHT,
+                40), ADD(ADD_OPERATOR, 30), SUBTRACT(SUBTRACT_OPERATOR, 30), COMPARE_EQUALITY(EQUALITY_OPERATOR,
+                        20), COMPARE_NOT_EQUALITY(NOT_EQUAL_OPERATOR, OperationType.BINARY, 20), COMPARE_GREATER(
+                                GREATER_OPERATOR, 20), COMPARE_LESSER(LESSER_OPERATOR, 20), AND(AND_OPERATOR,
+                                        OperationType.BINARY, 10), OR(OR_OPERATOR, OperationType.BINARY, 5);
 
         public final char operatorCharacter;
         public final int priority;
@@ -332,8 +335,10 @@ public class ExpressionCalculator {
             shrink();
 
             if (!operatorStack.isEmpty() && expressionStack.isEmpty()) {
-                throw new IFML2ExpressionException("Системный сбой: стек операторов не пуст, при этом нет значений в стеке выражений!" +
-                        "\nСтек операторов: {0}\nСтек выражений: {1}", operatorStack, expressionStack);
+                throw new IFML2ExpressionException(
+                        "Системный сбой: стек операторов не пуст, при этом нет значений в стеке выражений!"
+                                + "\nСтек операторов: {0}\nСтек выражений: {1}",
+                        operatorStack, expressionStack);
             }
 
             while (!operatorStack.isEmpty()) {
@@ -344,12 +349,12 @@ public class ExpressionCalculator {
 
             if (expressionStack.size() == 1) {
                 Expression lastExpression = expressionStack.pop();
-                final Value solutionResult = lastExpression.solve();
-                return solutionResult;
+                return lastExpression.solve();
             } else {
-                throw new IFML2ExpressionException("Системный сбой: в стеке выражений осталось не одно (а {2}) значение!" +
-                        "\nСтек операторов: {0}\nСтек выражений: {1}", operatorStack, expressionStack,
-                        expressionStack.size());
+                throw new IFML2ExpressionException(
+                        "Системный сбой: в стеке выражений осталось не одно (а {2}) значение!"
+                                + "\nСтек операторов: {0}\nСтек выражений: {1}",
+                        operatorStack, expressionStack, expressionStack.size());
             }
         }
 
@@ -395,7 +400,8 @@ public class ExpressionCalculator {
                 case SUBTRACT:
                     return new SubtractExpression(leftExpr, rightExpr);
                 default:
-                    throw new IFML2ExpressionException("Операция {0} временно поддерживается в выражениях", operation.toString());
+                    throw new IFML2ExpressionException("Операция {0} временно поддерживается в выражениях",
+                            operation.toString());
             }
         }
 
@@ -456,7 +462,8 @@ public class ExpressionCalculator {
             protected final Expression leftExpr;
             protected final Expression rightExpr;
 
-            public BinaryExpression(Expression leftExpr, @NotNull Expression rightExpr) throws IFML2ExpressionException {
+            public BinaryExpression(Expression leftExpr, @NotNull Expression rightExpr)
+                    throws IFML2ExpressionException {
                 super();
                 if (leftExpr == null) {
                     throw new IFML2ExpressionException(format("Нет левого операнда для операции \"%s\"", this));
@@ -484,11 +491,13 @@ public class ExpressionCalculator {
                 if (leftValue instanceof IAddableValue) {
                     return ((IAddableValue) leftValue).add(rightValue);
                 } else if (rightValue instanceof TextValue) {
-                    // если левый операнд не поддерживает сложение, но правый - текст, то всё превращаем в строку и клеим
+                    // если левый операнд не поддерживает сложение, но правый - текст, то всё
+                    // превращаем в строку и клеим
                     return new TextValue(leftValue.toString() + ((TextValue) rightValue).getValue());
                 } else {
-                    throw new IFML2ExpressionException("Не поддерживается операция \"{0}\" между типом \"{1}\" и \"{2}\"",
-                            Value.Operation.ADD, leftValue.getTypeName(), leftValue.getTypeName());
+                    throw new IFML2ExpressionException(
+                            "Не поддерживается операция \"{0}\" между типом \"{1}\" и \"{2}\"", Value.Operation.ADD,
+                            leftValue.getTypeName(), leftValue.getTypeName());
                 }
             }
         }
@@ -587,7 +596,8 @@ public class ExpressionCalculator {
         private class GetPropertyExpression extends BinaryExpression {
             private SymbolResolver symbolResolver;
 
-            public GetPropertyExpression(Expression leftExpr, @NotNull Expression rightExpr, SymbolResolver symbolResolver) throws IFML2ExpressionException {
+            public GetPropertyExpression(Expression leftExpr, @NotNull Expression rightExpr,
+                    SymbolResolver symbolResolver) throws IFML2ExpressionException {
                 super(leftExpr, rightExpr);
                 this.symbolResolver = symbolResolver;
             }
@@ -619,7 +629,8 @@ public class ExpressionCalculator {
                 try {
                     propertyValue = ifmlObject.getMemberValue(propertyName, this.symbolResolver);
                 } catch (IFML2Exception e) {
-                    throw new IFML2VMException(e, "Ошибка во время получения свойства {0} у объекта {1}", propertyName, ifmlObject);
+                    throw new IFML2VMException(e, "Ошибка во время получения свойства {0} у объекта {1}", propertyName,
+                            ifmlObject);
                 }
                 return propertyValue == null ? new EmptyValue() : propertyValue;
             }
@@ -662,7 +673,8 @@ public class ExpressionCalculator {
         private class EqualsExpression extends BinaryExpression {
             private final boolean isPositive;
 
-            public EqualsExpression(Expression leftExpr, Expression rightExpr, boolean isPositive) throws IFML2ExpressionException {
+            public EqualsExpression(Expression leftExpr, Expression rightExpr, boolean isPositive)
+                    throws IFML2ExpressionException {
                 super(leftExpr, rightExpr);
                 this.isPositive = isPositive;
             }
@@ -681,7 +693,8 @@ public class ExpressionCalculator {
                     case RIGHT_BIGGER:
                         return new BooleanValue(!isPositive);
                     case NOT_APPLICABLE:
-                        throw new IFML2ExpressionException("Сравниваемые величины разного типа ({0} и {1})", leftValue, rightValue);
+                        throw new IFML2ExpressionException("Сравниваемые величины разного типа ({0} и {1})", leftValue,
+                                rightValue);
 
                     default:
                         throw new IFML2VMException("Неизвестный результат сравнения величин ({0})", compareResult);
@@ -698,7 +711,8 @@ public class ExpressionCalculator {
         private class CompareGreaterExpression extends BinaryExpression {
             private final boolean isPositive;
 
-            public CompareGreaterExpression(Expression leftExpr, Expression rightExpr, boolean isPositive) throws IFML2ExpressionException {
+            public CompareGreaterExpression(Expression leftExpr, Expression rightExpr, boolean isPositive)
+                    throws IFML2ExpressionException {
                 super(leftExpr, rightExpr);
                 this.isPositive = isPositive;
             }
@@ -718,8 +732,9 @@ public class ExpressionCalculator {
                     case EQUAL:
                         return new BooleanValue(false);
                     default:
-                        throw new IFML2ExpressionException(format("Непринменимая операция \">\" для операндов типов %s и %s",
-                                leftValue.getTypeName(), rightValue.getTypeName()));
+                        throw new IFML2ExpressionException(
+                                format("Непринменимая операция \">\" для операндов типов %s и %s",
+                                        leftValue.getTypeName(), rightValue.getTypeName()));
                 }
             }
 

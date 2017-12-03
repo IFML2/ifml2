@@ -1,5 +1,24 @@
 package ifml2.editor.gui.editors;
 
+import static ifml2.om.Word.Gender.MASCULINE;
+
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+import javax.swing.AbstractAction;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
+import org.jetbrains.annotations.NotNull;
+
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.swing.DefaultEventComboBoxModel;
@@ -11,17 +30,6 @@ import ifml2.editor.gui.AbstractEditor;
 import ifml2.om.LiteralTemplateElement;
 import ifml2.om.Parameter;
 import ifml2.om.Procedure;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
-import static ifml2.om.Word.Gender.MASCULINE;
 
 public class LiteralElementEditor extends AbstractEditor<LiteralTemplateElement> {
     private static final String EDITOR_TITLE = "Литерал";
@@ -70,8 +78,8 @@ public class LiteralElementEditor extends AbstractEditor<LiteralTemplateElement>
             @Override
             public void actionPerformed(ActionEvent e) {
                 String selectedSynonym = (String) synonymsList.getSelectedValue();
-                if (selectedSynonym != null && GUIUtils.showDeleteConfirmDialog(LiteralElementEditor.this, "синоним", "синонима",
-                        MASCULINE)) {
+                if (selectedSynonym != null && GUIUtils.showDeleteConfirmDialog(LiteralElementEditor.this, "синоним",
+                        "синонима", MASCULINE)) {
                     synonymsClone.remove(selectedSynonym);
                 }
             }

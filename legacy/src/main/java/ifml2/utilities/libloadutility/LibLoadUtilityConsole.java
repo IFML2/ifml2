@@ -1,5 +1,20 @@
 package ifml2.utilities.libloadutility;
 
+import static ifml2.om.Word.GramCase.VP;
+import static ifml2.vm.instructions.ShowMessageInstr.Type.EXPRESSION;
+import static ifml2.vm.instructions.ShowMessageInstr.Type.TEXT;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.text.MessageFormat;
+
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.xml.bind.JAXBException;
+
 import ifml2.IFML2Exception;
 import ifml2.om.Action;
 import ifml2.om.Library;
@@ -10,19 +25,6 @@ import ifml2.om.Parameter;
 import ifml2.om.Procedure;
 import ifml2.om.Template;
 import ifml2.vm.instructions.ShowMessageInstr;
-
-import javax.swing.*;
-import javax.xml.bind.JAXBException;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.text.MessageFormat;
-
-import static ifml2.om.Word.GramCase.VP;
-import static ifml2.vm.instructions.ShowMessageInstr.Type.EXPRESSION;
-import static ifml2.vm.instructions.ShowMessageInstr.Type.TEXT;
 
 public class LibLoadUtilityConsole {
     private static void log(String message, Object... args) {
@@ -48,8 +50,8 @@ public class LibLoadUtilityConsole {
         // choose lib from folder
         File libFolder = new File(currentDirectoryPath + "\\libs\\");
         File[] libs = libFolder.listFiles();
-        File selectedLib = (File) JOptionPane.showInputDialog(null, "Выберите библиотеку для заполнения:", "Библиотека ЯРИЛ",
-                JOptionPane.QUESTION_MESSAGE, null, libs, null);
+        File selectedLib = (File) JOptionPane.showInputDialog(null, "Выберите библиотеку для заполнения:",
+                "Библиотека ЯРИЛ", JOptionPane.QUESTION_MESSAGE, null, libs, null);
         if (selectedLib == null) {
             JOptionPane.showMessageDialog(null, "Библиотека ЯРИЛ для заполнения не выбрана. Завершение работы.");
             return;
@@ -63,7 +65,8 @@ public class LibLoadUtilityConsole {
         // process text file...
         log("\nОбработка файла...");
 
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(textFile), "UTF8"));
+        BufferedReader bufferedReader = new BufferedReader(
+                new InputStreamReader(new FileInputStream(textFile), "UTF8"));
         int lineNo = 0;
         String lineStr;
         while ((lineStr = bufferedReader.readLine()) != null) {

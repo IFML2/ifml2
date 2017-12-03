@@ -1,6 +1,6 @@
 package ifml2.editor;
 
-import java.awt.*;
+import java.awt.Component;
 
 public class DataNotValidException extends IFML2EditorException {
     private final Component componentForFocus;

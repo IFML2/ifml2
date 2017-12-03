@@ -1,17 +1,18 @@
 package ifml2.vm.instructions;
 
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import ifml2.IFML2Exception;
 import ifml2.om.IFMLObject;
 import ifml2.om.InstructionList;
 import ifml2.vm.RunningContext;
 import ifml2.vm.values.ObjectValue;
-
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 @XmlRootElement(name = "loop")
 @IFML2Instruction(title = "Цикл")
@@ -48,7 +49,8 @@ public class LoopInstruction extends Instruction {
     public void run(RunningContext runningContext) throws IFML2Exception {
         // get the collection
         List<IFMLObject> collection = convertToClassedList(
-                getCollectionFromExpression(collectionExpression, runningContext, getTitle(), "Коллекция"), IFMLObject.class);
+                getCollectionFromExpression(collectionExpression, runningContext, getTitle(), "Коллекция"),
+                IFMLObject.class);
 
         List<IFMLObject> filteredCollection = new ArrayList<IFMLObject>();
 
@@ -131,7 +133,7 @@ public class LoopInstruction extends Instruction {
 
     @Override
     public String toString() {
-        return MessageFormat
-                .format("Цикл: для каждого \"{0}\" из \"{1}\" с условием \"{2}\"", elementName, collectionExpression, conditionExpression);
+        return MessageFormat.format("Цикл: для каждого \"{0}\" из \"{1}\" с условием \"{2}\"", elementName,
+                collectionExpression, conditionExpression);
     }
 }

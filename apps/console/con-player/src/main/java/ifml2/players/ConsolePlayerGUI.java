@@ -1,8 +1,11 @@
 package ifml2.players;
 
+import javafx.stage.FileChooser;
+
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.io.File;
+import java.util.Optional;
 
 public class ConsolePlayerGUI {
     /**

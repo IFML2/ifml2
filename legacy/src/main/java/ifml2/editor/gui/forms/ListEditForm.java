@@ -1,19 +1,6 @@
 package ifml2.editor.gui.forms;
 
-import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.swing.DefaultEventListModel;
-import ifml2.GUIUtils;
-import ifml2.editor.gui.ButtonAction;
-import ifml2.om.Word;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.*;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -21,13 +8,35 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.swing.JButton;
+import javax.swing.JInternalFrame;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.swing.DefaultEventListModel;
+import ifml2.GUIUtils;
+import ifml2.editor.gui.ButtonAction;
+import ifml2.om.Word;
+
 /**
- * JInternalFrame with JList and buttons <b>Add</b>, <b>Edit</b>, <b>Delete</b> and optional <b>Up</b> and <b>Down</b> arrows.<br/>
- * Usage: add to form, tick "Custom create" property, create and override abstract methods <i>createElement()</i>,
- * <i>editElement(T selectedElement)</i> and, if needed, <i>beforeDelete(T selectedElement)</i>. Call bindData(EventList<T> clonedList)
- * when you need update data in list.
+ * JInternalFrame with JList and buttons <b>Add</b>, <b>Edit</b>, <b>Delete</b>
+ * and optional <b>Up</b> and <b>Down</b> arrows.<br/>
+ * Usage: add to form, tick "Custom create" property, create and override
+ * abstract methods <i>createElement()</i>, <i>editElement(T
+ * selectedElement)</i> and, if needed, <i>beforeDelete(T selectedElement)</i>.
+ * Call bindData(EventList<T> clonedList) when you need update data in list.
  *
- * @param <T> Edited type.
+ * @param <T>
+ *            Edited type.
  */
 public abstract class ListEditForm<T> extends JInternalFrame {
     protected Window owner;
@@ -49,14 +58,19 @@ public abstract class ListEditForm<T> extends JInternalFrame {
     /**
      * Initializes form.
      *
-     * @param owner        Dialog - owner of form - for showing sub dialog on him.
-     * @param objectNameVP Element VP.
-     * @param objectNameRP Element RP.
-     * @param gender       Element gender.
-     * @param clazz        T class.
+     * @param owner
+     *            Dialog - owner of form - for showing sub dialog on him.
+     * @param objectNameVP
+     *            Element VP.
+     * @param objectNameRP
+     *            Element RP.
+     * @param gender
+     *            Element gender.
+     * @param clazz
+     *            T class.
      */
-    public ListEditForm(@Nullable final Window owner, @NotNull final String objectNameVP, @NotNull final String objectNameRP,
-                        @NotNull final Word.Gender gender, Class<T> clazz) {
+    public ListEditForm(@Nullable final Window owner, @NotNull final String objectNameVP,
+            @NotNull final String objectNameRP, @NotNull final Word.Gender gender, Class<T> clazz) {
         setContentPane(contentPane);
 
         this.clazz = clazz;
@@ -108,7 +122,8 @@ public abstract class ListEditForm<T> extends JInternalFrame {
                 if (toRemove) {
                     clonedList.remove(selectedElement);
 
-                    selectedIndex = Math.min(selectedIndex, elementsList.getModel().getSize() - 1); // make index not exceeding limit
+                    selectedIndex = Math.min(selectedIndex, elementsList.getModel().getSize() - 1); // make index not
+                                                                                                    // exceeding limit
                     elementsList.setSelectedIndex(selectedIndex);
 
                     fireListChangeListeners();
@@ -221,29 +236,34 @@ public abstract class ListEditForm<T> extends JInternalFrame {
      * Add element logic. By default adds element to clonedList. <br/>
      * Override if needed other logic.
      *
-     * @param element adding element.
+     * @param element
+     *            adding element.
      */
     protected void addElementToList(T element) {
         clonedList.add(element);
     }
 
     /**
-     * Creates element. You should override this method to implement element creation logic.
-     * If you return not null, it will be added to list and events fired.
+     * Creates element. You should override this method to implement element
+     * creation logic. If you return not null, it will be added to list and events
+     * fired.
      *
      * @return Return element if created and null if not.
-     * @throws Exception will be shown.
+     * @throws Exception
+     *             will be shown.
      */
     protected abstract T createElement() throws Exception;
 
     /**
-     * Edits element. You should override this method to implement element edition logic.
-     * If you return true, list will be updated and events fired.
-     * Don't override if you have set showEditButton = false
+     * Edits element. You should override this method to implement element edition
+     * logic. If you return true, list will be updated and events fired. Don't
+     * override if you have set showEditButton = false
      *
-     * @param selectedElement currently selected element.
+     * @param selectedElement
+     *            currently selected element.
      * @return true if edit was made and false vise versa.
-     * @throws Exception will be shown.
+     * @throws Exception
+     *             will be shown.
      */
     protected boolean editElement(T selectedElement) throws Exception {
         return false;
@@ -252,21 +272,25 @@ public abstract class ListEditForm<T> extends JInternalFrame {
     /**
      * Fired before deletion of element. Returns true if element should be deleted.
      * Override if you need custom logic (verifications before deletion etc).
-     * Original implementation just asks about deletion in dialog box.
-     * (You can call it to ask with standard dialog.)
+     * Original implementation just asks about deletion in dialog box. (You can call
+     * it to ask with standard dialog.)
      *
-     * @param selectedElement currently selected element.
+     * @param selectedElement
+     *            currently selected element.
      * @return true if element should be deleted and false vise versa.
-     * @throws Exception will be shown.
+     * @throws Exception
+     *             will be shown.
      */
     protected boolean beforeDelete(T selectedElement) throws Exception {
         return showDeleteConfirmDialog();
     }
 
     /**
-     * Adds list change listened. Event of change fired then elements are added, edited, deleted or swapped (using arrow buttons).
+     * Adds list change listened. Event of change fired then elements are added,
+     * edited, deleted or swapped (using arrow buttons).
      *
-     * @param changeListener ChangeListener to receive events.
+     * @param changeListener
+     *            ChangeListener to receive events.
      */
     public void addListChangeListener(ChangeListener changeListener) {
         listChangeListeners.add(changeListener);
@@ -310,27 +334,26 @@ public abstract class ListEditForm<T> extends JInternalFrame {
     /**
      * Binds data and updates form.
      *
-     * @param clonedList Already cloned list. All changes are made with him.
+     * @param clonedList
+     *            Already cloned list. All changes are made with him.
      */
     public void bindData(EventList<T> clonedList) {
         this.clonedList = clonedList;
         elementsList.setModel(new DefaultEventListModel<T>(clonedList));
     }
 
-/*    public boolean isShowUpDownButtons()
-    {
-        return upDownToolbar.isVisible();
-    }
-
-    */
+    /*
+     * public boolean isShowUpDownButtons() { return upDownToolbar.isVisible(); }
+     * 
+     */
 
     /**
-     * Flag to show or hide toolbar with up/down buttons. Set it to other value in static constructor to change behaviour.
+     * Flag to show or hide toolbar with up/down buttons. Set it to other value in
+     * static constructor to change behaviour.
      *//*
-    public void setShowUpDownButtons(boolean showUpDownButtons)
-    {
-        upDownToolbar.setVisible(showUpDownButtons);
-    }*/
+        * public void setShowUpDownButtons(boolean showUpDownButtons) {
+        * upDownToolbar.setVisible(showUpDownButtons); }
+        */
     public boolean isShowEditButton() {
         return editElementButton.isVisible();
     }

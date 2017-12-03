@@ -159,12 +159,14 @@
               <component id="1c464" class="javax.swing.JButton" binding="newWordButton">
                 <constraints/>
                 <properties>
+                  <icon value="ifml2/editor/gui/images/New24.gif"/>
                   <text value="&amp;Новое..."/>
                 </properties>
               </component>
               <component id="e6c8d" class="javax.swing.JButton" binding="delWordButton">
                 <constraints/>
                 <properties>
+                  <icon value="ifml2/editor/gui/images/Delete24.gif"/>
                   <text value="&amp;Удалить..."/>
                 </properties>
               </component>

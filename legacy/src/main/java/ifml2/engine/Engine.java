@@ -1,5 +1,29 @@
 package ifml2.engine;
 
+import static ifml2.engine.Engine.SystemCommand.HELP;
+import static java.lang.String.format;
+
+import java.awt.Image;
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
+
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ca.odell.glazedlists.BasicEventList;
 import ifml2.CommonConstants;
 import ifml2.IFML2Exception;
@@ -36,38 +60,20 @@ import ifml2.vm.values.NumberValue;
 import ifml2.vm.values.ObjectValue;
 import ifml2.vm.values.TextValue;
 import ifml2.vm.values.Value;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.swing.*;
-import java.awt.*;
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.Callable;
-
-import static ifml2.engine.Engine.SystemCommand.HELP;
-import static java.lang.String.format;
 
 public class Engine {
     public static final Logger LOG = LoggerFactory.getLogger(Engine.class);
     private static final String DEBUG_OUTPUT_PREFIX = "    [ОТЛАДКА] ";
-    private final HashMap<String, Value> globalVariables = new HashMap<>();
+    private final Map<String, Value> globalVariables = new HashMap<>();
     private final Parser parser = new Parser();
     private final VirtualMachine virtualMachine = new VirtualMachine();
-    private final HashMap<String, Value> systemVariables = new HashMap<>();
-    private final ArrayList<Item> abyss = new ArrayList<>();
+    private final Map<String, Value> systemVariables = new HashMap<>();
+    private final List<Item> abyss = new ArrayList<>();
     private Story story = null;
-    private ArrayList<Item> inventory = new ArrayList<>();
-    private HashMap<String, SystemCommand> SYSTEM_COMMANDS = new HashMap<String, SystemCommand>() {
+    private List<Item> inventory = new ArrayList<>();
+    private Map<String, SystemCommand> SYSTEM_COMMANDS = new HashMap<String, SystemCommand>() {
+        private static final long serialVersionUID = 1L;
+
         {
             put("помощь", HELP);
             put("помоги", HELP);
@@ -98,18 +104,16 @@ public class Engine {
     private boolean isDebugMode = false;
     private IPlayerFeatureProvider playerFeatureProvider;
     private Date starTime = new Date();
-    private HashMap<String, Callable<? extends Value>> ENGINE_SYMBOLS = new HashMap<String, Callable<? extends Value>>() {
+    private Map<String, Callable<? extends Value>> ENGINE_SYMBOLS = new HashMap<String, Callable<? extends Value>>() {
         {
             Callable<CollectionValue> returnInv = () -> new CollectionValue(inventory);
 
             put("инвентарий", returnInv);
             put("инвентарь", returnInv);
-            put("куча",
-                    (Callable<TextValue>) () -> new TextValue(new CollectionValue(
-                            new ArrayList<>(story.getObjectsHeap().values())).toString()));
-            put("словарь",
-                    (Callable<TextValue>) () -> new TextValue(new CollectionValue(
-                            new ArrayList<>(story.getDictionary().values())).toString()));
+            put("куча", (Callable<TextValue>) () -> new TextValue(
+                    new CollectionValue(new ArrayList<>(story.getObjectsHeap().values())).toString()));
+            put("словарь", (Callable<TextValue>) () -> new TextValue(
+                    new CollectionValue(new ArrayList<>(story.getDictionary().values())).toString()));
             put("пустота", (Callable<CollectionValue>) () -> new CollectionValue(abyss));
             put("глобальные", (Callable<TextValue>) () -> new TextValue(globalVariables.entrySet().toString()));
             put("локации",
@@ -152,9 +156,10 @@ public class Engine {
             throw new IFML2Exception("Файл истории не найден");
         }
 
-        //TODO validate xml
+        // TODO validate xml
 
-        OMManager.LoadStoryResult loadStoryResult = OMManager.loadStoryFromFile(storyFileName, true, isAllowedOpenCipherFiles);
+        OMManager.LoadStoryResult loadStoryResult = OMManager.loadStoryFromFile(storyFileName, true,
+                isAllowedOpenCipherFiles);
         story = loadStoryResult.getStory();
         this.storyFileName = storyFileName;
         inventory = loadStoryResult.getInventory();
@@ -199,7 +204,8 @@ public class Engine {
         // load global vars
         globalVariables.clear();
         for (SetVarInstruction varInstruction : story.getStoryOptions().getVars()) {
-            Value value = ExpressionCalculator.calculate(RunningContext.CreateNewContext(virtualMachine), varInstruction.getValue());
+            Value value = ExpressionCalculator.calculate(RunningContext.CreateNewContext(virtualMachine),
+                    varInstruction.getValue());
             String name = varInstruction.getName();
             if (name != null) {
                 globalVariables.put(name.toLowerCase(), value);
@@ -208,10 +214,11 @@ public class Engine {
 
         // find properties and evaluates its expression into value
         for (IFMLObject ifmlObject : story.getObjectsHeap().values()) {
-            //todo: check pure object properties
+            // todo: check pure object properties
             // check roles:
             for (Role role : ifmlObject.getRoles()) {
-                // fill roles instances with default properties (not set in instances but defined in role definitions)
+                // fill roles instances with default properties (not set in instances but
+                // defined in role definitions)
                 for (PropertyDefinition propertyDefinition : role.getRoleDefinition().getPropertyDefinitions()) {
                     Property property = role.tryFindPropertyByDefinition(propertyDefinition);
                     if (property == null) {
@@ -239,15 +246,17 @@ public class Engine {
         outTextLn(storyDescription.getName() != null ? storyDescription.getName() : "<Без имени>");
         outTextLn("**********");
         outTextLn(storyDescription.getDescription() != null ? storyDescription.getDescription() : "<Без описания>");
-        outTextLn(format("ВЕРСИЯ: %s", storyDescription.getVersion() != null ? storyDescription.getVersion() : "<Без версии>"));
-        outTextLn(format("АВТОР: %s", storyDescription.getAuthor() != null ? storyDescription.getAuthor() : "<Без автора>"));
+        outTextLn(format("ВЕРСИЯ: %s",
+                storyDescription.getVersion() != null ? storyDescription.getVersion() : "<Без версии>"));
+        outTextLn(format("АВТОР: %s",
+                storyDescription.getAuthor() != null ? storyDescription.getAuthor() : "<Без автора>"));
         outTextLn("**********\n");
 
         Procedure startProcedure = story.getStartProcedure();
         if (startProcedure != null) {
             try {
                 virtualMachine.runProcedureWithoutParameters(startProcedure);
-            } catch (IFML2Exception e)  // should we catch it?
+            } catch (IFML2Exception e) // should we catch it?
             {
                 outTextLn(e.getMessage());
             }
@@ -273,7 +282,8 @@ public class Engine {
     public boolean executeGamerCommand(String gamerCommand) {
         String trimmedCommand = gamerCommand.trim();
 
-        StoryOptions.SystemCommandsDisableOption systemCommandsDisableOption = story.getStoryOptions().getSystemCommandsDisableOption();
+        StoryOptions.SystemCommandsDisableOption systemCommandsDisableOption = story.getStoryOptions()
+                .getSystemCommandsDisableOption();
 
         // check system commands
         if (SYSTEM_COMMANDS.containsKey(trimmedCommand)) {
@@ -291,7 +301,8 @@ public class Engine {
         if (isDebugMode && trimmedCommand.length() > 0 && trimmedCommand.charAt(0) == '?') {
             String expression = trimmedCommand.substring(1);
             try {
-                Value value = ExpressionCalculator.calculate(RunningContext.CreateNewContext(virtualMachine), expression);
+                Value value = ExpressionCalculator.calculate(RunningContext.CreateNewContext(virtualMachine),
+                        expression);
                 outDebug("({0}) {1}", value.getTypeName(), value);
             } catch (IFML2Exception e) {
                 outDebug("Ошибка при вычислении выражения: {0}", e.getMessage());
@@ -319,11 +330,13 @@ public class Engine {
             outEngDebug("Поиск перехватов для действия \"{0}\"...", action);
 
             HashMap<Hook.Type, List<Hook>> objectHooks = collectObjectHooks(action, formalElements);
-            //outEngDebug("Кол-во найденных перехватов на предмете - {0}.", objectHooks.size()); // нужно выводить не кол-во списков перехватов,
+            // outEngDebug("Кол-во найденных перехватов на предмете - {0}.",
+            // objectHooks.size()); // нужно выводить не кол-во списков перехватов,
             // а само кол-во перехватов
 
             HashMap<Hook.Type, List<Hook>> locationHooks = collectLocationHooks(action);
-            //outEngDebug("Кол-во найденных перехватов в локации - {0}.", locationHooks.size()); // нужно выводить не кол-во списков перехватов,
+            // outEngDebug("Кол-во найденных перехватов в локации - {0}.",
+            // locationHooks.size()); // нужно выводить не кол-во списков перехватов,
             // а само кол-во перехватов
 
             List<Variable> parameters = convertFormalElementsToParameters(formalElements);
@@ -332,7 +345,8 @@ public class Engine {
             int itemInsteadHooksQty = objectHooks.get(Hook.Type.INSTEAD).size();
             int locInsteadHooksQty = locationHooks.get(Hook.Type.INSTEAD).size();
             if (itemInsteadHooksQty > 0 || locInsteadHooksQty > 0) {
-                outEngDebug("Найдено перехватов типа \"ВМЕСТО\": на предмете - {0}, в локации - {1}.", itemInsteadHooksQty, locInsteadHooksQty);
+                outEngDebug("Найдено перехватов типа \"ВМЕСТО\": на предмете - {0}, в локации - {1}.",
+                        itemInsteadHooksQty, locInsteadHooksQty);
 
                 // fire object hooks
                 for (Hook hook : objectHooks.get(Hook.Type.INSTEAD)) {
@@ -362,7 +376,6 @@ public class Engine {
             // fire BEFORE hooks
             outEngDebug("Выполнение перехватов \"ДО\"...");
             fireBeforeHooks(parameters, objectHooks, locationHooks);
-
 
             // fire action
             outEngDebug("Выполнение самого действия \"{0}\"...", action);
@@ -408,17 +421,18 @@ public class Engine {
         if (parseErrorHandler != null) {
             try {
                 // prepare parameters
-                List<Variable> parameters = Arrays
-                        .asList(new Variable(CommonConstants.PARSE_ERROR_HANDLER_PRM_PHRASE, new TextValue(trimmedCommand)),
-                                new Variable(CommonConstants.PARSE_ERROR_HANDLER_PRM_ERROR, new TextValue(parseException.getMessage())));
+                List<Variable> parameters = Arrays.asList(
+                        new Variable(CommonConstants.PARSE_ERROR_HANDLER_PRM_PHRASE, new TextValue(trimmedCommand)),
+                        new Variable(CommonConstants.PARSE_ERROR_HANDLER_PRM_ERROR,
+                                new TextValue(parseException.getMessage())));
 
                 // call handler
                 Value returnValue = virtualMachine.callProcedureWithParameters(parseErrorHandler, parameters);
 
                 // check return value
                 if (returnValue != null && returnValue instanceof BooleanValue) {
-                    Boolean isErrorHandled = ((BooleanValue) returnValue)
-                            .getValue(); // error handler should return false if he can't handle error
+                    Boolean isErrorHandled = ((BooleanValue) returnValue).getValue(); // error handler should return
+                                                                                      // false if he can't handle error
                     if (!isErrorHandled) {
                         // show original parser error
                         outTextLn(parseException.getMessage());
@@ -432,7 +446,8 @@ public class Engine {
         }
     }
 
-    private List<Variable> convertFormalElementsToParameters(@NotNull List<FormalElement> formalElements) throws IFML2Exception {
+    private List<Variable> convertFormalElementsToParameters(@NotNull List<FormalElement> formalElements)
+            throws IFML2Exception {
         List<Variable> parameters = new ArrayList<>(formalElements.size());
         for (FormalElement formalElement : formalElements) {
             Value value;
@@ -445,7 +460,8 @@ public class Engine {
                     value = new ObjectValue(formalElement.getObject());
                     break;
                 default:
-                    throw new IFML2Exception("Внутренняя ошибка: Неизвестный тип формального элемента: {0}", formalElementType);
+                    throw new IFML2Exception("Внутренняя ошибка: Неизвестный тип формального элемента: {0}",
+                            formalElementType);
             }
             parameters.add(new Variable(formalElement.getParameterName(), value));
         }
@@ -479,8 +495,10 @@ public class Engine {
     /**
      * Outputs debug message in game window only if debug mode is on.
      *
-     * @param message Debug message.
-     * @param args    Arguments for message formatting.
+     * @param message
+     *            Debug message.
+     * @param args
+     *            Arguments for message formatting.
      */
     public void outDebug(String message, Object... args) {
         if (isDebugMode) {
@@ -489,7 +507,7 @@ public class Engine {
     }
 
     private void fireAfterHooks(List<Variable> parameters, HashMap<Hook.Type, List<Hook>> objectHooks,
-                                HashMap<Hook.Type, List<Hook>> locationHooks) throws IFML2Exception {
+            HashMap<Hook.Type, List<Hook>> locationHooks) throws IFML2Exception {
         // ... object hooks
         for (Hook hook : objectHooks.get(Hook.Type.AFTER)) {
             virtualMachine.runHook(hook, parameters);
@@ -501,7 +519,7 @@ public class Engine {
     }
 
     private void fireBeforeHooks(List<Variable> parameters, HashMap<Hook.Type, List<Hook>> objectHooks,
-                                 HashMap<Hook.Type, List<Hook>> locationHooks) throws IFML2Exception {
+            HashMap<Hook.Type, List<Hook>> locationHooks) throws IFML2Exception {
         // ... object hooks
         for (Hook hook : objectHooks.get(Hook.Type.BEFORE)) {
             virtualMachine.runHook(hook, parameters);
@@ -544,16 +562,14 @@ public class Engine {
         };
 
         // collect all object hooks
-        formalElements.stream().filter(formalElement ->
-                FormalElement.Type.OBJECT.equals(formalElement.getType()) &&
-                        formalElement.getObject() instanceof Item).forEach(formalElement -> {
-            Item item = (Item) formalElement.getObject();
-            item.getHooks().stream().filter(hook -> action.equals(hook.getAction()) &&
-                    formalElement.getParameterName()
-                            .equalsIgnoreCase(
-                                    hook.getObjectElement()))
-                    .forEach(hook -> objectHooks.get(hook.getType()).add(hook));
-        });
+        formalElements.stream().filter(formalElement -> FormalElement.Type.OBJECT.equals(formalElement.getType())
+                && formalElement.getObject() instanceof Item).forEach(formalElement -> {
+                    Item item = (Item) formalElement.getObject();
+                    item.getHooks().stream()
+                            .filter(hook -> action.equals(hook.getAction())
+                                    && formalElement.getParameterName().equalsIgnoreCase(hook.getObjectElement()))
+                            .forEach(hook -> objectHooks.get(hook.getType()).add(hook));
+                });
         return objectHooks;
     }
 
@@ -573,8 +589,8 @@ public class Engine {
                     return true;
                 }
             } catch (IFML2Exception e) {
-                throw new IFML2Exception(e, "{0}\n  при вычислении ограничения \"{1}\" действия \"{2}\"", e.getMessage(),
-                        restriction.getCondition(), action);
+                throw new IFML2Exception(e, "{0}\n  при вычислении ограничения \"{1}\" действия \"{2}\"",
+                        e.getMessage(), restriction.getCondition(), action);
             }
         }
         return false;
@@ -586,15 +602,17 @@ public class Engine {
 
     @Nullable
     public Location getCurrentLocation() {
-        ObjectValue object = (ObjectValue) systemVariables.get(SystemIdentifiers.CURRENT_LOCATION_SYSTEM_VARIABLE.toLowerCase());
+        ObjectValue object = (ObjectValue) systemVariables
+                .get(SystemIdentifiers.CURRENT_LOCATION_SYSTEM_VARIABLE.toLowerCase());
         return object != null ? (Location) object.getValue() : null;
     }
 
     public void setCurrentLocation(Location currentLocation) {
-        systemVariables.put(SystemIdentifiers.CURRENT_LOCATION_SYSTEM_VARIABLE.toLowerCase(), new ObjectValue(currentLocation));
+        systemVariables.put(SystemIdentifiers.CURRENT_LOCATION_SYSTEM_VARIABLE.toLowerCase(),
+                new ObjectValue(currentLocation));
     }
 
-    public ArrayList<Item> getInventory() {
+    public List<Item> getInventory() {
         return inventory;
     }
 
@@ -645,8 +663,10 @@ public class Engine {
     /**
      * Checks if item is in deep content of other items
      *
-     * @param itemToCheck item to check
-     * @param items       items with deep content
+     * @param itemToCheck
+     *            item to check
+     * @param items
+     *            items with deep content
      * @return true if item is in deep content of items
      * @throws ifml2.IFML2Exception
      */
@@ -655,7 +675,8 @@ public class Engine {
             Value itemContents = item.getAccessibleContent(getVirtualMachine());
             if (itemContents != null) {
                 if (!(itemContents instanceof CollectionValue)) {
-                    throw new IFML2VMException("Триггер доступного содержимого у предмета \"{0}\" вернул не коллекцию, а \"{1}\"!",
+                    throw new IFML2VMException(
+                            "Триггер доступного содержимого у предмета \"{0}\" вернул не коллекцию, а \"{1}\"!",
                             itemToCheck, itemContents.getTypeName());
                 }
 
@@ -664,8 +685,8 @@ public class Engine {
                 for (Object object : itemContentsList) {
                     if (!(object instanceof Item)) {
                         throw new IFML2VMException(
-                                "Триггер доступного содержимого у предмета \"{0}\" вернул в коллекции не предмет, а \"{1}\"!", itemToCheck,
-                                object);
+                                "Триггер доступного содержимого у предмета \"{0}\" вернул в коллекции не предмет, а \"{1}\"!",
+                                itemToCheck, object);
                     }
 
                     itemContentsItemList.add((Item) object);
@@ -683,9 +704,11 @@ public class Engine {
     /**
      * Checks if object is inaccessible for player's actions
      *
-     * @param object IFMLObject for check
+     * @param object
+     *            IFMLObject for check
      * @return true if object is accessible including deep content
-     * @throws ifml2.IFML2Exception when tested objects neither location or item
+     * @throws ifml2.IFML2Exception
+     *             when tested objects neither location or item
      */
     public boolean isObjectAccessible(IFMLObject object) throws IFML2Exception {
         Location currentLocation = getCurrentLocation();
@@ -697,13 +720,13 @@ public class Engine {
         // test locations
         if (object instanceof Location) {
             return object.equals(currentLocation);
-        } else if (object instanceof Item)   // test items
+        } else if (object instanceof Item) // test items
         {
             Item item = (Item) object;
 
             // test if object is in current location or player's inventory
-            return currentLocation.contains(item) || inventory.contains(item) || checkDeepContent(item, currentLocation.getItems()) ||
-                    checkDeepContent(item, inventory);
+            return currentLocation.contains(item) || inventory.contains(item)
+                    || checkDeepContent(item, currentLocation.getItems()) || checkDeepContent(item, inventory);
         } else {
             throw new IFML2Exception("Системная ошибка: Неизвестный тип объекта: \"{0}\".", object);
         }
@@ -744,15 +767,15 @@ public class Engine {
      * Helper for saved games data.
      */
     public class DataHelper {
-        public HashMap<String, Value> getGlobalVariables() {
+        public Map<String, Value> getGlobalVariables() {
             return globalVariables;
         }
 
-        public HashMap<String, Value> getSystemVariables() {
+        public Map<String, Value> getSystemVariables() {
             return systemVariables;
         }
 
-        public ArrayList<Item> getInventory() {
+        public List<Item> getInventory() {
             return inventory;
         }
 
@@ -770,9 +793,7 @@ public class Engine {
             systemVariables.put(name, value);
         }
 
-        public
-        @NotNull
-        String getStoryFileName() {
+        public @NotNull String getStoryFileName() {
             return new File(storyFileName).getName();
         }
 
@@ -784,28 +805,22 @@ public class Engine {
             Engine.this.outDebug(level, genReporterName(reporter) + message, args);
         }
 
-        public
-        @Nullable
-        Procedure getParseErrorHandler() {
+        public @Nullable Procedure getParseErrorHandler() {
             return story.getInheritedSystemProcedures().getParseErrorHandler();
         }
     }
 
     private class GlobalVariableProxy extends Variable {
-        private final HashMap<String, Value> globalVariables;
+        private final Map<String, Value> globalVariables;
 
-        public GlobalVariableProxy(@NotNull HashMap<String, Value> globalVariables, @NotNull String name, Value value) {
+        public GlobalVariableProxy(@NotNull Map<String, Value> globalVariables, @NotNull String name, Value value) {
             super(name.toLowerCase(), value);
             this.globalVariables = globalVariables;
         }
 
         @Override
         public Value getValue() {
-            if (globalVariables.containsKey(name)) {
-                return globalVariables.get(name);
-            }
-
-            return null;
+            return globalVariables.getOrDefault(name, null);
         }
 
         @Override

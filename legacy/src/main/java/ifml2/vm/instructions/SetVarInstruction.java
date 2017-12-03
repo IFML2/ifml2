@@ -1,12 +1,13 @@
 package ifml2.vm.instructions;
 
-import ifml2.IFML2Exception;
-import ifml2.vm.ExpressionCalculator;
-import ifml2.vm.RunningContext;
+import java.text.MessageFormat;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.text.MessageFormat;
+
+import ifml2.IFML2Exception;
+import ifml2.vm.ExpressionCalculator;
+import ifml2.vm.RunningContext;
 
 @XmlRootElement(name = "var")
 @IFML2Instruction(title = "Установить переменную")

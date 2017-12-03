@@ -1,12 +1,12 @@
 package ifml2.om;
 
-import ifml2.IFMLEntity;
-import ifml2.vm.values.Value;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
+
+import ifml2.IFMLEntity;
+import ifml2.vm.values.Value;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class ProcedureVariable extends IFMLEntity implements Cloneable {

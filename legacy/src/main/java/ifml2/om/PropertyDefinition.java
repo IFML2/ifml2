@@ -1,10 +1,11 @@
 package ifml2.om;
 
+import java.text.MessageFormat;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
-import java.text.MessageFormat;
 
 public class PropertyDefinition {
     @XmlAttribute(name = "name")
@@ -35,12 +36,9 @@ public class PropertyDefinition {
     @XmlType(namespace = "PropertyDefinition")
     public enum Type {
         @XmlEnumValue(value = "text")
-        TEXT,
-        @XmlEnumValue(value = "number")
-        NUMBER,
-        @XmlEnumValue(value = "logic")
-        LOGIC,
-        @XmlEnumValue(value = "collection")
+        TEXT, @XmlEnumValue(value = "number")
+        NUMBER, @XmlEnumValue(value = "logic")
+        LOGIC, @XmlEnumValue(value = "collection")
         COLLECTION
     }
 

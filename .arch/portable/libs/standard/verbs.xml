@@ -104,7 +104,9 @@
                     <literalElement position="1">
                         <synonym>осмотреть</synonym>
                         <synonym>осм</synonym>
+                        <synonym>о</synonym>
                         <synonym>исследовать</synonym>
+                        <synonym>изучить</synonym>
                     </literalElement>
                     <objectElement position="2" case="vp" parameter="предмет"/>
                 </template>
@@ -117,6 +119,10 @@
                 <template>
                     <literalElement position="1">
                         <synonym>идти на север</synonym>
+                        <synonym>шагать на север</synonym>
+                        <synonym>перейти на север</synonym>
+                        <synonym>бежать на север</synonym>
+                        <synonym>ползти на север</synonym>
                         <synonym>север</synonym>
                         <synonym>с</synonym>
                     </literalElement>
@@ -129,6 +135,10 @@
                 <template>
                     <literalElement position="1">
                         <synonym>идти на северо-восток</synonym>
+                        <synonym>шагать на северо-восток</synonym>
+                        <synonym>перейти на северо-восток</synonym>
+                        <synonym>бежать на северо-восток</synonym>
+                        <synonym>ползти на северо-восток</synonym>
                         <synonym>северо-восток</synonym>
                         <synonym>св</synonym>
                     </literalElement>
@@ -153,6 +163,10 @@
                 <template>
                     <literalElement position="1">
                         <synonym>идти на юго-восток</synonym>
+                        <synonym>шагать на юго-восток</synonym>
+                        <synonym>перейти на юго-восток</synonym>
+                        <synonym>бежать на юго-восток</synonym>
+                        <synonym>ползти на юго-восток</synonym>
                         <synonym>юго-восток</synonym>
                         <synonym>юв</synonym>
                     </literalElement>
@@ -165,6 +179,10 @@
                 <template>
                     <literalElement position="1">
                         <synonym>идти на юг</synonym>
+                        <synonym>шагать на юг</synonym>
+                        <synonym>перейти на юг</synonym>
+                        <synonym>бежать на юг</synonym>
+                        <synonym>ползти на юг</synonym>
                         <synonym>юг</synonym>
                         <synonym>ю</synonym>
                     </literalElement>
@@ -177,6 +195,10 @@
                 <template>
                     <literalElement position="1">
                         <synonym>идти на юго-запад</synonym>
+                        <synonym>шагать на юго-запад</synonym>
+                        <synonym>перейти на юго-запад</synonym>
+                        <synonym>бежать на юго-запад</synonym>
+                        <synonym>ползти на юго-запад</synonym>
                         <synonym>юго-запад</synonym>
                         <synonym>юз</synonym>
                     </literalElement>
@@ -189,6 +211,10 @@
                 <template>
                     <literalElement position="1">
                         <synonym>идти на запад</synonym>
+                        <synonym>шагать на запад</synonym>
+                        <synonym>перейти на запад</synonym>
+                        <synonym>бежать на запад</synonym>
+                        <synonym>ползти на запад</synonym>
                         <synonym>запад</synonym>
                         <synonym>з</synonym>
                     </literalElement>
@@ -201,6 +227,10 @@
                 <template>
                     <literalElement position="1">
                         <synonym>идти на северо-запад</synonym>
+                        <synonym>шагать на северо-запад</synonym>
+                        <synonym>перейти на северо-запад</synonym>
+                        <synonym>бежать на северо-запад</synonym>
+                        <synonym>ползти на северо-запад</synonym>
                         <synonym>северо-запад</synonym>
                         <synonym>сз</synonym>
                     </literalElement>
@@ -214,6 +244,10 @@
                     <literalElement position="1">
                         <synonym>идти вниз</synonym>
                         <synonym>спуститься вниз</synonym>
+                        <synonym>шагать вниз</synonym>
+                        <synonym>перейти вниз</synonym>
+                        <synonym>бежать вниз</synonym>
+                        <synonym>ползти вниз</synonym>
                         <synonym>спуститься</synonym>
                         <synonym>вниз</synonym>
                         <synonym>вн</synonym>
@@ -228,6 +262,16 @@
                     <literalElement position="1">
                         <synonym>идти наверх</synonym>
                         <synonym>подняться наверх</synonym>
+                        <synonym>шагать наверх</synonym>
+                        <synonym>перейти наверх</synonym>
+                        <synonym>бежать наверх</synonym>
+                        <synonym>ползти наверх</synonym>
+                        <synonym>идти вверх</synonym>
+                        <synonym>подняться вверх</synonym>
+                        <synonym>шагать вверх</synonym>
+                        <synonym>перейти вверх</synonym>
+                        <synonym>бежать вверх</synonym>
+                        <synonym>ползти вверх</synonym>
                         <synonym>подняться</synonym>
                         <synonym>наверх</synonym>
                         <synonym>вверх</synonym>
@@ -244,6 +288,8 @@
                     <literalElement position="1">
                         <synonym>инвентарий</synonym>
                         <synonym>инвентарь</synonym>
+                        <synonym>котомка</synonym>
+                        <synonym>вещи</synonym>
                         <synonym>инв</synonym>
                         <synonym>и</synonym>
                     </literalElement>
@@ -1167,17 +1213,6 @@
             </procedureVariables>
             <procedureBody>
                 <showMessage position="1" type="text" message="Сижу, и что дальше?"/>
-                <!--ifml2:showMessage position="2" type="expression" message="'Счётчик = ' + счётчик"/-->
-                <if position="3" condition="счётчик = 1">
-                    <then>
-                        <!--ifml2:showMessage position="1" type="text" message="Cчётчик = 1!"/-->
-                    </then>
-                </if>
-                <var position="4" name="счётчик" value="счётчик + 1"/>
-                <!--ifml2:showMessage position="5" type="expression" message="'Счётчик = ' + счётчик"/-->
-                <var position="6" name="локальная" value="2"/>
-                <var position="7" name="локальная" value="локальная + 1"/>
-                <!--ifml2:showMessage position="8" type="expression" message="'Локальная = ' + локальная"/-->
             </procedureBody>
         </procedure>
         <procedure name="Курить">

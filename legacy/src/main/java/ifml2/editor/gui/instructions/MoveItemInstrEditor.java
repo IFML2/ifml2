@@ -1,5 +1,19 @@
 package ifml2.editor.gui.instructions;
 
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import org.jetbrains.annotations.NotNull;
+
 import ca.odell.glazedlists.swing.DefaultEventComboBoxModel;
 import ifml2.editor.DataNotValidException;
 import ifml2.editor.IFML2EditorException;
@@ -7,14 +21,6 @@ import ifml2.om.Item;
 import ifml2.om.Story;
 import ifml2.vm.instructions.Instruction;
 import ifml2.vm.instructions.MoveItemInstruction;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class MoveItemInstrEditor extends AbstractInstrEditor {
     private static final String MOVE_ITEM_EDITOR_TITLE = Instruction.getTitleFor(MoveItemInstruction.class);

@@ -1,5 +1,21 @@
 package ifml2.editor.gui.editors;
 
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Optional;
+
+import javax.swing.AbstractAction;
+import javax.swing.JButton;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+import org.jetbrains.annotations.NotNull;
+
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.swing.DefaultEventListModel;
@@ -8,15 +24,6 @@ import ifml2.editor.IFML2EditorException;
 import ifml2.editor.gui.AbstractEditor;
 import ifml2.om.Action;
 import ifml2.om.Story;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 public class ActionsEditor extends AbstractEditor<EventList<Action>> {
     private static final String ACTIONS_EDITOR_FORM_NAME = "Действия";
@@ -93,10 +100,8 @@ public class ActionsEditor extends AbstractEditor<EventList<Action>> {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
-                    Action action = (Action) actionsList.getSelectedValue();
-                    if (action != null) {
-                        editAction(action);
-                    }
+                    Optional.ofNullable((Action) actionsList.getSelectedValue())
+                            .ifPresent(action -> editAction(action));
                 }
             }
         });
@@ -105,8 +110,8 @@ public class ActionsEditor extends AbstractEditor<EventList<Action>> {
         actionsClone = GlazedLists.eventList(storyDataHelper.getActions());
 
         // load data
-        actionsList.setModel(new DefaultEventListModel<Action>(actionsClone));
-        libsActionsList.setModel(new DefaultEventListModel<Action>(storyDataHelper.getAllActions()));
+        actionsList.setModel(new DefaultEventListModel<>(actionsClone));
+        libsActionsList.setModel(new DefaultEventListModel<>(storyDataHelper.getAllActions()));
     }
 
     private boolean editAction(@NotNull Action action) {

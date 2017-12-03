@@ -1,5 +1,16 @@
 package ifml2.editor.gui.editors;
 
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+
+import javax.swing.AbstractAction;
+import javax.swing.JButton;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import org.jetbrains.annotations.NotNull;
+
 import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ifml2.GUIUtils;
 import ifml2.editor.DataNotValidException;
@@ -9,11 +20,6 @@ import ifml2.om.InstructionList;
 import ifml2.om.Restriction;
 import ifml2.om.Story;
 import ifml2.vm.instructions.Instruction;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
 
 public class RestrictionEditor extends AbstractEditor<Restriction> {
     private static final String EDITOR_TITLE = "Ограничение";
@@ -40,7 +46,8 @@ public class RestrictionEditor extends AbstractEditor<Restriction> {
         editReactionButton.setAction(new AbstractAction("Редактировать инструкции...", GUIUtils.EDIT_ELEMENT_ICON) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                InstructionsEditor instructionsEditor = new InstructionsEditor(RestrictionEditor.this, reactionClone, storyDataHelper);
+                InstructionsEditor instructionsEditor = new InstructionsEditor(RestrictionEditor.this, reactionClone,
+                        storyDataHelper);
                 if (instructionsEditor.showDialog()) {
                     instructionsEditor.updateData(reactionClone);
                 }

@@ -1,27 +1,5 @@
 package ifml2.om;
 
-import ca.odell.glazedlists.BasicEventList;
-import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.GlazedLists;
-import ifml2.IFML2Exception;
-import ifml2.IFMLEntity;
-import ifml2.vm.IFML2VMException;
-import ifml2.vm.SymbolResolver;
-import ifml2.vm.values.BooleanValue;
-import ifml2.vm.values.TextValue;
-import ifml2.vm.values.Value;
-import org.jetbrains.annotations.NotNull;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlIDREF;
-import java.text.MessageFormat;
-
-import static ifml2.om.Word.GramCase;
 import static ifml2.om.xml.XmlSchemaConstants.IFML_OBJECT_ATTRIBUTES_ELEMENT;
 import static ifml2.om.xml.XmlSchemaConstants.IFML_OBJECT_ATTRIBUTE_ELEMENT;
 import static ifml2.om.xml.XmlSchemaConstants.IFML_OBJECT_ROLES_ELEMENT;
@@ -31,6 +9,30 @@ import static ifml2.om.xml.XmlSchemaConstants.ITEM_HOOK_ELEMENT;
 import static ifml2.om.xml.XmlSchemaConstants.OBJECT_PROPERTIES_ELEMENT;
 import static ifml2.om.xml.XmlSchemaConstants.OBJECT_PROPERTY_ELEMENT;
 import static ifml2.om.xml.XmlSchemaConstants.OBJECT_WORDS_TAG;
+
+import java.text.MessageFormat;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlIDREF;
+
+import org.jetbrains.annotations.NotNull;
+
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.GlazedLists;
+import ifml2.IFML2Exception;
+import ifml2.IFMLEntity;
+import ifml2.om.Word.GramCase;
+import ifml2.vm.IFML2VMException;
+import ifml2.vm.SymbolResolver;
+import ifml2.vm.values.BooleanValue;
+import ifml2.vm.values.TextValue;
+import ifml2.vm.values.Value;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class IFMLObject extends IFMLEntity {
@@ -206,7 +208,8 @@ public class IFMLObject extends IFMLEntity {
             }
         }
 
-        throw new IFML2VMException("У объекта \"{0}\" нет свойства \"{1}\", а также в игре нет признаков и ролей с таким названием.", this,
+        throw new IFML2VMException(
+                "У объекта \"{0}\" нет свойства \"{1}\", а также в игре нет признаков и ролей с таким названием.", this,
                 propertyName);
     }
 

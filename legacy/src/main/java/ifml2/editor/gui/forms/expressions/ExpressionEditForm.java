@@ -1,6 +1,6 @@
 package ifml2.editor.gui.forms.expressions;
 
-import javax.swing.*;
+import javax.swing.JInternalFrame;
 
 public abstract class ExpressionEditForm extends JInternalFrame {
     protected String expression;

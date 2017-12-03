@@ -1,12 +1,12 @@
 package ifml2.vm.instructions;
 
-import ifml2.IFML2Exception;
-import ifml2.om.InstructionList;
-import ifml2.vm.RunningContext;
-
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import ifml2.IFML2Exception;
+import ifml2.om.InstructionList;
+import ifml2.vm.RunningContext;
 
 @XmlRootElement(name = "if")
 @IFML2Instruction(title = "Проверить условие")

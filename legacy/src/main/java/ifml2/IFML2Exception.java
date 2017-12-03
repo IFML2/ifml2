@@ -3,6 +3,8 @@ package ifml2;
 import java.text.MessageFormat;
 
 public class IFML2Exception extends Exception {
+    private static final long serialVersionUID = 1L;
+
     public IFML2Exception(String message) {
         super(message);
     }

@@ -1,10 +1,10 @@
 package ifml2.om;
 
-import ca.odell.glazedlists.BasicEventList;
-import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.GlazedLists;
-import ca.odell.glazedlists.event.ListEvent;
-import ca.odell.glazedlists.event.ListEventListener;
+import static ifml2.om.xml.XmlSchemaConstants.WORDS_MAIN_WORD_ATTRIBUTE;
+import static ifml2.om.xml.XmlSchemaConstants.WORDS_WORD_TAG;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -14,11 +14,12 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlTransient;
-import java.util.ArrayList;
-import java.util.List;
 
-import static ifml2.om.xml.XmlSchemaConstants.WORDS_MAIN_WORD_ATTRIBUTE;
-import static ifml2.om.xml.XmlSchemaConstants.WORDS_WORD_TAG;
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.GlazedLists;
+import ca.odell.glazedlists.event.ListEvent;
+import ca.odell.glazedlists.event.ListEventListener;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class WordLinks implements Cloneable {

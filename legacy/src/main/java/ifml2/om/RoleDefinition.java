@@ -1,7 +1,9 @@
 package ifml2.om;
 
-import ca.odell.glazedlists.BasicEventList;
-import ca.odell.glazedlists.EventList;
+import static ifml2.om.xml.XmlSchemaConstants.ROLE_DEFINITION_ATTRIBUTES_ELEMENT;
+import static ifml2.om.xml.XmlSchemaConstants.ROLE_DEFINITION_ATTRIBUTE_ELEMENT;
+
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -10,10 +12,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlIDREF;
-import java.util.List;
 
-import static ifml2.om.xml.XmlSchemaConstants.ROLE_DEFINITION_ATTRIBUTES_ELEMENT;
-import static ifml2.om.xml.XmlSchemaConstants.ROLE_DEFINITION_ATTRIBUTE_ELEMENT;
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class RoleDefinition {
@@ -51,7 +52,7 @@ public class RoleDefinition {
 
     @Override
     public String toString() {
-        return /*"определение роли " + */name;
+        return /* "определение роли " + */name;
     }
 
     public PropertyDefinition findPropertyDefinitionByName(String name) {

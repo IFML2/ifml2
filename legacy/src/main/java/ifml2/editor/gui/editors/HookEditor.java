@@ -1,5 +1,26 @@
 package ifml2.editor.gui.editors;
 
+import static ifml2.om.Hook.Type.AFTER;
+import static ifml2.om.Hook.Type.BEFORE;
+import static ifml2.om.Hook.Type.INSTEAD;
+
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.text.MessageFormat;
+
+import javax.swing.AbstractAction;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+
+import org.jetbrains.annotations.NotNull;
+
 import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.matchers.Matcher;
 import ca.odell.glazedlists.swing.DefaultEventComboBoxModel;
@@ -13,19 +34,6 @@ import ifml2.om.Hook;
 import ifml2.om.InstructionList;
 import ifml2.om.Story;
 import ifml2.vm.instructions.Instruction;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.text.MessageFormat;
-
-import static ifml2.om.Hook.Type.AFTER;
-import static ifml2.om.Hook.Type.BEFORE;
-import static ifml2.om.Hook.Type.INSTEAD;
 
 public class HookEditor extends AbstractEditor<Hook> {
     private JPanel contentPane;
@@ -44,7 +52,8 @@ public class HookEditor extends AbstractEditor<Hook> {
 
     private static final String HOOK_EDITOR_TITLE = "Перехват";
 
-    public HookEditor(Window owner, @NotNull Hook hook, final boolean areObjectHooks, final Story.DataHelper storyDataHelper) throws IFML2EditorException {
+    public HookEditor(Window owner, @NotNull Hook hook, final boolean areObjectHooks,
+            final Story.DataHelper storyDataHelper) throws IFML2EditorException {
         super(owner);
         initializeEditor(HOOK_EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
 
@@ -68,7 +77,7 @@ public class HookEditor extends AbstractEditor<Hook> {
             GUIUtils.showErrorMessage(this, e);
         }
 
-        //  -- form init --
+        // -- form init --
 
         // check object hooks or not
         if (!areObjectHooks) {
@@ -96,13 +105,13 @@ public class HookEditor extends AbstractEditor<Hook> {
         });
 
         // filter actions due to areObjectHooks
-        actionCombo.setModel(new DefaultEventComboBoxModel<Action>(new FilterList<Action>(storyDataHelper.getAllActions(), new Matcher<Action>() {
-            @Override
-            public boolean matches(Action item) {
-                return areObjectHooks && item.getAllObjectParameters().length > 0 || !areObjectHooks;
-            }
-        })));
-
+        actionCombo.setModel(new DefaultEventComboBoxModel<Action>(
+                new FilterList<Action>(storyDataHelper.getAllActions(), new Matcher<Action>() {
+                    @Override
+                    public boolean matches(Action item) {
+                        return areObjectHooks && item.getAllObjectParameters().length > 0 || !areObjectHooks;
+                    }
+                })));
 
         if (hook.getAction() != null) {
             actionCombo.setSelectedItem(hook.getAction()); // select hook's action

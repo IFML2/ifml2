@@ -1,5 +1,44 @@
 package ifml2.editor.gui.editors;
 
+import static ifml2.om.Location.ExitDirection.DOWN;
+import static ifml2.om.Location.ExitDirection.EAST;
+import static ifml2.om.Location.ExitDirection.NORTH;
+import static ifml2.om.Location.ExitDirection.NORTH_EAST;
+import static ifml2.om.Location.ExitDirection.NORTH_WEST;
+import static ifml2.om.Location.ExitDirection.SOUTH;
+import static ifml2.om.Location.ExitDirection.SOUTH_EAST;
+import static ifml2.om.Location.ExitDirection.SOUTH_WEST;
+import static ifml2.om.Location.ExitDirection.UP;
+import static ifml2.om.Location.ExitDirection.WEST;
+
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.swing.AbstractAction;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+import org.jetbrains.annotations.NotNull;
+
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.swing.DefaultEventListModel;
@@ -11,37 +50,9 @@ import ifml2.om.Attribute;
 import ifml2.om.Hook;
 import ifml2.om.Item;
 import ifml2.om.Location;
+import ifml2.om.Location.ExitDirection;
 import ifml2.om.Story;
 import ifml2.om.Word;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-import static ifml2.om.Location.ExitDirection;
-import static ifml2.om.Location.ExitDirection.DOWN;
-import static ifml2.om.Location.ExitDirection.EAST;
-import static ifml2.om.Location.ExitDirection.NORTH;
-import static ifml2.om.Location.ExitDirection.NORTH_EAST;
-import static ifml2.om.Location.ExitDirection.NORTH_WEST;
-import static ifml2.om.Location.ExitDirection.SOUTH;
-import static ifml2.om.Location.ExitDirection.SOUTH_EAST;
-import static ifml2.om.Location.ExitDirection.SOUTH_WEST;
-import static ifml2.om.Location.ExitDirection.UP;
-import static ifml2.om.Location.ExitDirection.WEST;
 
 public class LocationEditor extends AbstractEditor<Location> {
     private static final String LOCATION_EDITOR_TITLE = "Локация";
@@ -127,7 +138,6 @@ public class LocationEditor extends AbstractEditor<Location> {
                 editItem((Item) itemsList.getSelectedValue());
             }
 
-
         });
         delItemButton.setAction(new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON) {
             {
@@ -144,7 +154,8 @@ public class LocationEditor extends AbstractEditor<Location> {
             public void actionPerformed(ActionEvent e) {
                 Item item = (Item) itemsList.getSelectedValue();
                 if (item != null) {
-                    int answer = JOptionPane.showConfirmDialog(LocationEditor.this, "Вы уверены, что хотите удалить этот предмет?");
+                    int answer = JOptionPane.showConfirmDialog(LocationEditor.this,
+                            "Вы уверены, что хотите удалить этот предмет?");
                     if (answer == 0) {
                         itemsClone.remove(item);
                         updateItems();
@@ -152,13 +163,12 @@ public class LocationEditor extends AbstractEditor<Location> {
                 }
             }
 
-
         });
         editAttributesButton.setAction(new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ObjectAttributesEditor objectAttributesEditor = new ObjectAttributesEditor(LocationEditor.this, attributesClone,
-                        storyDataHelper);
+                ObjectAttributesEditor objectAttributesEditor = new ObjectAttributesEditor(LocationEditor.this,
+                        attributesClone, storyDataHelper);
                 if (objectAttributesEditor.showDialog()) {
                     updateAttributes();
                 }
@@ -194,7 +204,6 @@ public class LocationEditor extends AbstractEditor<Location> {
                 }
             }
 
-
         });
         deleteHookButton.setAction(new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON) {
             {
@@ -211,12 +220,11 @@ public class LocationEditor extends AbstractEditor<Location> {
             public void actionPerformed(ActionEvent e) {
                 Hook selectedHook = (Hook) hooksList.getSelectedValue();
                 if (selectedHook != null && JOptionPane.showConfirmDialog(LocationEditor.this,
-                        "Вы действительно хотите удалить выбранный перехват?", "Удаление перехвата", JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+                        "Вы действительно хотите удалить выбранный перехват?", "Удаление перехвата",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
                     hooksClone.remove(selectedHook);
                 }
             }
-
 
         });
 
@@ -245,7 +253,7 @@ public class LocationEditor extends AbstractEditor<Location> {
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                //do nothing
+                // do nothing
             }
         });
 
@@ -259,7 +267,7 @@ public class LocationEditor extends AbstractEditor<Location> {
         });
 
         updateDictionaryLinks(storyDataHelper.getDictionary());
-        //TODO:dictWordCombo.setSelectedItem(location.getWord());
+        // TODO:dictWordCombo.setSelectedItem(location.getWord());
 
         for (ExitDirection exitDirection : ExitDirection.values()) {
             JComboBox comboBox = exitCombosMap.get(exitDirection);
@@ -366,8 +374,10 @@ public class LocationEditor extends AbstractEditor<Location> {
                 GUIUtils.showErrorMessage(this, e);
             }
             throw new DataNotValidException(
-                    "У локации должен быть уникальный идентификатор - не пересекаться с другими локациями, предметами и словарём.\n" +
-                            MessageFormat.format("Найден другой объект с тем же идентификатором: \"{0}\" типа \"{1}\".", object, className),
+                    "У локации должен быть уникальный идентификатор - не пересекаться с другими локациями, предметами и словарём.\n"
+                            + MessageFormat.format(
+                                    "Найден другой объект с тем же идентификатором: \"{0}\" типа \"{1}\".", object,
+                                    className),
                     locationIDText);
         }
     }
@@ -388,53 +398,27 @@ public class LocationEditor extends AbstractEditor<Location> {
         location.setHooks(GlazedLists.eventList(hooksClone)); // rewrite data in EventList
     }
 
-
-    //region Item in location actions
+    // region Item in location actions
     /*
-    private class AddItemAction extends AbstractAction
-    {
-        private AddItemAction()
-        {
-            super("Добавить...");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            Item item = (Item) JOptionPane.showInputDialog(dialog, "Выберите добавляемый предмет", "Добавить предмет",
-                    JOptionPane.QUESTION_MESSAGE, null, story.items.values().toArray(), null);
-
-            if(item != null)
-            {
-                itemsClone.add(item);
-                updateItems();
-                itemsList.setSelectedValue(item, true);
-            }
-        }
-    }
-
-    private class DelItemAction extends AbstractAction
-    {
-        private DelItemAction()
-        {
-            super("Удалить");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            Item item = (Item) itemsList.getSelectedValue();
-            if(item != null)
-            {
-                int answer = JOptionPane.showConfirmDialog(dialog, "Вы уверены, что хотите удалить этот предмет из локации?");
-                if(answer == 0)
-                {
-                    itemsClone.remove(item);
-                    updateItems();
-                }
-            }
-        }
-    }
-    */
-    //endregion
+     * private class AddItemAction extends AbstractAction { private AddItemAction()
+     * { super("Добавить..."); }
+     * 
+     * @Override public void actionPerformed(ActionEvent e) { Item item = (Item)
+     * JOptionPane.showInputDialog(dialog, "Выберите добавляемый предмет",
+     * "Добавить предмет", JOptionPane.QUESTION_MESSAGE, null,
+     * story.items.values().toArray(), null);
+     * 
+     * if(item != null) { itemsClone.add(item); updateItems();
+     * itemsList.setSelectedValue(item, true); } } }
+     * 
+     * private class DelItemAction extends AbstractAction { private DelItemAction()
+     * { super("Удалить"); }
+     * 
+     * @Override public void actionPerformed(ActionEvent e) { Item item = (Item)
+     * itemsList.getSelectedValue(); if(item != null) { int answer =
+     * JOptionPane.showConfirmDialog(dialog,
+     * "Вы уверены, что хотите удалить этот предмет из локации?"); if(answer == 0) {
+     * itemsClone.remove(item); updateItems(); } } } }
+     */
+    // endregion
 }

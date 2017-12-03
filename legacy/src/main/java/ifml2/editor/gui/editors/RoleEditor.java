@@ -1,7 +1,22 @@
 package ifml2.editor.gui.editors;
 
-import ca.odell.glazedlists.swing.DefaultEventListModel;
+import java.awt.Window;
+
+import javax.swing.JButton;
+import javax.swing.JInternalFrame;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.intellij.uiDesigner.core.GridConstraints;
+
+import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ifml2.GUIUtils;
 import ifml2.editor.IFML2EditorException;
 import ifml2.editor.gui.AbstractEditor;
@@ -14,13 +29,6 @@ import ifml2.om.Item;
 import ifml2.om.Property;
 import ifml2.om.Role;
 import ifml2.om.Story;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.*;
 
 public class RoleEditor extends AbstractEditor<Role> {
     private static final String ROLE_EDITOR_TITLE = "Роль";
@@ -36,7 +44,8 @@ public class RoleEditor extends AbstractEditor<Role> {
     private JInternalFrame currentForm;
     private Item holder;
 
-    public RoleEditor(@Nullable Window owner, @NotNull Role role, @NotNull Item holder, final Story.DataHelper dataHelper) {
+    public RoleEditor(@Nullable Window owner, @NotNull Role role, @NotNull Item holder,
+            final Story.DataHelper dataHelper) {
         super(owner);
         this.holder = holder;
 
@@ -75,8 +84,8 @@ public class RoleEditor extends AbstractEditor<Role> {
                             changeEditForm(new LogicExpressionEditForm(expression));
                             break;
                         case COLLECTION:
-                            changeEditForm(new CollectionEditForm(RoleEditor.this, currentProperty.getCollectionItems(), Item.class,
-                                    RoleEditor.this.holder, dataHelper));
+                            changeEditForm(new CollectionEditForm(RoleEditor.this, currentProperty.getCollectionItems(),
+                                    Item.class, RoleEditor.this.holder, dataHelper));
                             break;
                     }
                 }
@@ -87,7 +96,8 @@ public class RoleEditor extends AbstractEditor<Role> {
                 expressionPanel.removeAll();
                 expressionPanel.add(expressionEditForm.getContentPane(),
                         new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH,
-                                GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null));
+                                GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, null,
+                                null));
             }
         });
 
@@ -104,7 +114,8 @@ public class RoleEditor extends AbstractEditor<Role> {
                 CollectionEditForm collectionEditForm = (CollectionEditForm) currentForm;
                 currentProperty.setCollectionItems(collectionEditForm.getEditedCollection());
             } else {
-                throw new IFML2EditorException("Неизвестный тип формы для свойства: {0}", currentForm.getClass().getName());
+                throw new IFML2EditorException("Неизвестный тип формы для свойства: {0}",
+                        currentForm.getClass().getName());
             }
         }
     }

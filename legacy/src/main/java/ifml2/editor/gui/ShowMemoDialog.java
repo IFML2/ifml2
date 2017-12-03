@@ -1,11 +1,15 @@
 package ifml2.editor.gui;
 
-import ifml2.GUIUtils;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+
+import ifml2.GUIUtils;
 
 public class ShowMemoDialog extends JDialog {
     private JPanel contentPane;
@@ -32,7 +36,7 @@ public class ShowMemoDialog extends JDialog {
     }
 
     private void onOK() {
-// add your code here
+        // add your code here
         dispose();
     }
 }

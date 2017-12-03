@@ -1,8 +1,8 @@
 package ifml2.vm;
 
-import ifml2.IFML2Exception;
-
 import java.text.MessageFormat;
+
+import ifml2.IFML2Exception;
 
 @SuppressWarnings("serial")
 public class IFML2VMException extends IFML2Exception {

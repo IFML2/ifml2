@@ -1,5 +1,10 @@
 package ifml2.vm.instructions;
 
+import java.text.MessageFormat;
+
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import ifml2.IFML2Exception;
 import ifml2.om.IFMLObject;
 import ifml2.om.Property;
@@ -8,10 +13,6 @@ import ifml2.vm.IFML2VMException;
 import ifml2.vm.RunningContext;
 import ifml2.vm.values.ObjectValue;
 import ifml2.vm.values.Value;
-
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import java.text.MessageFormat;
 
 @XmlRootElement(name = "setProperty")
 @IFML2Instruction(title = "Установить свойство объекта")
@@ -29,13 +30,13 @@ public class SetPropertyInstruction extends Instruction {
     public void run(RunningContext runningContext) throws IFML2Exception {
         Value objectGenericValue = ExpressionCalculator.calculate(runningContext, object);
         if (!(objectGenericValue instanceof ObjectValue)) {
-            throw new IFML2VMException("Выражение (\"{0}\") для объекта не объектного типа, а {1}",
-                    object, objectGenericValue != null ? objectGenericValue.getTypeName() : "пустое");
+            throw new IFML2VMException("Выражение (\"{0}\") для объекта не объектного типа, а {1}", object,
+                    objectGenericValue != null ? objectGenericValue.getTypeName() : "пустое");
         }
         ObjectValue objectValue = (ObjectValue) objectGenericValue;
         IFMLObject ifmlObject = objectValue.getValue();
 
-        //IFMLObject ifmlObject = runningContext.getObjectByName(object);
+        // IFMLObject ifmlObject = runningContext.getObjectByName(object);
         if (ifmlObject == null) {
             throw new IFML2VMException("Объект с именем \"{0}\" не найден", object);
         }

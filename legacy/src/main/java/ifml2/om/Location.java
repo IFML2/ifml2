@@ -1,18 +1,20 @@
 package ifml2.om;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.Callable;
+
+import javax.xml.bind.annotation.XmlTransient;
+
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 import ifml2.IFML2Exception;
 import ifml2.vm.SymbolResolver;
 import ifml2.vm.values.CollectionValue;
 import ifml2.vm.values.ObjectValue;
 import ifml2.vm.values.Value;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-
-import javax.xml.bind.annotation.XmlTransient;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.Callable;
 
 @XmlTransient
 public class Location extends IFMLObject {
@@ -102,7 +104,7 @@ public class Location extends IFMLObject {
         return items;
     }
 
-    //@XmlTransient // is loaded in OMManager through item.location
+    // @XmlTransient // is loaded in OMManager through item.location
     public void setItems(List<Item> items) {
         this.items = items;
     }
@@ -110,7 +112,8 @@ public class Location extends IFMLObject {
     /**
      * Checks whether location contains item.
      *
-     * @param item item to check
+     * @param item
+     *            item to check
      * @return True if location contains item and false otherwise.
      */
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
@@ -126,7 +129,8 @@ public class Location extends IFMLObject {
             try {
                 return LOCATION_SYMBOLS.get(loweredPropName).call();
             } catch (Exception e) {
-                throw new IFML2Exception(e, "Ошибка при вычислении свойства \"{0}\" у локации {1}", propertyName, getId());
+                throw new IFML2Exception(e, "Ошибка при вычислении свойства \"{0}\" у локации {1}", propertyName,
+                        getId());
             }
         } else {
             return super.getMemberValue(propertyName, symbolResolver);
@@ -158,16 +162,8 @@ public class Location extends IFMLObject {
      * Location exit directions
      */
     public enum ExitDirection {
-        NORTH("север"),
-        NORTH_EAST("северо-восток"),
-        EAST("восток"),
-        SOUTH_EAST("юго-восток"),
-        SOUTH("юг"),
-        SOUTH_WEST("юго-запад"),
-        WEST("запад"),
-        NORTH_WEST("северо-запад"),
-        UP("вверх"),
-        DOWN("вниз");
+        NORTH("север"), NORTH_EAST("северо-восток"), EAST("восток"), SOUTH_EAST("юго-восток"), SOUTH("юг"), SOUTH_WEST(
+                "юго-запад"), WEST("запад"), NORTH_WEST("северо-запад"), UP("вверх"), DOWN("вниз");
         private final String name;
 
         ExitDirection(String name) {

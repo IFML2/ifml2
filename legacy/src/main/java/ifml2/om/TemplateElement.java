@@ -3,8 +3,9 @@ package ifml2.om;
 import javax.xml.bind.annotation.XmlAttribute;
 
 public abstract class TemplateElement implements Cloneable {
-    /*@XmlAttribute(name="position")
-	public int position;*/
+    /*
+     * @XmlAttribute(name="position") public int position;
+     */
 
     protected String parameter;
 

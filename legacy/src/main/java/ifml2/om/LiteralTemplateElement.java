@@ -1,10 +1,10 @@
 package ifml2.om;
 
+import javax.xml.bind.annotation.XmlElement;
+
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
-
-import javax.xml.bind.annotation.XmlElement;
 
 public class LiteralTemplateElement extends TemplateElement {
     @XmlElement(name = "synonym")

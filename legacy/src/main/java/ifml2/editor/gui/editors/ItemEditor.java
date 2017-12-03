@@ -1,5 +1,31 @@
 package ifml2.editor.gui.editors;
 
+import static ifml2.om.Word.Gender.FEMININE;
+import static ifml2.om.Word.Gender.MASCULINE;
+
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.text.MessageFormat;
+import java.util.List;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
@@ -17,23 +43,6 @@ import ifml2.om.Role;
 import ifml2.om.RoleDefinition;
 import ifml2.om.Story;
 import ifml2.om.WordLinks;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.text.MessageFormat;
-import java.util.List;
-
-import static ifml2.om.Word.Gender.FEMININE;
-import static ifml2.om.Word.Gender.MASCULINE;
 
 public class ItemEditor extends AbstractEditor<Item> {
     private static final String ITEM_EDITOR_TITLE = "Предмет";
@@ -79,7 +88,8 @@ public class ItemEditor extends AbstractEditor<Item> {
             @Override
             public void actionPerformed(ActionEvent e) {
                 final EventList<Attribute> attributes = itemClone.getAttributes();
-                ObjectAttributesEditor objectAttributesEditor = new ObjectAttributesEditor(ItemEditor.this, attributes, storyDataHelper);
+                ObjectAttributesEditor objectAttributesEditor = new ObjectAttributesEditor(ItemEditor.this, attributes,
+                        storyDataHelper);
                 if (objectAttributesEditor.showDialog()) {
                     objectAttributesEditor.updateData(attributes);
                 }
@@ -89,7 +99,8 @@ public class ItemEditor extends AbstractEditor<Item> {
             @Override
             public void actionPerformed(ActionEvent e) {
                 final WordLinks wordLinks = itemClone.getWordLinks();
-                WordLinksEditor wordLinksEditor = new WordLinksEditor(ItemEditor.this, storyDataHelper.getDictionary(), wordLinks);
+                WordLinksEditor wordLinksEditor = new WordLinksEditor(ItemEditor.this, storyDataHelper.getDictionary(),
+                        wordLinks);
                 if (wordLinksEditor.showDialog()) {
                     wordLinksEditor.updateData(wordLinks);
                 }
@@ -113,7 +124,8 @@ public class ItemEditor extends AbstractEditor<Item> {
             }
 
             @Override
-            public void changedUpdate(DocumentEvent e) { /* do nothing */ }
+            public void changedUpdate(DocumentEvent e) {
+                /* do nothing */ }
         });
         idText.addKeyListener(new KeyAdapter() {
             @Override
@@ -146,7 +158,8 @@ public class ItemEditor extends AbstractEditor<Item> {
 
         // set item in locations
         itemInLocationsList.setModel(new DefaultEventListModel<Location>(storyDataHelper.getLocations()));
-        DefaultEventSelectionModel<Location> selectionModel = new DefaultEventSelectionModel<Location>(storyDataHelper.getLocations());
+        DefaultEventSelectionModel<Location> selectionModel = new DefaultEventSelectionModel<Location>(
+                storyDataHelper.getLocations());
         itemInLocationsList.setSelectionModel(selectionModel);
         selectionModel.setValueIsAdjusting(true);
         try {
@@ -192,7 +205,7 @@ public class ItemEditor extends AbstractEditor<Item> {
 
     @Override
     protected void validateData() throws DataNotValidException {
-        //check name
+        // check name
         if (nameText.getText().trim().length() == 0) {
             throw new DataNotValidException("У предмета должно быть задано имя.", nameText);
         }
@@ -217,8 +230,10 @@ public class ItemEditor extends AbstractEditor<Item> {
                 GUIUtils.showErrorMessage(this, e);
             }
             throw new DataNotValidException(
-                    "У предмета должен быть уникальный идентификатор - не пересекаться с другими локациями, предметами и словарём.\n" +
-                            MessageFormat.format("Найден другой объект с тем же идентификатором: \"{0}\" типа \"{1}\".", object, className),
+                    "У предмета должен быть уникальный идентификатор - не пересекаться с другими локациями, предметами и словарём.\n"
+                            + MessageFormat.format(
+                                    "Найден другой объект с тем же идентификатором: \"{0}\" типа \"{1}\".", object,
+                                    className),
                     idText);
         }
     }
@@ -256,14 +271,14 @@ public class ItemEditor extends AbstractEditor<Item> {
                 }
 
                 if (allRoleDefinitions.size() == 0) {
-                    JOptionPane.showMessageDialog(ItemEditor.this, "Уже добавлены все возможные роли", "Нет больше ролей",
-                            JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(ItemEditor.this, "Уже добавлены все возможные роли",
+                            "Нет больше ролей", JOptionPane.INFORMATION_MESSAGE);
                     return null;
                 }
 
-                final RoleDefinition roleDefinition = (RoleDefinition) JOptionPane
-                        .showInputDialog(ItemEditor.this, "Выберите роль", "Добавление роли", JOptionPane.QUESTION_MESSAGE, null,
-                                allRoleDefinitions.toArray(), null);
+                final RoleDefinition roleDefinition = (RoleDefinition) JOptionPane.showInputDialog(ItemEditor.this,
+                        "Выберите роль", "Добавление роли", JOptionPane.QUESTION_MESSAGE, null,
+                        allRoleDefinitions.toArray(), null);
 
                 if (roleDefinition != null) {
                     Role role = new Role(roleDefinition);

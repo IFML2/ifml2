@@ -89,13 +89,15 @@
               <component id="e9816" class="javax.swing.JButton" binding="upButton">
                 <constraints/>
                 <properties>
-                  <text value="&amp;Вверх"/>
+                  <icon value="ifml2/editor/gui/images/Up24.gif"/>
+                  <text value=""/>
                 </properties>
               </component>
               <component id="ea3b" class="javax.swing.JButton" binding="downButton">
                 <constraints/>
                 <properties>
-                  <text value="В&amp;низ"/>
+                  <icon value="ifml2/editor/gui/images/Down24.gif"/>
+                  <text value=""/>
                 </properties>
               </component>
             </children>
@@ -116,18 +118,21 @@
           <component id="a053f" class="javax.swing.JButton" binding="addInstrButton">
             <constraints/>
             <properties>
+              <icon value="ifml2/editor/gui/images/New24.gif"/>
               <text value="&amp;Добавить..."/>
             </properties>
           </component>
           <component id="df2f5" class="javax.swing.JButton" binding="editInstrButton">
             <constraints/>
             <properties>
+              <icon value="ifml2/editor/gui/images/Edit24.gif"/>
               <text value="&amp;Изменить..."/>
             </properties>
           </component>
           <component id="e48b6" class="javax.swing.JButton" binding="delInstrButton">
             <constraints/>
             <properties>
+              <icon value="ifml2/editor/gui/images/Delete24.gif"/>
               <text value="&amp;Удалить..."/>
             </properties>
           </component>

@@ -1,5 +1,23 @@
 package ifml2.editor.gui.editors;
 
+import static ifml2.om.Word.Gender.MASCULINE;
+
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Collections;
+
+import javax.swing.AbstractAction;
+import javax.swing.JButton;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+import org.jetbrains.annotations.NotNull;
+
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ifml2.GUIUtils;
@@ -11,18 +29,6 @@ import ifml2.om.ObjectTemplateElement;
 import ifml2.om.Procedure;
 import ifml2.om.Template;
 import ifml2.om.TemplateElement;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.Collections;
-
-import static ifml2.om.Word.Gender.MASCULINE;
 
 public class TemplateEditor extends AbstractEditor<Template> {
     private JPanel contentPane;
@@ -62,8 +68,9 @@ public class TemplateEditor extends AbstractEditor<Template> {
                         return "Объект";
                     }
                 };
-                Object answer = JOptionPane.showInputDialog(TemplateEditor.this, "Выберите тип элемента шаблона:", "Тип элемента шаблона",
-                        JOptionPane.QUESTION_MESSAGE, null, new Object[]{literalOption, objectOption}, literalOption);
+                Object answer = JOptionPane.showInputDialog(TemplateEditor.this, "Выберите тип элемента шаблона:",
+                        "Тип элемента шаблона", JOptionPane.QUESTION_MESSAGE, null,
+                        new Object[] { literalOption, objectOption }, literalOption);
 
                 TemplateElement element = null;
 
@@ -153,7 +160,11 @@ public class TemplateEditor extends AbstractEditor<Template> {
                 templateList.addListSelectionListener(new ListSelectionListener() {
                     @Override
                     public void valueChanged(ListSelectionEvent e) {
-                        setEnabled(templateList.getSelectedIndex() < templateList.getModel().getSize() - 1); // depends on selection and list length
+                        setEnabled(templateList.getSelectedIndex() < templateList.getModel().getSize() - 1); // depends
+                                                                                                             // on
+                                                                                                             // selection
+                                                                                                             // and list
+                                                                                                             // length
                     }
                 });
             }

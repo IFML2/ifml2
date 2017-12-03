@@ -1,16 +1,5 @@
 package ifml2.om;
 
-import ca.odell.glazedlists.BasicEventList;
-import ca.odell.glazedlists.EventList;
-import ifml2.IFML2Exception;
-import ifml2.IFMLEntity;
-import ifml2.vm.ExpressionCalculator;
-import ifml2.vm.RunningContext;
-import ifml2.vm.Variable;
-import ifml2.vm.instructions.Instruction;
-import ifml2.vm.values.Value;
-import org.jetbrains.annotations.NotNull;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -20,6 +9,18 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.jetbrains.annotations.NotNull;
+
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
+import ifml2.IFML2Exception;
+import ifml2.IFMLEntity;
+import ifml2.vm.ExpressionCalculator;
+import ifml2.vm.RunningContext;
+import ifml2.vm.Variable;
+import ifml2.vm.instructions.Instruction;
+import ifml2.vm.values.Value;
 
 @XmlRootElement(name = "procedure")
 @XmlAccessorType(XmlAccessType.NONE)
@@ -133,8 +134,7 @@ public class Procedure extends IFMLEntity implements Cloneable {
     @XmlEnum
     public enum SystemProcedureType {
         @XmlEnumValue(value = "showLocation")
-        SHOW_LOCATION("Описать локацию"),
-        @XmlEnumValue(value = "parseErrorHandler")
+        SHOW_LOCATION("Описать локацию"), @XmlEnumValue(value = "parseErrorHandler")
         PARSE_ERROR_HANDLER("Обработка ошибок парсинга");
 
         private String name;

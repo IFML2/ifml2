@@ -1,5 +1,14 @@
 package ifml2.vm;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
+
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import ifml2.IFML2Exception;
 import ifml2.om.Attribute;
 import ifml2.om.IFMLObject;
@@ -8,13 +17,6 @@ import ifml2.om.Procedure;
 import ifml2.om.RoleDefinition;
 import ifml2.vm.values.EmptyValue;
 import ifml2.vm.values.Value;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
 
 public class RunningContext implements SymbolResolver {
     private HashMap<String, Variable> loweredLocalVariablesMap = new HashMap<String, Variable>();
@@ -37,28 +39,26 @@ public class RunningContext implements SymbolResolver {
     /**
      * Создание нового пустого контекста для процедуры.
      */
-    public static RunningContext CreateCallContext(@NotNull VirtualMachine virtualMachine, @NotNull Procedure contextProcedure,
-                                                   @Nullable List<Variable> parameters) {
+    public static RunningContext CreateCallContext(@NotNull VirtualMachine virtualMachine,
+            @NotNull Procedure contextProcedure, @Nullable List<Variable> parameters) {
         RunningContext runningContext = new RunningContext(virtualMachine);
         runningContext.contextProcedure = contextProcedure;
 
         // fill parameters
         if (parameters != null) {
-            for (Variable parameter : parameters) {
+            parameters.forEach(parameter -> {
                 String name = parameter.getName();
                 if (name != null) {
                     String loweredName = name.toLowerCase();
                     runningContext.loweredLocalVariablesMap.put(loweredName, parameter);
                 }
-            }
+            });
         }
 
         // fill not set parameters as EmptyValue
-        for (Parameter parameter : contextProcedure.getParameters()) {
-            if (runningContext.searchLocalVariable(parameter.getName()) == null) {
-                runningContext.writeLocalVariable(new Variable(parameter.getName(), new EmptyValue()));
-            }
-        }
+        contextProcedure.getParameters().stream()
+                .filter(param -> runningContext.searchLocalVariable(param.getName()) == null)
+                .forEach(param -> runningContext.writeLocalVariable(new Variable(param.getName(), new EmptyValue())));
 
         return runningContext;
     }
@@ -70,10 +70,7 @@ public class RunningContext implements SymbolResolver {
         RunningContext runningContext = new RunningContext(parentRunningContext.virtualMachine);
 
         // copy local variables
-        Collection<Variable> localVariables = parentRunningContext.loweredLocalVariablesMap.values();
-        for (Variable variable : localVariables) {
-            runningContext.writeLocalVariable(variable);
-        }
+        parentRunningContext.loweredLocalVariablesMap.values().forEach(runningContext::writeLocalVariable);
 
         return runningContext;
     }
@@ -154,10 +151,13 @@ public class RunningContext implements SymbolResolver {
     }
 
     /**
-     * Searches for variable by name in scope (local, then procedure, then global) and set is by value.
+     * Searches for variable by name in scope (local, then procedure, then global)
+     * and set is by value.
      *
-     * @param name  name of variable.
-     * @param value value for setting.
+     * @param name
+     *            name of variable.
+     * @param value
+     *            value for setting.
      */
     public void writeVariable(@NotNull String name, Value value) throws IFML2Exception {
         String loweredName = name.toLowerCase();
@@ -202,17 +202,12 @@ public class RunningContext implements SymbolResolver {
     }
 
     private void writeLocalVariable(@NotNull Variable variable) {
-        String name = variable.getName();
-        if (name != null) {
-            loweredLocalVariablesMap.put(name.toLowerCase(), variable);
-        }
+        Optional.ofNullable(variable.getName()).ifPresent(name -> loweredLocalVariablesMap.put(name.toLowerCase(), variable));
     }
 
     public void populateParameters(List<Variable> parameters) {
         if (parameters != null) {
-            for (Variable parameter : parameters) {
-                writeLocalVariable(parameter);
-            }
+            parameters.forEach(this::writeLocalVariable);
         }
     }
 }
