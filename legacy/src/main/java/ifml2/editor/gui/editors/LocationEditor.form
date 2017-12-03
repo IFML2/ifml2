@@ -273,18 +273,21 @@
                       <component id="108bd" class="javax.swing.JButton" binding="addItemButton">
                         <constraints/>
                         <properties>
+                          <icon value="ifml2/editor/gui/images/Add24.gif"/>
                           <text value="&amp;Добавить..."/>
                         </properties>
                       </component>
                       <component id="feb6b" class="javax.swing.JButton" binding="editItemButton">
                         <constraints/>
                         <properties>
+                          <icon value="ifml2/editor/gui/images/Edit24.gif"/>
                           <text value="Р&amp;едактировать..."/>
                         </properties>
                       </component>
                       <component id="725c" class="javax.swing.JButton" binding="delItemButton">
                         <constraints/>
                         <properties>
+                          <icon value="ifml2/editor/gui/images/Delete24.gif"/>
                           <text value="&amp;Удалить..."/>
                         </properties>
                       </component>
@@ -443,18 +446,21 @@
                   <component id="33349" class="javax.swing.JButton" binding="addHookButton">
                     <constraints/>
                     <properties>
+                      <icon value="ifml2/editor/gui/images/Add24.gif"/>
                       <text value="&amp;Добавить..."/>
                     </properties>
                   </component>
                   <component id="7102a" class="javax.swing.JButton" binding="editHookButton">
                     <constraints/>
                     <properties>
+                      <icon value="ifml2/editor/gui/images/Edit24.gif"/>
                       <text value="Изм&amp;енить..."/>
                     </properties>
                   </component>
                   <component id="1bb0d" class="javax.swing.JButton" binding="deleteHookButton">
                     <constraints/>
                     <properties>
+                      <icon value="ifml2/editor/gui/images/Delete24.gif"/>
                       <text value="&amp;Удалить"/>
                     </properties>
                   </component>

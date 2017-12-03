@@ -88,18 +88,21 @@
           <component id="2cfb3" class="javax.swing.JButton" binding="addButton">
             <constraints/>
             <properties>
+              <icon value="ifml2/editor/gui/images/Add24.gif"/>
               <text value="&amp;Добавить..."/>
             </properties>
           </component>
           <component id="a7130" class="javax.swing.JButton" binding="editButton">
             <constraints/>
             <properties>
+              <icon value="ifml2/editor/gui/images/Edit24.gif"/>
               <text value="&amp;Редактировать..."/>
             </properties>
           </component>
           <component id="657a0" class="javax.swing.JButton" binding="delButton">
             <constraints/>
             <properties>
+              <icon value="ifml2/editor/gui/images/Delete24.gif"/>
               <text value="&amp;Удалить"/>
             </properties>
           </component>

@@ -166,18 +166,21 @@
                           <component id="559a3" class="javax.swing.JButton" binding="addTemplateButton">
                             <constraints/>
                             <properties>
+                              <icon value="ifml2/editor/gui/images/Add24.gif"/>
                               <text value="Добавить..."/>
                             </properties>
                           </component>
                           <component id="82316" class="javax.swing.JButton" binding="editTemplateButton">
                             <constraints/>
                             <properties>
+                              <icon value="ifml2/editor/gui/images/Edit24.gif"/>
                               <text value="Изменить..."/>
                             </properties>
                           </component>
                           <component id="9f20a" class="javax.swing.JButton" binding="delTemplateButton">
                             <constraints/>
                             <properties>
+                              <icon value="ifml2/editor/gui/images/Delete24.gif"/>
                               <text value="Удалить"/>
                             </properties>
                           </component>
@@ -234,18 +237,21 @@
                       <component id="8a8ba" class="javax.swing.JButton" binding="addRestrictionButton">
                         <constraints/>
                         <properties>
+                          <icon value="ifml2/editor/gui/images/Add24.gif"/>
                           <text value="Добавить..."/>
                         </properties>
                       </component>
                       <component id="f1b7a" class="javax.swing.JButton" binding="editRestrictionButton">
                         <constraints/>
                         <properties>
+                          <icon value="ifml2/editor/gui/images/Edit24.gif"/>
                           <text value="Изменить..."/>
                         </properties>
                       </component>
                       <component id="4a7a7" class="javax.swing.JButton" binding="delRestrictionButton">
                         <constraints/>
                         <properties>
+                          <icon value="ifml2/editor/gui/images/Delete24.gif"/>
                           <text value="Удалить"/>
                         </properties>
                       </component>
@@ -269,13 +275,15 @@
                       <component id="5af47" class="javax.swing.JButton" binding="upRestrictionButton">
                         <constraints/>
                         <properties>
-                          <text value="Button"/>
+                          <icon value="ifml2/editor/gui/images/Up24.gif"/>
+                          <text value=""/>
                         </properties>
                       </component>
                       <component id="6896e" class="javax.swing.JButton" binding="downRestrictionButton">
                         <constraints/>
                         <properties>
-                          <text value="Button"/>
+                          <icon value="ifml2/editor/gui/images/Down24.gif"/>
+                          <text value=""/>
                         </properties>
                       </component>
                     </children>

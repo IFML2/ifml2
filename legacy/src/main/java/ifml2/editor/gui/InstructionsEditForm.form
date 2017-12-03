@@ -75,21 +75,21 @@
           <component id="4f9b0" class="javax.swing.JButton" binding="addInstrButton">
             <constraints/>
             <properties>
-              <icon value="Add24.gif"/>
+              <icon value="ifml2/editor/gui/images/Add24.gif"/>
               <text value="&amp;Добавить..."/>
             </properties>
           </component>
           <component id="92008" class="javax.swing.JButton" binding="editInstrButton">
             <constraints/>
             <properties>
-              <icon value="Edit24.gif"/>
+              <icon value="ifml2/editor/gui/images/Edit24.gif"/>
               <text value="&amp;Изменить..."/>
             </properties>
           </component>
           <component id="76da3" class="javax.swing.JButton" binding="delInstrButton">
             <constraints/>
             <properties>
-              <icon value="Delete24.gif"/>
+              <icon value="ifml2/editor/gui/images/Delete24.gif"/>
               <text value="&amp;Удалить..."/>
             </properties>
           </component>
