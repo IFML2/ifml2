@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="ifml2.editor.gui.editors.ActionEditor">
+  <grid id="cbd77" binding="contentPane" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="10" left="10" bottom="10" right="10"/>
+    <constraints>
+      <xy x="48" y="54" width="599" height="425"/>
+    </constraints>
+    <properties>
+      <preferredSize width="800" height="600"/>
+    </properties>
+    <border type="none"/>
+    <children>
+      <grid id="94766" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <hspacer id="98af6">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+          </hspacer>
+          <grid id="9538f" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="true" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="e7465" class="javax.swing.JButton" binding="buttonOK">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="OK"/>
+                </properties>
+              </component>
+              <component id="5723f" class="javax.swing.JButton" binding="buttonCancel">
+                <constraints>
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Cancel"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+        </children>
+      </grid>
+      <grid id="e3588" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <tabbedpane id="aa203" default-binding="true">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                <preferred-size width="200" height="200"/>
+              </grid>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <grid id="53e73" layout-manager="GridLayoutManager" row-count="4" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="4" left="4" bottom="4" right="4"/>
+                <constraints>
+                  <tabbedpane title="Основные свойства"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="2d97e" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <labelFor value="fefd1"/>
+                      <text value="Название"/>
+                    </properties>
+                  </component>
+                  <component id="fefd1" class="javax.swing.JTextField" binding="nameText">
+                    <constraints>
+                      <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="-1"/>
+                      </grid>
+                    </constraints>
+                    <properties/>
+                  </component>
+                  <component id="464e9" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <labelFor value="a6e71"/>
+                      <text value="Описание"/>
+                    </properties>
+                  </component>
+                  <component id="a6e71" class="javax.swing.JTextField" binding="descriptionText">
+                    <constraints>
+                      <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="-1"/>
+                      </grid>
+                    </constraints>
+                    <properties/>
+                  </component>
+                  <component id="338b5" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <labelFor value="5a415"/>
+                      <text value="Вызываемая процедура"/>
+                    </properties>
+                  </component>
+                  <component id="5a415" class="javax.swing.JComboBox" binding="procedureCallCombo">
+                    <constraints>
+                      <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties/>
+                  </component>
+                  <grid id="9efc2" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                    <margin top="0" left="0" bottom="0" right="0"/>
+                    <constraints>
+                      <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties/>
+                    <border type="etched"/>
+                    <children>
+                      <scrollpane id="d34e8">
+                        <constraints>
+                          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                            <preferred-size width="357" height="128"/>
+                          </grid>
+                        </constraints>
+                        <properties/>
+                        <border type="none"/>
+                        <children>
+                          <component id="6e81f" class="javax.swing.JList" binding="templatesList">
+                            <constraints/>
+                            <properties/>
+                          </component>
+                        </children>
+                      </scrollpane>
+                      <toolbar id="39762">
+                        <constraints>
+                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                            <preferred-size width="-1" height="20"/>
+                          </grid>
+                        </constraints>
+                        <properties>
+                          <floatable value="false"/>
+                          <opaque value="false"/>
+                        </properties>
+                        <clientProperties>
+                          <JToolBar.isRollover class="java.lang.Boolean" value="false"/>
+                        </clientProperties>
+                        <border type="none"/>
+                        <children>
+                          <component id="559a3" class="javax.swing.JButton" binding="addTemplateButton">
+                            <constraints/>
+                            <properties>
+                              <icon value="ifml2/editor/gui/images/Add24.gif"/>
+                              <text value="Добавить..."/>
+                            </properties>
+                          </component>
+                          <component id="82316" class="javax.swing.JButton" binding="editTemplateButton">
+                            <constraints/>
+                            <properties>
+                              <icon value="ifml2/editor/gui/images/Edit24.gif"/>
+                              <text value="Изменить..."/>
+                            </properties>
+                          </component>
+                          <component id="9f20a" class="javax.swing.JButton" binding="delTemplateButton">
+                            <constraints/>
+                            <properties>
+                              <icon value="ifml2/editor/gui/images/Delete24.gif"/>
+                              <text value="Удалить"/>
+                            </properties>
+                          </component>
+                        </children>
+                      </toolbar>
+                    </children>
+                  </grid>
+                  <component id="563f2" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Шаблоны"/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
+              <grid id="68cc0" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="4" left="4" bottom="4" right="4"/>
+                <constraints>
+                  <tabbedpane title="Ограничения"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <scrollpane id="27bdc">
+                    <constraints>
+                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties/>
+                    <border type="none"/>
+                    <children>
+                      <component id="b228e" class="javax.swing.JList" binding="restrictionsList">
+                        <constraints/>
+                        <properties/>
+                      </component>
+                    </children>
+                  </scrollpane>
+                  <toolbar id="d3e26">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                        <preferred-size width="-1" height="20"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <floatable value="false"/>
+                      <opaque value="false"/>
+                    </properties>
+                    <clientProperties>
+                      <JToolBar.isRollover class="java.lang.Boolean" value="false"/>
+                    </clientProperties>
+                    <border type="none"/>
+                    <children>
+                      <component id="8a8ba" class="javax.swing.JButton" binding="addRestrictionButton">
+                        <constraints/>
+                        <properties>
+                          <icon value="ifml2/editor/gui/images/Add24.gif"/>
+                          <text value="Добавить..."/>
+                        </properties>
+                      </component>
+                      <component id="f1b7a" class="javax.swing.JButton" binding="editRestrictionButton">
+                        <constraints/>
+                        <properties>
+                          <icon value="ifml2/editor/gui/images/Edit24.gif"/>
+                          <text value="Изменить..."/>
+                        </properties>
+                      </component>
+                      <component id="4a7a7" class="javax.swing.JButton" binding="delRestrictionButton">
+                        <constraints/>
+                        <properties>
+                          <icon value="ifml2/editor/gui/images/Delete24.gif"/>
+                          <text value="Удалить"/>
+                        </properties>
+                      </component>
+                    </children>
+                  </toolbar>
+                  <toolbar id="bd574">
+                    <constraints>
+                      <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                        <preferred-size width="-1" height="20"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <floatable value="false"/>
+                      <orientation value="1"/>
+                    </properties>
+                    <clientProperties>
+                      <JToolBar.isRollover class="java.lang.Boolean" value="false"/>
+                    </clientProperties>
+                    <border type="none"/>
+                    <children>
+                      <component id="5af47" class="javax.swing.JButton" binding="upRestrictionButton">
+                        <constraints/>
+                        <properties>
+                          <icon value="ifml2/editor/gui/images/Up24.gif"/>
+                          <text value=""/>
+                        </properties>
+                      </component>
+                      <component id="6896e" class="javax.swing.JButton" binding="downRestrictionButton">
+                        <constraints/>
+                        <properties>
+                          <icon value="ifml2/editor/gui/images/Down24.gif"/>
+                          <text value=""/>
+                        </properties>
+                      </component>
+                    </children>
+                  </toolbar>
+                </children>
+              </grid>
+            </children>
+          </tabbedpane>
+        </children>
+      </grid>
+    </children>
+  </grid>
+</form>

@@ -1,0 +1,9 @@
+# IDEA files
+.idea/
+*.iml
+# Eclipse files
+.settings/
+.project
+.classpath
+# Maven files
+target/
