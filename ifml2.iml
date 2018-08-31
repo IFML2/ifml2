@@ -15,15 +15,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="forms_rt" level="project" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$APPLICATION_HOME_DIR$/lib/annotations.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="library" name="log4j:log4j:Release" level="project" />
     <orderEntry type="library" name="net.java.dev.glazedlists:glazedlists_java15:Release" level="project" />
     <orderEntry type="library" name="org.mockito:mockito-core:Release" level="project" />
@@ -37,5 +28,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="org.jetbrains:annotations:Release" level="project" />
   </component>
 </module>
