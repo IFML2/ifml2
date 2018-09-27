@@ -2,21 +2,21 @@
   <library name="org.mockito:mockito-core:Release" type="repository">
     <properties maven-id="org.mockito:mockito-core:RELEASE" />
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/lib/mockito-core-2.21.0.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/byte-buddy-1.8.15.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/byte-buddy-agent-1.8.15.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/mockito-core-2.22.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/byte-buddy-1.8.21.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/byte-buddy-agent-1.8.21.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/objenesis-2.6.jar!/" />
     </CLASSES>
     <JAVADOC>
-      <root url="jar://$PROJECT_DIR$/lib/mockito-core-2.21.0-javadoc.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/byte-buddy-1.8.15-javadoc.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/byte-buddy-agent-1.8.15-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/mockito-core-2.22.0-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/byte-buddy-1.8.21-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/byte-buddy-agent-1.8.21-javadoc.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/objenesis-2.6-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
-      <root url="jar://$PROJECT_DIR$/lib/mockito-core-2.21.0-sources.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/byte-buddy-1.8.15-sources.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/byte-buddy-agent-1.8.15-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/mockito-core-2.22.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/byte-buddy-1.8.21-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/byte-buddy-agent-1.8.21-sources.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/objenesis-2.6-sources.jar!/" />
     </SOURCES>
   </library>
