@@ -411,6 +411,30 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
             }
         });
         mainMenu.add(storyMenu);
+
+        JMenu playerMenu = new JMenu("Плеер");
+        playerMenu.add(new AbstractAction("Тема офомления...", GUIUtils.PENCIL_ICON) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                PlayerThemeDialog playerThemeDialog = new PlayerThemeDialog(GUIPlayer.this);
+                PlayerTheme playerTheme = playerThemeDialog.ShowDialog();
+                if (playerTheme != null )
+                {
+                    Color fontColor = playerTheme.getFontColor();
+                    Color backgroundColor = playerTheme.getBackgroundColor();
+                    Font font = new Font(playerTheme.getFontName(), Font.PLAIN, playerTheme.getFontSize());
+                    logTextPane.setForeground(fontColor);
+                    logTextPane.setBackground(backgroundColor);
+                    logTextPane.setFont(font);
+                    commandText.setForeground(fontColor);
+                    commandText.setBackground(backgroundColor);
+                    commandText.setFont(font);
+                    mainPanel.setBackground(backgroundColor);
+                }
+            }
+        });
+        mainMenu.add(playerMenu);
+
         return mainMenu;
     }
 
@@ -481,7 +505,7 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
         historyIterator = commandHistory.listIterator(commandHistory.size());
     }
 
-    public void setStoryFile(String storyFile)
+    private void setStoryFile(String storyFile)
     {
         this.storyFile = storyFile;
         updateTitle();
@@ -505,7 +529,7 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
         setTitle(format("%s Плеер %s -- %s", RUSSIAN_PRODUCT_NAME, VERSION, titleFile));
     }
 
-    public String getCommandText()
+    private String getCommandText()
     {
         String command = commandText.getText();
         commandText.setText("");
