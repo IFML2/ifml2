@@ -1,15 +1,22 @@
 package ifml2.players.guiplayer;
 
 import java.awt.*;
+import java.util.Arrays;
+import java.util.List;
 
 public class PlayerTheme {
+    private static final PlayerTheme LIGHT_THEME = new PlayerTheme("Светлая", new Color(0x000000), new Color(0xF0F0F0), "sansserif", 18);
+    private static final PlayerTheme DARK_THEME = new PlayerTheme("Тёмная", new Color(0xC0C0C0), new Color(0x303030), "serif", 18);
+    private static final PlayerTheme CONTRAST_THEME = new PlayerTheme("Контрастная", new Color(0x00FF00), new Color(0x120021), "monospaced", 20);
+    static List<PlayerTheme> DEFAULT_PLAYER_THEMES = Arrays.asList(LIGHT_THEME, DARK_THEME, CONTRAST_THEME);
+    static PlayerTheme DEFAULT_THEME = DARK_THEME;
     private String name;
     private Color fontColor;
     private Color backgroundColor;
     private String fontName;
     private int fontSize;
 
-    PlayerTheme(String name, Color fontColor, Color backgroundColor, String fontName, int fontSize) {
+    private PlayerTheme(String name, Color fontColor, Color backgroundColor, String fontName, int fontSize) {
         this.name = name;
         this.fontColor = fontColor;
         this.backgroundColor = backgroundColor;

@@ -45,6 +45,7 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
     private ListIterator<String> historyIterator = commandHistory.listIterator();
     private String storyFile;
     private boolean isFromTempFile;
+    private PlayerTheme _playerTheme;
 
     private GUIPlayer(boolean fromTempFile)
     {
@@ -96,6 +97,9 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
                         }
             }
         });
+
+        // применяем тему по-умолчанию
+        setPlayerTheme(PlayerTheme.DEFAULT_THEME);
 
         commandText.requestFocusInWindow();
         setVisible(true);
@@ -336,6 +340,10 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
     {
         JMenuBar mainMenu = new JMenuBar();
 
+        /*// меняем размер шрифта главного меню на 18
+        Font mainMenuFont = mainMenu.getFont();
+        UIManager.put("Menu.font", new Font(mainMenuFont.getFontName(), mainMenuFont.getStyle(), 18));*/
+
         JMenu storyMenu = new JMenu("История");
         storyMenu.add(new AbstractAction("Начать новую историю...", NEW_ELEMENT_ICON)
         {
@@ -417,25 +425,30 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
             @Override
             public void actionPerformed(ActionEvent e) {
                 PlayerThemeDialog playerThemeDialog = new PlayerThemeDialog(GUIPlayer.this);
-                PlayerTheme playerTheme = playerThemeDialog.ShowDialog();
-                if (playerTheme != null )
-                {
-                    Color fontColor = playerTheme.getFontColor();
-                    Color backgroundColor = playerTheme.getBackgroundColor();
-                    Font font = new Font(playerTheme.getFontName(), Font.PLAIN, playerTheme.getFontSize());
-                    logTextPane.setForeground(fontColor);
-                    logTextPane.setBackground(backgroundColor);
-                    logTextPane.setFont(font);
-                    commandText.setForeground(fontColor);
-                    commandText.setBackground(backgroundColor);
-                    commandText.setFont(font);
-                    mainPanel.setBackground(backgroundColor);
-                }
+                PlayerTheme playerTheme = playerThemeDialog.ShowDialog(_playerTheme);
+                setPlayerTheme(playerTheme);
             }
         });
         mainMenu.add(playerMenu);
 
         return mainMenu;
+    }
+
+    private void setPlayerTheme(PlayerTheme playerTheme) {
+        if (playerTheme != null )
+        {
+            Color fontColor = playerTheme.getFontColor();
+            Color backgroundColor = playerTheme.getBackgroundColor();
+            Font font = new Font(playerTheme.getFontName(), Font.PLAIN, playerTheme.getFontSize());
+            logTextPane.setForeground(fontColor);
+            logTextPane.setBackground(backgroundColor);
+            logTextPane.setFont(font);
+            commandText.setForeground(fontColor);
+            commandText.setBackground(backgroundColor);
+            commandText.setFont(font);
+            mainPanel.setBackground(backgroundColor);
+            _playerTheme = playerTheme;
+        }
     }
 
     private void focusCommandText()

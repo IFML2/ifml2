@@ -7,15 +7,8 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.Arrays;
-import java.util.List;
 
 public class PlayerThemeDialog extends JDialog {
-    private final static List<PlayerTheme> defaultPlayerThemes = Arrays.asList(
-            new PlayerTheme("Светлая", new Color(0x000000), new Color(0xF0F0F0), "Sitka Text", 18),
-            new PlayerTheme("Тёмная", new Color(0xC0C0C0), new Color(0x303030), "Book Antiqua", 18),
-            new PlayerTheme("Старая зелёная", new Color(0x00FF00), new Color(0x000000), "Lucida Console", 18)
-    );
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
@@ -52,12 +45,12 @@ public class PlayerThemeDialog extends JDialog {
         themeList.setModel(new AbstractListModel<PlayerTheme>() {
             @Override
             public int getSize() {
-                return defaultPlayerThemes.size();
+                return PlayerTheme.DEFAULT_PLAYER_THEMES.size();
             }
 
             @Override
             public PlayerTheme getElementAt(int index) {
-                return defaultPlayerThemes.get(index);
+                return PlayerTheme.DEFAULT_PLAYER_THEMES.get(index);
             }
         });
         themeList.addListSelectionListener(e -> {
@@ -69,7 +62,11 @@ public class PlayerThemeDialog extends JDialog {
         themeList.setSelectedIndex(0);
     }
 
-    PlayerTheme ShowDialog() {
+    PlayerTheme ShowDialog(PlayerTheme playerTheme) {
+        if (playerTheme != null)
+        {
+            themeList.setSelectedValue(playerTheme, true);
+        }
         setVisible(true);
         return isOk ? themeList.getSelectedValue() : null;
     }
