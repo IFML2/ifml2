@@ -50,7 +50,7 @@ public class PlayerThemeDialog extends JDialog {
 
             @Override
             public PlayerTheme getElementAt(int index) {
-                return PlayerTheme.DEFAULT_PLAYER_THEMES.get(index);
+                return (PlayerTheme) PlayerTheme.DEFAULT_PLAYER_THEMES.values().toArray()[index];
             }
         });
         themeList.addListSelectionListener(e -> {
@@ -59,7 +59,6 @@ public class PlayerThemeDialog extends JDialog {
             previewTextPane.setForeground(theme.getFontColor());
             previewTextPane.setFont(new Font(theme.getFontName(), Font.PLAIN, theme.getFontSize()));
         });
-        themeList.setSelectedIndex(0);
     }
 
     PlayerTheme ShowDialog(PlayerTheme playerTheme) {

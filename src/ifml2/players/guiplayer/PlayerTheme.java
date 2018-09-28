@@ -1,14 +1,26 @@
 package ifml2.players.guiplayer;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.awt.*;
-import java.util.Arrays;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class PlayerTheme {
     private static final PlayerTheme LIGHT_THEME = new PlayerTheme("Светлая", new Color(0x000000), new Color(0xF0F0F0), "sansserif", 18);
     private static final PlayerTheme DARK_THEME = new PlayerTheme("Тёмная", new Color(0xC0C0C0), new Color(0x303030), "serif", 18);
     private static final PlayerTheme CONTRAST_THEME = new PlayerTheme("Контрастная", new Color(0x00FF00), new Color(0x120021), "monospaced", 20);
-    static List<PlayerTheme> DEFAULT_PLAYER_THEMES = Arrays.asList(LIGHT_THEME, DARK_THEME, CONTRAST_THEME);
+    static Map<String, PlayerTheme> DEFAULT_PLAYER_THEMES = new LinkedHashMap<String, PlayerTheme>() {
+        {
+            put(LIGHT_THEME);
+            put(DARK_THEME);
+            put(CONTRAST_THEME);
+        }
+
+        private void put(@NotNull PlayerTheme playerTheme) {
+            put(playerTheme.getName(), playerTheme);
+        }
+    };// Arrays.asList(LIGHT_THEME, DARK_THEME, CONTRAST_THEME);
     static PlayerTheme DEFAULT_THEME = DARK_THEME;
     private String name;
     private Color fontColor;
@@ -26,7 +38,7 @@ public class PlayerTheme {
 
     @Override
     public String toString() {
-        return name;
+        return getName();
     }
 
     Color getFontColor() {
@@ -43,5 +55,9 @@ public class PlayerTheme {
 
     int getFontSize() {
         return fontSize;
+    }
+
+    public String getName() {
+        return name;
     }
 }

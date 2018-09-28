@@ -5,8 +5,8 @@ import ifml2.GUIUtils;
 import ifml2.IFML2Exception;
 import ifml2.engine.Engine;
 import ifml2.engine.featureproviders.graphic.IOutputIconProvider;
-import ifml2.om.IFML2LoadXmlException;
 import ifml2.engine.featureproviders.text.IOutputPlainTextProvider;
+import ifml2.om.IFML2LoadXmlException;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
@@ -98,11 +98,37 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
             }
         });
 
-        // применяем тему по-умолчанию
-        setPlayerTheme(PlayerTheme.DEFAULT_THEME);
+        // загружаем настройки
+        loadPreferences();
+        // подписываемся на закрытие, чтобы сохранить настройки
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                savePreferences();
+                super.windowClosing(e);
+            }
+        });
 
         commandText.requestFocusInWindow();
         setVisible(true);
+    }
+
+    private void savePreferences() {
+        // настройки темы оформления
+        PlayerPreferences.setPlayerThemeName(_playerTheme.getName());
+   }
+
+    private void loadPreferences() {
+        // настройки темы оформления
+        String playerThemeName = PlayerPreferences.getPlayerThemeName();
+        setPlayerThemeByName(playerThemeName);
+    }
+
+    private void setPlayerThemeByName(String playerThemeName) {
+        if(PlayerTheme.DEFAULT_PLAYER_THEMES.containsKey(playerThemeName))
+        {
+            setPlayerTheme(PlayerTheme.DEFAULT_PLAYER_THEMES.get(playerThemeName));
+        }
     }
 
     private static String acquireStoryFileNameForPlay(String[] args)
@@ -421,7 +447,7 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
         mainMenu.add(storyMenu);
 
         JMenu playerMenu = new JMenu("Плеер");
-        playerMenu.add(new AbstractAction("Тема офомления...", GUIUtils.PENCIL_ICON) {
+        playerMenu.add(new AbstractAction("Тема офомления...", GUIUtils.PALETTE_ICON) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 PlayerThemeDialog playerThemeDialog = new PlayerThemeDialog(GUIPlayer.this);
