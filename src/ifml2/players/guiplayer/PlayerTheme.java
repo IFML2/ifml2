@@ -9,7 +9,7 @@ import java.util.Map;
 public class PlayerTheme {
     private static final PlayerTheme LIGHT_THEME = new PlayerTheme("Светлая", new Color(0x000000), new Color(0xF0F0F0), "sansserif", 18);
     private static final PlayerTheme DARK_THEME = new PlayerTheme("Тёмная", new Color(0xC0C0C0), new Color(0x303030), "serif", 18);
-    private static final PlayerTheme CONTRAST_THEME = new PlayerTheme("Контрастная", new Color(0x00FF00), new Color(0x120021), "monospaced", 20);
+    private static final PlayerTheme CONTRAST_THEME = new PlayerTheme("Контрастная", new Color(0x00FF00), new Color(0x120021), "sansserif", 20);
     static Map<String, PlayerTheme> DEFAULT_PLAYER_THEMES = new LinkedHashMap<String, PlayerTheme>() {
         {
             put(LIGHT_THEME);

@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileView;
+import javax.swing.plaf.FontUIResource;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
 import javax.xml.bind.ValidationEvent;
@@ -54,6 +55,11 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
 
         setContentPane(mainPanel);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+
+        // меняем размер шрифта главного меню на 14
+        FontUIResource fontUIResource = (FontUIResource) UIManager.get("Menu.font");
+        UIManager.put("Menu.font", new Font(fontUIResource.getFontName(), fontUIResource.getStyle(), 14));
+        UIManager.put("MenuItem.font", new Font(fontUIResource.getFontName(), fontUIResource.getStyle(), 14));
 
         setJMenuBar(createMainMenu());
 
@@ -365,10 +371,6 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
     private JMenuBar createMainMenu()
     {
         JMenuBar mainMenu = new JMenuBar();
-
-        /*// меняем размер шрифта главного меню на 18
-        Font mainMenuFont = mainMenu.getFont();
-        UIManager.put("Menu.font", new Font(mainMenuFont.getFontName(), mainMenuFont.getStyle(), 18));*/
 
         JMenu storyMenu = new JMenu("История");
         storyMenu.add(new AbstractAction("Начать новую историю...", NEW_ELEMENT_ICON)
