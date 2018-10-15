@@ -49,6 +49,13 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
     private boolean isFromTempFile;
     private PlayerTheme _playerTheme;
 
+    static {
+        // меняем размер шрифта главного меню на 14
+        FontUIResource fontUIResource = (FontUIResource) UIManager.get("Menu.font");
+        UIManager.put("Menu.font", new Font(fontUIResource.getFontName(), fontUIResource.getStyle(), 14));
+        UIManager.put("MenuItem.font", new Font(fontUIResource.getFontName(), fontUIResource.getStyle(), 14));
+    }
+
     private GUIPlayer(boolean fromTempFile)
     {
         super(format("%s Плеер %s", RUSSIAN_PRODUCT_NAME, VERSION));
@@ -56,11 +63,6 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
 
         setContentPane(mainPanel);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-
-        // меняем размер шрифта главного меню на 14
-        FontUIResource fontUIResource = (FontUIResource) UIManager.get("Menu.font");
-        UIManager.put("Menu.font", new Font(fontUIResource.getFontName(), fontUIResource.getStyle(), 14));
-        UIManager.put("MenuItem.font", new Font(fontUIResource.getFontName(), fontUIResource.getStyle(), 14));
 
         setJMenuBar(createMainMenu());
 
