@@ -90,7 +90,7 @@ public class VirtualMachine
         }
     }
 
-    private void runProcedure(@NotNull Procedure procedure, List<Variable> parameters) throws IFML2Exception
+    void runProcedure(@NotNull Procedure procedure, List<Variable> parameters) throws IFML2Exception
     {
         try
         {
@@ -145,7 +145,7 @@ public class VirtualMachine
         else
         {
             // not inherited! do as usual...
-            outTextLn("<strong>" + location.getName() + "</strong>");
+            outTextLn(location.getName());
             outTextLn(location.getDescription());
             if (location.getItems().size() > 0)
             {
@@ -184,7 +184,7 @@ public class VirtualMachine
         return result;
     }
 
-    Value resolveSymbol(String symbol) throws IFML2VMException
+    public Value resolveSymbol(String symbol) throws IFML2VMException
     {
         String loweredSymbol = symbol.toLowerCase();
 
@@ -226,7 +226,7 @@ public class VirtualMachine
         engine.outText(text);
     }
 
-    Variable searchGlobalVariable(String name)
+    public Variable searchGlobalVariable(String name)
     {
         return engine.searchGlobalVariable(name);
     }

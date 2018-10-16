@@ -909,7 +909,7 @@
     <procedures>
         <procedure name="ОписатьТекущуюЛокацию" inheritsSystemProcedure="showLocation">
             <procedureBody>
-                <showMessage position="1" type="expression" message="'&lt;strong&gt;' + ТекущаяЛокация.Имя + '&lt;/strong&gt;'"/>
+                <showMessage position="1" type="expression" message="ТекущаяЛокация.Имя"/>
                 <showMessage position="2" type="expression" message="ТекущаяЛокация.Описание"/>
                 <loop position="3" collection="ТекущаяЛокация.Предметы" element="предмет"
                       condition="не предмет.частьПейзажа">

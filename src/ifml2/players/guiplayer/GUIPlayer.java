@@ -14,12 +14,11 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileView;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.StyledDocument;
 import javax.xml.bind.ValidationEvent;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.MessageFormat;
@@ -597,7 +596,7 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
         }
 
         // echo command
-        outputPlainText("<em>&gt; " + command + "</em>\n");
+        outputPlainText("> " + command + "\n");
 
         // scroll to inputted command
         final Point viewPosition = new Point(startLocation.x, startLocation.y);
@@ -620,11 +619,10 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
 
     @Override
     public void outputPlainText(String text) {
-        HTMLDocument document = (HTMLDocument) logTextPane.getStyledDocument();
+        StyledDocument document = logTextPane.getStyledDocument();
         try {
-            String translatedText = text.replace("\n", "<br/>");
-            document.insertAfterEnd(document.getCharacterElement(document.getLength()), translatedText);
-        } catch (BadLocationException | IOException e) {
+            document.insertString(document.getLength(), text, null);
+        } catch (BadLocationException e) {
             LOG.error("Error while inserting string to JTextPane", e);
             throw new RuntimeException(e);
         }

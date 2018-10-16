@@ -39,22 +39,19 @@
             <constraints/>
             <properties>
               <background awt-color="black"/>
-              <contentType value="text/html"/>
               <editable value="false"/>
               <font name="Segoe UI" size="16"/>
               <foreground awt-color="green"/>
               <margin top="4" left="4" bottom="4" right="4"/>
             </properties>
-            <clientProperties>
-              <JEditorPane.honorDisplayProperties class="java.lang.Boolean" value="true"/>
-            </clientProperties>
           </component>
         </children>
       </scrollpane>
     </children>
   </grid>
   <inspectionSuppressions>
-    <suppress inspection="NoLabelFor"/>
-    <suppress inspection="I18nForm" id="26eea"/>
+    <suppress inspection="NoLabelFor" id="c53bd"/>
+    <suppress inspection="NoLabelFor" id="3c7c7"/>
+    <suppress inspection="NoLabelFor" id="ff8d8"/>
   </inspectionSuppressions>
 </form>
