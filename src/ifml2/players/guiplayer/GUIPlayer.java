@@ -51,8 +51,9 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
     static {
         // меняем размер шрифта главного меню на 14
         FontUIResource fontUIResource = (FontUIResource) UIManager.get("Menu.font");
-        UIManager.put("Menu.font", new Font(fontUIResource.getFontName(), fontUIResource.getStyle(), 14));
-        UIManager.put("MenuItem.font", new Font(fontUIResource.getFontName(), fontUIResource.getStyle(), 14));
+        Font derivedFont = fontUIResource.deriveFont(14f);
+        UIManager.put("Menu.font", derivedFont);
+        UIManager.put("MenuItem.font", derivedFont);
     }
 
     private GUIPlayer(boolean fromTempFile)
