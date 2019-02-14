@@ -36,6 +36,8 @@ public class GUIUtils
     public static final Icon STORY_FILE_ICON = getEditorIcon("Edit24.gif");
     public static final Icon CIPHERED_STORY_FILE_ICON = STORY_FILE_ICON;
     public static final Icon LIBRARY_FILE_ICON = STORY_FILE_ICON;
+    public static final Icon PENCIL_ICON = getEditorIcon("pencil_32.png");
+    public static final Icon PALETTE_ICON = getEditorIcon("icons8-paint-palette-24.png");
 
     public static void packAndCenterWindow(@NotNull Window window)
     {
@@ -103,14 +105,7 @@ public class GUIUtils
         action.setEnabled(!list.isSelectionEmpty());
 
         // add listener
-        list.addListSelectionListener(new ListSelectionListener()
-        {
-            @Override
-            public void valueChanged(ListSelectionEvent e)
-            {
-                action.setEnabled(!list.isSelectionEmpty());
-            }
-        });
+        list.addListSelectionListener(e -> action.setEnabled(!list.isSelectionEmpty()));
     }
 
     private static ImageIcon getEditorIcon(String fileName)
@@ -118,7 +113,7 @@ public class GUIUtils
         return new ImageIcon(GUIUtils.class.getResource(IFML2_EDITOR_GUI_IMAGES + fileName));
     }
 
-    public static void showMemoDialog(Window owner, String title, String message)
+    private static void showMemoDialog(Window owner, String title, String message)
     {
         new ShowMemoDialog(owner, title, message);
     }
@@ -128,28 +123,28 @@ public class GUIUtils
         exception.printStackTrace();
         FormatLogger LOG = new FormatLogger(owner.getClass());
         LOG.error(exception.getMessage());
-        String errorMessage = "";
+        StringBuilder errorMessage = new StringBuilder();
         if (!(exception instanceof IFML2LoadXmlException) && exception.getCause() instanceof IFML2LoadXmlException)
         {
             exception = exception.getCause();
         }
         if (exception instanceof IFML2LoadXmlException)
         {
-            errorMessage += "В файле истории есть ошибки:";
+            errorMessage.append("В файле истории есть ошибки:");
             for (ValidationEvent validationEvent : ((IFML2LoadXmlException) exception).getEvents())
             {
-                errorMessage += MessageFormat
+                errorMessage.append(MessageFormat
                         .format("\n\"{0}\" at {1},{2}", validationEvent.getMessage(), validationEvent.getLocator().getLineNumber(),
-                                validationEvent.getLocator().getColumnNumber());
+                                validationEvent.getLocator().getColumnNumber()));
             }
         }
         else
         {
             StringWriter stringWriter = new StringWriter();
             exception.printStackTrace(new PrintWriter(stringWriter));
-            errorMessage += stringWriter.toString();
+            errorMessage.append(stringWriter.toString());
         }
-        showMemoDialog(owner, "Произошла ошибка", errorMessage);
+        showMemoDialog(owner, "Произошла ошибка", errorMessage.toString());
     }
 
     public static class EventComboBoxModelWithNullElement<T> extends DefaultEventComboBoxModel<T>

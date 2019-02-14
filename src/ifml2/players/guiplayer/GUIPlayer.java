@@ -5,13 +5,14 @@ import ifml2.GUIUtils;
 import ifml2.IFML2Exception;
 import ifml2.engine.Engine;
 import ifml2.engine.featureproviders.graphic.IOutputIconProvider;
-import ifml2.om.IFML2LoadXmlException;
 import ifml2.engine.featureproviders.text.IOutputPlainTextProvider;
+import ifml2.om.IFML2LoadXmlException;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileView;
+import javax.swing.plaf.FontUIResource;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
 import javax.xml.bind.ValidationEvent;
@@ -45,6 +46,15 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
     private ListIterator<String> historyIterator = commandHistory.listIterator();
     private String storyFile;
     private boolean isFromTempFile;
+    private PlayerTheme _playerTheme;
+
+    static {
+        // меняем размер шрифта главного меню на 14
+        FontUIResource fontUIResource = (FontUIResource) UIManager.get("Menu.font");
+        Font derivedFont = fontUIResource.deriveFont(14f);
+        UIManager.put("Menu.font", derivedFont);
+        UIManager.put("MenuItem.font", derivedFont);
+    }
 
     private GUIPlayer(boolean fromTempFile)
     {
@@ -97,8 +107,37 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
             }
         });
 
+        // загружаем настройки
+        loadPreferences();
+        // подписываемся на закрытие, чтобы сохранить настройки
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                savePreferences();
+                super.windowClosing(e);
+            }
+        });
+
         commandText.requestFocusInWindow();
         setVisible(true);
+    }
+
+    private void savePreferences() {
+        // настройки темы оформления
+        PlayerPreferences.setPlayerThemeName(_playerTheme.getName());
+   }
+
+    private void loadPreferences() {
+        // настройки темы оформления
+        String playerThemeName = PlayerPreferences.getPlayerThemeName();
+        setPlayerThemeByName(playerThemeName);
+    }
+
+    private void setPlayerThemeByName(String playerThemeName) {
+        if(PlayerTheme.DEFAULT_PLAYER_THEMES.containsKey(playerThemeName))
+        {
+            setPlayerTheme(PlayerTheme.DEFAULT_PLAYER_THEMES.get(playerThemeName));
+        }
     }
 
     private static String acquireStoryFileNameForPlay(String[] args)
@@ -411,7 +450,36 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
             }
         });
         mainMenu.add(storyMenu);
+
+        JMenu playerMenu = new JMenu("Плеер");
+        playerMenu.add(new AbstractAction("Тема офомления...", GUIUtils.PALETTE_ICON) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                PlayerThemeDialog playerThemeDialog = new PlayerThemeDialog(GUIPlayer.this);
+                PlayerTheme playerTheme = playerThemeDialog.ShowDialog(_playerTheme);
+                setPlayerTheme(playerTheme);
+            }
+        });
+        mainMenu.add(playerMenu);
+
         return mainMenu;
+    }
+
+    private void setPlayerTheme(PlayerTheme playerTheme) {
+        if (playerTheme != null )
+        {
+            Color fontColor = playerTheme.getFontColor();
+            Color backgroundColor = playerTheme.getBackgroundColor();
+            Font font = new Font(playerTheme.getFontName(), Font.PLAIN, playerTheme.getFontSize());
+            logTextPane.setForeground(fontColor);
+            logTextPane.setBackground(backgroundColor);
+            logTextPane.setFont(font);
+            commandText.setForeground(fontColor);
+            commandText.setBackground(backgroundColor);
+            commandText.setFont(font);
+            mainPanel.setBackground(backgroundColor);
+            _playerTheme = playerTheme;
+        }
     }
 
     private void focusCommandText()
@@ -481,7 +549,7 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
         historyIterator = commandHistory.listIterator(commandHistory.size());
     }
 
-    public void setStoryFile(String storyFile)
+    private void setStoryFile(String storyFile)
     {
         this.storyFile = storyFile;
         updateTitle();
@@ -505,7 +573,7 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
         setTitle(format("%s Плеер %s -- %s", RUSSIAN_PRODUCT_NAME, VERSION, titleFile));
     }
 
-    public String getCommandText()
+    private String getCommandText()
     {
         String command = commandText.getText();
         commandText.setText("");

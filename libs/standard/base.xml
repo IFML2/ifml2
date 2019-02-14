@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<!--suppress XmlDefaultAttributeValue -->
-<library xmlns="http://toysoft.narod.ru/IFML2Schema" name="Глаголы">
+<library xmlns="http://toysoft.narod.ru/IFML2Schema" name="Базовая библиотека">
     <attribute-definitions>
         <attribute-definition name="частьПейзажа"
                               description="Определяет, пропускать ли упоминание предмета при описании локации."/>
@@ -102,9 +101,7 @@
                     <literalElement position="1">
                         <synonym>осмотреть</synonym>
                         <synonym>осм</synonym>
-                        <synonym>о</synonym>
                         <synonym>исследовать</synonym>
-                        <synonym>изучить</synonym>
                     </literalElement>
                     <objectElement position="2" case="vp" parameter="предмет"/>
                 </template>
@@ -117,10 +114,6 @@
                 <template>
                     <literalElement position="1">
                         <synonym>идти на север</synonym>
-                        <synonym>шагать на север</synonym>
-                        <synonym>перейти на север</synonym>
-                        <synonym>бежать на север</synonym>
-                        <synonym>ползти на север</synonym>
                         <synonym>север</synonym>
                         <synonym>с</synonym>
                     </literalElement>
@@ -133,10 +126,6 @@
                 <template>
                     <literalElement position="1">
                         <synonym>идти на северо-восток</synonym>
-                        <synonym>шагать на северо-восток</synonym>
-                        <synonym>перейти на северо-восток</synonym>
-                        <synonym>бежать на северо-восток</synonym>
-                        <synonym>ползти на северо-восток</synonym>
                         <synonym>северо-восток</synonym>
                         <synonym>св</synonym>
                     </literalElement>
@@ -161,10 +150,6 @@
                 <template>
                     <literalElement position="1">
                         <synonym>идти на юго-восток</synonym>
-                        <synonym>шагать на юго-восток</synonym>
-                        <synonym>перейти на юго-восток</synonym>
-                        <synonym>бежать на юго-восток</synonym>
-                        <synonym>ползти на юго-восток</synonym>
                         <synonym>юго-восток</synonym>
                         <synonym>юв</synonym>
                     </literalElement>
@@ -177,10 +162,6 @@
                 <template>
                     <literalElement position="1">
                         <synonym>идти на юг</synonym>
-                        <synonym>шагать на юг</synonym>
-                        <synonym>перейти на юг</synonym>
-                        <synonym>бежать на юг</synonym>
-                        <synonym>ползти на юг</synonym>
                         <synonym>юг</synonym>
                         <synonym>ю</synonym>
                     </literalElement>
@@ -193,10 +174,6 @@
                 <template>
                     <literalElement position="1">
                         <synonym>идти на юго-запад</synonym>
-                        <synonym>шагать на юго-запад</synonym>
-                        <synonym>перейти на юго-запад</synonym>
-                        <synonym>бежать на юго-запад</synonym>
-                        <synonym>ползти на юго-запад</synonym>
                         <synonym>юго-запад</synonym>
                         <synonym>юз</synonym>
                     </literalElement>
@@ -209,10 +186,6 @@
                 <template>
                     <literalElement position="1">
                         <synonym>идти на запад</synonym>
-                        <synonym>шагать на запад</synonym>
-                        <synonym>перейти на запад</synonym>
-                        <synonym>бежать на запад</synonym>
-                        <synonym>ползти на запад</synonym>
                         <synonym>запад</synonym>
                         <synonym>з</synonym>
                     </literalElement>
@@ -225,10 +198,6 @@
                 <template>
                     <literalElement position="1">
                         <synonym>идти на северо-запад</synonym>
-                        <synonym>шагать на северо-запад</synonym>
-                        <synonym>перейти на северо-запад</synonym>
-                        <synonym>бежать на северо-запад</synonym>
-                        <synonym>ползти на северо-запад</synonym>
                         <synonym>северо-запад</synonym>
                         <synonym>сз</synonym>
                     </literalElement>
@@ -242,10 +211,6 @@
                     <literalElement position="1">
                         <synonym>идти вниз</synonym>
                         <synonym>спуститься вниз</synonym>
-                        <synonym>шагать вниз</synonym>
-                        <synonym>перейти вниз</synonym>
-                        <synonym>бежать вниз</synonym>
-                        <synonym>ползти вниз</synonym>
                         <synonym>спуститься</synonym>
                         <synonym>вниз</synonym>
                         <synonym>вн</synonym>
@@ -260,16 +225,6 @@
                     <literalElement position="1">
                         <synonym>идти наверх</synonym>
                         <synonym>подняться наверх</synonym>
-                        <synonym>шагать наверх</synonym>
-                        <synonym>перейти наверх</synonym>
-                        <synonym>бежать наверх</synonym>
-                        <synonym>ползти наверх</synonym>
-                        <synonym>идти вверх</synonym>
-                        <synonym>подняться вверх</synonym>
-                        <synonym>шагать вверх</synonym>
-                        <synonym>перейти вверх</synonym>
-                        <synonym>бежать вверх</synonym>
-                        <synonym>ползти вверх</synonym>
                         <synonym>подняться</synonym>
                         <synonym>наверх</synonym>
                         <synonym>вверх</synonym>
@@ -286,8 +241,6 @@
                     <literalElement position="1">
                         <synonym>инвентарий</synonym>
                         <synonym>инвентарь</synonym>
-                        <synonym>котомка</synonym>
-                        <synonym>вещи</synonym>
                         <synonym>инв</synonym>
                         <synonym>и</synonym>
                     </literalElement>
@@ -364,7 +317,6 @@
                         <synonym>бросить</synonym>
                         <synonym>выбросить</synonym>
                         <synonym>кинуть</synonym>
-                        <synonym>выкинуть</synonym>
                     </literalElement>
                     <objectElement position="2" case="vp" parameter="предмет"/>
                 </template>
@@ -737,56 +689,10 @@
         </action>
 
         <!-- Положить -->
-        <action name="положить" description="положить/поставить [что, ВП] (на пол)/(на землю) / положить/поставить/поместить/водрузить/сунуть/засунуть/запихать ([что, ВП] на/в/в(о) [что, ВП] / на/в/в(о) [что, ВП] [что, ВП])">
+        <action name="положить" description="положить [ВП] в(о) [ВП] / положить [ВП] на [ВП]">
             <templates>
                 <template>
-                    <!-- положить/поставить [что, ВП] (на пол)/(на землю) -->
-                    <literalElement position="1">
-                        <synonym>положить</synonym>
-                        <synonym>поставить</synonym>
-                    </literalElement>
-                    <objectElement position="2" case="vp" parameter="чтоПоложить"/>
-                    <literalElement position="3" parameter="наПол">
-                        <synonym>на пол</synonym>
-                        <synonym>на землю</synonym>
-                    </literalElement>
-                </template>
-                <template>
-                    <!-- положить/поставить/поместить/сунуть/засунуть/запихать что-то в/во что-то -->
-                    <literalElement position="1">
-                        <synonym>положить</synonym>
-                        <synonym>поставить</synonym>
-                        <synonym>поместить</synonym>
-                        <synonym>сунуть</synonym>
-                        <synonym>засунуть</synonym>
-                        <synonym>запихать</synonym>
-                    </literalElement>
-                    <objectElement position="2" case="vp" parameter="чтоПоложить"/>
-                    <literalElement position="3" parameter="предлог">
-                        <synonym>в</synonym>
-                        <synonym>во</synonym>
-                    </literalElement>
-                    <objectElement position="4" case="vp" parameter="кудаПоложить"/>
-                </template>
-                <template>
-                   <!-- положить/поставить/поместить/сунуть/засунуть/запихать в/во что-то что-то -->
-                    <literalElement position="1">
-                        <synonym>положить</synonym>
-                        <synonym>поставить</synonym>
-                        <synonym>поместить</synonym>
-                        <synonym>сунуть</synonym>
-                        <synonym>засунуть</synonym>
-                        <synonym>запихать</synonym>
-                    </literalElement>
-                    <literalElement position="2" parameter="предлог">
-                        <synonym>в</synonym>
-                        <synonym>во</synonym>
-                    </literalElement>
-                    <objectElement position="3" case="vp" parameter="кудаПоложить"/>
-                    <objectElement position="4" case="vp" parameter="чтоПоложить"/>
-                </template>
-                <template>
-                    <!-- положить/поставить/поместить/водрузить что-то на что-то -->
+                    <!-- Положить на/в/во что-то -->
                     <literalElement position="1">
                         <synonym>положить</synonym>
                         <synonym>поставить</synonym>
@@ -795,64 +701,42 @@
                     </literalElement>
                     <objectElement position="2" case="vp" parameter="чтоПоложить"/>
                     <literalElement position="3" parameter="предлог">
+                        <synonym>во</synonym>
+                        <synonym>в</synonym>
                         <synonym>на</synonym>
                     </literalElement>
                     <objectElement position="4" case="vp" parameter="кудаПоложить"/>
-                </template>
-                <template>
-                    <!-- положить/поставить/поместить/водрузить/сунуть/засунуть/запихать на что-то что-то -->
-                    <literalElement position="1">
-                        <synonym>положить</synonym>
-                        <synonym>поставить</synonym>
-                        <synonym>поместить</synonym>
-                        <synonym>водрузить</synonym>
-                    </literalElement>
-                    <literalElement position="2" parameter="предлог">
-                        <synonym>на</synonym>
-                    </literalElement>
-                    <objectElement position="3" case="vp" parameter="кудаПоложить"/>
-                    <objectElement position="4" case="vp" parameter="чтоПоложить"/>
                 </template>
             </templates>
             <restrictions>
-                <restriction condition="чтоПоложить = кудаПоложить">
-                    <reaction>
-                        <showMessage type="expression" message="'Нельзя поместить предмет ' + предлог + ' самого себя.'"/>
-                    </reaction>
-                </restriction>
-                <restriction condition="не чтоПоложить в инвентарь">
-                    <reaction>
-                        <showMessage position="1" type="expression" message="'У Вас нет ' + чтоПоложить.рп + '.'"/>
-                    </reaction>
-                </restriction>
                 <restriction condition="чтоПоложить.недоступен">
                     <reaction>
                         <showMessage position="1" type="text" message="Это невозможно. Предмет недоступен."/>
                     </reaction>
                 </restriction>
-                <restriction condition="чтоПоложить.надеваемый и чтоПоложить.надет">
+                <!-- todo redo in case of lazy evaluation -->
+                <!--restriction condition="чтоПоложить.надеваемый и чтоПоложить.надет">
                     <reaction>
                         <showMessage type="expression" message="чтоПоложить.ип + ' надет(а,о). Сначала нужно снять.'" beginWithCap="true"/>
-                        <!-- todo: после ввода рода и числа заменить "надет(а,о)" на нормальное окончание по полу -->
                     </reaction>
-                </restriction>
-                <restriction condition="предлог = 'на' и кудаПоложить &lt;&gt; ПУСТО и не кудаПоложить.поверхность">
+                </restriction-->
+                <restriction condition="предлог = 'на' и не кудаПоложить.поверхность">
                     <reaction>
                         <showMessage position="1" type="expression"
                                      message="'На ' + кудаПоложить.ВП + ' нельзя ничего класть.'"/>
                     </reaction>
                 </restriction>
-                <!-- todo переписать, когда будет ИЛИ и скобки или литералы массивов (для проверки вхождения) -->
-                <restriction condition="предлог = 'в' и кудаПоложить &lt;&gt; ПУСТО и не кудаПоложить.контейнер">
+                <!-- todo переписать, когда будет ИЛИ -->
+                <restriction condition="предлог = 'в' и не кудаПоложить.контейнер">
                     <reaction>
                         <showMessage position="1" type="expression"
                                      message="'В ' + кудаПоложить.ВП + ' нельзя ничего класть.'"/>
                     </reaction>
                 </restriction>
-                <restriction condition="предлог = 'во' и кудаПоложить &lt;&gt; ПУСТО и не кудаПоложить.контейнер">
+                <restriction condition="предлог = 'во' и не кудаПоложить.контейнер">
                     <reaction>
                         <showMessage position="1" type="expression"
-                                     message="'Во ' + кудаПоложить.ВП + ' нельзя ничего класть.'"/>
+                                     message="'В ' + кудаПоложить.ВП + ' нельзя ничего класть.'"/>
                     </reaction>
                 </restriction>
             </restrictions>
@@ -1266,6 +1150,17 @@
             </procedureVariables>
             <procedureBody>
                 <showMessage position="1" type="text" message="Сижу, и что дальше?"/>
+                <!--ifml2:showMessage position="2" type="expression" message="'Счётчик = ' + счётчик"/-->
+                <if position="3" condition="счётчик = 1">
+                    <then>
+                        <!--ifml2:showMessage position="1" type="text" message="Cчётчик = 1!"/-->
+                    </then>
+                </if>
+                <var position="4" name="счётчик" value="счётчик + 1"/>
+                <!--ifml2:showMessage position="5" type="expression" message="'Счётчик = ' + счётчик"/-->
+                <var position="6" name="локальная" value="2"/>
+                <var position="7" name="локальная" value="локальная + 1"/>
+                <!--ifml2:showMessage position="8" type="expression" message="'Локальная = ' + локальная"/-->
             </procedureBody>
         </procedure>
         <procedure name="Курить">
@@ -1468,46 +1363,38 @@
                 <parameter name="чтоПоложить"/>
                 <parameter name="предлог"/>
                 <parameter name="кудаПоложить"/>
-                <parameter name="наПол"/>
             </parameters>
             <procedureBody>
-                <if condition="наПол &lt;&gt; ПУСТО">
+                <if condition="предлог = 'на'">
                     <then>
-                        <moveItem item="чтоПоложить" to="ТекущаяЛокация.предметы"/>
+                        <moveItem item="чтоПоложить" to="кудаПоложить.предметыСверху"/>
                         <showMessage type="expression"
-                                     message="'Вы положили ' + чтоПоложить.вп + ' на пол.'"/>
+                                     message="'Вы положили ' + чтоПоложить.вп + ' ' + предлог + ' ' + кудаПоложить.вп + '.'"/>
                     </then>
-                    <else>
-                        <if condition="предлог = 'на'">
+                </if>
+                <if condition="предлог = 'в' или предлог = 'во'">
+                    <then>
+                        <var name="можноЛиКласть" value="да"/>
+
+                        <if condition="кудаПоложить.открываемый">
                             <then>
-                                <moveItem item="чтоПоложить" to="кудаПоложить.предметыСверху"/>
+                                <if condition="не кудаПоложить.открыт">
+                                    <then>
+                                        <showMessage type="expression" beginWithCap="true" message="кудаПоложить + ' закрыт.'"/>
+                                        <var name="можноЛиКласть" value="нет"/>
+                                    </then>
+                                </if>
+                            </then>
+                        </if>
+
+                        <if condition="можноЛиКласть">
+                            <then>
+                                <moveItem item="чтоПоложить" to="кудаПоложить.предметыВнутри"/>
                                 <showMessage type="expression"
                                              message="'Вы положили ' + чтоПоложить.вп + ' ' + предлог + ' ' + кудаПоложить.вп + '.'"/>
                             </then>
-                            <else>
-                                <if condition="предлог = 'в' или предлог = 'во'">
-                                    <then>
-                                        <var name="можноЛиКласть" value="да"/>
-
-                                        <if condition="кудаПоложить.открываемый и не кудаПоложить.открыт">
-                                            <then>
-                                                <showMessage type="expression" beginWithCap="true" message="кудаПоложить + ' закрыт.'"/>
-                                                <var name="можноЛиКласть" value="нет"/>
-                                            </then>
-                                        </if>
-
-                                        <if condition="можноЛиКласть">
-                                            <then>
-                                                <moveItem item="чтоПоложить" to="кудаПоложить.предметыВнутри"/>
-                                                <showMessage type="expression"
-                                                             message="'Вы положили ' + чтоПоложить.вп + ' ' + предлог + ' ' + кудаПоложить.вп + '.'"/>
-                                            </then>
-                                        </if>
-                                    </then>
-                                </if>
-                            </else>
                         </if>
-                    </else>
+                    </then>
                 </if>
             </procedureBody>
         </procedure>

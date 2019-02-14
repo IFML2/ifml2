@@ -9,12 +9,12 @@ import ifml2.vm.SymbolResolver;
 import ifml2.vm.values.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
 
 import java.util.Collections;
 
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -105,7 +105,7 @@ public class ExpressionCalculatorTest
     {
         final Location mockLocation = mock(Location.class);
         when(mockSymbolResolver.resolveSymbol("локация")).thenReturn(new ObjectValue(mockLocation));
-        when(mockLocation.getMemberValue(eq("свойство"), Matchers.<SymbolResolver>any())).thenReturn(new TextValue("значение"));
+        when(mockLocation.getMemberValue(eq("свойство"), ArgumentMatchers.any())).thenReturn(new TextValue("значение"));
 
         Value result = calculate("локация.свойство");
 
@@ -123,7 +123,7 @@ public class ExpressionCalculatorTest
     {
         final IFMLObject mockObject = mock(IFMLObject.class);
         when(mockSymbolResolver.resolveSymbol("объект")).thenReturn(new ObjectValue(mockObject));
-        when(mockObject.getMemberValue(eq("свойство"), Matchers.<SymbolResolver>any())).thenReturn(new TextValue("значение"));
+        when(mockObject.getMemberValue(eq("свойство"), ArgumentMatchers.any())).thenReturn(new TextValue("значение"));
 
         Value result = calculate("объект.свойство");
 
