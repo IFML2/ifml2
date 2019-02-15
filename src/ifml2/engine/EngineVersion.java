@@ -2,5 +2,5 @@ package ifml2.engine;
 
 public interface EngineVersion
 {
-    String VERSION = "Выпуск [Храм/разработка]";
+    String VERSION = "РАЗРАБОТКА/ХРАМ";
 }
