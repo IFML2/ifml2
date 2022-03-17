@@ -185,7 +185,6 @@ public class Editor extends JFrame
 
     private void loadStory(final String storyFilePath)
     {
-        // todo remake to SwingWorker
         new Thread(() -> { //todo rewrite using SwingWorker
             Cursor previousCursor = mainPanel.getCursor();
             mainPanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));

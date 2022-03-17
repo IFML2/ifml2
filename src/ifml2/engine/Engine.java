@@ -400,42 +400,27 @@ public class Engine {
     }
 
     private List<Variable> convertFormalElementsToArguments(@NotNull List<FormalElement> formalElements) throws IFML2Exception {
-        /*todo rewrite to streams...
-        Stream<Value<?>> argToValues = formalElements.stream()
-                .filter(formalElement -> "".equals(formalElement.getParameterName()))
-                .map(formalElement -> {
-                    switch (formalElement.type) {
-                        case LITERAL:
-                            return new TextValue(formalElement.getLiteral());
-                        case OBJECT:
-                            return new ObjectValue(formalElement.getObject());
-                        default:
-                            return (Value)null;
-                    }
-                })
-                .filter(Objects::nonNull)
-                .collect();*/
-
-        List<Variable> parameters = new ArrayList<>(formalElements.size());
+        List<Variable> arguments = new ArrayList<>(formalElements.size());
         for (FormalElement formalElement : formalElements) {
-            if (formalElement.getParameterName() != null) {
-                Value value;
-                FormalElement.Type formalElementType = formalElement.getType();
-                switch (formalElementType) {
-                    case LITERAL:
-                        value = new TextValue(formalElement.getLiteral());
-                        break;
-                    case OBJECT:
-                        value = new ObjectValue(formalElement.getObject());
-                        break;
-                    default:
-                        throw new IFML2Exception("Внутренняя ошибка: Неизвестный тип формального элемента: {0}", formalElementType);
-                }
-                parameters.add(new Variable(formalElement.getParameterName(), value));
+            if (formalElement.getParameterName() == null) {
+                continue;
             }
+            Value value;
+            FormalElement.Type formalElementType = formalElement.getType();
+            switch (formalElementType) {
+                case LITERAL:
+                    value = new TextValue(formalElement.getLiteral());
+                    break;
+                case OBJECT:
+                    value = new ObjectValue(formalElement.getObject());
+                    break;
+                default:
+                    throw new IFML2Exception("Внутренняя ошибка: Неизвестный тип формального элемента: {0}", formalElementType);
+            }
+            arguments.add(new Variable(formalElement.getParameterName(), value));
         }
 
-        return parameters;
+        return arguments;
     }
 
     public void outEngDebug(String message, Object... args) {
