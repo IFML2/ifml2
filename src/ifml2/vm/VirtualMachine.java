@@ -58,9 +58,9 @@ public class VirtualMachine
         this.engine = engine;
     }
 
-    public void runAction(@NotNull Action action, List<Variable> parameters) throws IFML2Exception
+    public void runAction(@NotNull Action action, List<Variable> arguments) throws IFML2Exception
     {
-        runProcedure(action.getProcedureCall().getProcedure(), parameters);
+        runProcedure(action.getProcedureCall().getProcedure(), arguments);
     }
 
     public void runProcedureWithoutParameters(@NotNull Procedure procedure) throws IFML2Exception
