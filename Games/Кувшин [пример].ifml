@@ -9,6 +9,9 @@
             <var value="0" name="броски"/>
             <var value="0" name="глоб1"/>
         </globalVars>
+        <musicList>
+            <music name="Пример" fileName="sample-12s.mp3"/>
+        </musicList>
     </storyOptions>
     <procedures>
         <procedure name="БроситьКубик">
