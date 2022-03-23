@@ -571,6 +571,7 @@
             <element name="storyDescription" type="ifml2:storyDescriptionType"/>
             <element name="globalVars" type="ifml2:varsType" minOccurs="0"/>
             <xs:element name="systemCommandsDisableOption" type="ifml2:systemCommandsDisableOptionType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="musicList" type="ifml2:musicListType" minOccurs="0" maxOccurs="1"/>
         </all>
     </complexType>
 
@@ -650,5 +651,15 @@
     <xs:complexType name="systemCommandsDisableOptionType">
         <xs:attribute type="xs:boolean" name="DisableHelp"/>
         <xs:attribute type="xs:boolean" name="DisableDebug"/>
+    </xs:complexType>
+
+    <xs:complexType name="musicListType">
+        <sequence>
+            <xs:element name="music" type="ifml2:musicType" minOccurs="0" maxOccurs="unbounded"/>
+        </sequence>
+    </xs:complexType>
+    <xs:complexType name="musicType">
+        <xs:attribute name="name" type="xs:string"/>
+        <xs:attribute name="fileName" type="xs:string"/>
     </xs:complexType>
 </schema>
