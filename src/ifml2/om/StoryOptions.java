@@ -204,7 +204,7 @@ public class StoryOptions
     }
 
     @XmlAccessorType(NONE)
-    private static class Music {
+    public static class Music {
         @XmlAttribute(name = "name")
         private String name;
 

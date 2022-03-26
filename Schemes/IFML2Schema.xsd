@@ -274,6 +274,7 @@
             <element name="rollDice" type="ifml2:instructionRollDiceType"/>
             <element name="runProcedure" type="ifml2:instructionRunProcedureType"/>
             <xs:element name="showPicture" type="ifml2:instructionShowPictureType"/>
+            <xs:element name="playMusic" type="ifml2:instructionPlayMusicType"/>
         </choice>
     </complexType>
 
@@ -476,6 +477,14 @@
                 <xs:attribute name="maxWidth" type="xs:int" use="optional"/>
             </extension>
         </complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="instructionPlayMusicType">
+        <xs:complexContent>
+            <extension base="ifml2:instructionType">
+                <xs:attribute name="name" type="xs:string" use="required"/>
+            </extension>
+        </xs:complexContent>
     </xs:complexType>
 
     <element name="library" type="ifml2:libraryType"/>
