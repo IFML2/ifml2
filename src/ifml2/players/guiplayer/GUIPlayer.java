@@ -5,8 +5,10 @@ import ifml2.GUIUtils;
 import ifml2.IFML2Exception;
 import ifml2.engine.Engine;
 import ifml2.engine.featureproviders.graphic.IOutputIconProvider;
+import ifml2.engine.featureproviders.music.IPlayMusicProvider;
 import ifml2.engine.featureproviders.text.IOutputPlainTextProvider;
 import ifml2.om.IFML2LoadXmlException;
+import ifml2.players.guiplayer.music.MusicManager;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
@@ -31,7 +33,7 @@ import static ifml2.engine.EngineVersion.VERSION;
 import static java.lang.String.format;
 import static javax.swing.JOptionPane.*;
 
-public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutputIconProvider
+public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutputIconProvider, IPlayMusicProvider
 {
     private static final Logger LOG = Logger.getLogger(GUIPlayer.class);
     private static final String START_ANEW_COMMAND = "заново!";
@@ -55,6 +57,8 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
         UIManager.put("Menu.font", derivedFont);
         UIManager.put("MenuItem.font", derivedFont);
     }
+
+    private final MusicManager musicManager = new MusicManager(MusicManager.CreateJavaZoomPlayer());
 
     private GUIPlayer(boolean fromTempFile)
     {
@@ -633,5 +637,10 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
     public void outputIcon(Icon icon) {
         logTextPane.setCaretPosition(logTextPane.getStyledDocument().getLength());
         logTextPane.insertIcon(icon);
+    }
+
+    @Override
+    public void startMusic(String musicName, File musicFile) {
+        musicManager.StartPlay(musicName, musicFile);
     }
 }

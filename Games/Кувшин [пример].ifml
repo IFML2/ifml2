@@ -115,6 +115,12 @@
                 <parameter name="Пар2"/>
             </parameters>
         </procedure>
+        <procedure name="ВключитьМузыку">
+            <procedureBody>
+                <playMusic name="Пример"/>
+                <showMessage type="text" message="Заиграла музыка..."/>
+            </procedureBody>
+        </procedure>
     </procedures>
     <libraries>
         <library>standard/verbs.xml</library>
@@ -287,6 +293,16 @@
             </templates>
             <procedureCall procedure="Проц"/>
             <restrictions/>
+        </action>
+        <action name="музыка">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>включить музыку</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="ВключитьМузыку"/>
         </action>
     </actions>
 </story>
