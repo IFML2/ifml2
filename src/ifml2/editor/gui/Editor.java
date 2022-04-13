@@ -381,6 +381,24 @@ public class Editor extends JFrame
             }
         });
         storyMenu.addSeparator();
+        storyMenu.add(new AbstractAction("Музыка") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                EventList<StoryOptions.Music> musicList = story.getStoryOptions().getMusicList();
+                MusicListEditor musicListEditor = new MusicListEditor(Editor.this, musicList, story.getDataHelper());
+                if (musicListEditor.showDialog()){
+                    try {
+                        musicListEditor.updateData(musicList);
+                        markStoryEdited();
+                    }
+                    catch (Throwable ex)
+                    {
+                        GUIUtils.ReportError(Editor.this, ex);
+                    }
+                }
+            }
+        });
+        storyMenu.addSeparator();
         storyMenu.add(new AbstractAction("Запустить историю в Плеере...", GUIUtils.PLAY_ICON)
         {
             @Override

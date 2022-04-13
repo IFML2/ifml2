@@ -5,7 +5,7 @@ import ca.odell.glazedlists.EventList;
 import ifml2.vm.instructions.SetVarInstruction;
 
 import javax.xml.bind.annotation.*;
-import java.util.ArrayList;
+import java.text.MessageFormat;
 
 import static javax.xml.bind.annotation.XmlAccessType.NONE;
 
@@ -38,7 +38,7 @@ public class StoryOptions
 
     @XmlElementWrapper(name = "globalVars")
     @XmlElement(name = "var")
-    private EventList<SetVarInstruction> vars = new BasicEventList<SetVarInstruction>();
+    private EventList<SetVarInstruction> vars = new BasicEventList<>();
 
     public EventList<SetVarInstruction> getVars()
     {
@@ -60,13 +60,13 @@ public class StoryOptions
 
     @XmlElementWrapper(name = "musicList")
     @XmlElement(name = "music")
-    private ArrayList<Music> musicList = new ArrayList<>();
+    private EventList<Music> musicList = new BasicEventList<>();
 
-    public ArrayList<Music> getMusicList() {
+    public EventList<Music> getMusicList() {
         return musicList;
     }
 
-    public void setMusicList(ArrayList<Music> musicList) { this.musicList = musicList; }
+    public void setMusicList(EventList<Music> musicList) { this.musicList = musicList; }
 
     @XmlAccessorType(NONE)
     public static class StartLocationOption
@@ -225,6 +225,11 @@ public class StoryOptions
 
         public void setFileName(String fileName) {
             this.fileName = fileName;
+        }
+
+        @Override
+        public String toString() {
+            return MessageFormat.format("\"{0}\" по пути {1}", name, fileName);
         }
     }
 }
