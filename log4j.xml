@@ -9,7 +9,7 @@
         </layout>
     </appender>
     <appender name="rollingFile" class="org.apache.log4j.RollingFileAppender">
-        <param name="File" value="IFML2.log"/>
+        <param name="File" value="${user.home}/IFML2.log"/>
         <param name="Append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d [%t] %-5p %c %m%n"/>
@@ -19,6 +19,6 @@
     <root>
         <priority value="trace"/>
         <appender-ref ref="rollingFile"/>
-        <!--appender-ref ref="console" /-->
+        <appender-ref ref="console" />
     </root>
 </log4j:configuration>
