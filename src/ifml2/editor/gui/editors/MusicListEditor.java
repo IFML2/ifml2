@@ -2,6 +2,9 @@ package ifml2.editor.gui.editors;
 
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
+import ifml2.CommonConstants;
+import ifml2.CommonUtils;
+import ifml2.GUIUtils;
 import ifml2.editor.IFML2EditorException;
 import ifml2.editor.gui.AbstractEditor;
 import ifml2.editor.gui.forms.ListEditForm;
@@ -11,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.util.List;
 
 import static ifml2.om.Word.Gender.FEMININE;
@@ -35,8 +39,21 @@ public class MusicListEditor extends AbstractEditor<List<StoryOptions.Music>> {
     private void createUIComponents() {
         musicListEditForm = new ListEditForm<StoryOptions.Music>(this, "музыку", "музыки", FEMININE, StoryOptions.Music.class) {
             @Override
-            protected StoryOptions.Music createElement() throws Exception {
-                return null; //fixme
+            protected StoryOptions.Music createElement() {
+                File file = GUIUtils.selectFile(MusicListEditor.this, CommonUtils.getGamesDirectory(),
+                        CommonConstants.MUSIC_FILE_FILTER_NAME, CommonConstants.MP3_EXTENSION, GUIUtils.MUSIC_FILE_ICON);
+                if (file == null) {
+                    return null;
+                }
+
+                String musicName = GUIUtils.inputUniqueName(MusicListEditor.this, "Название музыки:",
+                        musicListClone, "Музыка с именем {0} уже есть.", StoryOptions.Music::getName);
+
+                if (musicName == null) {
+                    return null;
+                }
+
+                return new StoryOptions.Music(musicName, file.getName());
             }
 
             @Override

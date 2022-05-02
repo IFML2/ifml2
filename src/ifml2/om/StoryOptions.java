@@ -208,6 +208,14 @@ public class StoryOptions
         @XmlAttribute(name = "name")
         private String name;
 
+        public Music() {
+        }
+
+        public Music(String name, String fileName) {
+            this.name = name;
+            this.fileName = fileName;
+        }
+
         public String getName() {
             return name;
         }
