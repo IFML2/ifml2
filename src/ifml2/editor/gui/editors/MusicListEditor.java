@@ -40,25 +40,37 @@ public class MusicListEditor extends AbstractEditor<List<StoryOptions.Music>> {
         musicListEditForm = new ListEditForm<StoryOptions.Music>(this, "музыку", "музыки", FEMININE, StoryOptions.Music.class) {
             @Override
             protected StoryOptions.Music createElement() {
-                File file = GUIUtils.selectFile(MusicListEditor.this, CommonUtils.getGamesDirectory(),
-                        CommonConstants.MUSIC_FILE_FILTER_NAME, CommonConstants.MP3_EXTENSION, GUIUtils.MUSIC_FILE_ICON);
-                if (file == null) {
-                    return null;
-                }
-
-                String musicName = GUIUtils.inputUniqueName(MusicListEditor.this, "Название музыки:",
-                        musicListClone, "Музыка с именем {0} уже есть.", StoryOptions.Music::getName);
-
-                if (musicName == null) {
-                    return null;
-                }
-
-                return new StoryOptions.Music(musicName, file.getName());
+                StoryOptions.Music music = new StoryOptions.Music();
+                return editMusic(music) ? music : null;
             }
 
             @Override
-            protected boolean editElement(StoryOptions.Music selectedElement) throws Exception {
-                return super.editElement(selectedElement); //fixme
+            protected boolean editElement(StoryOptions.Music selectedElement) {
+                return editMusic(selectedElement);
+            }
+
+            private boolean editMusic(StoryOptions.@NotNull Music music){
+                String fileName = music.getFileName();
+                File previousFile = fileName != null ? new File(CommonUtils.getGamesDirectory(), fileName) : null;
+                File file = GUIUtils.selectFile(MusicListEditor.this, CommonUtils.getGamesDirectory(),
+                        CommonConstants.MUSIC_FILE_FILTER_NAME, CommonConstants.MP3_EXTENSION,
+                        GUIUtils.MUSIC_FILE_ICON, previousFile);
+                if (file == null) {
+                    return false;
+                }
+
+                String name = music.getName();
+                String musicName = GUIUtils.inputUniqueName(MusicListEditor.this, "Название музыки:", musicListClone,
+                        StoryOptions.Music::getName, "Музыка с именем {0} уже есть.", name);
+
+                if (musicName == null) {
+                    return false;
+                }
+
+                music.setFileName(file.getName());
+                music.setName(musicName);
+
+                return true;
             }
         };
     }

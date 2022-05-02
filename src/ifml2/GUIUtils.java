@@ -152,7 +152,8 @@ public class GUIUtils
         showMemoDialog(owner, "Произошла ошибка", errorMessage.toString());
     }
 
-    public static @Nullable File selectFile(Component parentComponent, String directory, final String filterName, final String extension, final Icon fileIcon) {
+    public static @Nullable File selectFile(Component parentComponent, String directory, final String filterName,
+            final String extension, final Icon fileIcon, @Nullable File previousFile) {
         JFileChooser fileChooser = new JFileChooser(directory);
         fileChooser.setFileFilter(new FileFilter() {
             @Override
@@ -171,6 +172,9 @@ public class GUIUtils
                 return f.isDirectory() ? GUIUtils.DIRECTORY_ICON : fileIcon;
             }
         });
+        if (previousFile != null && previousFile.exists()){
+            fileChooser.setSelectedFile(previousFile);
+        }
         if (fileChooser.showOpenDialog(parentComponent) == JFileChooser.APPROVE_OPTION) {
             return fileChooser.getSelectedFile();
         }
@@ -187,16 +191,19 @@ public class GUIUtils
             }
             name = name.trim();
             if ("".equalsIgnoreCase(name)) {
-                JOptionPane.showMessageDialog(parentComponent, "Значение не должно быть пустым.", "Пустое значение", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(parentComponent, "Значение не должно быть пустым.", "Пустое значение",
+                        JOptionPane.WARNING_MESSAGE);
             }
         } while ("".equalsIgnoreCase(name));
 
         return name;
     }
 
-    public static <T> @Nullable String inputUniqueName(Component parentComponent, String prompt, Collection<T> uniqueCollection, String duplicateFormatMessage, Function<T, String> nameMapper) {
+    public static <T> @Nullable String inputUniqueName(Component parentComponent, String prompt,
+            Collection<T> uniqueCollection, Function<T, String> nameMapper, String duplicateFormatMessage,
+            @Nullable String previousName) {
         boolean isNameNotUnique;
-        String name = null;
+        String name = previousName;
         do {
             name = inputName(parentComponent, prompt, name);
             if (name == null) {
@@ -204,9 +211,13 @@ public class GUIUtils
             }
 
             String finalName = name;
-            isNameNotUnique = uniqueCollection.stream().anyMatch(t -> nameMapper.apply(t).equalsIgnoreCase(finalName));
+            isNameNotUnique = uniqueCollection.stream().anyMatch(t -> {
+                String existingName = nameMapper.apply(t);
+                return !existingName.equalsIgnoreCase(previousName) && existingName.equalsIgnoreCase(finalName);
+            });
             if (isNameNotUnique) {
-                JOptionPane.showMessageDialog(parentComponent, MessageFormat.format(duplicateFormatMessage, name), "Уже есть", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(parentComponent, MessageFormat.format(duplicateFormatMessage, name),
+                        "Уже есть", JOptionPane.WARNING_MESSAGE);
             }
         } while (isNameNotUnique);
         return name;
