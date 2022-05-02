@@ -6,7 +6,6 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/unittests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/ifml2/editor/gui/images" type="java-resource" />
-      <excludeFolder url="file://$MODULE_DIR$/JSmooth" />
       <excludeFolder url="file://$MODULE_DIR$/bitrock" />
       <excludeFolder url="file://$MODULE_DIR$/launch4j" />
       <excludeFolder url="file://$MODULE_DIR$/lib" />
@@ -15,10 +14,10 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="forms_rt" level="project" />
-    <orderEntry type="library" name="log4j:log4j:Release" level="project" />
-    <orderEntry type="library" name="net.java.dev.glazedlists:glazedlists_java15:Release" level="project" />
-    <orderEntry type="library" name="org.mockito:mockito-core:1.9.7" level="project" />
-    <orderEntry type="library" name="org.jetbrains:annotations:Release" level="project" />
+    <orderEntry type="library" name="log4j:log4j:1.2.17" level="project" />
+    <orderEntry type="library" name="net.java.dev.glazedlists:glazedlists_java15:1.9.1" level="project" />
+    <orderEntry type="library" name="org.mockito:mockito-core:4.5.1" level="project" />
+    <orderEntry type="library" name="org.jetbrains:annotations:23.0.0" level="project" />
     <orderEntry type="module-library" scope="TEST">
       <library name="JUnit4">
         <CLASSES>
