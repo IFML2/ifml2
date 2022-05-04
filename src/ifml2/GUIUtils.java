@@ -42,7 +42,8 @@ public class GUIUtils
     public static final Icon LIBRARY_FILE_ICON = STORY_FILE_ICON;
     public static final Icon PENCIL_ICON = getEditorIcon("pencil_32.png");
     public static final Icon PALETTE_ICON = getEditorIcon("icons8-paint-palette-24.png");
-    public static final Icon MUSIC_FILE_ICON = getEditorIcon("icons8-musical-notes-24.png");
+    public static final Icon MUSIC_ICON = getEditorIcon("icons8-musical-notes-24.png");
+    public static final Icon MUSIC_FILE_ICON = MUSIC_ICON;
 
     public static void packAndCenterWindow(@NotNull Window window)
     {

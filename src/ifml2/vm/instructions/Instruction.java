@@ -177,7 +177,7 @@ public abstract class Instruction implements Cloneable
         RUN_PROCEDURE(RunProcedureInstruction.class, RunProcedureInstrEditor.class),
         RETURN(ReturnInstruction.class, ReturnInstrEditor.class),
         SHOW_PICTURE(ShowPictureInstruction.class, ShowPictureInstrEditor.class),
-        PLAY_MUSIC(PlayMusicInstruction.class, null); //todo PlayMusicInstruction Editor
+        PLAY_MUSIC(PlayMusicInstruction.class, PlayMusicInstrEditor.class);
 
         private Class<? extends Instruction> instrClass;
         private String title;

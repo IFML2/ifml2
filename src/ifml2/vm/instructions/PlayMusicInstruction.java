@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import static java.text.MessageFormat.format;
+import static java.lang.String.format;
 import static javax.xml.bind.annotation.XmlAccessType.NONE;
 
 @XmlRootElement(name = "playMusic")
@@ -32,6 +32,6 @@ public class PlayMusicInstruction extends Instruction {
 
     @Override
     public String toString() {
-        return format("Включить музыку %s", name);
+        return format("Включить музыку \"%s\"", name);
     }
 }
