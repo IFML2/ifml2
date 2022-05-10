@@ -1,20 +1,21 @@
 <project>
     <shortName>ifml2</shortName>
     <fullName>IFML</fullName>
-    <version>2016.5</version>
+    <version>install-fix</version>
     <readmeFile>../docs/notes.txt</readmeFile>
+    <logoImage>../ifmlicon.png</logoImage>
     <splashImage>../ifmlicon.png</splashImage>
     <defaultLanguage>ru</defaultLanguage>
     <componentList>
         <component>
-            <name>platform</name>
-            <description>Платформа</description>
+            <name>ifml2</name>
+            <description>Платформа ЯРИЛ</description>
             <canBeEdited>0</canBeEdited>
             <selected>1</selected>
             <show>1</show>
             <folderList>
                 <folder>
-                    <description>Program Files</description>
+                    <description>Program Files (All)</description>
                     <destination>${installdir}</destination>
                     <name>programfiles</name>
                     <platforms>all</platforms>
@@ -33,6 +34,7 @@
                                     <runInBackground>0</runInBackground>
                                     <runInConsole>0</runInConsole>
                                     <selectionOrder>newest</selectionOrder>
+                                    <useLauncherDirectoryAsWorkingDirectory>1</useLauncherDirectoryAsWorkingDirectory>
                                     <usePropertiesFile>0</usePropertiesFile>
                                     <vmParameters></vmParameters>
                                     <windowsResourceFileVersion>1.0.0.0</windowsResourceFileVersion>
@@ -58,6 +60,7 @@
                                     <runInBackground>0</runInBackground>
                                     <runInConsole>0</runInConsole>
                                     <selectionOrder>newest</selectionOrder>
+                                    <useLauncherDirectoryAsWorkingDirectory>1</useLauncherDirectoryAsWorkingDirectory>
                                     <usePropertiesFile>0</usePropertiesFile>
                                     <vmParameters></vmParameters>
                                     <windowsResourceFileVersion>1.0.0.0</windowsResourceFileVersion>
@@ -82,6 +85,26 @@
                         <distributionFile>
                             <origin>../docs/notes.txt</origin>
                         </distributionFile>
+                    </distributionFileList>
+                </folder>
+                <folder>
+                    <description>Program Files (Linux)</description>
+                    <destination>${installdir}</destination>
+                    <name>programfileslinux</name>
+                    <platforms>linux</platforms>
+                    <actionList>
+                        <propertiesFileSet>
+                            <file>${locationsPropsFile}</file>
+                            <key>libs.location</key>
+                            <value>${project.component(ifml2).folder(programfileslinux).destination}</value>
+                        </propertiesFileSet>
+                        <propertiesFileSet>
+                            <file>${locationsPropsFile}</file>
+                            <key>games.location</key>
+                            <value>${project.component(ifml2).folder(programfileslinux).destination}</value>
+                        </propertiesFileSet>
+                    </actionList>
+                    <distributionFileList>
                         <distributionDirectory>
                             <origin>../libs</origin>
                         </distributionDirectory>
@@ -91,30 +114,86 @@
                     </distributionFileList>
                 </folder>
                 <folder>
-                    <description>Program Files</description>
-                    <destination>${installdir}</destination>
-                    <name>programfileslinux</name>
-                    <platforms>linux</platforms>
-                </folder>
-                <folder>
-                    <description>Program Files</description>
+                    <description>Program Files (Windows)</description>
                     <destination>${installdir}</destination>
                     <name>programfileswindows</name>
                     <platforms>windows</platforms>
                 </folder>
                 <folder>
-                    <description>Program Files</description>
+                    <description>Program Files (Mac OS X)</description>
                     <destination>${installdir}</destination>
                     <name>programfilesosx</name>
                     <platforms>osx</platforms>
                 </folder>
                 <folder>
-                    <description>Saved Games</description>
+                    <description>Saved Games (Windows)</description>
+                    <destination>${windows_folder_personal}\${product_fullname}\Saved Games</destination>
+                    <name>winsavedgames</name>
+                    <platforms>windows</platforms>
+                    <actionList>
+                        <propertiesFileSet>
+                            <file>${locationsPropsFile}</file>
+                            <key>savedgames.location</key>
+                            <value>${project.component(ifml2).folder(windocs).destination}</value>
+                        </propertiesFileSet>
+                    </actionList>
+                </folder>
+                <folder>
+                    <description>Saved Games (Linux)</description>
                     <destination>${installdir}/Saved Games</destination>
-                    <name>savedgames</name>
-                    <platforms>all</platforms>
+                    <name>linuxsavedgames</name>
+                    <platforms>linux</platforms>
+                    <actionList>
+                        <propertiesFileSet>
+                            <file>${locationsPropsFile}</file>
+                            <key>savedgames.location</key>
+                            <value>${project.component(ifml2).folder(linuxsavedgames).destination}</value>
+                        </propertiesFileSet>
+                    </actionList>
+                </folder>
+                <folder>
+                    <description>Windows AppData</description>
+                    <destination>${windows_folder_appdata}\${product_fullname}</destination>
+                    <name>winappdata</name>
+                    <platforms>windows</platforms>
+                    <actionList>
+                        <propertiesFileSet>
+                            <file>${locationsPropsFile}</file>
+                            <key>libs.location</key>
+                            <value>${project.component(ifml2).folder(winappdata).destination}</value>
+                        </propertiesFileSet>
+                    </actionList>
+                    <distributionFileList>
+                        <distributionDirectory>
+                            <origin>../libs</origin>
+                        </distributionDirectory>
+                    </distributionFileList>
+                </folder>
+                <folder>
+                    <description>Windows Documents</description>
+                    <destination>${windows_folder_personal}\${product_fullname}</destination>
+                    <name>windocs</name>
+                    <platforms>windows</platforms>
+                    <actionList>
+                        <propertiesFileSet>
+                            <file>${locationsPropsFile}</file>
+                            <key>games.location</key>
+                            <value>${project.component(ifml2).folder(windocs).destination}</value>
+                        </propertiesFileSet>
+                    </actionList>
+                    <distributionFileList>
+                        <distributionDirectory>
+                            <origin>../Games</origin>
+                        </distributionDirectory>
+                    </distributionFileList>
                 </folder>
             </folderList>
+            <readyToInstallActionList>
+                <setInstallerVariable>
+                    <name>locationsPropsFile</name>
+                    <value>${installdir}/locations.properties</value>
+                </setInstallerVariable>
+            </readyToInstallActionList>
             <startMenuShortcutList>
                 <startMenuShortcut>
                     <comment>Удалить ${product_fullname}</comment>
