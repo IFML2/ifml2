@@ -381,7 +381,7 @@ public class Editor extends JFrame
             }
         });
         storyMenu.addSeparator();
-        storyMenu.add(new AbstractAction("Музыка...", GUIUtils.MUSIC_ICON) {
+        storyMenu.add(new AbstractAction("Мультимедиа...", GUIUtils.MUSIC_ICON) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 EventList<StoryOptions.Music> musicList = story.getStoryOptions().getMusicList();
