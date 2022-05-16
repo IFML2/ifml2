@@ -7,6 +7,7 @@ import ifml2.FormatLogger;
 import ifml2.IFML2Exception;
 import ifml2.IFMLEntity;
 import ifml2.om.xml.XmlSchemaConstants;
+import ifml2.vm.IFML2VMException;
 import ifml2.vm.SymbolResolver;
 import ifml2.vm.VirtualMachine;
 import ifml2.vm.values.CollectionValue;
@@ -15,11 +16,13 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import javax.xml.bind.annotation.*;
+import java.util.ArrayList;
 import java.util.List;
 
 import static ifml2.om.Trigger.Type.GET_ACCESSIBLE_CONTENT;
 import static ifml2.om.xml.XmlSchemaConstants.ITEM_STARTING_POSITION_ELEMENT;
 import static ifml2.om.xml.XmlSchemaConstants.STARTING_POSITION_INVENTORY_ELEMENT;
+import static java.lang.String.format;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class Item extends IFMLObject implements Cloneable {
@@ -67,18 +70,32 @@ public class Item extends IFMLObject implements Cloneable {
      * @param virtualMachine Virtual Machine
      * @return Value returned by trigger
      */
-    public Value getAccessibleContent(VirtualMachine virtualMachine) throws IFML2Exception {
+    public CollectionValue getAccessibleContent(VirtualMachine virtualMachine) throws IFML2Exception {
         //todo: run own triggers -- when they will exist
+
+        List<IFMLEntity> allAccessibleObjects = new ArrayList<>();
 
         // run roles' triggers
         for (Role role : roles) {
             Trigger trigger = role.getRoleDefinition().getTrigger(GET_ACCESSIBLE_CONTENT);
-            if (trigger != null) {
-                return virtualMachine.runTrigger(trigger, this);
+            if (trigger == null) {
+                continue;
+            }
+
+            Value<?> value = virtualMachine.runTrigger(trigger, this);
+            if (value == null) {
+                continue;
+            }
+
+            if (value instanceof CollectionValue) {
+                List<? extends IFMLEntity> accessibleObjects = ((CollectionValue) value).getValue();
+                allAccessibleObjects.addAll(accessibleObjects);
+            } else {
+                throw new IFML2VMException(format("Триггер доступного содержимого у роли \"%s\" предмета \"%s\" вернул не коллекцию, а \"%s\"!", role.getName(), this, value));
             }
         }
 
-        return null;
+        return new CollectionValue(allAccessibleObjects);
     }
 
     public List<? extends IFMLEntity> getContainer() {
