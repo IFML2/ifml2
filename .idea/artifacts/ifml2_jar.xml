@@ -9,6 +9,10 @@
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/glazedlists_java15-1.9.1.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/log4j/log4j/1.2.17/log4j-1.2.17.jar" path-in-jar="/" />
       <element id="file-copy" path="$PROJECT_DIR$/log4j.xml" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/de.huxhorn.sulky.sounds-impl-jlayer-8.3.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/de.huxhorn.sulky.3rdparty.jlayer-1.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/slf4j-api-1.7.32.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/de.huxhorn.sulky.sounds-api-8.3.0.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

@@ -176,7 +176,8 @@ public abstract class Instruction implements Cloneable
         SET_PROPERTY(SetPropertyInstruction.class, null), // todo SetPropertyInstruction Editor
         RUN_PROCEDURE(RunProcedureInstruction.class, RunProcedureInstrEditor.class),
         RETURN(ReturnInstruction.class, ReturnInstrEditor.class),
-        SHOW_PICTURE(ShowPictureInstruction.class, ShowPictureInstrEditor.class);
+        SHOW_PICTURE(ShowPictureInstruction.class, ShowPictureInstrEditor.class),
+        PLAY_MUSIC(PlayMusicInstruction.class, PlayMusicInstrEditor.class);
 
         private Class<? extends Instruction> instrClass;
         private String title;

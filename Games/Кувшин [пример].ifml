@@ -9,6 +9,9 @@
             <var value="0" name="броски"/>
             <var value="0" name="глоб1"/>
         </globalVars>
+        <musicList>
+            <music name="Пример" fileName="sample-12s.mp3"/>
+        </musicList>
     </storyOptions>
     <procedures>
         <procedure name="БроситьКубик">
@@ -111,6 +114,12 @@
                 <parameter name="Пар1"/>
                 <parameter name="Пар2"/>
             </parameters>
+        </procedure>
+        <procedure name="ВключитьМузыку">
+            <procedureBody>
+                <playMusic name="Пример"/>
+                <showMessage type="text" message="Заиграла музыка..."/>
+            </procedureBody>
         </procedure>
     </procedures>
     <libraries>
@@ -284,6 +293,16 @@
             </templates>
             <procedureCall procedure="Проц"/>
             <restrictions/>
+        </action>
+        <action name="музыка">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>включить музыку</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="ВключитьМузыку"/>
         </action>
     </actions>
 </story>

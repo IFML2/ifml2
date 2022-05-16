@@ -242,4 +242,8 @@ public class VirtualMachine
     public void outPicture(String filePath, int maxHeight, int maxWidth) {
         engine.outIcon(filePath, maxHeight, maxWidth);
     }
+
+    public void playMusic(String name) {
+        engine.playMusic(name);
+    }
 }

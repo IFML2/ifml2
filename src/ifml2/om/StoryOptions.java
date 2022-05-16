@@ -5,6 +5,7 @@ import ca.odell.glazedlists.EventList;
 import ifml2.vm.instructions.SetVarInstruction;
 
 import javax.xml.bind.annotation.*;
+import java.text.MessageFormat;
 
 import static javax.xml.bind.annotation.XmlAccessType.NONE;
 
@@ -37,7 +38,7 @@ public class StoryOptions
 
     @XmlElementWrapper(name = "globalVars")
     @XmlElement(name = "var")
-    private EventList<SetVarInstruction> vars = new BasicEventList<SetVarInstruction>();
+    private EventList<SetVarInstruction> vars = new BasicEventList<>();
 
     public EventList<SetVarInstruction> getVars()
     {
@@ -56,6 +57,16 @@ public class StoryOptions
     {
         return systemCommandsDisableOption;
     }
+
+    @XmlElementWrapper(name = "musicList")
+    @XmlElement(name = "music")
+    private EventList<Music> musicList = new BasicEventList<>();
+
+    public EventList<Music> getMusicList() {
+        return musicList;
+    }
+
+    public void setMusicList(EventList<Music> musicList) { this.musicList = musicList; }
 
     @XmlAccessorType(NONE)
     public static class StartLocationOption
@@ -189,6 +200,44 @@ public class StoryOptions
         public void setDisableDebug(boolean disableDebug)
         {
             this.disableDebug = disableDebug;
+        }
+    }
+
+    @XmlAccessorType(NONE)
+    public static class Music {
+        @XmlAttribute(name = "name")
+        private String name;
+
+        public Music() {
+        }
+
+        public Music(String name, String fileName) {
+            this.name = name;
+            this.fileName = fileName;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        @XmlAttribute(name = "fileName")
+        private String fileName;
+
+        public String getFileName() {
+            return fileName;
+        }
+
+        public void setFileName(String fileName) {
+            this.fileName = fileName;
+        }
+
+        @Override
+        public String toString() {
+            return MessageFormat.format("\"{0}\" по пути {1}", name, fileName);
         }
     }
 }

@@ -494,6 +494,8 @@ public class Story
             return items;
         }
 
+        public EventList<StoryOptions.Music> getMusicList() { return storyOptions.getMusicList(); }
+
         /**
          * Tries to find item by id. Id shouldn't be null. If finds returns it, else returns null.
          *

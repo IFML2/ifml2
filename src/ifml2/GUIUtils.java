@@ -6,15 +6,19 @@ import ifml2.editor.gui.ShowMemoDialog;
 import ifml2.om.IFML2LoadXmlException;
 import ifml2.om.Word;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileView;
 import javax.xml.bind.ValidationEvent;
 import java.awt.*;
+import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.MessageFormat;
+import java.util.Collection;
+import java.util.function.Function;
 
 public class GUIUtils
 {
@@ -38,6 +42,8 @@ public class GUIUtils
     public static final Icon LIBRARY_FILE_ICON = STORY_FILE_ICON;
     public static final Icon PENCIL_ICON = getEditorIcon("pencil_32.png");
     public static final Icon PALETTE_ICON = getEditorIcon("icons8-paint-palette-24.png");
+    public static final Icon MUSIC_ICON = getEditorIcon("icons8-musical-notes-24.png");
+    public static final Icon MUSIC_FILE_ICON = MUSIC_ICON;
 
     public static void packAndCenterWindow(@NotNull Window window)
     {
@@ -142,9 +148,80 @@ public class GUIUtils
         {
             StringWriter stringWriter = new StringWriter();
             exception.printStackTrace(new PrintWriter(stringWriter));
-            errorMessage.append(stringWriter.toString());
+            errorMessage.append(stringWriter);
         }
         showMemoDialog(owner, "Произошла ошибка", errorMessage.toString());
+    }
+
+    public static @Nullable File selectFile(Component parentComponent, String directory, final String filterName,
+            final String extension, final Icon fileIcon, @Nullable File previousFile) {
+        JFileChooser fileChooser = new JFileChooser(directory);
+        fileChooser.setFileFilter(new FileFilter() {
+            @Override
+            public String getDescription() {
+                return filterName;
+            }
+
+            @Override
+            public boolean accept(File file) {
+                return file.isDirectory() || file.getName().toLowerCase().endsWith(extension);
+            }
+        });
+        fileChooser.setFileView(new FileView() {
+            @Override
+            public Icon getIcon(File f) {
+                return f.isDirectory() ? GUIUtils.DIRECTORY_ICON : fileIcon;
+            }
+        });
+        if (previousFile != null && previousFile.exists()){
+            fileChooser.setSelectedFile(previousFile);
+        }
+        if (fileChooser.showOpenDialog(parentComponent) == JFileChooser.APPROVE_OPTION) {
+            return fileChooser.getSelectedFile();
+        }
+
+        return null;
+    }
+
+    public static @Nullable String inputName(Component parentComponent, String prompt, String initialValue) {
+        String name;
+        do {
+            name = JOptionPane.showInputDialog(parentComponent, prompt, initialValue);
+            if (name == null) {
+                return null;
+            }
+            name = name.trim();
+            if ("".equalsIgnoreCase(name)) {
+                JOptionPane.showMessageDialog(parentComponent, "Значение не должно быть пустым.", "Пустое значение",
+                        JOptionPane.WARNING_MESSAGE);
+            }
+        } while ("".equalsIgnoreCase(name));
+
+        return name;
+    }
+
+    public static <T> @Nullable String inputUniqueName(Component parentComponent, String prompt,
+            Collection<T> uniqueCollection, Function<T, String> nameMapper, String duplicateFormatMessage,
+            @Nullable String previousName) {
+        boolean isNameNotUnique;
+        String name = previousName;
+        do {
+            name = inputName(parentComponent, prompt, name);
+            if (name == null) {
+                return null;
+            }
+
+            String finalName = name;
+            isNameNotUnique = uniqueCollection.stream().anyMatch(t -> {
+                String existingName = nameMapper.apply(t);
+                return !existingName.equalsIgnoreCase(previousName) && existingName.equalsIgnoreCase(finalName);
+            });
+            if (isNameNotUnique) {
+                JOptionPane.showMessageDialog(parentComponent, MessageFormat.format(duplicateFormatMessage, name),
+                        "Уже есть", JOptionPane.WARNING_MESSAGE);
+            }
+        } while (isNameNotUnique);
+        return name;
     }
 
     public static class EventComboBoxModelWithNullElement<T> extends DefaultEventComboBoxModel<T>

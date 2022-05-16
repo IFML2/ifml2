@@ -23,4 +23,6 @@ public interface CommonConstants
     String PARSE_ERROR_HANDLER_PRM_PHRASE = "Фраза";
     String PARSE_ERROR_HANDLER_PRM_ERROR = "Ошибка";
     String RUSSIAN_PRODUCT_NAME = "ЯРИЛ 2.0";
+    String MP3_EXTENSION = ".mp3";
+    String MUSIC_FILE_FILTER_NAME = MessageFormat.format("Файл музыки/звука (*{0})", MP3_EXTENSION);
 }

@@ -28,5 +28,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="de.huxhorn.sulky.sounds.impl.jlayer" level="project" />
   </component>
 </module>

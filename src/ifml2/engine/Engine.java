@@ -5,6 +5,7 @@ import ca.odell.glazedlists.EventList;
 import ifml2.*;
 import ifml2.engine.featureproviders.IPlayerFeatureProvider;
 import ifml2.engine.featureproviders.graphic.IOutputIconProvider;
+import ifml2.engine.featureproviders.music.IPlayMusicProvider;
 import ifml2.engine.featureproviders.text.IOutputPlainTextProvider;
 import ifml2.engine.saved.SavedGame;
 import ifml2.om.Action;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static ifml2.engine.Engine.SystemCommand.HELP;
 import static java.lang.String.format;
@@ -713,6 +715,32 @@ public class Engine {
         }
 
         return null;
+    }
+
+    public void playMusic(String name) {
+        if (!(playerFeatureProvider instanceof IPlayMusicProvider)) {
+            return;
+        }
+
+        // get music from the music list
+        Stream<StoryOptions.Music> musicStream = story.getStoryOptions().getMusicList().stream();
+        Optional<StoryOptions.Music> musicOptional = musicStream.filter(music -> music.getName().equalsIgnoreCase(name)).findFirst();
+        if (!musicOptional.isPresent()) {
+            return;
+        }
+        StoryOptions.Music music = musicOptional.get();
+        String musicName = music.getName();
+        String musicFileName = music.getFileName();
+
+        // convert path relative to game to file
+        Path storyFolder = Paths.get(storyFileName).normalize().getParent();
+        Path musicPath = Paths.get(musicFileName);
+        Path musicFullPath = storyFolder.resolve(musicPath);
+        File musicFile = musicFullPath.toFile();
+
+        // play music via player
+        outEngDebug(format("Запуск музыки с именем %s по пути %s...", musicName, musicFile.getAbsolutePath()));
+        ((IPlayMusicProvider)playerFeatureProvider).startMusic(musicName, musicFile);
     }
 
     public enum SystemCommand {
