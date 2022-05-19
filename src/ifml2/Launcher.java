@@ -1,7 +1,6 @@
 package ifml2;
 
 import ifml2.editor.gui.Editor;
-import ifml2.engine.EngineVersion;
 import ifml2.players.guiplayer.GUIPlayer;
 import ifml2.tests.gui.TestRunner;
 import org.apache.log4j.Logger;
@@ -68,7 +67,7 @@ public class Launcher
                     return "Тестер";
                 }
             };
-            Object answer = JOptionPane.showInputDialog(null, "Что запустить?", format("%s %s", RUSSIAN_PRODUCT_NAME, EngineVersion.VERSION),
+            Object answer = JOptionPane.showInputDialog(null, "Что запустить?", format("%s %s", RUSSIAN_PRODUCT_NAME, CommonUtils.getVersion()),
                     JOptionPane.QUESTION_MESSAGE, null, new Object[]{playerOption, editorOption, testerOption}, playerOption);
             if(playerOption.equals(answer))
             {

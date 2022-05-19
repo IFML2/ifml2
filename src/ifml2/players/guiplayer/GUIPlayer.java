@@ -29,7 +29,6 @@ import java.util.ListIterator;
 
 import static ifml2.CommonConstants.*;
 import static ifml2.GUIUtils.*;
-import static ifml2.engine.EngineVersion.VERSION;
 import static java.lang.String.format;
 import static javax.swing.JOptionPane.*;
 
@@ -62,7 +61,7 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
 
     private GUIPlayer(boolean fromTempFile)
     {
-        super(format("%s Плеер %s", RUSSIAN_PRODUCT_NAME, VERSION));
+        super(format("%s Плеер %s", RUSSIAN_PRODUCT_NAME, CommonUtils.getVersion()));
         this.isFromTempFile = fromTempFile;
 
         setContentPane(mainPanel);
@@ -574,7 +573,7 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
                 titleFile = file.getName();
             }
         }
-        setTitle(format("%s Плеер %s -- %s", RUSSIAN_PRODUCT_NAME, VERSION, titleFile));
+        setTitle(format("%s Плеер %s -- %s", RUSSIAN_PRODUCT_NAME, CommonUtils.getVersion(), titleFile));
     }
 
     private String getCommandText()
