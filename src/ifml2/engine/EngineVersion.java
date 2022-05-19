@@ -2,5 +2,5 @@ package ifml2.engine;
 
 public interface EngineVersion
 {
-    String VERSION = "(В РАЗРАБОТКЕ)";
+    String VERSION = "Выпуск для Андрея Репина";
 }
