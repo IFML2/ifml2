@@ -1,8 +1,13 @@
 package ifml2;
 
+import ifml2.engine.EngineVersion;
+
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
+import java.io.File;
+import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 
 public class CommonUtils
 {
@@ -64,4 +69,27 @@ public class CommonUtils
         }
         return stringBuilder.toString();
     }*/
+
+    public static Date getBuildDate(){
+        try {
+            String jarPath = CommonUtils.class
+                    .getProtectionDomain()
+                    .getCodeSource()
+                    .getLocation()
+                    .toURI()
+                    .getPath();
+            File jarFile = new File(jarPath);
+            return new Date(jarFile.lastModified());
+        } catch (URISyntaxException e) {
+            return null;
+        }
+    }
+
+    public static String getVersion(){
+        String versionStr = EngineVersion.VERSION;
+        if (EngineVersion.IS_DEVELOPER_VERSION){
+            versionStr += String.format("[📅%1$td/%1$tb/%1$ty]", getBuildDate());
+        }
+        return versionStr;
+    }
 }

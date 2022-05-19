@@ -8,7 +8,6 @@ import ifml2.IFML2Exception;
 import ifml2.editor.IFML2EditorException;
 import ifml2.editor.gui.editors.*;
 import ifml2.editor.gui.forms.ListEditForm;
-import ifml2.engine.EngineVersion;
 import ifml2.om.Action;
 import ifml2.om.*;
 import ifml2.players.guiplayer.GUIPlayer;
@@ -164,7 +163,7 @@ public class Editor extends JFrame
     {
         String fileName = storyFile != null ? storyFile.getName() : "новая история";
         String storyEditedMark = isStoryEdited ? " - * история не сохранена" : "";
-        String editorTitle =  format("%s Редактор %s -- %s%s", RUSSIAN_PRODUCT_NAME, EngineVersion.VERSION, fileName,
+        String editorTitle =  format("%s Редактор %s -- %s%s", RUSSIAN_PRODUCT_NAME, CommonUtils.getVersion(), fileName,
                 storyEditedMark);
         setTitle(editorTitle);
     }
