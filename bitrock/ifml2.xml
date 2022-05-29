@@ -93,15 +93,19 @@
                     <name>programfileslinux</name>
                     <platforms>linux</platforms>
                     <actionList>
+                        <setInstallerVariable>
+                            <name>linProgFilesPath</name>
+                            <value>${project.component(ifml2).folder(programfileslinux).destination}</value>
+                        </setInstallerVariable>
                         <propertiesFileSet>
                             <file>${locationsPropsFile}</file>
                             <key>libs.location</key>
-                            <value>${project.component(ifml2).folder(programfileslinux).destination}</value>
+                            <value>${linProgFilesPath.escape_backslashes}</value>
                         </propertiesFileSet>
                         <propertiesFileSet>
                             <file>${locationsPropsFile}</file>
                             <key>games.location</key>
-                            <value>${project.component(ifml2).folder(programfileslinux).destination}</value>
+                            <value>${linProgFilesPath.escape_backslashes}</value>
                         </propertiesFileSet>
                     </actionList>
                     <distributionFileList>
@@ -114,76 +118,82 @@
                     </distributionFileList>
                 </folder>
                 <folder>
-                    <description>Program Files (Windows)</description>
-                    <destination>${installdir}</destination>
-                    <name>programfileswindows</name>
-                    <platforms>windows</platforms>
-                </folder>
-                <folder>
-                    <description>Program Files (Mac OS X)</description>
-                    <destination>${installdir}</destination>
-                    <name>programfilesosx</name>
-                    <platforms>osx</platforms>
-                </folder>
-                <folder>
-                    <description>Saved Games (Windows)</description>
+                    <description>Saved Games</description>
                     <destination>${windows_folder_personal}\${product_fullname}\Saved Games</destination>
-                    <name>winsavedgames</name>
+                    <name>WinSavedGames</name>
                     <platforms>windows</platforms>
                     <actionList>
+                        <setInstallerVariable>
+                            <name>winSavedGamesPath</name>
+                            <value>${project.component(ifml2).folder(winsavedgames).destination}</value>
+                        </setInstallerVariable>
                         <propertiesFileSet>
                             <file>${locationsPropsFile}</file>
                             <key>savedgames.location</key>
-                            <value>${project.component(ifml2).folder(windocs).destination}</value>
+                            <value>${winSavedGamesPath.escape_backslashes}</value>
                         </propertiesFileSet>
                     </actionList>
                 </folder>
                 <folder>
-                    <description>Saved Games (Linux)</description>
+                    <description>Saved Games</description>
                     <destination>${installdir}/Saved Games</destination>
-                    <name>linuxsavedgames</name>
+                    <name>LinuxSavedGames</name>
                     <platforms>linux</platforms>
                     <actionList>
+                        <setInstallerVariable>
+                            <name>linProgFilesPath</name>
+                            <value>${project.component(ifml2).folder(programfileslinux).destination}</value>
+                        </setInstallerVariable>
                         <propertiesFileSet>
                             <file>${locationsPropsFile}</file>
                             <key>savedgames.location</key>
-                            <value>${project.component(ifml2).folder(linuxsavedgames).destination}</value>
+                            <value>${linProgFilesPath.escape_backslashes}</value>
                         </propertiesFileSet>
                     </actionList>
                 </folder>
                 <folder>
-                    <description>Windows AppData</description>
-                    <destination>${windows_folder_appdata}\${product_fullname}</destination>
-                    <name>winappdata</name>
+                    <description>libs</description>
+                    <destination>${windows_folder_appdata}\${product_fullname}\libs</destination>
+                    <name>WinAppDataLibs</name>
                     <platforms>windows</platforms>
                     <actionList>
+                        <setInstallerVariable>
+                            <name>WinAppDataLibsPath</name>
+                            <value>${project.component(ifml2).folder(WinAppDataLibs).destination}</value>
+                        </setInstallerVariable>
                         <propertiesFileSet>
                             <file>${locationsPropsFile}</file>
                             <key>libs.location</key>
-                            <value>${project.component(ifml2).folder(winappdata).destination}</value>
+                            <value>${WinAppDataLibsPath.escape_backslashes}</value>
                         </propertiesFileSet>
                     </actionList>
                     <distributionFileList>
                         <distributionDirectory>
-                            <origin>../libs</origin>
+                            <allowWildcards>1</allowWildcards>
+                            <origin>../libs/*</origin>
                         </distributionDirectory>
                     </distributionFileList>
                 </folder>
                 <folder>
-                    <description>Windows Documents</description>
-                    <destination>${windows_folder_personal}\${product_fullname}</destination>
-                    <name>windocs</name>
+                    <description>Games</description>
+                    <destination>${windows_folder_personal}\${product_fullname}\Games</destination>
+                    <name>windocsGames</name>
                     <platforms>windows</platforms>
                     <actionList>
+                        <setInstallerVariable>
+                            <name>winDocsGamesPath</name>
+                            <value>${project.component(ifml2).folder(winDocsGames).destination}</value>
+                        </setInstallerVariable>
                         <propertiesFileSet>
                             <file>${locationsPropsFile}</file>
                             <key>games.location</key>
-                            <value>${project.component(ifml2).folder(windocs).destination}</value>
+                            <value>${winDocsGamesPath.escape_backslashes}</value>
                         </propertiesFileSet>
                     </actionList>
                     <distributionFileList>
                         <distributionDirectory>
-                            <origin>../Games</origin>
+                            <allowWildcards>1</allowWildcards>
+                            <origin>../Games/*</origin>
                         </distributionDirectory>
                     </distributionFileList>
                 </folder>
