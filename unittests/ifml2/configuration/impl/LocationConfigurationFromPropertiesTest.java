@@ -1,35 +1,51 @@
 package ifml2.configuration.impl;
 
+import ifml2.configuration.IFML2ConfigurationException;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Properties;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class LocationConfigurationFromPropertiesTest {
     @Test
-    public void canBeCreated_shall_return_false_for_not_existing_file() {
-        //Act
-        boolean canBeCreated = LocationConfigurationFromProperties.canBeCreated("really not existing file");
-        //Assert
-        assertFalse(canBeCreated);
-    }
-
-    @Test
-    public void canBeCreated_shall_return_true_for_existing_file() throws IOException {
+    public void whenFileExists_thenCreationShallBeSuccessful() throws IOException, IFML2ConfigurationException {
         //Arrange
         File tempFile = File.createTempFile("UnitTest", "LocationConfigurationFromProperties");
         tempFile.deleteOnExit();
         //Act
-        boolean canBeCreated = LocationConfigurationFromProperties.canBeCreated(tempFile.getAbsolutePath());
+        LocationConfigurationFromProperties locationConfigurationFromProperties = new LocationConfigurationFromProperties(tempFile.getAbsolutePath());
         //Assert
-        assertTrue(canBeCreated);
+        assertNotNull(locationConfigurationFromProperties);
+    }
+
+    @Test(expected = IFML2ConfigurationException.class)
+    public void whenFileDoesntExist_thenExceptionShallBeThrown() throws IFML2ConfigurationException {
+        //Act
+        new LocationConfigurationFromProperties("really not existing file");
+        //Assert
+        Assert.fail("Shall not reach this line since an exception shall be thrown");
     }
 
     @Test
-    public void getLibsPath() {
-        //todo
+    public void whenPropertiesFileExists_thenLibsPathShallBeReturnedFromIt() throws IOException, IFML2ConfigurationException {
+        //Arrange
+        File tempFile = File.createTempFile("UnitTest", "LocationConfigurationFromProperties");
+        tempFile.deleteOnExit();
+        Properties properties = new Properties();
+        final String libsLocation = "my random libs location";
+        properties.setProperty("libs.location", libsLocation);
+        properties.store(new FileWriter(tempFile), "location properties");
+        //Act
+        LocationConfigurationFromProperties locationConfigurationFromProperties = new LocationConfigurationFromProperties(tempFile.getAbsolutePath());
+        Path libsPath = locationConfigurationFromProperties.getLibsPath();
+        //Assert
+        assertEquals(libsLocation, libsPath.toString());
     }
 }

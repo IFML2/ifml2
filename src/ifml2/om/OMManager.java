@@ -5,6 +5,7 @@ import ifml2.CommonConstants;
 import ifml2.CommonUtils;
 import ifml2.FormatLogger;
 import ifml2.IFML2Exception;
+import ifml2.configuration.Configuration;
 import ifml2.engine.saved.SavedGame;
 import ifml2.om.xml.xmladapters.LocationAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -17,8 +18,9 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.*;
 import javax.xml.bind.util.ValidationEventCollector;
 import java.io.*;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -89,18 +91,18 @@ public class OMManager
                 else
                 {
                     LOG.debug("loadStoryFromFile :: File is normal, read...");
-                    inputStream = new FileInputStream(storyFileName);
+                    inputStream = Files.newInputStream(Paths.get(storyFileName));
                 }
 
                 final Story story;
-                final ArrayList<Item> inventory = new ArrayList<Item>();
+                final ArrayList<Item> inventory = new ArrayList<>();
 
                 JAXBContext context = JAXBContext.newInstance(Story.class);
                 Unmarshaller unmarshaller = context.createUnmarshaller();
                 unmarshaller.setProperty(IDResolver.class.getName(), new IFMLIDResolver());
                 unmarshaller.setAdapter(new LocationAdapter());
 
-                final HashMap<String, IFMLObject> ifmlObjectsHeap = new HashMap<String, IFMLObject>();
+                final HashMap<String, IFMLObject> ifmlObjectsHeap = new HashMap<>();
 
                 unmarshaller.setListener(new Unmarshaller.Listener()
                 {
@@ -226,9 +228,8 @@ public class OMManager
     {
         LOG.debug("loadLibrary(String libPath = \"{0}\")", libPath);
 
-        //--Loading from JAR--Reader reader = new BufferedReader(new InputStreamReader(OMManager.class.getResourceAsStream(realRelativePath), "UTF-8"));
-
-        File file = new File(CommonConstants.LIBS_FOLDER, libPath);
+        Path libsPath = Configuration.Factory.getInstance().getLibsPath();
+        File file = libsPath.resolve(libPath).toFile();
         LOG.debug("loadLibrary :: real relative path = \"{0}\"", file.getAbsolutePath());
 
         Library library = loadLibrary(file);
@@ -268,37 +269,32 @@ public class OMManager
             };
             unmarshaller.setEventHandler(validationEventCollector);
 
-            LOG.debug("loadLibrary :: before unmarshal");
+            LOG.trace("loadLibrary :: before unmarshal");
             library = (Library) unmarshaller.unmarshal(libFile);
-            LOG.debug("loadLibrary :: after unmarshal");
+            LOG.trace("loadLibrary :: after unmarshal");
 
-            String librariesDirectory = CommonUtils.getLibrariesDirectory();
-            LOG.debug("librariesDirectory = {0}", librariesDirectory);
-
-            //todo rewrite using Path in Java >= 7
-            File libFolder = new File(librariesDirectory);
-            URI libFileUri = new URI(libFile.toURI().toString().toLowerCase());
-            LOG.debug("libFile.URI = {0}", libFileUri);
-            URI libFolderUri = new URI(libFolder.toURI().toString().toLowerCase());
-            LOG.debug("libFolderUri.URI = {0}", libFolderUri);
-            URI relativeUri = libFolderUri.relativize(libFileUri);
-            LOG.debug("relativeUri = {0}", relativeUri);
-            String libPath = relativeUri.getPath();
-            LOG.debug("loadLibrary :: calculated libPath = {0}", libPath);
-            library.setPath(libPath);
+            saveLibraryPath(library, libFile.toPath());
         }
         catch (JAXBException e)
         {
             throw new IFML2Exception(e, "Ошибка загрузки библиотеки: {0}", e.getMessage());
         }
-        catch (URISyntaxException e)
-        {
-            throw new IFML2Exception(e, "Ошибка вычисления относительного пути.");
-        }
 
         LOG.debug("loadLibrary(File) :: End");
 
         return library;
+    }
+
+    private static void saveLibraryPath(@NotNull Library library, @NotNull Path filePath) {
+        Path libsPath = Configuration.Factory.getInstance().getLibsPath();
+        Path relativePath = libsPath.relativize(filePath);
+        LOG.debug("Calculated paths:\n" +
+                "\tlibraries directory path: {0};\n" +
+                "\tlibrary {1} path: {2};\n" +
+                "\trelative path: {3}",
+                libsPath, library.getName(), filePath, relativePath);
+
+        library.setPath(relativePath.toString());
     }
 
     public static void saveStoryToXmlFile(String xmlFile, Story story) throws IFML2Exception
@@ -368,9 +364,7 @@ public class OMManager
             Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
-            ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-            try
-            {
+            try (ByteArrayOutputStream byteStream = new ByteArrayOutputStream()) {
                 // marshal to bytes
                 marshaller.marshal(story, byteStream);
                 byte[] storyBytes = byteStream.toByteArray();
@@ -386,9 +380,7 @@ public class OMManager
                 byte[] storyBytesEncrypted = desCipher.doFinal(storyBytes);
 
                 // create fileOutputStream
-                FileOutputStream cipherStoryFile = new FileOutputStream(fileName);
-                try
-                {
+                try (FileOutputStream cipherStoryFile = new FileOutputStream(fileName)) {
                     // store key
                     byte[] keyBytes = key.getEncoded();
                     cipherStoryFile.write(keyBytes.length); // key length
@@ -397,15 +389,6 @@ public class OMManager
                     // write cipher
                     cipherStoryFile.write(storyBytesEncrypted);
                 }
-
-                finally
-                {
-                    cipherStoryFile.close();
-                }
-            }
-            finally
-            {
-                byteStream.close();
             }
         }
         catch (Exception e)
@@ -477,93 +460,83 @@ public class OMManager
         }
 
         @Override
-        public Callable<?> resolve(final String s, final Class aClass) throws SAXException
-        {
+        public Callable<?> resolve(final String s, final Class aClass) {
             LOG.debug("resolve(s = \"{0}\", aClass = \"{1}\")", s, aClass);
 
-            return new Callable<Object>()
-            {
-                public Object call() throws Exception
-                {
-                    LOG.debug("call() :: Trying to resolve \"{0}\" for \"{1}\" class", s, aClass);
+            return (Callable<Object>) () -> {
+                LOG.debug("call() :: Trying to resolve \"{0}\" for \"{1}\" class", s, aClass);
 
-                    if (bindings.containsKeyOfClass(s, aClass))
+                if (bindings.containsKeyOfClass(s, aClass))
+                {
+                    Object object = bindings.getObjectOfClass(s, aClass);
+                    LOG.debug("call() ::    => binding \"{0}\"; class is {1}", object,
+                              object != null ? object.getClass() : "[o is null!]");
+                    return object;
+                }
+                else
+                {
+                    LOG.debug("call() ::   not found in bindings, trying to find in libs: ...");
+                    // try to find key in libraries
+                    if (story != null)
                     {
-                        Object object = bindings.getObjectOfClass(s, aClass);
-                        LOG.debug("call() ::    => binding \"{0}\"; class is {1}", object,
-                                  object != null ? object.getClass() : "[o is null!]");
-                        return object;
+                        LOG.debug("call() ::    story is not null, trying to get story.getLibraries(). " + "getLibraries() returns {0}",
+                                  story.getLibraries());
+                        for (Library library : story.getLibraries())
+                        {
+                            LOG.debug("call() ::   test object class from getLibraries(): {0}", library.getClass());
+                            LOG.debug("call() ::   - searching in lib {0}, class is {1}", library.getName(), aClass);
+
+                            if (aClass == Object.class)
+                            {
+                                LOG.warn("call() :: aClass is Object for name \"{0}\"!", s);
+                            }
+
+                            // attributes
+                            if (aClass == Attribute.class || aClass == Object.class) //todo: remove Object after JAXB fix of JAXB-546
+                            {
+                                LOG.debug("call() ::   => searching Attribute \"{0}\"", s);
+                                Attribute attribute = library.getAttributeByName(s);
+                                if (attribute != null)
+                                {
+                                    LOG.debug("call() ::     - found Attribute: \"{0}\"", attribute);
+                                    return attribute;
+                                }
+                            }
+                            // actions
+                            else if (aClass == Action.class || aClass == Object.class) //todo: remove Object after JAXB fix of JAXB-546
+                            {
+                                LOG.debug("call() ::   => searching Action \"{0}\"", s);
+                                Action action = library.getActionByName(s);
+                                if (action != null)
+                                {
+                                    LOG.debug("call() ::     - found Action: \"{0}\"", action);
+                                    return action;
+                                }
+                            }
+                            // role definitions
+                            else if (aClass == RoleDefinition.class || aClass == Object.class)
+                            {
+                                LOG.debug("call() ::   => searching RoleDefinition \"{0}\"", s);
+                                RoleDefinition roleDefinition = library.getRoleDefinitionByName(s);
+                                if (roleDefinition != null)
+                                {
+                                    LOG.debug("call() ::     - found RoleDefinition: \"{0}\"", roleDefinition);
+                                    return roleDefinition;
+                                }
+                            }
+                            else
+                            {
+                                LOG.debug("call() ::     it's nor Attribute, nor Action, nor RoleDefinition => nothing to search else");
+                            }
+                        }
                     }
                     else
                     {
-                        LOG.debug("call() ::   not found in bindings, trying to find in libs: ...");
-                        // try to find key in libraries
-                        if (story != null)
-                        {
-                            LOG.debug("call() ::    story is not null, trying to get story.getLibraries(). " + "getLibraries() returns {0}",
-                                      story.getLibraries());
-                            for (Object object : story.getLibraries())
-                            {
-                                LOG.debug("call() ::   test object class from getLibraries(): {0}", object.getClass());
-                                if (!(object instanceof Library))
-                                {
-                                    throw new IFML2Exception("Member of getLibraries isn't a Library! It's {0}", object.getClass());
-                                }
-                                Library library = (Library) object;
-                                LOG.debug("call() ::   - searching in lib {0}, class is {1}", library.getName(), aClass);
-
-                                if (aClass == Object.class)
-                                {
-                                    LOG.warn("call() :: aClass is Object for name \"{0}\"!", s);
-                                }
-
-                                // attributes
-                                if (aClass == Attribute.class || aClass == Object.class) //todo: remove Object after JAXB fix of JAXB-546
-                                {
-                                    LOG.debug("call() ::   => searching Attribute \"{0}\"", s);
-                                    Attribute attribute = library.getAttributeByName(s);
-                                    if (attribute != null)
-                                    {
-                                        LOG.debug("call() ::     - found Attribute: \"{0}\"", attribute);
-                                        return attribute;
-                                    }
-                                }
-                                // actions
-                                else if (aClass == Action.class || aClass == Object.class) //todo: remove Object after JAXB fix of JAXB-546
-                                {
-                                    LOG.debug("call() ::   => searching Action \"{0}\"", s);
-                                    Action action = library.getActionByName(s);
-                                    if (action != null)
-                                    {
-                                        LOG.debug("call() ::     - found Action: \"{0}\"", action);
-                                        return action;
-                                    }
-                                }
-                                // role definitions
-                                else if (aClass == RoleDefinition.class || aClass == Object.class)
-                                {
-                                    LOG.debug("call() ::   => searching RoleDefinition \"{0}\"", s);
-                                    RoleDefinition roleDefinition = library.getRoleDefinitionByName(s);
-                                    if (roleDefinition != null)
-                                    {
-                                        LOG.debug("call() ::     - found RoleDefinition: \"{0}\"", roleDefinition);
-                                        return roleDefinition;
-                                    }
-                                }
-                                else
-                                {
-                                    LOG.debug("call() ::     it's nor Attribute, nor Action, nor RoleDefinition => nothing to search else");
-                                }
-                            }
-                        }
-                        else
-                        {
-                            LOG.debug("call() ::    story is null");
-                        }
+                        LOG.debug("call() ::    story is null");
                     }
-                    LOG.debug("call() ::   -> Binding NOT FOUND");
-                    return null;
                 }
+                LOG.debug("call() ::   -> Binding NOT FOUND");
+                return null;
             };
         }
 
@@ -574,11 +547,11 @@ public class OMManager
             super.endDocument();
         }
 
-        private class BindingMap extends HashMap<String, ArrayList<Object>>
+        private static class BindingMap extends HashMap<String, ArrayList<Object>>
         {
             public final FormatLogger LOG = FormatLogger.getLogger(BindingMap.class);
 
-            public void addBinding(String name, Object object)
+            public void addBinding(@NotNull String name, Object object)
             {
                 // add name in lower case
                 String loweredName = name.toLowerCase();
@@ -589,7 +562,7 @@ public class OMManager
                 }
                 else
                 {
-                    ArrayList<Object> arrayList = new ArrayList<Object>();
+                    ArrayList<Object> arrayList = new ArrayList<>();
                     arrayList.add(object);
                     put(loweredName, arrayList);
                 }
@@ -605,7 +578,7 @@ public class OMManager
                     {
                         if (object != null)
                         {
-                            Class objectClass = object.getClass();
+                            Class<?> objectClass = object.getClass();
                             if (/*objectClass.equals(aClass) ||*/ aClass.isAssignableFrom(objectClass) /*|| aClass == Object.class*/) //todo remove Object after JAXB fix of JAXB-546
                             {
                                 if (aClass == Object.class)

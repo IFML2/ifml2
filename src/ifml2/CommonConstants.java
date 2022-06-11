@@ -4,10 +4,9 @@ import java.text.MessageFormat;
 
 public interface CommonConstants
 {
-    String GAMES_DIRECTORY = "\\Games";
-    String LIBRARIES_DIRECTORY = "\\libs";
-    String TESTS_DIRECTORY = "\\Tests";
-    String SAVES_DIRECTORY = "\\Saved Games";
+    String GAMES_DIRECTORY = "\\Games"; //fixme replace with Configuration
+    String TESTS_DIRECTORY = "\\Tests"; //todo replace with Configuration
+    String SAVES_DIRECTORY = "\\Saved Games"; //fixme replace with Configuration
     String STORY_EXTENSION = ".ifml";
     String STORY_FILE_FILTER_NAME = MessageFormat.format("Файл истории (*{0})", STORY_EXTENSION);
     String TEST_EXTENSION = ".xml";
@@ -17,7 +16,6 @@ public interface CommonConstants
     String CIPHERED_STORY_EXTENSION = ".cifml";
     String STORY_ALL_TYPES_FILE_FILTER_NAME = MessageFormat.format("Файл истории (*{0}, *{1})", STORY_EXTENSION, CIPHERED_STORY_EXTENSION);
     String CIPHERED_STORY_FILE_FILTER_NAME = MessageFormat.format("Файл зашифрованной истории (*{0})", CIPHERED_STORY_EXTENSION);
-    String LIBS_FOLDER = "libs"; //todo merge with LIBRARIES_DIRECTORY constant
     String LIBRARY_EXTENSION = ".xml";
     String LIBRARY_FILE_FILTER_NAME = MessageFormat.format("Файл библиотеки (*{0})", LIBRARY_EXTENSION);
     String PARSE_ERROR_HANDLER_PRM_PHRASE = "Фраза";

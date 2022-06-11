@@ -4,9 +4,9 @@ import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ifml2.CommonConstants;
-import ifml2.CommonUtils;
 import ifml2.GUIUtils;
 import ifml2.IFML2Exception;
+import ifml2.configuration.Configuration;
 import ifml2.editor.IFML2EditorException;
 import ifml2.editor.gui.AbstractEditor;
 import ifml2.om.Library;
@@ -27,7 +27,7 @@ public class UsedLibsEditor extends AbstractEditor<List<Library>>
     public static final String USED_LIBS_EDITOR_TITLE = "Используемые библиотеки";
     private JPanel contentPane;
     private JButton buttonOK;
-    private JList usedLibsList;
+    private JList<Library> usedLibsList;
     private JButton addButton;
     private JButton delButton;
     private JButton buttonCancel;
@@ -46,7 +46,7 @@ public class UsedLibsEditor extends AbstractEditor<List<Library>>
 
         // -- init actions --
         addButton.addActionListener(e -> {
-            JFileChooser libFileChooser = new JFileChooser(CommonUtils.getLibrariesDirectory());
+            JFileChooser libFileChooser = new JFileChooser(Configuration.Factory.getInstance().getLibsPath().toFile());
             libFileChooser.setFileFilter(new FileFilter()
             {
                 @Override
@@ -118,7 +118,7 @@ public class UsedLibsEditor extends AbstractEditor<List<Library>>
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                Library usedLib = (Library) usedLibsList.getSelectedValue();
+                Library usedLib = usedLibsList.getSelectedValue();
                 if (usedLib != null)
                 {
                     if (JOptionPane.showConfirmDialog(UsedLibsEditor.this, "Вы уверены, что не хотите больше использовать эту библиотеку?",
@@ -134,7 +134,7 @@ public class UsedLibsEditor extends AbstractEditor<List<Library>>
         librariesClone = GlazedLists.eventList(libraries);
 
         // init controls
-        usedLibsList.setModel(new DefaultEventListModel<>(librariesClone));
+        usedLibsList.setModel(new DefaultEventListModel<Library>(librariesClone));
     }
 
     @Override

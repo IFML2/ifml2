@@ -19,16 +19,14 @@ public abstract class LocationConfiguration {
 
     public static class Factory {
         private static final String LOCATION_PROPERTIES_FILENAME = "locations.properties";
+
         public static @NotNull LocationConfiguration createLocationConfiguration() {
-            if (LocationConfigurationFromProperties.canBeCreated(LOCATION_PROPERTIES_FILENAME)) {
-                try {
-                    return new LocationConfigurationFromProperties(LOCATION_PROPERTIES_FILENAME);
-                } catch (IFML2ConfigurationException e) {
-                    LOG.warn(format("Error during creation of location properties class %s", LocationConfigurationFromProperties.class.getSimpleName()));
-                    return new LocationConfigurationDefaults();
-                }
+            try {
+                return new LocationConfigurationFromProperties(LOCATION_PROPERTIES_FILENAME);
+            } catch (IFML2ConfigurationException e) {
+                LOG.warn(format("Error during creation of location properties class %s", LocationConfigurationFromProperties.class.getSimpleName()));
+                return new LocationConfigurationDefaults();
             }
-            return new LocationConfigurationDefaults();
         }
     }
 }

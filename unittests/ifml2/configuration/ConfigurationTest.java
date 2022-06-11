@@ -18,7 +18,7 @@ public class ConfigurationTest {
     }
 
     @Test
-    public void getLibsPath_shall_call_LocationConfiguration_getLibsPath() {
+    public void whenGetLibsPathCalled_thenShallCallLocationConfiguration() {
         configuration.getLibsPath();
         verify(locationConfigurationMock).getLibsPath();
     }

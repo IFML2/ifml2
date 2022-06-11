@@ -16,11 +16,6 @@ public class CommonUtils
         return getCurrentDirectory() + CommonConstants.GAMES_DIRECTORY;
     }
 
-    public static String getLibrariesDirectory()
-    {
-        return getCurrentDirectory() + CommonConstants.LIBRARIES_DIRECTORY;
-    }
-
     public static String uppercaseFirstLetter(String s)
     {
         if(s == null || "".equals(s))

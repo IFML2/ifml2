@@ -17,20 +17,21 @@ import static java.lang.String.format;
 public class LocationConfigurationFromProperties extends LocationConfiguration {
     private static final Logger LOG = Logger.getLogger(LocationConfigurationFromProperties.class);
     private static File propertiesFile;
-    private final String LIBS_KEY = "libs.location";
+    private static final String LIBS_KEY = "libs.location";
     private final Properties properties = new Properties();
 
     public LocationConfigurationFromProperties(String fileName) throws IFML2ConfigurationException {
         propertiesFile = new File(fileName);
+        validateFile();
         loadProperties();
     }
 
-    public static boolean canBeCreated(String fileName) {
-        File testFile = new File(fileName);
-        boolean isFileExist = testFile.exists() && testFile.isFile();
-        if (!isFileExist)
-            LOG.warn(format("No location properties file found by path %s", testFile.getAbsolutePath()));
-        return isFileExist;
+    private void validateFile() throws IFML2ConfigurationException {
+        boolean isFileExist = propertiesFile.exists() && propertiesFile.isFile();
+        if (!isFileExist){
+            LOG.warn(format("No location properties file found by path %s", propertiesFile.getAbsolutePath()));
+            throw new IFML2ConfigurationException(format("Файл настроек путей не найден по пути %s", propertiesFile.getAbsolutePath()));
+        }
     }
 
     private void loadProperties() throws IFML2ConfigurationException {
