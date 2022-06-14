@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<story xmlns="http://toysoft.narod.ru/IFML2Schema" id="story">
+    <inheritedSystemProcedures/>
+    <storyOptions>
+        <startLocationOption showStartLocDesc="false"/>
+        <startProcedureOption procedure="аааа"/>
+        <storyDescription name="" description="" version="" author=""/>
+        <globalVars/>
+        <systemCommandsDisableOption DisableHelp="false" DisableDebug="false"/>
+        <musicList/>
+    </storyOptions>
+    <procedures>
+        <procedure name="аааа">
+            <procedureVariables/>
+            <procedureBody>
+                <moveItem item="ПреПред" to="пустота"/>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+    </procedures>
+    <libraries/>
+    <dictionary>
+        <word>
+            <ip>пре</ip>
+        </word>
+    </dictionary>
+    <locations>
+        <location id="ЛоуЛок" name="лоу">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words/>
+            <description></description>
+            <attributes/>
+        </location>
+    </locations>
+    <items>
+        <item id="ПреПред" name="пре">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="пре">
+                <word>пре</word>
+            </words>
+            <description></description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations/>
+            </startingPosition>
+        </item>
+    </items>
+    <actions/>
+</story>

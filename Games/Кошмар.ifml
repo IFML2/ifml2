@@ -1,0 +1,2201 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<story xmlns="http://toysoft.narod.ru/IFML2Schema" id="story">
+    <inheritedSystemProcedures/>
+    <storyOptions>
+        <startLocationOption location="ЗаставкаЛок" showStartLocDesc="true"/>
+        <startProcedureOption procedure="Стартовая"/>
+        <storyDescription name="Кошмар на улице Вязов" description="" version="Версия для ЯРИЛа" author="Репин Андрей"/>
+        <globalVars>
+            <var name="КлючИБудильникНашлись" value="нет"/>
+            <var name="случай" value="0"/>
+        </globalVars>
+        <systemCommandsDisableOption DisableHelp="false" DisableDebug="false"/>
+        <musicList>
+            <music name="Начало" fileName="Тема.mp3"/>
+            <music name="Фоновая" fileName="terror.mp3"/>
+            <music name="Считалка" fileName="Fredy.mp3"/>
+            <music name="Конец игры" fileName="Game over.mp3"/>
+            <music name="Идиотский смех" fileName="Идиотский смех.mp3"/>
+            <music name="Странные звуки" fileName="Странные звуки.mp3"/>
+            <music name="Тяжелое дыхание" fileName="Тяжелое дыхание.mp3"/>
+            <music name="капает кран" fileName="капает кран.mp3"/>
+            <music name="бегущая вода" fileName="вода в трубе.mp3"/>
+        </musicList>
+    </storyOptions>
+    <procedures>
+        <procedure name="быстро">
+            <procedureVariables/>
+            <procedureBody>
+                <moveItem item="КоробокПред" to="инвентарь"/>
+                <goToLoc location="КухняЛок"/>
+                <moveItem item="ЯтаганПред" to="инвентарь"/>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="Стартовая">
+            <procedureVariables/>
+            <procedureBody>
+                <showPicture filepath="Nightmare.jpg" maxHeight="0" maxWidth="0"/>
+                <playMusic name="Начало"/>
+                <showMessage beginWithCap="false" carriageReturn="true" message="" type="text"/>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="Начало игры">
+            <procedureVariables/>
+            <procedureBody>
+                <goToLoc location="НачалоЛок"/>
+                <playMusic name="Фоновая"/>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="ОтветВведёнНеВовремя">
+            <procedureVariables/>
+            <procedureBody>
+                <showMessage beginWithCap="false" carriageReturn="true" message="Не был задан вопрос." type="text"/>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="Посмотреть в окно">
+            <procedureVariables/>
+            <procedureBody>
+                <if condition="КоридорУВходаВПодвалЛок &lt;&gt; ТекущаяЛокация">
+                    <else>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="За окном, напевая песенку-считалку, играют дети." type="text"/>
+                        <showPicture filepath="Фреди считалка.png" maxHeight="320" maxWidth="460"/>
+                        <playMusic name="Считалка"/>
+                    </else>
+                    <then>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="А за окном то дождь, то снег,&#xA;И спать пора, и никак не уснуть.&#xA;Всё тот же двор, всё тот же смех,&#xA;И лишь тебя не хватает чуть-чуть.&#xA;Маленький кусочек тебя.&#xA;Бу-га-га." type="text"/>
+                        <playMusic name="Идиотский смех"/>
+                    </then>
+                </if>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="ПроявитьКлючИБудильник">
+            <procedureVariables/>
+            <procedureBody>
+                <if condition="не КлючИБудильникНашлись">
+                    <else/>
+                    <then>
+                        <moveItem item="БудильникПред" to="КроватьПред.ПредметыСверху"/>
+                        <moveItem item="КлючПред" to="КроватьПред.ПредметыСверху"/>
+                        <var name="КлючИБудильникНашлись" value="да"/>
+                    </then>
+                </if>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="включить фонарик">
+            <procedureVariables/>
+            <procedureBody>
+                <if condition="ФонарикВыключенПред в инвентарий">
+                    <else>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="Я не могу включить фонарик. Чего-то не хватает." type="text"/>
+                    </else>
+                    <then>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="Я включил фонарик. Лампочка светит слабо. Да, батарейка почти села." type="text"/>
+                        <moveItem item="ФонарикВыключенПред" to="пустота"/>
+                        <moveItem item="ФонарикВключёнПред" to="инвентарий"/>
+                    </then>
+                </if>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="вставить батарейку">
+            <procedureVariables/>
+            <procedureBody>
+                <if condition="ФонарикПред в инвентарий">
+                    <else>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="У меня нет фонарика." type="text"/>
+                    </else>
+                    <then>
+                        <if condition="БатарейкаПред в инвентарий">
+                            <else>
+<showMessage beginWithCap="false" carriageReturn="true" message="У меня нет батарейки." type="text"/>
+                            </else>
+                            <then>
+<showMessage beginWithCap="false" carriageReturn="true" message="Я вставил батарейку в фонарик." type="text"/>
+<moveItem item="ФонарикВыключенПред" to="инвентарий"/>
+<moveItem item="ФонарикПред" to="пустота"/>
+                            </then>
+                        </if>
+                    </then>
+                </if>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="выключить фонарик">
+            <procedureVariables/>
+            <procedureBody>
+                <if condition="ФонарикВключёнПред в инвентарий">
+                    <else>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="У меня нет фонарика." type="text"/>
+                    </else>
+                    <then>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="Я выключил фонарик. Батарейку нужно беречь." type="text"/>
+                        <moveItem item="ФонарикВыключенПред" to="инвентарий"/>
+                        <moveItem item="ФонарикВключёнПред" to="пустота"/>
+                    </then>
+                </if>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="снять батарейку">
+            <procedureVariables/>
+            <procedureBody>
+                <if condition="ФонарикВыключенПред в инвентарий или ФонарикВключёнПред в инвентарий">
+                    <else>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="А где эта батарейка?" type="text"/>
+                    </else>
+                    <then>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="Не вижу в этом никакого смысла. Кроме фонарика батарейка нигде не требуется." type="text"/>
+                    </then>
+                </if>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="сломать табуретку">
+            <procedureVariables/>
+            <procedureBody>
+                <if condition="Табуретка Пред в инвентарий">
+                    <else>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="У меня нет табуретки." type="text"/>
+                    </else>
+                    <then>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="Размахнувшись изо всех сил, я бросил табуретку на пол." type="text"/>
+                        <moveItem item="ТабуреткаПред" to="пустота"/>
+                        <moveItem item="ДроваПред" to="КухняЛок.Предметы"/>
+                    </then>
+                </if>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="случай">
+            <procedureVariables/>
+            <procedureBody>
+                <rollDice from="1" to="10" var="случай"/>
+                <if condition="случай=1">
+                    <else/>
+                    <then>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="Вдруг я услышал за спиной чей-то идиотский смех. Я обернулся, но ничего не увидел. Какая-то чертовщина, подумал я. А может послышалось." type="text"/>
+                        <playMusic name="Идиотский смех"/>
+                    </then>
+                </if>
+                <if condition="случай=2">
+                    <else/>
+                    <then>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="За дверью кто-то ходит. Я слышу это.  Слышу эти тяжелые шаги. Слышу это хриплое дыхание. Но вот все затихло." type="text"/>
+                        <playMusic name="Тяжелое дыхание"/>
+                    </then>
+                </if>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+        <procedure name="зажечь">
+            <procedureVariables/>
+            <procedureBody>
+                <if condition="ЧтоЗажечь=спичкаПред">
+                    <else>
+                        <if condition="ЧтоЗажечь=КоробокПред">
+                            <else>
+<showMessage beginWithCap="false" carriageReturn="true" message="Не буду я это зажигать." type="text"/>
+                            </else>
+                            <then>
+<showMessage beginWithCap="false" carriageReturn="true" message="Я зажёг спичку и поджёг коробок. Положил в плиту, а сверху дрова из табуретки. Огонь в плите загорелся." type="text"/>
+<moveItem item="КоробокПред" to="пустота"/>
+<moveItem item="СпичкаПред" to="пустота"/>
+<moveItem item="ДроваПред" to="пустота"/>
+                            </then>
+                        </if>
+                    </else>
+                    <then>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="Я зажег спичку, и она постепенно сгорела." type="text"/>
+                        <moveItem item="СпичкаПред" to="пустота"/>
+                    </then>
+                </if>
+            </procedureBody>
+            <parameters>
+                <parameter name="ЧтоЗажечь"/>
+            </parameters>
+        </procedure>
+        <procedure name="помыть посуду">
+            <procedureVariables/>
+            <procedureBody>
+                <if condition="вентиль=открыт">
+                    <else>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="При таком напоре воды вымыть посуду невозможно." type="text"/>
+                    </else>
+                    <then>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="Я вымыл эту грязную посуду, и поставил её в буфет." type="text"/>
+                        <moveItem item="ГрязнаяЛожкаПред" to="пустота"/>
+                        <moveItem item="ГрязнаяКружкаПред" to="пустота"/>
+                        <moveItem item="ГрязнаяТарелкаПред" to="пустота"/>
+                        <moveItem item="ЧистаяЛожкаПред" to="БуфетПред.Предметы"/>
+                        <moveItem item="ЧистаяКружкаПред" to="БуфетПред.Предметы"/>
+                        <moveItem item="ЧистаяТарелкаПред" to="БуфетПред.Предметы"/>
+                    </then>
+                </if>
+            </procedureBody>
+            <parameters/>
+        </procedure>
+    </procedures>
+    <libraries>
+        <library>standard/humour.xml</library>
+    </libraries>
+    <dictionary>
+        <word>
+            <ip>коробка</ip>
+            <rp>коробки</rp>
+            <dp>коробке</dp>
+            <vp>коробку</vp>
+            <tp>коробкой</tp>
+            <pp>коробке</pp>
+        </word>
+        <word>
+            <ip>дверной</ip>
+            <rp>дверного</rp>
+            <dp>дверному</dp>
+            <vp>дверной</vp>
+            <tp>дверным</tp>
+            <pp>дверном</pp>
+        </word>
+        <word>
+            <ip>очистки</ip>
+            <rp>очисток</rp>
+            <dp>очисткам</dp>
+            <vp>очистки</vp>
+            <tp>очистками</tp>
+            <pp>очистках</pp>
+        </word>
+        <word>
+            <ip>шкаф</ip>
+            <rp>шкафа</rp>
+            <dp>шкафу</dp>
+            <vp>шкаф</vp>
+            <tp>шкафом</tp>
+            <pp>шкафе</pp>
+        </word>
+        <word>
+            <ip>будильник</ip>
+            <rp>будильника</rp>
+            <dp>будильнику</dp>
+            <vp>будильник</vp>
+            <tp>будильником</tp>
+            <pp>будильнике</pp>
+        </word>
+        <word>
+            <ip>ключ</ip>
+            <rp>ключа</rp>
+            <dp>ключу</dp>
+            <vp>ключ</vp>
+            <tp>ключом</tp>
+            <pp>ключе</pp>
+        </word>
+        <word>
+            <ip>сундук</ip>
+            <rp>сундука</rp>
+            <dp>сундуку</dp>
+            <vp>сундук</vp>
+            <tp>сундуком</tp>
+            <pp>сундуке</pp>
+        </word>
+        <word>
+            <ip>кофе</ip>
+            <rp>кофе</rp>
+            <dp>кофе</dp>
+            <vp>кофе</vp>
+            <tp>кофе</tp>
+            <pp>кофе</pp>
+        </word>
+        <word>
+            <ip>дрова</ip>
+            <rp>дров</rp>
+            <dp>дровам</dp>
+            <vp>дрова</vp>
+            <tp>дровами</tp>
+            <pp>дровах</pp>
+        </word>
+        <word>
+            <ip>ятаган</ip>
+            <rp>ятагана</rp>
+            <dp>ятагану</dp>
+            <vp>ятаган</vp>
+            <tp>ятаганом</tp>
+            <pp>ятагане</pp>
+        </word>
+        <word>
+            <ip>коробок</ip>
+            <rp>коробка</rp>
+            <dp>коробку</dp>
+            <vp>коробок</vp>
+            <tp>коробоком</tp>
+            <pp>коробке</pp>
+        </word>
+        <word>
+            <ip>подвальная</ip>
+            <rp>подвальной</rp>
+            <dp>подвальной</dp>
+            <vp>подвальную</vp>
+            <tp>подвальной</tp>
+            <pp>подвальной</pp>
+        </word>
+        <word>
+            <ip>стены</ip>
+            <rp>стен</rp>
+            <dp>стенам</dp>
+            <vp>стены</vp>
+            <tp>стенами</tp>
+            <pp>стенах</pp>
+        </word>
+        <word>
+            <ip>ковер</ip>
+            <rp>ковра</rp>
+            <dp>ковру</dp>
+            <vp>ковер</vp>
+            <tp>ковром</tp>
+            <pp>ковре</pp>
+        </word>
+        <word>
+            <ip>выключатель</ip>
+            <rp>выключателя</rp>
+            <dp>выключателю</dp>
+            <vp>выключатель</vp>
+            <tp>выключателем</tp>
+            <pp>выключателе</pp>
+        </word>
+        <word>
+            <ip>ведро</ip>
+            <rp>ведра</rp>
+            <dp>ведру</dp>
+            <vp>ведро</vp>
+            <tp>ведром</tp>
+            <pp>ведре</pp>
+        </word>
+        <word>
+            <ip>плита</ip>
+            <rp>плиты</rp>
+            <dp>плите</dp>
+            <vp>плиту</vp>
+            <tp>плитой</tp>
+            <pp>плите</pp>
+        </word>
+        <word>
+            <ip>труба</ip>
+            <rp>трубы</rp>
+            <dp>трубе</dp>
+            <vp>трубу</vp>
+            <tp>трубой</tp>
+            <pp>трубе</pp>
+        </word>
+        <word>
+            <ip>шторы</ip>
+            <rp>штор</rp>
+            <dp>шторам</dp>
+            <vp>шторы</vp>
+            <tp>шторами</tp>
+            <pp>шторах</pp>
+        </word>
+        <word>
+            <ip>батарейка</ip>
+            <rp>батарейки</rp>
+            <dp>батарейке</dp>
+            <vp>батарейку</vp>
+            <tp>батарейкой</tp>
+            <pp>батарейке</pp>
+        </word>
+        <word>
+            <ip>тарелка</ip>
+            <rp>тарелки</rp>
+            <dp>тарелке</dp>
+            <vp>тарелку</vp>
+            <tp>тарелкой</tp>
+            <pp>тарелке</pp>
+        </word>
+        <word>
+            <ip>фонарик</ip>
+            <rp>фонарика</rp>
+            <dp>фонарику</dp>
+            <vp>фонарик</vp>
+            <tp>фонариком</tp>
+            <pp>фонарике</pp>
+        </word>
+        <word>
+            <ip>стол</ip>
+            <rp>стола</rp>
+            <dp>столу</dp>
+            <vp>стол</vp>
+            <tp>столом</tp>
+            <pp>столе</pp>
+        </word>
+        <word>
+            <ip>табуретка</ip>
+            <rp>табуретки</rp>
+            <dp>табуретке</dp>
+            <vp>табуретку</vp>
+            <tp>табуретку</tp>
+            <pp>табуретке</pp>
+        </word>
+        <word>
+            <ip>окно</ip>
+            <rp>окна</rp>
+            <dp>окну</dp>
+            <vp>окно</vp>
+            <tp>окном</tp>
+            <pp>окне</pp>
+        </word>
+        <word>
+            <ip>замок</ip>
+            <rp>замка</rp>
+            <dp>замку</dp>
+            <vp>замок</vp>
+            <tp>замком</tp>
+            <pp>замке</pp>
+        </word>
+        <word>
+            <ip>шелуха</ip>
+            <rp>шелухи</rp>
+            <dp>шелухе</dp>
+            <vp>шелуху</vp>
+            <tp>шелухой</tp>
+            <pp>шелухе</pp>
+        </word>
+        <word>
+            <ip>чайник</ip>
+            <rp>чайника</rp>
+            <dp>чайнику</dp>
+            <vp>чайник</vp>
+            <tp>чайником</tp>
+            <pp>чайнике</pp>
+        </word>
+        <word>
+            <ip>отмычка</ip>
+            <rp>отмычки</rp>
+            <dp>отмычке</dp>
+            <vp>отмычку</vp>
+            <tp>отмычкой</tp>
+            <pp>отмычке</pp>
+        </word>
+        <word>
+            <ip>окурок</ip>
+            <rp>окурка</rp>
+            <dp>окурку</dp>
+            <vp>окурок</vp>
+            <tp>окурком</tp>
+            <pp>окурке</pp>
+        </word>
+        <word>
+            <ip>пол</ip>
+            <rp>пола</rp>
+            <dp>полу</dp>
+            <vp>пол</vp>
+            <tp>полом</tp>
+            <pp>поле</pp>
+        </word>
+        <word>
+            <ip>кровать</ip>
+            <rp>кровати</rp>
+            <dp>кровати</dp>
+            <vp>кровать</vp>
+            <tp>кроватью</tp>
+            <pp>кровати</pp>
+        </word>
+        <word>
+            <ip>подушка</ip>
+            <rp>подушки</rp>
+            <dp>подушке</dp>
+            <vp>подушку</vp>
+            <tp>подушкой</tp>
+            <pp>подушке</pp>
+        </word>
+        <word>
+            <ip>кран</ip>
+            <rp>крана</rp>
+            <dp>крану</dp>
+            <vp>кран</vp>
+            <tp>краном</tp>
+            <pp>кране</pp>
+        </word>
+        <word>
+            <ip>буфет</ip>
+            <rp>буфета</rp>
+            <dp>буфетом</dp>
+            <vp>буфет</vp>
+            <tp>буфетом</tp>
+            <pp>буфете</pp>
+        </word>
+        <word>
+            <ip>дверь</ip>
+            <rp>двери</rp>
+            <dp>двери</dp>
+            <vp>дверь</vp>
+            <tp>дверью</tp>
+            <pp>двери</pp>
+        </word>
+        <word>
+            <ip>кружка</ip>
+            <rp>кружку</rp>
+            <dp>кружке</dp>
+            <vp>кружку</vp>
+            <tp>кружкой</tp>
+            <pp>кружке</pp>
+        </word>
+        <word>
+            <ip>вентиль</ip>
+            <rp>вентиля</rp>
+            <dp>вентилю</dp>
+            <vp>вентиль</vp>
+            <tp>вентилем</tp>
+            <pp>вентиле</pp>
+        </word>
+        <word>
+            <ip>ковёр</ip>
+            <rp>ковра</rp>
+            <dp>ковру</dp>
+            <vp>ковёр</vp>
+            <tp>ковром</tp>
+            <pp>ковре</pp>
+        </word>
+        <word>
+            <ip>ложка</ip>
+            <rp>ложки</rp>
+            <dp>ложке</dp>
+            <vp>ложку</vp>
+            <tp>ложкой</tp>
+            <pp>ложке</pp>
+        </word>
+        <word>
+            <ip>входная</ip>
+            <rp>входной</rp>
+            <dp>входной</dp>
+            <vp>входную</vp>
+            <tp>входной</tp>
+            <pp>входной</pp>
+        </word>
+        <word>
+            <ip>стена</ip>
+            <rp>стены</rp>
+            <dp>стене</dp>
+            <vp>стену</vp>
+            <tp>стеной</tp>
+            <pp>стене</pp>
+        </word>
+        <word>
+            <ip>банка</ip>
+            <rp>банки</rp>
+            <dp>банке</dp>
+            <vp>банку</vp>
+            <tp>банкой</tp>
+            <pp>банке</pp>
+        </word>
+        <word>
+            <ip>спичка</ip>
+            <rp>спички</rp>
+            <dp>спичке</dp>
+            <vp>спичку</vp>
+            <tp>спичкой</tp>
+            <pp>спичке</pp>
+        </word>
+        <word>
+            <ip>сломанная</ip>
+            <rp>сломанной</rp>
+            <dp>сломанной</dp>
+            <vp>сломанную</vp>
+            <tp>сломанной</tp>
+            <pp>сломанной</pp>
+        </word>
+        <word>
+            <ip>потолок</ip>
+            <rp>потолка</rp>
+            <dp>потолоку</dp>
+            <vp>потолок</vp>
+            <tp>потолоком</tp>
+            <pp>потолке</pp>
+        </word>
+        <word>
+            <ip>кости</ip>
+            <rp>костей</rp>
+            <dp>костям</dp>
+            <vp>кости</vp>
+            <tp>костями</tp>
+            <pp>костях</pp>
+        </word>
+        <word>
+            <ip>раковина</ip>
+            <rp>раковины</rp>
+            <dp>раковине</dp>
+            <vp>раковину</vp>
+            <tp>раковиной</tp>
+            <pp>раковине</pp>
+        </word>
+    </dictionary>
+    <locations>
+        <location id="ЗаставкаЛок" name="Начать игру? да/нет">
+            <hooks>
+                <hook action="да" objectElement="" type="instead">
+                    <instructions>
+                        <goToLoc location="НачалоЛок"/>
+                        <playMusic name="Фоновая"/>
+                    </instructions>
+                </hook>
+                <hook action="нет" objectElement="" type="instead">
+                    <instructions>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="На нет и суда нет. Смотрите заставку." type="text"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words/>
+            <description></description>
+            <attributes/>
+        </location>
+        <location id="НачалоЛок" name="Начало">
+            <hooks>
+                <hook action="осмотреться" objectElement="" type="instead">
+                    <instructions>
+                        <goToLoc location="КоридорУВходаВПодвалЛок"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words/>
+            <description>Бороться со сном становится всё труднее и труднее. Веки тяжелеют, и я уже не могу их контролировать. Глаза слипаются. Я теряю ощущение реальности. На мгновение закрываю глаза. Что это? Я нахожусь во дворе незнакомого дома. Прямо передо мной крыльцо  и входная дверь. Поднимаюсь по ступеням, открываю дверь, захожу в дом. Дверь за мной захлопывается. Где я?</description>
+            <attributes/>
+        </location>
+        <location id="КомнатаЛок" name="Комната">
+            <hooks>
+                <hook action="осмотреться" objectElement="" type="before">
+                    <instructions>
+                        <rollDice from="1" to="6" var="случай"/>
+                        <if condition="случай=1">
+                            <else>
+<if condition="случай=2">
+    <else/>
+    <then>
+        <showMessage beginWithCap="false" carriageReturn="true" message="За дверью кто-то ходит. Я слышу это.  Слышу эти тяжелые шаги. Слышу это хриплое дыхание. Но вот все затихло." type="text"/>
+        <playMusic name="Тяжелое дыхание"/>
+    </then>
+</if>
+                            </else>
+                            <then>
+<showMessage beginWithCap="false" carriageReturn="true" message="Вдруг я услышал за спиной чей-то идиотский смех. Я обернулся, но ничего не увидел. Какая-то чертовщина, подумал я. А может послышалось." type="text"/>
+<playMusic name="Идиотский смех"/>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words/>
+            <description>Это довольно-таки большая комната. Окно, выходящее на юг, задернуто темно-зелеными шторами, пропускает лишь слабый свет полуденного солнца. На противоположной стороне комнаты дверь. В углу огромных размеров сундук. На стене висит ковёр.</description>
+            <attributes/>
+            <north>КоридорУВходаВКомнатуЛок</north>
+        </location>
+        <location id="КоридорУВходаВКомнатуЛок" name="Коридор у входа в комнату">
+            <hooks>
+                <hook action="осмотреться" type="before">
+                    <instructions>
+                        <rollDice from="1" to="6" var="случай"/>
+                        <if condition="случай=1">
+                            <else>
+<if condition="случай=2">
+    <else/>
+    <then>
+        <showMessage beginWithCap="false" carriageReturn="true" message="За дверью кто-то ходит. Я слышу это.  Слышу эти тяжелые шаги. Слышу это хриплое дыхание. Но вот все затихло." type="text"/>
+        <playMusic name="Тяжелое дыхание"/>
+    </then>
+</if>
+                            </else>
+                            <then>
+<showMessage beginWithCap="false" carriageReturn="true" message="Вдруг я услышал за спиной чей-то идиотский смех. Я обернулся, но ничего не увидел. Какая-то чертовщина, подумал я. А может послышалось." type="text"/>
+<playMusic name="Идиотский смех"/>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words/>
+            <description>Коридор  длинный и узкий. С одной стороны идет ряд межкомнатных дверей. Другая стена коридора ничем особенным не отличается, за исключением гвоздей, забитых в нее в разных местах. В дальнем конце коридора виднеется небольшое окно возле которого еще одна дверь</description>
+            <attributes/>
+            <east>КоридорУВходаВКухнюЛок</east>
+            <south>КомнатаЛок</south>
+        </location>
+        <location id="КоридорУВходаВКухнюЛок" name="Коридор у входа в кухню">
+            <hooks>
+                <hook action="осмотреться" objectElement="" type="before">
+                    <instructions>
+                        <rollDice from="1" to="6" var="случай"/>
+                        <if condition="случай=1">
+                            <else>
+<if condition="случай=2">
+    <else/>
+    <then>
+        <showMessage beginWithCap="false" carriageReturn="true" message="За дверью кто-то ходит. Я слышу это.  Слышу эти тяжелые шаги. Слышу это хриплое дыхание. Но вот все затихло." type="text"/>
+        <playMusic name="Тяжелое дыхание"/>
+    </then>
+</if>
+                            </else>
+                            <then>
+<showMessage beginWithCap="false" carriageReturn="true" message="Вдруг я услышал за спиной чей-то идиотский смех. Я обернулся, но ничего не увидел. Какая-то чертовщина, подумал я. А может послышалось." type="text"/>
+<playMusic name="Идиотский смех"/>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words/>
+            <description>Коридор длинный и узкий. С одной стороны идет ряд межкомнатных дверей. Другая стена коридора ничем особенным не отличается, за исключением гвоздей, забитых в нее в разных местах. Я сделал несколько шагов по коридору и остановился у одной из дверей.</description>
+            <attributes/>
+            <east>КоридорУВходаВСпальнюЛок</east>
+            <south>КухняЛок</south>
+            <west>КоридорУВходаВКомнатуЛок</west>
+        </location>
+        <location id="КоридорУВходаВСпальнюЛок" name="Коридор у входа в спальню">
+            <hooks>
+                <hook action="осмотреться" objectElement="" type="before">
+                    <instructions>
+                        <rollDice from="1" to="6" var="случай"/>
+                        <if condition="случай=1">
+                            <else>
+<if condition="случай=2">
+    <else/>
+    <then>
+        <showMessage beginWithCap="false" carriageReturn="true" message="За дверью кто-то ходит. Я слышу это.  Слышу эти тяжелые шаги. Слышу это хриплое дыхание. Но вот все затихло." type="text"/>
+        <playMusic name="Тяжелое дыхание"/>
+    </then>
+</if>
+                            </else>
+                            <then>
+<showMessage beginWithCap="false" carriageReturn="true" message="Вдруг я услышал за спиной чей-то идиотский смех. Я обернулся, но ничего не увидел. Какая-то чертовщина, подумал я. А может послышалось." type="text"/>
+<playMusic name="Идиотский смех"/>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words/>
+            <description>Коридор  длинный и узкий. С одной стороны идет ряд межкомнатных дверей. Другая стена коридора ничем особенным не отличается, за исключением гвоздей, забитых в нее в разных местах. Я сделал несколько шагов по коридору и остановился у одной из дверей.</description>
+            <attributes/>
+            <east>КоридорУВходаВПодвалЛок</east>
+            <south>СпальняЛок</south>
+            <west>КоридорУВходаВКухнюЛок</west>
+        </location>
+        <location id="КоридорУВходаВПодвалЛок" name="Коридор у входа в подвал">
+            <hooks>
+                <hook action="осмотреться" objectElement="" type="before">
+                    <instructions>
+                        <rollDice from="1" to="6" var="случай"/>
+                        <if condition="случай=1">
+                            <else>
+<if condition="случай=2">
+    <else/>
+    <then>
+        <showMessage beginWithCap="false" carriageReturn="true" message="За дверью кто-то ходит. Я слышу это.  Слышу эти тяжелые шаги. Слышу это хриплое дыхание. Но вот все затихло." type="text"/>
+        <playMusic name="Тяжелое дыхание"/>
+    </then>
+</if>
+                            </else>
+                            <then>
+<showMessage beginWithCap="false" carriageReturn="true" message="Вдруг я услышал за спиной чей-то идиотский смех. Я обернулся, но ничего не увидел. Какая-то чертовщина, подумал я. А может послышалось." type="text"/>
+<playMusic name="Идиотский смех"/>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words/>
+            <description>Коридор длинный и узкий. С одной стороны идет ряд межкомнатных дверей. Другая стена коридора ничем особенным не отличается, за исключением гвоздей, забитых в нее в разных местах. Этот конец коридора слабо освещен сквозь маленькое запыленное окно на входной двери. Через находящуюся рядом с окном дверь можно попасть во двор. Ступеньки ведут вниз в подвал.</description>
+            <attributes/>
+            <south>КладоваяЛок</south>
+            <west>КоридорУВходаВСпальнюЛок</west>
+            <down>ВходВПодвалЛок</down>
+        </location>
+        <location id="КухняЛок" name="Кухня">
+            <hooks>
+                <hook action="осмотреться" type="before">
+                    <instructions>
+                        <rollDice from="1" to="6" var="случай"/>
+                        <if condition="случай=1">
+                            <else>
+<if condition="случай=2">
+    <else/>
+    <then>
+        <showMessage beginWithCap="false" carriageReturn="true" message="За дверью кто-то ходит. Я слышу это.  Слышу эти тяжелые шаги. Слышу это хриплое дыхание. Но вот все затихло." type="text"/>
+        <playMusic name="Тяжелое дыхание"/>
+    </then>
+</if>
+                            </else>
+                            <then>
+<showMessage beginWithCap="false" carriageReturn="true" message="Вдруг я услышал за спиной чей-то идиотский смех. Я обернулся, но ничего не увидел. Какая-то чертовщина, подумал я. А может послышалось." type="text"/>
+<playMusic name="Идиотский смех"/>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words/>
+            <description>Слева от двери дровяная плита. Справа старая оцинкованная раковина с медным краном. Напротив кухонный буфет. </description>
+            <attributes/>
+            <north>КоридорУВходаВКухнюЛок</north>
+        </location>
+        <location id="СпальняЛок" name="Спальня">
+            <hooks>
+                <hook action="осмотреться" objectElement="" type="before">
+                    <instructions>
+                        <rollDice from="1" to="6" var="случай"/>
+                        <if condition="случай=1">
+                            <else>
+<if condition="случай=2">
+    <else/>
+    <then>
+        <showMessage beginWithCap="false" carriageReturn="true" message="За дверью кто-то ходит. Я слышу это.  Слышу эти тяжелые шаги. Слышу это хриплое дыхание. Но вот все затихло." type="text"/>
+        <playMusic name="Тяжелое дыхание"/>
+    </then>
+</if>
+                            </else>
+                            <then>
+<showMessage beginWithCap="false" carriageReturn="true" message="Вдруг я услышал за спиной чей-то идиотский смех. Я обернулся, но ничего не увидел. Какая-то чертовщина, подумал я. А может послышалось." type="text"/>
+<playMusic name="Идиотский смех"/>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words/>
+            <description>Справа от двери старая железная кровать. Напротив огромный платяной шкаф.</description>
+            <attributes/>
+            <north>КоридорУВходаВСпальнюЛок</north>
+        </location>
+        <location id="КладоваяЛок" name="Кладовая">
+            <hooks>
+                <hook action="осмотреться" objectElement="" type="before">
+                    <instructions>
+                        <rollDice from="1" to="6" var="случай"/>
+                        <if condition="случай=1">
+                            <else>
+<if condition="случай=2">
+    <else/>
+    <then>
+        <showMessage beginWithCap="false" carriageReturn="true" message="За дверью кто-то ходит. Я слышу это.  Слышу эти тяжелые шаги. Слышу это хриплое дыхание. Но вот все затихло." type="text"/>
+        <playMusic name="Тяжелое дыхание"/>
+    </then>
+</if>
+                            </else>
+                            <then>
+<showMessage beginWithCap="false" carriageReturn="true" message="Вдруг я услышал за спиной чей-то идиотский смех. Я обернулся, но ничего не увидел. Какая-то чертовщина, подумал я. А может послышалось." type="text"/>
+<playMusic name="Идиотский смех"/>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words/>
+            <description>В этой комнате полный бардак. Наверное, здесь собирались делать ремонт. Никакой мебели тут нет. На полу лежат мешки непонятно с чем, в одном углу - куча кирпича, в другом какие-то ломаные лопаты, носилки и прочий строительный то ли хлам, то ли инструмент.</description>
+            <attributes/>
+            <north>КоридорУВходаВПодвалЛок</north>
+        </location>
+        <location id="ВходВПодвалЛок" name="Вход в подвал">
+            <hooks>
+                <hook action="осмотреться" objectElement="" type="before">
+                    <instructions>
+                        <rollDice from="1" to="6" var="случай"/>
+                        <if condition="случай=1">
+                            <else>
+<if condition="случай=2">
+    <else/>
+    <then>
+        <showMessage beginWithCap="false" carriageReturn="true" message="За дверью кто-то ходит. Я слышу это.  Слышу эти тяжелые шаги. Слышу это хриплое дыхание. Но вот все затихло." type="text"/>
+        <playMusic name="Тяжелое дыхание"/>
+    </then>
+</if>
+                            </else>
+                            <then>
+<showMessage beginWithCap="false" carriageReturn="true" message="Вдруг я услышал за спиной чей-то идиотский смех. Я обернулся, но ничего не увидел. Какая-то чертовщина, подумал я. А может послышалось." type="text"/>
+<playMusic name="Идиотский смех"/>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words/>
+            <description>Прямо передо мной дверь, ведущая в подвал. Идти в подвал? Если нет, то...</description>
+            <attributes/>
+            <up>КоридорУВходаВПодвалЛок</up>
+        </location>
+        <location id="ДворЛок" name="Двор">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words/>
+            <description></description>
+            <attributes/>
+        </location>
+        <location id="ПодвалЛок" name="Подвал">
+            <hooks>
+                <hook action="осмотреться" objectElement="" type="before">
+                    <instructions>
+                        <rollDice from="1" to="6" var="случай"/>
+                        <if condition="случай=1">
+                            <else>
+<if condition="случай=2">
+    <else/>
+    <then>
+        <showMessage beginWithCap="false" carriageReturn="true" message="За дверью кто-то ходит. Я слышу это.  Слышу эти тяжелые шаги. Слышу это хриплое дыхание. Но вот все затихло." type="text"/>
+        <playMusic name="Тяжелое дыхание"/>
+    </then>
+</if>
+                            </else>
+                            <then>
+<showMessage beginWithCap="false" carriageReturn="true" message="Вдруг я услышал за спиной чей-то идиотский смех. Я обернулся, но ничего не увидел. Какая-то чертовщина, подумал я. А может послышалось." type="text"/>
+<playMusic name="Идиотский смех"/>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words/>
+            <description>Сырой подвал. Пахнет плесенью и крысами. Мрачное место, можно сказать даже немножко жутковатое. Темно, совсем темно. Сколько бы я ни пытался что-нибудь разглядеть, у меня ничего не получается.</description>
+            <attributes/>
+        </location>
+        <location id="ДальнийКонецПодвалаЛок" name="Дальний конец подвала">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words/>
+            <description>Я нахожусь около водопроводной трубы, которая ведет наверх.</description>
+            <attributes/>
+        </location>
+        <location id="АбсолютноТемноеМестоЛок" name="Абсолютно тёмное место">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words/>
+            <description>Сколько бы я ни пытался что-нибудь разглядеть, у меня ничего не получается.</description>
+            <attributes/>
+        </location>
+        <location id="СвояКвартираЛок" name="Своя квартира">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words/>
+            <description>Звенит будильник. Все становится словно в тумане. Окружающая обстановка теряет свою форму и расплывается. Что это за звон в ушах? Да это же звенит будильник. Я открываю глаза и вижу свою квартиру. А куда пропал тот дом? Неужели это был всего лишь сон? Кошмар закончилcя. Пора на работу. Или остаться дома и поспать еще. Может быть приснится еще что-нибудь интересное. Что лучше сделать?</description>
+            <attributes/>
+        </location>
+        <location id="ПрикупЛок" name="Прикуп">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words/>
+            <description>Здесь хранятся ненужные пока предметы.</description>
+            <attributes/>
+        </location>
+    </locations>
+    <items>
+        <item id="КовёрПред" name="персидский ковер">
+            <hooks>
+                <hook action="осмотреть" objectElement="предмет" type="instead">
+                    <instructions>
+                        <if condition="не ЯтаганПред в КовёрПред.ПредметыСверху">
+                            <else>
+<showMessage beginWithCap="false" carriageReturn="true" message="Старинный красивый ковёр ручной работы.  На ковре висит турецкий ятаган." type="text"/>
+                            </else>
+                            <then>
+<showMessage beginWithCap="false" carriageReturn="true" message="Старинный красивый ковёр ручной работы." type="text"/>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles>
+                <role name="поверхность">
+                    <properties>
+                        <property name="предметыСверху">
+                            <collectionItem>ЯтаганПред</collectionItem>
+                        </property>
+                    </properties>
+                </role>
+            </roles>
+            <properties/>
+            <words mainWord="ковёр">
+                <word>ковер</word>
+                <word>ковёр</word>
+            </words>
+            <description>Описание в перехвате системной команды.</description>
+            <attributes>
+                <attribute>прикреплён</attribute>
+                <attribute>частьПейзажа</attribute>
+            </attributes>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>КомнатаЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="ЯтаганПред" name="турецкий ятаган">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="ятаган">
+                <word>ятаган</word>
+            </words>
+            <description>Ятаган из дамаской стали. Если нужно, то и голову кому-нибудь можно снести, а в случае чего и хлебушек порубать можно.</description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations/>
+            </startingPosition>
+        </item>
+        <item id="СундукПред" name="массивный сундук">
+            <hooks>
+                <hook action="открыть" objectElement="чтоОткрыть" type="instead">
+                    <instructions>
+                        <if condition="КлючПред в инвентарий и не СундукПред.открыт">
+                            <else>
+<showMessage beginWithCap="false" carriageReturn="true" message="Без ключа к этому замку сундук не открыть." type="text"/>
+                            </else>
+                            <then>
+<showMessage beginWithCap="false" carriageReturn="true" message="Вы вставили ключ в замочную скважину, и провернули два раза. Замок открылся." type="text"/>
+<setProperty object="СундукПред" name="открыт" value="да"/>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles>
+                <role name="поверхность">
+                    <properties>
+                        <property name="предметыСверху"/>
+                    </properties>
+                </role>
+                <role name="контейнер">
+                    <properties>
+                        <property name="предметыВнутри">
+                            <collectionItem>ФонарикПред</collectionItem>
+                        </property>
+                    </properties>
+                </role>
+                <role name="открываемый">
+                    <properties>
+                        <property name="открыт" value="нет"/>
+                    </properties>
+                </role>
+            </roles>
+            <properties/>
+            <words mainWord="сундук">
+                <word>сундук</word>
+            </words>
+            <description>Огромных размеров окованый железом сундук. На сундуке таких же огромных размеров замок.</description>
+            <attributes>
+                <attribute>тяжёлый</attribute>
+                <attribute>частьПейзажа</attribute>
+            </attributes>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>КомнатаЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="ЗамокПред" name="амбарный замок">
+            <hooks>
+                <hook action="открыть" objectElement="чтоОткрыть" type="instead">
+                    <instructions>
+                        <if condition="КованыйКлючПред в инвентарий">
+                            <else>
+<showMessage beginWithCap="false" carriageReturn="true" message="У вас при себе нет ключа от замка.&#xA;" type="text"/>
+                            </else>
+                            <then>
+<showMessage beginWithCap="false" carriageReturn="true" message="Вы вставили ключ в замочную скважину, и провернули два раза. Замок открылся." type="text"/>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words mainWord="замок">
+                <word>замок</word>
+            </words>
+            <description>Обыкновенный висячий замок.</description>
+            <attributes>
+                <attribute>прикреплён</attribute>
+                <attribute>частьПейзажа</attribute>
+            </attributes>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>КомнатаЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="ФонарикПред" name="электрический фонарик">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="фонарик">
+                <word>фонарик</word>
+            </words>
+            <description>Обыкновенный электрический фонарик, только без батарейки.</description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations/>
+            </startingPosition>
+        </item>
+        <item id="КроватьПред" name="железная кровать">
+            <hooks>
+                <hook action="осмотреть" objectElement="предмет" type="before">
+                    <instructions>
+                        <if condition="не ПодушкаПред в КроватьПред.ПредметыСверху">
+                            <else/>
+                            <then>
+<runProcedure procedure="ПроявитьКлючИБудильник" returnToVar=""/>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles>
+                <role name="поверхность">
+                    <properties>
+                        <property name="предметыСверху">
+                            <collectionItem>ПодушкаПред</collectionItem>
+                        </property>
+                    </properties>
+                </role>
+            </roles>
+            <properties/>
+            <words mainWord="кровать">
+                <word>кровать</word>
+            </words>
+            <description>Обыкновенная кровать, только сломанная. Прилечь отдохнуть, конечно, можно, но осторожно. Кто спал на моей кровати и сломал ее? Так и хочется произнести эту фразу, когда видишь эту старую железную кровать.</description>
+            <attributes>
+                <attribute>тяжёлый</attribute>
+                <attribute>частьПейзажа</attribute>
+            </attributes>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>СпальняЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="ПодушкаПред" name="старая подушка">
+            <hooks>
+                <hook action="взять" objectElement="предмет" type="instead">
+                    <instructions>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="Я взял подушку с кровати. Теперь у меня есть старая подушка.&#xA;" type="text"/>
+                        <moveItem item="ПодушкаПред" to="инвентарий"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words mainWord="подушка">
+                <word>подушка</word>
+            </words>
+            <description>Обычная перьевая подушка. Из дыр торчат клочки перьев.</description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations/>
+            </startingPosition>
+        </item>
+        <item id="ШкафПред" name="платяной шкаф">
+            <hooks/>
+            <roles>
+                <role name="контейнер">
+                    <properties>
+                        <property name="предметыВнутри"/>
+                    </properties>
+                </role>
+                <role name="открываемый">
+                    <properties>
+                        <property name="открыт" value="нет"/>
+                    </properties>
+                </role>
+            </roles>
+            <properties/>
+            <words mainWord="шкаф">
+                <word>шкаф</word>
+            </words>
+            <description>Место для хранения скелета. Шутка. Но в каждой шутке есть .... . А вдруг?
+Обычный шкаф для нательного и постельного белья.</description>
+            <attributes>
+                <attribute>тяжёлый</attribute>
+                <attribute>частьПейзажа</attribute>
+            </attributes>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>СпальняЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="БуфетПред" name="кухонный буфет">
+            <hooks/>
+            <roles>
+                <role name="контейнер">
+                    <properties>
+                        <property name="предметыВнутри">
+                            <collectionItem>КофеПред</collectionItem>
+                        </property>
+                    </properties>
+                </role>
+                <role name="открываемый">
+                    <properties>
+                        <property name="открыт" value="нет"/>
+                    </properties>
+                </role>
+            </roles>
+            <properties/>
+            <words mainWord="буфет">
+                <word>буфет</word>
+            </words>
+            <description>Обычный кухонный буфет для посуды с дверцами.</description>
+            <attributes>
+                <attribute>тяжёлый</attribute>
+                <attribute>частьПейзажа</attribute>
+            </attributes>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations/>
+            </startingPosition>
+        </item>
+        <item id="КофеПред" name="банка с растворимым кофе">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="банка">
+                <word>банка</word>
+                <word>кофе</word>
+            </words>
+            <description>Очень хорошее средство для бессоницы. Глаз не сомкнешь. Только жевать его сухим я не буду. Хорошо бы его в кипяточке забодяжить.</description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations/>
+            </startingPosition>
+        </item>
+        <item id="ПлитаПред" name="дровяная плита">
+            <hooks/>
+            <roles>
+                <role name="поверхность">
+                    <properties>
+                        <property name="предметыСверху">
+                            <collectionItem>ЧайникПред</collectionItem>
+                        </property>
+                    </properties>
+                </role>
+            </roles>
+            <properties/>
+            <words mainWord="плита">
+                <word>плита</word>
+            </words>
+            <description>Незаменимая вещь при авариях на газопроводе и прочих достижениях цивилизации. Хорошо бы принести дровишек, да затопить печь, поставить чайничек. Красота.</description>
+            <attributes>
+                <attribute>прикреплён</attribute>
+                <attribute>частьПейзажа</attribute>
+            </attributes>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>КухняЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="ЧайникПред" name="эмалированый чайник">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="чайник">
+                <word>чайник</word>
+            </words>
+            <description>Чайник как чайник, пустой. Если набрать воды, вскипятить, то можно и кофейку дрябнуть.</description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations/>
+            </startingPosition>
+        </item>
+        <item id="СтолПред" name="кухонный стол">
+            <hooks/>
+            <roles>
+                <role name="поверхность">
+                    <properties>
+                        <property name="предметыСверху"/>
+                    </properties>
+                </role>
+            </roles>
+            <properties/>
+            <words mainWord="стол">
+                <word>стол</word>
+            </words>
+            <description>Крулый стол на четырех ножках с присохшими остатками давней трапезы на скатерти.
+На столе стоит будильник.</description>
+            <attributes>
+                <attribute>тяжёлый</attribute>
+            </attributes>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>КухняЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="РаковинаПред" name="оцинкованая раковина">
+            <hooks/>
+            <roles>
+                <role name="контейнер">
+                    <properties>
+                        <property name="предметыВнутри">
+                            <collectionItem>ГрязнаяКружкаПред</collectionItem>
+                            <collectionItem>ГрязнаяЛожкаПред</collectionItem>
+                            <collectionItem>ГрязнаяТарелкаПред</collectionItem>
+                        </property>
+                    </properties>
+                </role>
+            </roles>
+            <properties/>
+            <words mainWord="раковина">
+                <word>раковина</word>
+            </words>
+            <description>Старая и грязная раковина со следами ржавчины и медным краном над ней.</description>
+            <attributes>
+                <attribute>прикреплён</attribute>
+                <attribute>частьПейзажа</attribute>
+            </attributes>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>КухняЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="КранПред" name="медный кран">
+            <hooks>
+                <hook action="осмотреть" objectElement="предмет" type="instead">
+                    <instructions>
+                        <if condition="вентиль=закрыт">
+                            <else>
+<playMusic name="бегущая вода"/>
+<showMessage beginWithCap="false" carriageReturn="true" message="Обыкновенный водопроводный кран, из которого струёй течёт в раковину вода." type="text"/>
+                            </else>
+                            <then>
+<playMusic name="капает кран"/>
+<showMessage beginWithCap="false" carriageReturn="true" message="Обыкновенный водопроводный кран, из которого периодически в раковину падает редкая капля. Но если в кране нет воды? То ни туды, и не сюды. А если есть вода, то можно и помыться, и постирать, и посудку вымыть, и чайничек согреть, да мало ли чего еще." type="text"/>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+                <hook action="закрыть" objectElement="чтоЗакрыть" type="before">
+                    <instructions>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="Не закрывается. Наверное, кран сломан, потому вода и перекрыта в другом месте." type="text"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles>
+                <role name="открываемый">
+                    <properties>
+                        <property name="открыт" value="да"/>
+                    </properties>
+                </role>
+            </roles>
+            <properties/>
+            <words mainWord="кран">
+                <word>кран</word>
+            </words>
+            <description>Обыкновенный водопроводный кран для холодной воды, из которого периодически в раковину падает редкая капля. Но если в кране нет воды? То ни туды, и не сюды. А если есть вода, то можно и помыться, и постирать, и посудку вымыть, и чайничек согреть, да мало ли чего еще.</description>
+            <attributes>
+                <attribute>прикреплён</attribute>
+                <attribute>частьПейзажа</attribute>
+            </attributes>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>КухняЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="ГрязнаяЛожкаПред" name="грязная ложка">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="ложка">
+                <word>ложка</word>
+            </words>
+            <description>Гряные ложки грозят бедой, мало-ли какая бацилла там сидит, или ещё хуже, коронавирус.</description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations/>
+            </startingPosition>
+        </item>
+        <item id="ГрязнаяКружкаПред" name="грязная кружка">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="кружка">
+                <word>кружка</word>
+            </words>
+            <description>Грязные кружки грозят бедой, мало-ли какая бацилла там сидит или ещё хуже, короновирус.</description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations/>
+            </startingPosition>
+        </item>
+        <item id="ТабуреткаПред" name="деревянная табуретка">
+            <hooks/>
+            <roles>
+                <role name="поверхность">
+                    <properties>
+                        <property name="предметыСверху">
+                            <collectionItem>БудильникПред</collectionItem>
+                        </property>
+                    </properties>
+                </role>
+            </roles>
+            <properties/>
+            <words mainWord="табуретка">
+                <word>табуретка</word>
+            </words>
+            <description>Самая обыкновенная табуретка, окрашенная масляной краской грязно-зеленого цвета. Только сидеть на ней не рекомендуется - сразу развалится.</description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>КухняЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="ВедроПред" name="мусорное ведро">
+            <hooks>
+                <hook action="осмотреть" objectElement="предмет" type="before">
+                    <instructions>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="Так хочется поковырятся в мусоре? Хорошо. Извольте. Начинаю. Передо мною мусорное ведро." type="text"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles>
+                <role name="контейнер">
+                    <properties>
+                        <property name="предметыВнутри">
+                            <collectionItem>ШелухаПред</collectionItem>
+                            <collectionItem>КостиПред</collectionItem>
+                            <collectionItem>БатарейкаПред</collectionItem>
+                            <collectionItem>ОчисткиПред</collectionItem>
+                            <collectionItem>ОкурокОтПапиросыПред</collectionItem>
+                            <collectionItem>КоробокПред</collectionItem>
+                        </property>
+                    </properties>
+                </role>
+            </roles>
+            <properties/>
+            <words mainWord="ведро">
+                <word>ведро</word>
+            </words>
+            <description>Обыкновенное ведро со всяким  бытовым мусором.</description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>КухняЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="БудильникПред" name="механический будильник">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="будильник">
+                <word>будильник</word>
+            </words>
+            <description>Будильничек. Ага, если нужно проснуться, то его можно использовать.</description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations/>
+            </startingPosition>
+        </item>
+        <item id="ПодвальнаяДверьПред" name="подвальная дверь">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="дверь">
+                <word>дверь</word>
+                <word>подвальная</word>
+            </words>
+            <description>Дверь обита железом.</description>
+            <attributes>
+                <attribute>прикреплён</attribute>
+            </attributes>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>ВходВПодвалЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="ВходнаяДверьПред" name="входная дверь">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="дверь">
+                <word>дверь</word>
+                <word>входная</word>
+            </words>
+            <description>Крепкая дверь с маленьким смотровым окном.</description>
+            <attributes>
+                <attribute>прикреплён</attribute>
+            </attributes>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>КоридорУВходаВПодвалЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="ВыключательПред" name="электрический выключатель">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="выключатель">
+                <word>выключатель</word>
+            </words>
+            <description>Я увидел на стене подвала выключатель.</description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations/>
+            </startingPosition>
+        </item>
+        <item id="БатарейкаПред" name="старая батарейка">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="батарейка">
+                <word>батарейка</word>
+            </words>
+            <description>Батарейка судя по виду далеко не новая, но может быть еще послужит. Нужно только беречь ее.
+Батарейка еще не села окончательно, но кто ее знает.</description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations/>
+            </startingPosition>
+        </item>
+        <item id="КлючПред" name="кованый ключ">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="ключ">
+                <word>ключ</word>
+            </words>
+            <description>Очень большой ключ. Ключик, ключик, а где же твой замочек?</description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations/>
+            </startingPosition>
+        </item>
+        <item id="ТрубаПред" name="водопроводная труба">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="труба">
+                <word>труба</word>
+            </words>
+            <description>Старая ржавая труба, а на ней вентиль.</description>
+            <attributes>
+                <attribute>прикреплён</attribute>
+                <attribute>частьПейзажа</attribute>
+            </attributes>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>ПодвалЛок</location>
+                    <location>ДальнийКонецПодвалаЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="ВентильПред" name="водозапорный вентиль">
+            <hooks>
+                <hook action="открыть" objectElement="чтоОткрыть" type="after">
+                    <instructions>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="Я провернул вентиль, и услышал, как по трубе пошла вода." type="text"/>
+                        <playMusic name="бегущая вода"/>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="Вдруг лампочка в подвале ярко вспыхнула, и погасла. Перегорела, понял я, и оказался в кромешной темноте." type="text"/>
+                        <goToLoc location="АбсолютноТемноеМестоЛок"/>
+                        <var name="вентиль" value="открыт"/>
+                    </instructions>
+                </hook>
+                <hook action="закрыть" objectElement="чтоЗакрыть" type="instead">
+                    <instructions>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="Я закрыл вентиль." type="text"/>
+                        <var name="вентиль" value="закрыт"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles>
+                <role name="открываемый">
+                    <properties>
+                        <property name="открыт" value="нет"/>
+                    </properties>
+                </role>
+            </roles>
+            <properties/>
+            <words mainWord="вентиль">
+                <word>вентиль</word>
+            </words>
+            <description>Обычный довольно-таки старый водозапорный вентиль.</description>
+            <attributes>
+                <attribute>прикреплён</attribute>
+                <attribute>частьПейзажа</attribute>
+            </attributes>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>ДальнийКонецПодвалаЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="КоробокПред" name="спичечный коробок">
+            <hooks>
+                <hook action="положить" objectElement="чтоПоложить" type="instead">
+                    <instructions>
+                        <if condition="чтоПоложить=спичкаПред">
+                            <else>
+<showMessage beginWithCap="false" carriageReturn="true" message="Коробок слишком мал, чтобы что-то туда положить кроме спички." type="text"/>
+                            </else>
+                            <then>
+<showMessage beginWithCap="false" carriageReturn="true" message="Я положил спичку в коробок." type="text"/>
+<moveItem item="СпичкаПред" to="КоробокПред.Предметы"/>
+                            </then>
+                        </if>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles>
+                <role name="контейнер">
+                    <properties>
+                        <property name="предметыВнутри">
+                            <collectionItem>СпичкаПред</collectionItem>
+                        </property>
+                    </properties>
+                </role>
+                <role name="открываемый">
+                    <properties>
+                        <property name="открыт" value="нет"/>
+                    </properties>
+                </role>
+            </roles>
+            <properties/>
+            <words mainWord="коробок">
+                <word>коробок</word>
+            </words>
+            <description>Обыкновенный коробок для спичек.</description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations/>
+            </startingPosition>
+        </item>
+        <item id="ДроваПред" name="дрова">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="табуретка">
+                <word>табуретка</word>
+                <word>дрова</word>
+                <word>сломанная</word>
+            </words>
+            <description>Куча табуреточного лома. Можно сказать дров. Теперь есть чем растопить печь.</description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations/>
+            </startingPosition>
+        </item>
+        <item id="СпичкаПред" name="единственная спичка">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="спичка">
+                <word>спичка</word>
+            </words>
+            <description>Спичка она и в Африке спичка. Только на Плюке это КЦ.</description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations/>
+            </startingPosition>
+        </item>
+        <item id="ПолПред1" name="пол">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="пол">
+                <word>пол</word>
+            </words>
+            <description>Пол, как пол, ничего особенного.</description>
+            <attributes>
+                <attribute>частьПейзажа</attribute>
+                <attribute>прикреплён</attribute>
+                <attribute>недоступен</attribute>
+            </attributes>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>КомнатаЛок</location>
+                    <location>КоридорУВходаВКомнатуЛок</location>
+                    <location>КоридорУВходаВКухнюЛок</location>
+                    <location>КоридорУВходаВСпальнюЛок</location>
+                    <location>КоридорУВходаВПодвалЛок</location>
+                    <location>КухняЛок</location>
+                    <location>СпальняЛок</location>
+                    <location>КладоваяЛок</location>
+                    <location>ВходВПодвалЛок</location>
+                    <location>ПодвалЛок</location>
+                    <location>ДальнийКонецПодвалаЛок</location>
+                    <location>СвояКвартираЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="ПотолокПред1" name="потолок">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="потолок">
+                <word>потолок</word>
+            </words>
+            <description></description>
+            <attributes>
+                <attribute>прикреплён</attribute>
+                <attribute>частьПейзажа</attribute>
+                <attribute>недоступен</attribute>
+            </attributes>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>КомнатаЛок</location>
+                    <location>КоридорУВходаВКомнатуЛок</location>
+                    <location>КоридорУВходаВКухнюЛок</location>
+                    <location>КоридорУВходаВСпальнюЛок</location>
+                    <location>КоридорУВходаВПодвалЛок</location>
+                    <location>КухняЛок</location>
+                    <location>СпальняЛок</location>
+                    <location>КладоваяЛок</location>
+                    <location>ВходВПодвалЛок</location>
+                    <location>ПодвалЛок</location>
+                    <location>ДальнийКонецПодвалаЛок</location>
+                    <location>СвояКвартираЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="СтенаПред1" name="стена">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="стена">
+                <word>стена</word>
+                <word>стены</word>
+            </words>
+            <description></description>
+            <attributes>
+                <attribute>частьПейзажа</attribute>
+                <attribute>прикреплён</attribute>
+            </attributes>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>КомнатаЛок</location>
+                    <location>КоридорУВходаВКомнатуЛок</location>
+                    <location>КоридорУВходаВКухнюЛок</location>
+                    <location>КоридорУВходаВСпальнюЛок</location>
+                    <location>КоридорУВходаВПодвалЛок</location>
+                    <location>КухняЛок</location>
+                    <location>СпальняЛок</location>
+                    <location>КладоваяЛок</location>
+                    <location>ВходВПодвалЛок</location>
+                    <location>ПодвалЛок</location>
+                    <location>ДальнийКонецПодвалаЛок</location>
+                    <location>СвояКвартираЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="МежкомнатнаяДверьПред" name="межкомнатная дверь">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="дверь">
+                <word>дверь</word>
+            </words>
+            <description>Дверь, как дверь, ничего особенного.</description>
+            <attributes>
+                <attribute>частьПейзажа</attribute>
+                <attribute>прикреплён</attribute>
+            </attributes>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>КомнатаЛок</location>
+                    <location>КоридорУВходаВКомнатуЛок</location>
+                    <location>КоридорУВходаВКухнюЛок</location>
+                    <location>КоридорУВходаВСпальнюЛок</location>
+                    <location>КоридорУВходаВПодвалЛок</location>
+                    <location>КухняЛок</location>
+                    <location>СпальняЛок</location>
+                    <location>КладоваяЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="ОкноПред1" name="окно">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="окно">
+                <word>окно</word>
+            </words>
+            <description>Окно, как окно, ничего особенного.</description>
+            <attributes>
+                <attribute>частьПейзажа</attribute>
+                <attribute>прикреплён</attribute>
+            </attributes>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>КомнатаЛок</location>
+                    <location>КухняЛок</location>
+                    <location>СпальняЛок</location>
+                    <location>КладоваяЛок</location>
+                    <location>СвояКвартираЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+        <item id="ШторыПред" name="шторы">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="шторы">
+                <word>шторы</word>
+            </words>
+            <description>Шторы плотные, тёмно-зелёные, по-видимому, давно не стиранные.</description>
+            <attributes>
+                <attribute>прикреплён</attribute>
+                <attribute>частьПейзажа</attribute>
+            </attributes>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations/>
+            </startingPosition>
+        </item>
+        <item id="ДвернойКлючПред" name="дверной ключ">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="ключ">
+                <word>ключ</word>
+                <word>дверной</word>
+            </words>
+            <description></description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations/>
+            </startingPosition>
+        </item>
+        <item id="ФонарикВыключенПред" name="выключенный фонарик">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="фонарик">
+                <word>фонарик</word>
+            </words>
+            <description>Обыкновенный электрический фонарик. Фонарик выключен.</description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations/>
+            </startingPosition>
+        </item>
+        <item id="ФонарикВключёнПред" name="включённый фонарик">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="фонарик">
+                <word>фонарик</word>
+            </words>
+            <description>Обыкновенный электрический фонарик. Фонарик включён.</description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations/>
+            </startingPosition>
+        </item>
+        <item id="ЧистаяЛожкаПред" name="чистая ложка">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="ложка">
+                <word>ложка</word>
+            </words>
+            <description>Чистая чайная ложка.</description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations/>
+            </startingPosition>
+        </item>
+        <item id="ЧистаяКружкаПред" name="чистая кружка">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="кружка">
+                <word>кружка</word>
+            </words>
+            <description>Чистая кружка для кофе.</description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations/>
+            </startingPosition>
+        </item>
+        <item id="ОкурокОтПапиросыПред" name="окурок от папиросы">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="окурок">
+                <word>окурок</word>
+            </words>
+            <description></description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations/>
+            </startingPosition>
+        </item>
+        <item id="ОчисткиПред" name="картофельные очистки">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="очистки">
+                <word>очистки</word>
+            </words>
+            <description></description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations/>
+            </startingPosition>
+        </item>
+        <item id="КостиПред" name="рыбные кости">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="кости">
+                <word>кости</word>
+            </words>
+            <description></description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations/>
+            </startingPosition>
+        </item>
+        <item id="ШелухаПред" name="луковая шелуха">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="шелуха">
+                <word>шелуха</word>
+            </words>
+            <description></description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations/>
+            </startingPosition>
+        </item>
+        <item id="ГрязнаяТарелкаПред" name="грязная тарелка">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="тарелка">
+                <word>тарелка</word>
+            </words>
+            <description></description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations/>
+            </startingPosition>
+        </item>
+        <item id="ЧистаяТарелкаПред" name="чистая тарелка">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="тарелка">
+                <word>тарелка</word>
+            </words>
+            <description></description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations/>
+            </startingPosition>
+        </item>
+    </items>
+    <actions>
+        <action name="быстро" description="короткий путь">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>быстро</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="быстро"/>
+            <restrictions/>
+        </action>
+        <action name="да" description="Ответ &quot;да&quot;">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>да</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="ОтветВведёнНеВовремя"/>
+            <restrictions/>
+        </action>
+        <action name="нет" description="Ответ &quot;нет&quot;">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>нет</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="ОтветВведёнНеВовремя"/>
+            <restrictions/>
+        </action>
+        <action name="посмотреть в окно" description="Посмотреть в окно">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>посмотреть в окно</synonym>
+                        <synonym>поглядеть в окно</synonym>
+                        <synonym>глянуть в окно</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="Посмотреть в окно"/>
+            <restrictions/>
+        </action>
+        <action name="включить фонарик" description="включить фонарик">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>включить фонарик</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="включить фонарик"/>
+            <restrictions/>
+        </action>
+        <action name="фонарик выключен переход к ФонарикВыключенПред" description="вставить батарейку в фонарик">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>вставить батарейку в фонарик</synonym>
+                        <synonym>вставить в фонарик батарейку</synonym>
+                        <synonym>установить батарейку в фонарик</synonym>
+                        <synonym>установить в фонарик батарейку</synonym>
+                        <synonym>вставить батарейку</synonym>
+                        <synonym>установить батарейку</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="вставить батарейку"/>
+            <restrictions/>
+        </action>
+        <action name="выключить фонарик" description="">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>выключить фонарик</synonym>
+                        <synonym>отключить фонарик</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="выключить фонарик"/>
+            <restrictions/>
+        </action>
+        <action name="извлечь батарейку" description="снять батарейку из фонарика">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>снять батарейку</synonym>
+                        <synonym>извлечь батарейку</synonym>
+                        <synonym>снять батарейку из фонарика</synonym>
+                        <synonym>извлечь батарейку из фонарика</synonym>
+                        <synonym>снять батарейку с фонарика</synonym>
+                        <synonym>извлечь батарейку с фонарика</synonym>
+                    </literalElement>
+                </template>
+            </templates>
+            <procedureCall procedure="снять батарейку"/>
+            <restrictions/>
+        </action>
+        <action name="зажечь" description="использовать единственную спичку">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>зажечь</synonym>
+                    </literalElement>
+                    <objectElement case="vp" parameter="ЧтоЗажечь"/>
+                </template>
+            </templates>
+            <procedureCall procedure="зажечь"/>
+            <restrictions/>
+        </action>
+        <action name="вымыть посуду" description="вымыть посуду">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>вымыть</synonym>
+                        <synonym>помыть</synonym>
+                        <synonym>мыть</synonym>
+                    </literalElement>
+                    <objectElement case="vp"/>
+                </template>
+            </templates>
+            <procedureCall procedure="помыть посуду"/>
+            <restrictions/>
+        </action>
+    </actions>
+</story>

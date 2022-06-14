@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<story xmlns="http://toysoft.narod.ru/IFML2Schema" id="story">
+    <inheritedSystemProcedures/>
+    <storyOptions>
+        <startLocationOption showStartLocDesc="false"/>
+        <startProcedureOption/>
+        <storyDescription/>
+        <globalVars/>
+        <systemCommandsDisableOption DisableHelp="false" DisableDebug="false"/>
+    </storyOptions>
+    <procedures/>
+    <libraries>
+        <library>standard/verbs.xml</library>
+    </libraries>
+    <dictionary>
+        <word>
+            <ip>яблоко</ip>
+            <rp>яблока</rp>
+            <dp>яблоку</dp>
+            <vp>яблоко</vp>
+            <tp>яблоком</tp>
+            <pp>яблоке</pp>
+        </word>
+        <word>
+            <ip>сундук</ip>
+            <rp>сундука</rp>
+            <dp>сундуку</dp>
+            <vp>сундук</vp>
+            <tp>сундуком</tp>
+            <pp>сундуке</pp>
+        </word>
+    </dictionary>
+    <locations>
+        <location id="Где-тоЛок" name="Где-то">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words/>
+            <description></description>
+            <attributes/>
+        </location>
+    </locations>
+    <items>
+        <item id="ЯблокоПред" name="яблоко">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="яблоко">
+                <word>яблоко</word>
+            </words>
+            <description></description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations/>
+            </startingPosition>
+        </item>
+        <item id="СундукПред" name="сундук">
+            <hooks/>
+            <roles>
+                <role name="поверхность">
+                    <properties>
+                        <property name="предметыСверху"/>
+                    </properties>
+                </role>
+                <role name="открываемый">
+                    <properties>
+                        <property name="открыт" value="нет"/>
+                    </properties>
+                </role>
+                <role name="контейнер">
+                    <properties>
+                        <property name="предметыВнутри">
+                            <collectionItem>ЯблокоПред</collectionItem>
+                        </property>
+                    </properties>
+                </role>
+            </roles>
+            <properties/>
+            <words mainWord="сундук">
+                <word>сундук</word>
+            </words>
+            <description></description>
+            <attributes/>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>Где-тоЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+    </items>
+    <actions/>
+</story>

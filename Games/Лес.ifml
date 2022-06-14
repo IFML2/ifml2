@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<story xmlns="http://toysoft.narod.ru/IFML2Schema" id="story">
+    <inheritedSystemProcedures/>
+    <storyOptions>
+        <startLocationOption location="ГустойЛесЛок" showStartLocDesc="true"/>
+        <startProcedureOption/>
+        <storyDescription name="" description="" version="" author=""/>
+        <globalVars/>
+        <systemCommandsDisableOption DisableHelp="false" DisableDebug="false"/>
+        <musicList/>
+    </storyOptions>
+    <procedures/>
+    <libraries>
+        <library>standard/base.xml</library>
+    </libraries>
+    <dictionary>
+        <word>
+            <ip>компас</ip>
+            <rp>компаса</rp>
+            <dp>компасу</dp>
+            <vp>компас</vp>
+            <tp>компасом</tp>
+            <pp>компасе</pp>
+        </word>
+    </dictionary>
+    <locations>
+        <location id="ГустойЛесЛок" name="Густой лес">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words/>
+            <description>Ты в очень густом лесу. Куда ни посмотри и ни пойди - лес. Ты заблудился. Что делать?</description>
+            <attributes/>
+            <north>ГустойЛесЛок</north>
+            <north-east>ГустойЛесЛок</north-east>
+            <east>ГустойЛесЛок</east>
+            <south-east>ГустойЛесЛок</south-east>
+            <south>ГустойЛесЛок</south>
+            <south-west>ГустойЛесЛок</south-west>
+            <west>ГустойЛесЛок</west>
+            <north-west>ГустойЛесЛок</north-west>
+        </location>
+        <location id="ОпушкаЛок" name="Опушка">
+            <hooks>
+                <hook action="идти на север" type="instead">
+                    <instructions>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="- Нет, в лес я больше не ногой, натерпелся!!!" type="text"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words/>
+            <description>Опушка леса. Лес на севере, но в него ты больше не пойдёшь!</description>
+            <attributes/>
+            <north>ГустойЛесЛок</north>
+        </location>
+    </locations>
+    <items>
+        <item id="КомпасПред" name="компас">
+            <hooks>
+                <hook action="осмотреть" objectElement="предмет" type="instead">
+                    <instructions>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="Ты посмотрел на компас - он работает! Ура! Теперь ты знаешь, куда идти!&#xA;" type="text"/>
+                        <goToLoc location="ОпушкаЛок"/>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="&#xA;Ты благолучно вышел из леса!!!" type="text"/>
+                    </instructions>
+                </hook>
+            </hooks>
+            <roles/>
+            <properties/>
+            <words mainWord="компас">
+                <word>компас</word>
+            </words>
+            <description></description>
+            <attributes/>
+            <startingPosition>
+                <inventory>true</inventory>
+                <locations/>
+            </startingPosition>
+        </item>
+    </items>
+    <actions/>
+</story>
