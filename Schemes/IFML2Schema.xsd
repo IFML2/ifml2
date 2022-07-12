@@ -251,6 +251,13 @@
         </restriction>
     </simpleType>
 
+    <xs:simpleType name="timerTypeEnumType">
+        <restriction base="xs:string">
+            <xs:enumeration value="realTime"/>
+            <xs:enumeration value="actionsCount"/>
+        </restriction>
+    </xs:simpleType>
+
     <complexType name="procedureCallType">
         <attribute name="procedure" type="string" use="required"/>
     </complexType>
@@ -274,6 +281,7 @@
             <element name="rollDice" type="ifml2:instructionRollDiceType"/>
             <element name="runProcedure" type="ifml2:instructionRunProcedureType"/>
             <xs:element name="showPicture" type="ifml2:instructionShowPictureType"/>
+            <xs:element name="startTimer" type="ifml2:instructionStartTimerType"/>
         </choice>
     </complexType>
 
@@ -476,6 +484,18 @@
                 <xs:attribute name="maxWidth" type="xs:int" use="optional"/>
             </extension>
         </complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="instructionStartTimerType">
+        <xs:complexContent>
+            <extension base="ifml2:instructionType">
+                <all>
+                    <element name="reaction" type="ifml2:instructionsType"/>
+                </all>
+                <xs:attribute name="timerType" type="ifml2:timerTypeEnumType"/>
+                <xs:attribute name="time" type="xs:duration"/>
+            </extension>
+        </xs:complexContent>
     </xs:complexType>
 
     <element name="library" type="ifml2:libraryType"/>
