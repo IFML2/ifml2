@@ -492,8 +492,9 @@
                 <all>
                     <element name="reaction" type="ifml2:instructionsType"/>
                 </all>
-                <xs:attribute name="timerType" type="ifml2:timerTypeEnumType"/>
-                <xs:attribute name="time" type="xs:duration"/>
+                <xs:attribute name="timerType" type="ifml2:timerTypeEnumType" use="required"/>
+                <xs:attribute name="duration" type="xs:duration"/>
+                <xs:attribute name="actionsCount" type="xs:integer"/>
             </extension>
         </xs:complexContent>
     </xs:complexType>
