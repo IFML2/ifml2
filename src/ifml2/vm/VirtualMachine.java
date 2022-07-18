@@ -8,18 +8,20 @@ import ifml2.vm.instructions.Instruction;
 import ifml2.vm.values.BooleanValue;
 import ifml2.vm.values.EmptyValue;
 import ifml2.vm.values.Value;
+import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.time.Duration;
+import java.util.*;
 
 import static ifml2.om.Procedure.SystemProcedureType;
 import static ifml2.om.Procedure.SystemProcedureType.SHOW_LOCATION;
 
 public class VirtualMachine
 {
+    public static final Logger LOGGER = Logger.getLogger(VirtualMachine.class);
+
     private final HashMap<String, Value> systemConstants = new HashMap<String, Value>()
     {
         {
@@ -245,5 +247,20 @@ public class VirtualMachine
 
     public void playMusic(String name) {
         engine.playMusic(name);
+    }
+
+    public void startRealTimeTimer(Duration duration, InstructionList instructionList, RunningContext runningContext) {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    runInstructionList(instructionList, RunningContext.CreateNestedContext(runningContext));
+                } catch (IFML2Exception e) {
+                    LOGGER.error(String.format("Error while executing realtime timer (duration: %s)", duration), e);
+                }
+            }
+        },
+                duration.toMillis());
     }
 }

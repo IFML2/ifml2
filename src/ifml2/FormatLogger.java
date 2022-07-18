@@ -4,7 +4,7 @@ import org.apache.log4j.Logger;
 
 import java.text.MessageFormat;
 
-public class FormatLogger
+public class FormatLogger //fixme remove
 {
     private Logger logger;
 

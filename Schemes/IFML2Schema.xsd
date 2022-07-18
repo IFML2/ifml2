@@ -251,6 +251,13 @@
         </restriction>
     </simpleType>
 
+    <xs:simpleType name="timerTypeEnumType">
+        <restriction base="xs:string">
+            <xs:enumeration value="realTime"/>
+            <xs:enumeration value="actionsCount"/>
+        </restriction>
+    </xs:simpleType>
+
     <complexType name="procedureCallType">
         <attribute name="procedure" type="string" use="required"/>
     </complexType>
@@ -275,6 +282,7 @@
             <element name="runProcedure" type="ifml2:instructionRunProcedureType"/>
             <xs:element name="showPicture" type="ifml2:instructionShowPictureType"/>
             <xs:element name="playMusic" type="ifml2:instructionPlayMusicType"/>
+            <xs:element name="startTimer" type="ifml2:instructionStartTimerType"/>
         </choice>
     </complexType>
 
@@ -483,6 +491,19 @@
         <xs:complexContent>
             <extension base="ifml2:instructionType">
                 <xs:attribute name="name" type="xs:string" use="required"/>
+            </extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="instructionStartTimerType">
+        <xs:complexContent>
+            <extension base="ifml2:instructionType">
+                <all>
+                    <element name="reaction" type="ifml2:instructionsType"/>
+                </all>
+                <xs:attribute name="timerType" type="ifml2:timerTypeEnumType" use="required"/>
+                <xs:attribute name="duration" type="xs:duration"/>
+                <xs:attribute name="actionsCount" type="xs:integer"/>
             </extension>
         </xs:complexContent>
     </xs:complexType>

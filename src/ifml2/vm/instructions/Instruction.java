@@ -177,7 +177,9 @@ public abstract class Instruction implements Cloneable
         RUN_PROCEDURE(RunProcedureInstruction.class, RunProcedureInstrEditor.class),
         RETURN(ReturnInstruction.class, ReturnInstrEditor.class),
         SHOW_PICTURE(ShowPictureInstruction.class, ShowPictureInstrEditor.class),
-        PLAY_MUSIC(PlayMusicInstruction.class, PlayMusicInstrEditor.class);
+        PLAY_MUSIC(PlayMusicInstruction.class, PlayMusicInstrEditor.class),
+        SHOW_PICTURE(ShowPictureInstruction.class, ShowPictureInstrEditor.class),
+        START_TIMER(StartTimerInstruction.class, null); //todo StartTimerInstruction Editor
 
         private Class<? extends Instruction> instrClass;
         private String title;
