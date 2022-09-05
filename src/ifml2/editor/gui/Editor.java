@@ -491,6 +491,11 @@ public class Editor extends JFrame
         // choose story file:
         JFileChooser storyFileChooser = createStoryFileChooser();
 
+        if (storyFile != null)
+        {
+            storyFileChooser.setSelectedFile(storyFile);
+        }
+
         if (storyFileChooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION)
         {
             return null;
