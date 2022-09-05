@@ -213,14 +213,21 @@ public class Editor extends JFrame
     {
         JMenuBar mainMenu = new JMenuBar();
 
+        JMenu fileMenu = createFileMenu();
+        mainMenu.add(fileMenu);
+
+        JMenu storyMenu = createStoryMenu();
+        mainMenu.add(storyMenu);
+
+        return mainMenu;
+    }
+
+    private @NotNull JMenu createFileMenu() {
         JMenu fileMenu = new JMenu(FILE_MENU_NAME);
-        fileMenu.add(new AbstractAction("Новая история", GUIUtils.NEW_ELEMENT_ICON)
-        {
+        fileMenu.add(new AbstractAction("Новая история", GUIUtils.NEW_ELEMENT_ICON) {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                if (!ensureStorySaved())
-                {
+            public void actionPerformed(ActionEvent e) {
+                if (!ensureStorySaved()) {
                     return;
                 }
 
@@ -228,167 +235,128 @@ public class Editor extends JFrame
             }
         });
         fileMenu.addSeparator();
-        fileMenu.add(new AbstractAction(OPEN_STORY_ACTION_NAME, GUIUtils.OPEN_ICON)
-        {
+        fileMenu.add(new AbstractAction(OPEN_STORY_ACTION_NAME, GUIUtils.OPEN_ICON) {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                if (!ensureStorySaved())
-                {
+            public void actionPerformed(ActionEvent e) {
+                if (!ensureStorySaved()) {
                     return;
                 }
 
                 String storyFileName = selectStoryFileForOpen();
-                if (storyFileName != null)
-                {
+                if (storyFileName != null) {
                     loadStory(storyFileName);
                 }
             }
         });
-        fileMenu.add(new AbstractAction("Сохранить...", GUIUtils.SAVE_ICON)
-        {
+        fileMenu.add(new AbstractAction("Сохранить...", GUIUtils.SAVE_ICON) {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                try
-                {
+            public void actionPerformed(ActionEvent e) {
+                try {
                     selectFileAndSaveStory();
-                }
-                catch (IFML2Exception ex)
-                {
+                } catch (IFML2Exception ex) {
                     JOptionPane.showMessageDialog(Editor.this, "Ошибка во время сохранения истории: " + ex.getMessage());
                     GUIUtils.ReportError(Editor.this, ex);
                 }
             }
         });
         fileMenu.addSeparator();
-        fileMenu.add(new AbstractAction("Экспортировать зашифрованную историю...")
-        {
+        fileMenu.add(new AbstractAction("Экспортировать зашифрованную историю...") {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 // choose cipher story file:
                 JFileChooser storyFileChooser = new JFileChooser(CommonUtils.getGamesDirectory());
                 storyFileChooser.removeChoosableFileFilter(storyFileChooser.getAcceptAllFileFilter()); // remove All files filter
-                storyFileChooser.setFileFilter(new FileFilter()
-                {
+                storyFileChooser.setFileFilter(new FileFilter() {
                     @Override
-                    public String getDescription()
-                    {
+                    public String getDescription() {
                         return CommonConstants.CIPHERED_STORY_FILE_FILTER_NAME;
                     }
 
                     @Override
-                    public boolean accept(File file)
-                    {
+                    public boolean accept(File file) {
                         return file.isDirectory() || file.getName().toLowerCase().endsWith(CommonConstants.CIPHERED_STORY_EXTENSION) ||
-                               !file.exists();
+                                !file.exists();
                     }
                 });
 
-                storyFileChooser.setFileView(new FileView()
-                {
+                storyFileChooser.setFileView(new FileView() {
                     @Override
-                    public Icon getIcon(File f)
-                    {
-                        if (f.isDirectory())
-                        {
+                    public Icon getIcon(File f) {
+                        if (f.isDirectory()) {
                             return DIRECTORY_ICON;
                         }
                         return GUIUtils.CIPHERED_STORY_FILE_ICON;
                     }
                 });
 
-                if (storyFileChooser.showSaveDialog(Editor.this) == JFileChooser.APPROVE_OPTION)
-                {
+                if (storyFileChooser.showSaveDialog(Editor.this) == JFileChooser.APPROVE_OPTION) {
                     String fileName = storyFileChooser.getSelectedFile().getAbsolutePath();
 
-                    if (!fileName.toLowerCase().endsWith(CommonConstants.CIPHERED_STORY_EXTENSION))
-                    {
+                    if (!fileName.toLowerCase().endsWith(CommonConstants.CIPHERED_STORY_EXTENSION)) {
                         fileName += CommonConstants.CIPHERED_STORY_EXTENSION;
                     }
 
-                    try
-                    {
+                    try {
                         OMManager.exportCipheredStory(fileName, story);
-                    }
-                    catch (IFML2Exception ex)
-                    {
+                    } catch (IFML2Exception ex) {
                         GUIUtils.ReportError(Editor.this, ex);
                     }
                 }
             }
         });
-        mainMenu.add(fileMenu);
+        return fileMenu;
+    }
 
+    private @NotNull JMenu createStoryMenu() {
         JMenu storyMenu = new JMenu(STORY_MENU_NAME);
-        storyMenu.add(new AbstractAction("Настройки истории...", GUIUtils.PREFERENCES_ICON)
-        {
+        storyMenu.add(new AbstractAction("Настройки истории...", GUIUtils.PREFERENCES_ICON) {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 StoryOptionsEditor storyOptionsEditor = new StoryOptionsEditor(Editor.this, story.getStoryOptions(), story.getDataHelper());
-                if (storyOptionsEditor.showDialog())
-                {
+                if (storyOptionsEditor.showDialog()) {
                     storyOptionsEditor.updateData(story.getStoryOptions());
                     markStoryEdited();
                 }
             }
         });
-        storyMenu.add(new AbstractAction("Перехваты системных процедур...", GUIUtils.PREFERENCES_ICON)
-        {
+        storyMenu.add(new AbstractAction("Перехваты системных процедур...", GUIUtils.PREFERENCES_ICON) {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 InheritedSystemProcedures inheritedSystemProcedures = story.getInheritedSystemProcedures();
                 InheritedSystemProceduresEditor inheritedSystemProceduresEditor = new InheritedSystemProceduresEditor(Editor.this,
                         inheritedSystemProcedures, story.getDataHelper());
-                if (inheritedSystemProceduresEditor.showDialog())
-                {
-                    try
-                    {
+                if (inheritedSystemProceduresEditor.showDialog()) {
+                    try {
                         inheritedSystemProceduresEditor.updateData(inheritedSystemProcedures);
                         markStoryEdited();
-                    }
-                    catch (IFML2EditorException ex)
-                    {
+                    } catch (IFML2EditorException ex) {
                         GUIUtils.ReportError(Editor.this, ex);
                     }
                 }
             }
         });
         storyMenu.addSeparator();
-        storyMenu.add(new AbstractAction("Используемые библиотеки...")
-        {
+        storyMenu.add(new AbstractAction("Используемые библиотеки...") {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 EventList<Library> libraries = story.getLibraries();
                 UsedLibsEditor usedLibsEditor = new UsedLibsEditor(Editor.this, libraries, story.getDataHelper());
-                if (usedLibsEditor.showDialog())
-                {
-                    try
-                    {
+                if (usedLibsEditor.showDialog()) {
+                    try {
                         usedLibsEditor.updateData(libraries);
                         markStoryEdited();
-                    }
-                    catch (Throwable ex)
-                    {
+                    } catch (Throwable ex) {
                         GUIUtils.ReportError(Editor.this, ex);
                     }
                 }
             }
         });
         storyMenu.addSeparator();
-        storyMenu.add(new AbstractAction("Запустить историю в Плеере...", GUIUtils.PLAY_ICON)
-        {
+        storyMenu.add(new AbstractAction("Запустить историю в Плеере...", GUIUtils.PLAY_ICON) {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                try
-                {
-                    if (storyFile == null)
-                    {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    if (storyFile == null) {
                         JOptionPane.showMessageDialog(Editor.this, "Прежде, чем запускать в Плеере, необходимо сохранить историю хотя бы один раз.",
                                 "Необходимо сохранить историю", JOptionPane.WARNING_MESSAGE);
                         return;
@@ -400,25 +368,19 @@ public class Editor extends JFrame
                     String fileName = tempFile.getAbsolutePath();
                     saveStory(fileName, false);
                     SwingUtilities.invokeLater(() -> GUIPlayer.startFromFile(fileName, true));
-                }
-                catch (Throwable ex)
-                {
+                } catch (Throwable ex) {
                     GUIUtils.ReportError(Editor.this, ex);
                 }
             }
         });
         storyMenu.addSeparator();
-        storyMenu.add(new AbstractAction("Открыть Тестер...")
-        {
+        storyMenu.add(new AbstractAction("Открыть Тестер...") {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 TestRunner.main(new String[]{});
             }
         });
-        mainMenu.add(storyMenu);
-
-        return mainMenu;
+        return storyMenu;
     }
 
     private boolean ensureStorySaved() {
@@ -608,8 +570,7 @@ public class Editor extends JFrame
             }
 
             @Override
-            protected Location createElement() throws Exception
-            {
+            protected Location createElement() {
                 Location location = new Location();
                 return editLocation(location) ? location : null;
             }
@@ -640,8 +601,7 @@ public class Editor extends JFrame
             }
 
             @Override
-            protected Item createElement() throws Exception
-            {
+            protected Item createElement() {
                 Item item = new Item();
                 return editItem(item) ? item : null;
             }
@@ -662,8 +622,7 @@ public class Editor extends JFrame
             }
 
             @Override
-            protected Procedure createElement() throws Exception
-            {
+            protected Procedure createElement() {
                 Procedure procedure = new Procedure();
                 return editProcedure(procedure) ? procedure : null;
             }
