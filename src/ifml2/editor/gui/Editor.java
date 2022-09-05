@@ -486,9 +486,27 @@ public class Editor extends JFrame
         }
     }
 
-    private String selectFileForStorySave()
+    private @Nullable String selectFileForStorySave()
     {
         // choose story file:
+        JFileChooser storyFileChooser = createStoryFileChooser();
+
+        if (storyFileChooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION)
+        {
+            return null;
+        }
+
+        String fileName = storyFileChooser.getSelectedFile().getAbsolutePath();
+
+        if (!fileName.toLowerCase().endsWith(CommonConstants.STORY_EXTENSION))
+        {
+            fileName += CommonConstants.STORY_EXTENSION;
+        }
+
+        return fileName;
+    }
+
+    private @NotNull static JFileChooser createStoryFileChooser() {
         JFileChooser storyFileChooser = new JFileChooser(CommonUtils.getGamesDirectory());
         storyFileChooser.removeChoosableFileFilter(storyFileChooser.getAcceptAllFileFilter()); // remove All files filter
         storyFileChooser.setFileFilter(new FileFilter()
@@ -516,19 +534,7 @@ public class Editor extends JFrame
             }
         });
 
-        if (storyFileChooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION)
-        {
-            return null;
-        }
-
-        String fileName = storyFileChooser.getSelectedFile().getAbsolutePath();
-
-        if (!fileName.toLowerCase().endsWith(CommonConstants.STORY_EXTENSION))
-        {
-            fileName += CommonConstants.STORY_EXTENSION;
-        }
-
-        return fileName;
+        return storyFileChooser;
     }
 
     private boolean editItem(@Nullable Item item)
