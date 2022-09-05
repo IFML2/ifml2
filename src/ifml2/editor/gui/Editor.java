@@ -20,9 +20,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileView;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -224,6 +222,7 @@ public class Editor extends JFrame
 
     private @NotNull JMenu createFileMenu() {
         JMenu fileMenu = new JMenu(FILE_MENU_NAME);
+
         fileMenu.add(new AbstractAction("Новая история", GUIUtils.NEW_ELEMENT_ICON) {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -234,7 +233,9 @@ public class Editor extends JFrame
                 createNewStory();
             }
         });
+
         fileMenu.addSeparator();
+
         fileMenu.add(new AbstractAction(OPEN_STORY_ACTION_NAME, GUIUtils.OPEN_ICON) {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -248,7 +249,8 @@ public class Editor extends JFrame
                 }
             }
         });
-        fileMenu.add(new AbstractAction("Сохранить...", GUIUtils.SAVE_ICON) {
+
+        JMenuItem saveStoryMenuItem = fileMenu.add(new AbstractAction("Сохранить...", GUIUtils.SAVE_ICON) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
@@ -259,7 +261,10 @@ public class Editor extends JFrame
                 }
             }
         });
+        saveStoryMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
+
         fileMenu.addSeparator();
+
         fileMenu.add(new AbstractAction("Экспортировать зашифрованную историю...") {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -304,6 +309,7 @@ public class Editor extends JFrame
                 }
             }
         });
+
         return fileMenu;
     }
 
