@@ -7,6 +7,7 @@
 *.exe
 /bitrock/*.run
 target/
+bin/
 .project
 .classpath
 .settings/
