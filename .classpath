@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="unittests"/>
+	<classpathentry kind="lib" path="portable/glazedlists_java15-1.9.0.jar"/>
+	<classpathentry kind="lib" path="portable/ifml2.jar"/>
+	<classpathentry kind="lib" path="portable/log4j-1.2.17.jar"/>
+	<classpathentry kind="output" path="target"/>
+</classpath>

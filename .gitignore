@@ -1,9 +1,9 @@
-# IDEA files
-.idea/
-*.iml
-# Eclipse files
-.settings/
-.project
-.classpath
-# Maven files
-target/
+/out/
+/lib/
+/.idea/workspace.xml
+/.idea/shelf/
+*.bak
+*.backup
+*.exe
+/bitrock/*.run
+/target/
