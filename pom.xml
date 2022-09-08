@@ -107,6 +107,11 @@
                     <artifactId>exec-maven-plugin</artifactId>
                     <version>3.1.0</version>
                 </plugin>
+                <plugin>
+                    <groupId>com.amashchenko.maven.plugin</groupId>
+                    <artifactId>gitflow-maven-plugin</artifactId>
+                    <version>1.18.0</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -180,6 +185,24 @@
                             <directory>${project.basedir}/src/ifml2/editor/gui/images</directory>
                         </resource>
                     </resources>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.amashchenko.maven.plugin</groupId>
+                <artifactId>gitflow-maven-plugin</artifactId>
+                <configuration>
+                    <gitFlowConfig>
+                        <productionBranch>master</productionBranch>
+                        <developmentBranch>develop</developmentBranch>
+                        <featureBranchPrefix>feature/</featureBranchPrefix>
+                        <releaseBranchPrefix>release/</releaseBranchPrefix>
+                        <hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
+                        <supportBranchPrefix>support/</supportBranchPrefix>
+                        <versionTagPrefix>v</versionTagPrefix>
+                        <origin>origin</origin>
+                    </gitFlowConfig>
+                    <fetchRemote>true</fetchRemote>
+                    <pushRemote>true</pushRemote>
                 </configuration>
             </plugin>
         </plugins>
