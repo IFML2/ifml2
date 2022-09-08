@@ -7,7 +7,7 @@
 
     <groupId>ifml2</groupId>
     <artifactId>ifml2</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0-move-to-java-17-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>IFML2</name>
