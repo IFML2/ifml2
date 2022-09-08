@@ -37,7 +37,7 @@
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text value="&amp;OK"/>
+                  <text value="Подтвердить"/>
                 </properties>
               </component>
               <component id="5723f" class="javax.swing.JButton" binding="buttonCancel">
@@ -45,7 +45,7 @@
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text value="&amp;Cancel"/>
+                  <text value="Отменить"/>
                 </properties>
               </component>
             </children>
@@ -161,7 +161,7 @@
                       <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
-                      <text value="&amp;В инвентаре"/>
+                      <text value="В инвентаре"/>
                     </properties>
                   </component>
                   <scrollpane id="757aa">
@@ -201,7 +201,7 @@
                     </constraints>
                     <properties>
                       <icon value="Edit24.gif"/>
-                      <text value="Из&amp;менить..."/>
+                      <text value="Изменить..."/>
                     </properties>
                   </component>
                 </children>
@@ -239,7 +239,7 @@
                 </constraints>
                 <properties>
                   <icon value="Edit24.gif"/>
-                  <text value="И&amp;зменить..."/>
+                  <text value="Изменить..."/>
                 </properties>
               </component>
             </children>

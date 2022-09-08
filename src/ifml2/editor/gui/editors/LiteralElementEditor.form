@@ -36,7 +36,7 @@
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text value="&amp;OK"/>
+                  <text value="Подтвердить"/>
                 </properties>
               </component>
               <component id="5723f" class="javax.swing.JButton" binding="buttonCancel">
@@ -44,7 +44,7 @@
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text value="&amp;Cancel"/>
+                  <text value="Отменить"/>
                 </properties>
               </component>
             </children>
@@ -88,19 +88,19 @@
           <component id="2cfb3" class="javax.swing.JButton" binding="addButton">
             <constraints/>
             <properties>
-              <text value="&amp;Добавить..."/>
+              <text value="Добавить..."/>
             </properties>
           </component>
           <component id="a7130" class="javax.swing.JButton" binding="editButton">
             <constraints/>
             <properties>
-              <text value="&amp;Редактировать..."/>
+              <text value="Редактировать..."/>
             </properties>
           </component>
           <component id="657a0" class="javax.swing.JButton" binding="delButton">
             <constraints/>
             <properties>
-              <text value="&amp;Удалить"/>
+              <text value="Удалить"/>
             </properties>
           </component>
         </children>
@@ -133,7 +133,7 @@
               <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="&amp;Передавать значение элемента в процедуру как параметр"/>
+              <text value="Передавать значение элемента в процедуру как параметр"/>
             </properties>
           </component>
         </children>
