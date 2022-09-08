@@ -6,3 +6,8 @@
 *.backup
 *.exe
 /bitrock/*.run
+target/
+.project
+.classpath
+.settings/
+nb-configuration.xml
