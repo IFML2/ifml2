@@ -4,9 +4,12 @@ on:
   push:
     branches:
       - master
+      - develop
+      - feature/**
   pull_request:
     branches:
       - master
+      - develop
 jobs:
   test:
     name: Tests
