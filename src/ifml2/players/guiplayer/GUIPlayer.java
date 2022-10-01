@@ -520,7 +520,7 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
                 for (ValidationEvent validationEvent : ((IFML2LoadXmlException) exception).getEvents())
                 {
                     outputPlainText(MessageFormat
-                                    .format("\n\"{0}\" at {1},{2}", validationEvent.getMessage(), validationEvent.getLocator().getLineNumber(),
+                                    .format("\n - \"{0}\" at {1},{2}", validationEvent.getMessage(), validationEvent.getLocator().getLineNumber(),
                                             validationEvent.getLocator().getColumnNumber()));
                 }
             }

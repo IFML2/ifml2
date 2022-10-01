@@ -174,6 +174,9 @@ public class OMManager
                 }
             }
         }
+        catch (IFML2LoadXmlException e) {
+            throw e;
+        }
         catch (Exception e)
         {
             throw new IFML2Exception(e, "Ошибка при загрузке истории: {0}", e.getMessage());
