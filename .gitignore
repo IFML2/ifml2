@@ -5,3 +5,5 @@
 *.bak
 *.backup
 *.exe
+/bitrock/*.run
+/.idea/dictionaries/mbalanov.xml

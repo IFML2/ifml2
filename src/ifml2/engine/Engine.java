@@ -2,10 +2,7 @@ package ifml2.engine;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
-import ifml2.CommonConstants;
-import ifml2.FormatLogger;
-import ifml2.IFML2Exception;
-import ifml2.SystemIdentifiers;
+import ifml2.*;
 import ifml2.engine.featureproviders.IPlayerFeatureProvider;
 import ifml2.engine.featureproviders.graphic.IOutputIconProvider;
 import ifml2.engine.featureproviders.music.IPlayMusicProvider;
@@ -639,28 +636,25 @@ public class Engine {
      */
     public boolean checkDeepContent(Item itemToCheck, List<Item> items) throws IFML2Exception {
         for (Item item : items) {
-            Value itemContents = item.getAccessibleContent(getVirtualMachine());
-            if (itemContents != null) {
-                if (!(itemContents instanceof CollectionValue)) {
-                    throw new IFML2VMException("Триггер доступного содержимого у предмета \"{0}\" вернул не коллекцию, а \"{1}\"!",
-                            itemToCheck, itemContents.getTypeName());
+            CollectionValue itemContents = item.getAccessibleContent(getVirtualMachine());
+            if (itemContents == null) {
+                continue;
+            }
+
+            List<? extends IFMLEntity> itemContentsList = itemContents.getValue();
+            List<Item> itemContentsItemList = new BasicEventList<>();
+            for (IFMLEntity ifmlEntity : itemContentsList) {
+                if (!(ifmlEntity instanceof Item)) {
+                    throw new IFML2VMException(
+                            "Триггер доступного содержимого у предмета \"{0}\" вернул в коллекции не предмет, а \"{1}\"!", itemToCheck,
+                            ifmlEntity);
                 }
 
-                List itemContentsList = ((CollectionValue) itemContents).getValue();
-                List<Item> itemContentsItemList = new BasicEventList<>();
-                for (Object object : itemContentsList) {
-                    if (!(object instanceof Item)) {
-                        throw new IFML2VMException(
-                                "Триггер доступного содержимого у предмета \"{0}\" вернул в коллекции не предмет, а \"{1}\"!", itemToCheck,
-                                object);
-                    }
+                itemContentsItemList.add((Item) ifmlEntity);
+            }
 
-                    itemContentsItemList.add((Item) object);
-                }
-
-                if (itemContentsList.contains(itemToCheck) || checkDeepContent(itemToCheck, itemContentsItemList)) {
-                    return true;
-                }
+            if (itemContentsList.contains(itemToCheck) || checkDeepContent(itemToCheck, itemContentsItemList)) {
+                return true;
             }
         }
 
