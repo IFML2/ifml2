@@ -9,8 +9,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 public class LocationAdapter extends XmlAdapter<LocationAdapter.AdaptedLocation, Location>
 {
     @Override
-    public Location unmarshal(AdaptedLocation adaptedLocation) throws Exception
-    {
+    public Location unmarshal(AdaptedLocation adaptedLocation) {
         return adaptedLocation;
     }
 
@@ -24,7 +23,7 @@ public class LocationAdapter extends XmlAdapter<LocationAdapter.AdaptedLocation,
     @XmlType(name="location")
     public static class AdaptedLocation extends Location implements Cloneable
     {
-        /**
+        /*
          * Override getExit() to yield exits from plain fields to HashMap
          */
         @Override
@@ -58,9 +57,10 @@ public class LocationAdapter extends XmlAdapter<LocationAdapter.AdaptedLocation,
         }
 
         @Override
-        /**
+        /*
          * Override setExit() to set exits to plain fields from HashMap
-         */ public void setExit(ExitDirection exitDirection, Location location)
+         */
+        public void setExit(ExitDirection exitDirection, Location location)
         {
             switch (exitDirection)
             {

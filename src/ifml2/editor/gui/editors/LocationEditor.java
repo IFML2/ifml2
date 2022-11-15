@@ -21,6 +21,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static ifml2.om.Location.ExitDirection;
 import static ifml2.om.Location.ExitDirection.*;
@@ -55,7 +56,8 @@ public class LocationEditor extends AbstractEditor<Location>
     private JComboBox southEastCombo;
     private JComboBox southWestCombo;
     private JComboBox northWestCombo;
-    private Map<Location.ExitDirection, JComboBox> exitCombosMap = new HashMap<Location.ExitDirection, JComboBox>()
+    private JComboBox<StoryOptions.Music> backgroundMusicCombo;
+    private final Map<Location.ExitDirection, JComboBox> exitCombosMap = new HashMap<Location.ExitDirection, JComboBox>()
     {
         {
             put(NORTH, northCombo);
@@ -74,8 +76,8 @@ public class LocationEditor extends AbstractEditor<Location>
     private ArrayList<Item> itemsClone = null;
     private EventList<Attribute> attributesClone = null;
     private EventList<Hook> hooksClone = null;
-    private Location location;
-    private Story.DataHelper storyDataHelper;
+    private final Location location;
+    private final Story.DataHelper storyDataHelper;
 
     public LocationEditor(Window owner, Location location, final Story.DataHelper storyDataHelper)
     {
@@ -118,8 +120,6 @@ public class LocationEditor extends AbstractEditor<Location>
             {
                 editItem((Item) itemsList.getSelectedValue());
             }
-
-
         });
         delItemButton.setAction(new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
         {
@@ -149,8 +149,6 @@ public class LocationEditor extends AbstractEditor<Location>
                     }
                 }
             }
-
-
         });
         editAttributesButton.setAction(new AbstractAction("Редактировать...", GUIUtils.EDIT_ELEMENT_ICON)
         {
@@ -202,8 +200,6 @@ public class LocationEditor extends AbstractEditor<Location>
                     editHook(selectedHook);
                 }
             }
-
-
         });
         deleteHookButton.setAction(new AbstractAction("Удалить", GUIUtils.DEL_ELEMENT_ICON)
         {
@@ -230,8 +226,6 @@ public class LocationEditor extends AbstractEditor<Location>
                     hooksClone.remove(selectedHook);
                 }
             }
-
-
         });
 
         itemsList.addMouseListener(new MouseAdapter()
@@ -289,11 +283,11 @@ public class LocationEditor extends AbstractEditor<Location>
         for (ExitDirection exitDirection : ExitDirection.values())
         {
             JComboBox comboBox = exitCombosMap.get(exitDirection);
-            comboBox.setModel(new GUIUtils.EventComboBoxModelWithNullElement<Location>(storyDataHelper.getLocations(),
+            comboBox.setModel(new GUIUtils.EventComboBoxModelWithNullElement<>(storyDataHelper.getLocations(),
                     location.getExit(exitDirection)));
         }
 
-        itemsClone = new ArrayList<Item>(location.getItems());
+        itemsClone = new ArrayList<>(location.getItems());
         updateItems();
 
         attributesClone = GlazedLists.eventList(location.getAttributes());
@@ -323,7 +317,16 @@ public class LocationEditor extends AbstractEditor<Location>
                 }
             }
         });
-        hooksList.setModel(new DefaultEventListModel<Hook>(hooksClone));
+        hooksList.setModel(new DefaultEventListModel<>(hooksClone));
+
+        // set multimedia
+        EventList<StoryOptions.Music> musicList = storyDataHelper.getMusicList();
+        Optional<StoryOptions.Music> optionalMusic = musicList.stream()
+                .filter(music -> music.getName().equalsIgnoreCase(location.getBackgroundMusic()))
+                .findFirst();
+        backgroundMusicCombo.setModel(new GUIUtils.EventComboBoxModelWithNullElement<StoryOptions.Music>(
+                musicList,
+                optionalMusic.orElse(null)));
     }
 
     private boolean editHook(Hook hook)
@@ -439,55 +442,8 @@ public class LocationEditor extends AbstractEditor<Location>
         location.setId(locationIDText.getText().trim());
         location.setDescription(descriptionText.getText());
         location.setHooks(GlazedLists.eventList(hooksClone)); // rewrite data in EventList
+
+        StoryOptions.Music selectedMusic = (StoryOptions.Music) backgroundMusicCombo.getSelectedItem();
+        location.setBackgroundMusic(selectedMusic  != null ? selectedMusic.getName() : "");
     }
-
-
-    //region Item in location actions
-    /*
-    private class AddItemAction extends AbstractAction
-    {
-        private AddItemAction()
-        {
-            super("Добавить...");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            Item item = (Item) JOptionPane.showInputDialog(dialog, "Выберите добавляемый предмет", "Добавить предмет",
-                    JOptionPane.QUESTION_MESSAGE, null, story.items.values().toArray(), null);
-
-            if(item != null)
-            {
-                itemsClone.add(item);
-                updateItems();
-                itemsList.setSelectedValue(item, true);
-            }
-        }
-    }
-
-    private class DelItemAction extends AbstractAction
-    {
-        private DelItemAction()
-        {
-            super("Удалить");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            Item item = (Item) itemsList.getSelectedValue();
-            if(item != null)
-            {
-                int answer = JOptionPane.showConfirmDialog(dialog, "Вы уверены, что хотите удалить этот предмет из локации?");
-                if(answer == 0)
-                {
-                    itemsClone.remove(item);
-                    updateItems();
-                }
-            }
-        }
-    }
-    */
-    //endregion
 }
