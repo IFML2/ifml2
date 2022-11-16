@@ -8,7 +8,7 @@
           <option name="linkRegexp" value="http://www.hostedredmine.com/issues/$1" />
         </IssueNavigationLink>
         <IssueNavigationLink>
-          <option name="issueRegexp" value="ifml2-(\d+)" />
+          <option name="issueRegexp" value="ifml2/ifml2#(\d+)" />
           <option name="linkRegexp" value="https://github.com/IFML2/ifml2/issues/$1" />
         </IssueNavigationLink>
         <IssueNavigationLink>
