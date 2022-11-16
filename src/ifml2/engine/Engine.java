@@ -44,7 +44,7 @@ public class Engine {
     private final ArrayList<Item> abyss = new ArrayList<>();
     private Story story = null;
     private ArrayList<Item> inventory = new ArrayList<>();
-    private HashMap<String, SystemCommand> SYSTEM_COMMANDS = new HashMap<String, SystemCommand>() {
+    private final HashMap<String, SystemCommand> SYSTEM_COMMANDS = new HashMap<String, SystemCommand>() {
         {
             put("помощь", HELP);
             put("помоги", HELP);
@@ -70,12 +70,12 @@ public class Engine {
             return super.put(key.toLowerCase(), value);
         }
     };
-    private DataHelper dataHelper = new DataHelper();
+    private final DataHelper dataHelper = new DataHelper();
     private String storyFileName;
     private boolean isDebugMode = false;
-    private IPlayerFeatureProvider playerFeatureProvider;
+    private final IPlayerFeatureProvider playerFeatureProvider;
     private Date starTime = new Date();
-    private HashMap<String, Callable<? extends Value>> ENGINE_SYMBOLS = new HashMap<String, Callable<? extends Value>>() {
+    private final HashMap<String, Callable<? extends Value>> ENGINE_SYMBOLS = new HashMap<String, Callable<? extends Value>>() {
         {
             Callable<CollectionValue> returnInv = () -> new CollectionValue(inventory);
 
@@ -244,12 +244,11 @@ public class Engine {
         // check system commands
         if (SYSTEM_COMMANDS.containsKey(trimmedCommand)) {
             SystemCommand systemCommand = SYSTEM_COMMANDS.get(trimmedCommand);
-            switch (systemCommand) {
-                case HELP:
-                    if (!systemCommandsDisableOption.isDisableHelp()) {
-                        outTextLn("Попробуйте одну из команд: " + story.getAllActions());
-                        return true;
-                    }
+            if (systemCommand == HELP) {
+                if (!systemCommandsDisableOption.isDisableHelp()) {
+                    outTextLn("Попробуйте одну из команд: " + story.getAllActions());
+                    return true;
+                }
             }
         }
 
@@ -382,7 +381,7 @@ public class Engine {
                 Value returnValue = virtualMachine.callProcedureWithParameters(parseErrorHandler, parameters);
 
                 // check return value
-                if (returnValue != null && returnValue instanceof BooleanValue) {
+                if (returnValue instanceof BooleanValue) {
                     Boolean isErrorHandled = ((BooleanValue) returnValue)
                             .getValue(); // error handler should return false if he can't handle error
                     if (!isErrorHandled) {
@@ -440,7 +439,7 @@ public class Engine {
         } else if (VirtualMachine.class.equals(reporter)) {
             reporterName = "ВиртуальнаяМашина";
         } else {
-            reporterName = reporter != null ? reporter.getClass().getSimpleName() : "";
+            reporterName = reporter != null ? reporter.getSimpleName() : "";
         }
         return '[' + reporterName + "] ";
     }
@@ -538,8 +537,8 @@ public class Engine {
 
                 EventList<Parameter> procParams = action.procedureCall.getProcedure().getParameters();
                 List<String> emptyArgs = procParams.stream()
-                        .filter(p -> !lowParNames.contains(p.getName().toLowerCase()))
                         .map(Parameter::getName)
+                        .filter(name -> !lowParNames.contains(name.toLowerCase()))
                         .collect(Collectors.toList());
 
                 // fill not set arguments as EmptyValue
@@ -574,8 +573,39 @@ public class Engine {
         return object != null ? (Location) object.getValue() : null;
     }
 
-    public void setCurrentLocation(Location currentLocation) {
-        systemVariables.put(SystemIdentifiers.CURRENT_LOCATION_SYSTEM_VARIABLE.toLowerCase(), new ObjectValue(currentLocation));
+    public void setCurrentLocation(@NotNull Location location) {
+        Value<?> previousValue = systemVariables.put(
+                SystemIdentifiers.CURRENT_LOCATION_SYSTEM_VARIABLE.toLowerCase(),
+                new ObjectValue(location));
+        Location previousLocation = extractLocationFromValue(previousValue);
+        if (!Objects.equals(previousLocation, location))
+            fireCurrentLocationChanged(previousLocation, location);
+    }
+
+    private @Nullable Location extractLocationFromValue(@Nullable Value<?> value) {
+        if (value == null)
+            return null;
+        assert value instanceof ObjectValue : "";
+        ObjectValue objectValue = (ObjectValue) value;
+        IFMLObject ifmlObject = objectValue.getValue();
+        assert ifmlObject instanceof Location;
+        return (Location) ifmlObject;
+    }
+
+    private void fireCurrentLocationChanged(@Nullable Location previousLocation, @NotNull Location currentLocation) {
+        String previousMusic = previousLocation != null ? previousLocation.getBackgroundMusic() : null;
+        String currentMusic = currentLocation.getBackgroundMusic();
+        switchBackgroundMusic(previousMusic, currentMusic);
+    }
+
+    private void switchBackgroundMusic(@Nullable String previousMusic, @Nullable String currentMusic) {
+        LOG.debug("switchBackgroundMusic: previousMusic={0}, currentMusic={1}", previousMusic, currentMusic);
+        if (Objects.equals(previousMusic, currentMusic))
+            return;
+        if (previousMusic != null && !"".equals(previousMusic))
+            stopMusic(previousMusic);
+        if (currentMusic != null && !"".equals(currentMusic))
+            playMusic(currentMusic, true);
     }
 
     public ArrayList<Item> getInventory() {
@@ -632,7 +662,7 @@ public class Engine {
      * @param itemToCheck item to check
      * @param items       items with deep content
      * @return true if item is in deep content of items
-     * @throws ifml2.IFML2Exception
+     * @throws ifml2.IFML2Exception if getAccessibleContent trigger returned not an Item
      */
     public boolean checkDeepContent(Item itemToCheck, List<Item> items) throws IFML2Exception {
         for (Item item : items) {
@@ -696,9 +726,9 @@ public class Engine {
     }
 
     private void outDebug(int level, String message, Object... args) {
-        String tab = "";
+        StringBuilder tab = new StringBuilder();
         for (int i = 1; i <= level; i++) {
-            tab += "  ";
+            tab.append("  ");
         }
         outDebug(tab + message, args);
     }
@@ -718,17 +748,17 @@ public class Engine {
     }
 
     public void playMusic(String name) {
+        playMusic(name, false);
+    }
+
+    public void playMusic(String name, boolean isInfinite) {
         if (!(playerFeatureProvider instanceof IPlayMusicProvider)) {
             return;
         }
 
-        // get music from the music list
-        Stream<StoryOptions.Music> musicStream = story.getStoryOptions().getMusicList().stream();
-        Optional<StoryOptions.Music> musicOptional = musicStream.filter(music -> music.getName().equalsIgnoreCase(name)).findFirst();
-        if (!musicOptional.isPresent()) {
+        StoryOptions.Music music = getMusicFromMusicList(name);
+        if (music == null)
             return;
-        }
-        StoryOptions.Music music = musicOptional.get();
         String musicName = music.getName();
         String musicFileName = music.getFileName();
 
@@ -740,7 +770,28 @@ public class Engine {
 
         // play music via player
         outEngDebug(format("Запуск музыки с именем %s по пути %s...", musicName, musicFile.getAbsolutePath()));
-        ((IPlayMusicProvider)playerFeatureProvider).startMusic(musicName, musicFile);
+        ((IPlayMusicProvider)playerFeatureProvider).startMusic(musicName, musicFile, isInfinite);
+    }
+
+
+    private void stopMusic(String name) {
+        if (!(playerFeatureProvider instanceof IPlayMusicProvider)) {
+            return;
+        }
+
+        // stop music in player
+        outEngDebug(format("Остановка музыки с именем %s...", name));
+        ((IPlayMusicProvider)playerFeatureProvider).stopMusic(name);
+    }
+
+    @Nullable
+    private StoryOptions.Music getMusicFromMusicList(String name) {
+        // get music from the music list
+        Stream<StoryOptions.Music> musicStream = story.getStoryOptions().getMusicList().stream();
+        Optional<StoryOptions.Music> musicOptional = musicStream
+                .filter(music -> music.getName().equalsIgnoreCase(name))
+                .findFirst();
+        return musicOptional.orElse(null);
     }
 
     public enum SystemCommand {
@@ -798,7 +849,7 @@ public class Engine {
         }
     }
 
-    private class GlobalVariableProxy extends Variable {
+    private static class GlobalVariableProxy extends Variable {
         private final HashMap<String, Value> globalVariables;
 
         public GlobalVariableProxy(@NotNull HashMap<String, Value> globalVariables, @NotNull String name, Value value) {

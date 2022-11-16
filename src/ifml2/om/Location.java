@@ -8,6 +8,7 @@ import ifml2.vm.values.Value;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,32 +18,6 @@ import java.util.concurrent.Callable;
 @XmlTransient
 public class Location extends IFMLObject
 {
-    protected HashMap<ExitDirection, Location> exits = new HashMap<>();
-    protected List<Item> items = new ArrayList<>();
-    private HashMap<String, Callable<? extends Value>> LOCATION_SYMBOLS = new HashMap<String, Callable<? extends Value>>()
-    {
-        {
-            put("север", (Callable<Value>) () -> getObjectValue(ExitDirection.NORTH));
-            put("северовосток", (Callable<Value>) () -> getObjectValue(ExitDirection.NORTH_EAST));
-            put("восток", (Callable<Value>) () -> getObjectValue(ExitDirection.EAST));
-            put("юговосток", (Callable<Value>) () -> getObjectValue(ExitDirection.SOUTH_EAST));
-            put("юг", (Callable<Value>) () -> getObjectValue(ExitDirection.SOUTH));
-            put("югозапад", (Callable<Value>) () -> getObjectValue(ExitDirection.SOUTH_WEST));
-            put("запад", (Callable<Value>) () -> getObjectValue(ExitDirection.WEST));
-            put("северозапад", (Callable<Value>) () -> getObjectValue(ExitDirection.NORTH_WEST));
-            put("верх", (Callable<Value>) () -> getObjectValue(ExitDirection.UP));
-            put("низ", (Callable<Value>) () -> getObjectValue(ExitDirection.DOWN));
-
-            put("предметы", (Callable<Value>) () -> new CollectionValue(items));
-        }
-
-        @NotNull
-        private ObjectValue getObjectValue(ExitDirection exitDirection)
-        {
-            return new ObjectValue(getExit(exitDirection));
-        }
-    };
-
     @NotNull
     @Contract(pure = true)
     public static String getClassName()
@@ -56,12 +31,6 @@ public class Location extends IFMLObject
         Location location = (Location) super.clone();
         copyFieldsTo(location);
         return location;
-    }
-
-    private void copyFieldsTo(Location location)
-    {
-        location.exits = new HashMap<>(exits);
-        location.items = new ArrayList<>(items);
     }
 
     public Location getExit(ExitDirection exitDirection)
@@ -119,7 +88,6 @@ public class Location extends IFMLObject
         return items;
     }
 
-    //@XmlTransient // is loaded in OMManager through item.location
     public void setItems(List<Item> items)
     {
         this.items = items;
@@ -131,7 +99,6 @@ public class Location extends IFMLObject
      * @param item item to check
      * @return True if location contains item and false otherwise.
      */
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean contains(Item item)
     {
         return items.contains(item);
@@ -168,6 +135,10 @@ public class Location extends IFMLObject
     {
         setExit(ExitDirection.DOWN, down);
     }
+
+    public String getBackgroundMusic() { return backgroundMusic; }
+
+    public void setBackgroundMusic(String backgroundMusic) { this.backgroundMusic = backgroundMusic; }
 
     public Location getUp()
     {
@@ -206,5 +177,42 @@ public class Location extends IFMLObject
         {
             this.name = name;
         }
+    }
+    protected HashMap<ExitDirection, Location> exits = new HashMap<>();
+
+    protected List<Item> items = new ArrayList<>();
+
+    @XmlAttribute(name = "backgroundMusic")
+    protected String backgroundMusic;
+
+    private final HashMap<String, Callable<? extends Value>> LOCATION_SYMBOLS = new HashMap<String, Callable<? extends Value>>()
+    {
+        {
+            put("север", () -> getObjectValue(ExitDirection.NORTH));
+            put("северовосток", () -> getObjectValue(ExitDirection.NORTH_EAST));
+            put("восток", () -> getObjectValue(ExitDirection.EAST));
+            put("юговосток", () -> getObjectValue(ExitDirection.SOUTH_EAST));
+            put("юг", () -> getObjectValue(ExitDirection.SOUTH));
+            put("югозапад", () -> getObjectValue(ExitDirection.SOUTH_WEST));
+            put("запад", () -> getObjectValue(ExitDirection.WEST));
+            put("северозапад", () -> getObjectValue(ExitDirection.NORTH_WEST));
+            put("верх", () -> getObjectValue(ExitDirection.UP));
+            put("низ", () -> getObjectValue(ExitDirection.DOWN));
+
+            put("предметы", () -> new CollectionValue(items));
+        }
+
+        @NotNull
+        private ObjectValue getObjectValue(ExitDirection exitDirection)
+        {
+            return new ObjectValue(getExit(exitDirection));
+        }
+    };
+
+    private void copyFieldsTo(@NotNull Location location)
+    {
+        location.exits = new HashMap<>(exits);
+        location.items = new ArrayList<>(items);
+        location.backgroundMusic = backgroundMusic;
     }
 }

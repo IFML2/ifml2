@@ -43,10 +43,10 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
     private JTextField commandText;
     private JTextPane logTextPane;
     private JScrollPane scrollPane;
-    private Engine engine = new Engine(this);
+    private final Engine engine = new Engine(this);
     private ListIterator<String> historyIterator = commandHistory.listIterator();
     private String storyFile;
-    private boolean isFromTempFile;
+    private final boolean isFromTempFile;
     private PlayerTheme _playerTheme;
 
     static {
@@ -66,6 +66,12 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
 
         setContentPane(mainPanel);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                musicManager.stopAll();
+            }
+        });
 
         setJMenuBar(createMainMenu());
 
@@ -639,7 +645,12 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
     }
 
     @Override
-    public void startMusic(String musicName, File musicFile) {
-        musicManager.StartPlay(musicName, musicFile);
+    public void startMusic(String musicName, File musicFile, boolean isInfinite) {
+        musicManager.startPlay(musicName, musicFile, isInfinite);
+    }
+
+    @Override
+    public void stopMusic(String musicName) {
+        musicManager.stopPlay(musicName);
     }
 }
