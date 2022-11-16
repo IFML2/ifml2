@@ -18,6 +18,8 @@ public class JavaZoomPlayer implements MusicManager.MusicPlayer {
     @Override
     public void playMusic(@NotNull String musicName, File musicFile, boolean isInfinite) {
         // fixme обработка опции "Если эта музыка уже играет"
+        if (!musicFile.exists())
+            return;
         PlayerThread playerThread = new PlayerThread(musicFile, isInfinite, thisPlayerThread -> playerThreadMap.remove(musicName));
         playerThreadMap.put(musicName.toLowerCase(Locale.ROOT), playerThread);
     }
