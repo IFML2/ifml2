@@ -11,12 +11,24 @@ public class MusicManager {
         this.musicPlayer = musicPlayer;
     }
 
-    public void StartPlay(String musicName, File musicFile){
-        musicPlayer.playMusic(musicName, musicFile);
+    public void startPlay(String musicName, File musicFile, boolean isInfinite){
+        musicPlayer.playMusic(musicName, musicFile, isInfinite);
+    }
+
+    public void stopPlay(String musicName) {
+        musicPlayer.stopMusic(musicName);
+    }
+
+    public void stopAll() {
+        musicPlayer.stopAll();
     }
 
     public interface MusicPlayer {
-        void playMusic(String musicName, File musicFile);
+        void playMusic(String musicName, File musicFile, boolean isInfinite);
+
+        void stopMusic(String musicName);
+
+        void stopAll();
     }
 
     public static MusicPlayer CreateJavaZoomPlayer() {

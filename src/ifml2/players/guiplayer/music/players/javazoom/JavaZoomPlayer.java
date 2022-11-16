@@ -2,6 +2,7 @@ package ifml2.players.guiplayer.music.players.javazoom;
 
 import ifml2.players.guiplayer.music.MusicManager;
 import javazoom.jl.player.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,21 +16,38 @@ public class JavaZoomPlayer implements MusicManager.MusicPlayer {
     Map<String, PlayerThread> playerThreadMap = new HashMap<>();
 
     @Override
-    public void playMusic(String musicName, File musicFile) {
+    public void playMusic(@NotNull String musicName, File musicFile, boolean isInfinite) {
         // fixme обработка опции "Если эта музыка уже играет"
-        PlayerThread playerThread = new PlayerThread(musicFile, thisPlayerThread -> playerThreadMap.remove(musicName));
+        PlayerThread playerThread = new PlayerThread(musicFile, isInfinite, thisPlayerThread -> playerThreadMap.remove(musicName));
         playerThreadMap.put(musicName.toLowerCase(Locale.ROOT), playerThread);
+    }
+
+    @Override
+    public void stopMusic(String musicName) {
+        PlayerThread playerThread = playerThreadMap.get(musicName.toLowerCase(Locale.ROOT));
+        if (playerThread != null)
+            playerThread.stop();
+    }
+
+    @Override
+    public void stopAll() {
+        for (PlayerThread playerThread : playerThreadMap.values()) {
+            playerThread.stop();
+        }
+        playerThreadMap.clear();
     }
 
     static class PlayerThread implements Runnable {
         private final Date created;
         Thread playThread;
         private final File file;
+        private volatile boolean isInfinitePlay;
         private final Consumer<PlayerThread> consumer;
         Player player;
 
-        public PlayerThread(File file, Consumer<PlayerThread> consumer) {
+        public PlayerThread(File file, boolean isInfinitePlay, Consumer<PlayerThread> consumer) {
             this.file = file;
+            this.isInfinitePlay = isInfinitePlay;
             this.consumer = consumer;
             this.created = new Date();
             playThread = new Thread(this, file.getAbsolutePath());
@@ -44,9 +62,11 @@ public class JavaZoomPlayer implements MusicManager.MusicPlayer {
         @Override
         public void run() {
             try {
-                FileInputStream stream = new FileInputStream(file);
-                player = new Player(stream);
-                player.play();
+                do {
+                    FileInputStream stream = new FileInputStream(file);
+                    player = new Player(stream);
+                    player.play();
+                } while (isInfinitePlay);
                 if (consumer != null)
                 {
                     consumer.accept(this);
@@ -57,6 +77,7 @@ public class JavaZoomPlayer implements MusicManager.MusicPlayer {
         }
 
         public void stop() {
+            isInfinitePlay = false;
             player.close();
         }
 
