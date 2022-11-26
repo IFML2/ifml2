@@ -1,5 +1,6 @@
 package ifml2.players.guiplayer.music.players.javazoom;
 
+import ifml2.FormatLogger;
 import ifml2.players.guiplayer.music.MusicManager;
 import javazoom.jl.player.Player;
 import org.jetbrains.annotations.NotNull;
@@ -20,19 +21,31 @@ public class JavaZoomPlayer implements MusicManager.MusicPlayer {
         // fixme обработка опции "Если эта музыка уже играет"
         if (!musicFile.exists())
             return;
-        PlayerThread playerThread = new PlayerThread(musicFile, isInfinite, thisPlayerThread -> playerThreadMap.remove(musicName));
+        LOG.debug("Starting PlayerThread with music file {0}, {1}.", musicFile, isInfinite ? "infinite" : "once");
+        PlayerThread playerThread = new PlayerThread(
+            musicFile,
+            isInfinite,
+            thisPlayerThread -> {
+                playerThreadMap.remove(musicName, thisPlayerThread);
+                LOG.debug("{0} music file(s) are playing now.", playerThreadMap.size());
+            }
+        );
         playerThreadMap.put(musicName.toLowerCase(Locale.ROOT), playerThread);
+        LOG.debug("{0} music file(s) are playing now.", playerThreadMap.size());
     }
 
     @Override
     public void stopMusic(String musicName) {
         PlayerThread playerThread = playerThreadMap.get(musicName.toLowerCase(Locale.ROOT));
-        if (playerThread != null)
+        if (playerThread != null){
+            LOG.debug("Stopping PlayerThread with music file {0}.", playerThread.getFile());
             playerThread.stop();
+        }
     }
 
     @Override
     public void stopAll() {
+        LOG.debug("Stopping all PlayerThreads.");
         for (PlayerThread playerThread : playerThreadMap.values()) {
             playerThread.stop();
         }
@@ -44,15 +57,15 @@ public class JavaZoomPlayer implements MusicManager.MusicPlayer {
         Thread playThread;
         private final File file;
         private volatile boolean isInfinitePlay;
-        private final Consumer<PlayerThread> consumer;
+        private final Consumer<PlayerThread> finalizationConsumer;
         Player player;
 
-        public PlayerThread(File file, boolean isInfinitePlay, Consumer<PlayerThread> consumer) {
+        public PlayerThread(File file, boolean isInfinitePlay, Consumer<PlayerThread> finalizationConsumer) {
             this.file = file;
             this.isInfinitePlay = isInfinitePlay;
-            this.consumer = consumer;
+            this.finalizationConsumer = finalizationConsumer;
             this.created = new Date();
-            playThread = new Thread(this, file.getAbsolutePath());
+            playThread = new Thread(this, file.getName());
             playThread.start();
         }
 
@@ -65,26 +78,35 @@ public class JavaZoomPlayer implements MusicManager.MusicPlayer {
         public void run() {
             try {
                 do {
-                    FileInputStream stream = new FileInputStream(file);
-                    player = new Player(stream);
-                    player.play();
+                    try (FileInputStream stream = new FileInputStream(file)) {
+                        player = new Player(stream);
+                        LOG.debug("Starting playing music from file {0}.", file);
+                        player.play();
+                        LOG.debug("Playing music from file {0} ends.", file);
+                    }
                 } while (isInfinitePlay);
-                if (consumer != null)
+
+                if (finalizationConsumer != null)
                 {
-                    consumer.accept(this);
+                    finalizationConsumer.accept(this);
                 }
             } catch (Exception ex) {
-                //fixme обработка ошибок JOptionPane.showMessageDialog(mainPanel, ex.toString(), "Ошибка", JOptionPane.ERROR_MESSAGE);
+                LOG.error("Error while playing music: {0}", ex);
             }
         }
 
         public void stop() {
             isInfinitePlay = false;
+            LOG.debug("Closing player for music file {0}.", file);
             player.close();
         }
 
         public File getFile() {
             return file;
         }
+
+        private static final FormatLogger LOG = FormatLogger.getLogger(PlayerThread.class);
     }
+
+    private static final FormatLogger LOG = FormatLogger.getLogger(JavaZoomPlayer.class);
 }
