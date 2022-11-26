@@ -1,7 +1,7 @@
 package ifml2.players.guiplayer.music.players.javazoom;
 
 import ifml2.FormatLogger;
-import ifml2.players.guiplayer.music.MusicManager;
+import ifml2.players.guiplayer.music.IMusicPlayer;
 import javazoom.jl.player.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,11 +13,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class JavaZoomPlayer implements MusicManager.MusicPlayer {
+public class JavaZoomPlayer implements IMusicPlayer {
     Map<String, PlayerThread> playerThreadMap = new HashMap<>();
 
     @Override
-    public void playMusic(@NotNull String musicName, File musicFile, boolean isInfinite) {
+    public void playMusic(@NotNull String musicName, @NotNull File musicFile, boolean isInfinite) {
         // fixme обработка опции "Если эта музыка уже играет"
         if (!musicFile.exists())
             return;
@@ -35,7 +35,7 @@ public class JavaZoomPlayer implements MusicManager.MusicPlayer {
     }
 
     @Override
-    public void stopMusic(String musicName) {
+    public void stopMusic(@NotNull String musicName) {
         PlayerThread playerThread = playerThreadMap.get(musicName.toLowerCase(Locale.ROOT));
         if (playerThread != null){
             LOG.debug("Stopping PlayerThread with music file {0}.", playerThread.getFile());
@@ -60,7 +60,7 @@ public class JavaZoomPlayer implements MusicManager.MusicPlayer {
         private final Consumer<PlayerThread> finalizationConsumer;
         Player player;
 
-        public PlayerThread(File file, boolean isInfinitePlay, Consumer<PlayerThread> finalizationConsumer) {
+        public PlayerThread(@NotNull File file, boolean isInfinitePlay, Consumer<PlayerThread> finalizationConsumer) {
             this.file = file;
             this.isInfinitePlay = isInfinitePlay;
             this.finalizationConsumer = finalizationConsumer;
