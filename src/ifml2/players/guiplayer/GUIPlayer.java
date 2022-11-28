@@ -8,7 +8,7 @@ import ifml2.engine.featureproviders.graphic.IOutputIconProvider;
 import ifml2.engine.featureproviders.music.IPlayMusicProvider;
 import ifml2.engine.featureproviders.text.IOutputPlainTextProvider;
 import ifml2.om.IFML2LoadXmlException;
-import ifml2.players.guiplayer.music.MusicManager;
+import ifml2.players.guiplayer.music.IMusicPlayer;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
@@ -57,7 +57,7 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
         UIManager.put("MenuItem.font", derivedFont);
     }
 
-    private final MusicManager musicManager = new MusicManager(MusicManager.CreateJavaZoomPlayer());
+    private final IMusicPlayer musicPlayer = IMusicPlayer.CreateDefaultPlayer();
 
     private GUIPlayer(boolean fromTempFile)
     {
@@ -69,7 +69,7 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                musicManager.stopAll();
+                musicPlayer.stopAll();
             }
         });
 
@@ -461,7 +461,7 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
         mainMenu.add(storyMenu);
 
         JMenu playerMenu = new JMenu("Плеер");
-        playerMenu.add(new AbstractAction("Тема офомления...", GUIUtils.PALETTE_ICON) {
+        playerMenu.add(new AbstractAction("Тема оформления...", GUIUtils.PALETTE_ICON) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 PlayerThemeDialog playerThemeDialog = new PlayerThemeDialog(GUIPlayer.this);
@@ -646,11 +646,11 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
 
     @Override
     public void startMusic(String musicName, File musicFile, boolean isInfinite) {
-        musicManager.startPlay(musicName, musicFile, isInfinite);
+        musicPlayer.playMusic(musicName, musicFile, isInfinite);
     }
 
     @Override
     public void stopMusic(String musicName) {
-        musicManager.stopPlay(musicName);
+        musicPlayer.stopMusic(musicName);
     }
 }
