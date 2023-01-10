@@ -136,6 +136,18 @@
                         <synonym>на север</synonym>
                     </literalElement>
                 </template>
+                <template>
+                    <literalElement position="1">
+                        <synonym>идти</synonym>
+                        <synonym>шагать</synonym>
+                        <synonym>перейти</synonym>
+                        <synonym>бежать</synonym>
+                        <synonym>ползти</synonym>
+                    </literalElement>
+                    <literalElement position="2">
+                        <synonym>на север</synonym>
+                    </literalElement>
+                </template>
             </templates>
             <procedureCall procedure="ПерейтиНаСевер"/>
         </action>
@@ -160,6 +172,18 @@
                         <synonym>на северо-восток</synonym>
                     </literalElement>
                 </template>
+                <template>
+                    <literalElement position="1">
+                        <synonym>идти</synonym>
+                        <synonym>шагать</synonym>
+                        <synonym>перейти</synonym>
+                        <synonym>бежать</synonym>
+                        <synonym>ползти</synonym>
+                    </literalElement>
+                    <literalElement position="2">
+                        <synonym>на северо-восток</synonym>
+                    </literalElement>
+                </template>
             </templates>
             <procedureCall procedure="ПерейтиНаСевероВосток"/>
         </action>
@@ -170,6 +194,18 @@
                         <synonym>восток</synonym>
                         <synonym>на восток</synonym>
                         <synonym>в</synonym>
+                    </literalElement>
+                </template>
+                <template>
+                    <literalElement position="1">
+                        <synonym>идти</synonym>
+                        <synonym>шагать</synonym>
+                        <synonym>перейти</synonym>
+                        <synonym>бежать</synonym>
+                        <synonym>ползти</synonym>
+                    </literalElement>
+                    <literalElement position="2">
+                        <synonym>на восток</synonym>
                     </literalElement>
                 </template>
                 <template>
@@ -218,6 +254,18 @@
                         <synonym>юг</synonym>
                         <synonym>на юг</synonym>
                         <synonym>ю</synonym>
+                    </literalElement>
+                </template>
+                <template>
+                    <literalElement position="1">
+                        <synonym>идти</synonym>
+                        <synonym>шагать</synonym>
+                        <synonym>перейти</synonym>
+                        <synonym>бежать</synonym>
+                        <synonym>ползти</synonym>
+                    </literalElement>
+                    <literalElement position="2">
+                        <synonym>на юг</synonym>
                     </literalElement>
                 </template>
                 <template>
@@ -668,6 +716,13 @@
                         <synonym>почесаться</synonym>
                         <synonym>почесать</synonym>
                     </literalElement>
+                </template>
+                <template>
+                    <literalElement position="1">
+                        <synonym>чесать</synonym>
+                        <synonym>почесать</synonym>
+                    </literalElement>
+                    <objectElement position="2" case="vp" parameter="чтоПочесать"/>
                 </template>
                 <template>
                     <literalElement position="1">
