@@ -7,3 +7,4 @@
 *.exe
 /bitrock/*.run
 /.idea/dictionaries/mbalanov.xml
+/Games/*.temp
