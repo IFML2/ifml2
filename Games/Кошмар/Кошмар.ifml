@@ -400,7 +400,7 @@
         <procedure name="Батарейка_ЗапуститьТаймер">
             <procedureVariables/>
             <procedureBody>
-                <startTimer timerType="realTime" duration="PT1M">
+                <startTimer timerType="realTime" duration="PT1M" actionCount="0">
                     <reaction>
                         <if condition="Фонарик_Включен">
                             <else/>
@@ -458,7 +458,7 @@
                         <if condition="плита_растоплена = да">
                             <else/>
                             <then>
-<startTimer timerType="realTime" duration="PT10M">
+<startTimer timerType="realTime" duration="PT10M" actionCount="0">
     <reaction>
         <var name="кипяток" value="да"/>
     </reaction>
@@ -1044,7 +1044,7 @@
             <roles/>
             <properties/>
             <words/>
-            <description/>
+            <description></description>
             <attributes/>
         </location>
         <location backgroundMusic="Фоновая" id="НачалоЛок" name="Начало">
@@ -1061,7 +1061,7 @@
             <roles/>
             <properties/>
             <words/>
-            <description/>
+            <description></description>
             <attributes/>
         </location>
         <location backgroundMusic="Фоновая" id="КоридорПодвалЛок" name="Коридор у входа в подвал">
@@ -1269,7 +1269,7 @@
             <roles/>
             <properties/>
             <words/>
-            <description/>
+            <description></description>
             <attributes/>
         </location>
         <location backgroundMusic="Фоновая" id="ПодвалЛок" name="Подвал">
@@ -2341,7 +2341,7 @@
             <words mainWord="потолок">
                 <word>потолок</word>
             </words>
-            <description/>
+            <description></description>
             <attributes>
                 <attribute>прикреплён</attribute>
                 <attribute>частьПейзажа</attribute>
@@ -2373,7 +2373,7 @@
                 <word>стена</word>
                 <word>стены</word>
             </words>
-            <description/>
+            <description></description>
             <attributes>
                 <attribute>частьПейзажа</attribute>
                 <attribute>прикреплён</attribute>
@@ -2470,7 +2470,7 @@
                 <word>ключ</word>
                 <word>дверной</word>
             </words>
-            <description/>
+            <description></description>
             <attributes/>
             <startingPosition>
                 <inventory>false</inventory>
@@ -2484,7 +2484,7 @@
             <words mainWord="окурок">
                 <word>окурок</word>
             </words>
-            <description/>
+            <description></description>
             <attributes/>
             <startingPosition>
                 <inventory>false</inventory>
@@ -2498,7 +2498,7 @@
             <words mainWord="очистки">
                 <word>очистки</word>
             </words>
-            <description/>
+            <description></description>
             <attributes/>
             <startingPosition>
                 <inventory>false</inventory>
@@ -2512,7 +2512,7 @@
             <words mainWord="кости">
                 <word>кости</word>
             </words>
-            <description/>
+            <description></description>
             <attributes/>
             <startingPosition>
                 <inventory>false</inventory>
@@ -2526,7 +2526,7 @@
             <words mainWord="шелуха">
                 <word>шелуха</word>
             </words>
-            <description/>
+            <description></description>
             <attributes/>
             <startingPosition>
                 <inventory>false</inventory>
@@ -2631,7 +2631,7 @@
                 <word>мешок</word>
                 <word>мешки</word>
             </words>
-            <description/>
+            <description></description>
             <attributes>
                 <attribute>тяжёлый</attribute>
             </attributes>
@@ -2649,7 +2649,7 @@
             <words mainWord="кирпич">
                 <word>кирпич</word>
             </words>
-            <description/>
+            <description></description>
             <attributes>
                 <attribute>частьПейзажа</attribute>
             </attributes>
@@ -2667,7 +2667,7 @@
             <words mainWord="лопата">
                 <word>лопата</word>
             </words>
-            <description/>
+            <description></description>
             <attributes>
                 <attribute>частьПейзажа</attribute>
             </attributes>
@@ -2685,7 +2685,7 @@
                         <showMessage beginWithCap="false" carriageReturn="true" message="Я перевернул мешок, и встряхнул. Часть мусора высыпалась, но поднялась такая пыль, что я бросил мешок, и чихая, вышел из комнаты." type="text"/>
                         <goToLoc location="КоридорУВходаВПодвалЛок"/>
                         <var name="пыль" value="да"/>
-                        <startTimer timerType="realTime" duration="PT30M">
+                        <startTimer timerType="realTime" duration="PT30M" actionCount="0">
                             <reaction>
 <if condition="пыль = 2">
     <else/>
@@ -2704,7 +2704,7 @@
                 <word>мусор</word>
                 <word>хлам</word>
             </words>
-            <description/>
+            <description></description>
             <attributes/>
             <startingPosition>
                 <inventory>false</inventory>
