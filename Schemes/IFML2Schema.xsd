@@ -373,6 +373,7 @@
         <attribute name="action" type="string" use="required"/>
         <attribute name="objectElement" type="string" use="optional"/>
         <!-- action template parameter name for item hooks -->
+        <xs:attribute name="isRunAfterRestrictions" type="xs:boolean"/>
     </complexType>
 
     <simpleType name="hookEnumType">

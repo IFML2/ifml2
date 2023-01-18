@@ -301,12 +301,31 @@ public class Engine {
 
                 // fire object hooks
                 for (Hook hook : objectHooks.get(Hook.Type.INSTEAD)) {
+                    if (hook.getIsRunAfterRestrictions())
+                    {
+                        // check restrictions
+                        outEngDebug("Проверка ограничений действия...");
+                        if (checkActionRestrictions(action, arguments)) {
+                            outEngDebug("Сработало ограничение, команда завершается.");
+                            return true;
+                        }
+                    }
                     outEngDebug("Запуск перехвата \"{0}\" на предмете...", hook);
                     virtualMachine.runHook(hook, arguments);
                     outEngDebug("Перехват выполнен.");
                 }
+
                 // fire location hooks
                 for (Hook hook : locationHooks.get(Hook.Type.INSTEAD)) {
+                    if (hook.getIsRunAfterRestrictions())
+                    {
+                        // check restrictions
+                        outEngDebug("Проверка ограничений действия...");
+                        if (checkActionRestrictions(action, arguments)) {
+                            outEngDebug("Сработало ограничение, команда завершается.");
+                            return true;
+                        }
+                    }
                     outEngDebug("Запуск перехвата \"{0}\" в локации...", hook);
                     virtualMachine.runHook(hook, arguments);
                     outEngDebug("Перехват выполнен.");
