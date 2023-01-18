@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <story xmlns="http://toysoft.narod.ru/IFML2Schema" id="jar">
+    <inheritedSystemProcedures/>
     <storyOptions>
-        <startLocationOption showStartLocDesc="true" location="Комната"/>
+        <startLocationOption location="Комната" showStartLocDesc="true"/>
         <startProcedureOption/>
-        <storyDescription version="" name="" description="" author=""/>
+        <storyDescription name="" description="" version="" author=""/>
         <globalVars>
-            <var value="0" name="среднее"/>
-            <var value="0" name="броски"/>
-            <var value="0" name="глоб1"/>
+            <var name="сумма" value="0"/>
+            <var name="броски" value="0"/>
+            <var name="глоб1" value="0"/>
         </globalVars>
         <systemCommandsDisableOption DisableHelp="false" DisableDebug="false"/>
         <musicList>
@@ -271,7 +272,7 @@
                 </locations>
             </startingPosition>
         </item>
-        <item name="глиняный кувшин с молоком" id="ГлиняныйКувшинСМолоком">
+        <item id="ГлиняныйКувшинСМолоком" name="глиняный кувшин с молоком">
             <hooks/>
             <roles/>
             <properties/>
@@ -289,7 +290,7 @@
                 </locations>
             </startingPosition>
         </item>
-        <item name="глиняный голем" id="ГлиняныйГолем">
+        <item id="ГлиняныйГолем" name="глиняный голем">
             <hooks/>
             <roles/>
             <properties/>
@@ -310,7 +311,7 @@
         </item>
     </items>
     <actions>
-        <action description="" name="бросить кубик">
+        <action name="бросить кубик" description="">
             <templates>
                 <template>
                     <literalElement>
@@ -321,7 +322,7 @@
             <procedureCall procedure="БроситьКубик"/>
             <restrictions/>
         </action>
-        <action description="" name="Вызвать процу">
+        <action name="Вызвать процу" description="">
             <templates>
                 <template>
                     <literalElement>
@@ -332,7 +333,7 @@
             <procedureCall procedure="ВызватьПроцедуру"/>
             <restrictions/>
         </action>
-        <action description="" name="глоб">
+        <action name="глоб" description="">
             <templates>
                 <template>
                     <literalElement>
@@ -343,7 +344,7 @@
             <procedureCall procedure="ВызвГлоб2"/>
             <restrictions/>
         </action>
-        <action description="" name="ПроцПар">
+        <action name="ПроцПар" description="">
             <templates>
                 <template>
                     <literalElement>
