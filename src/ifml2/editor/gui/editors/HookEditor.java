@@ -1,7 +1,6 @@
 package ifml2.editor.gui.editors;
 
 import ca.odell.glazedlists.FilterList;
-import ca.odell.glazedlists.matchers.Matcher;
 import ca.odell.glazedlists.swing.DefaultEventComboBoxModel;
 import ca.odell.glazedlists.swing.DefaultEventListModel;
 import ifml2.GUIUtils;
@@ -25,78 +24,64 @@ import java.text.MessageFormat;
 
 import static ifml2.om.Hook.Type.*;
 
-public class HookEditor extends AbstractEditor<Hook>
-{
+public class HookEditor extends AbstractEditor<Hook> {
+    private static final String HOOK_EDITOR_TITLE = "Перехват";
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
-    private JComboBox actionCombo;
-    private JComboBox parameterCombo;
+    private JComboBox<Action> actionCombo;
+    private JComboBox<String> parameterCombo;
     private JRadioButton beforeRadio;
     private JRadioButton insteadRadio;
     private JRadioButton afterRadio;
     private JButton editInstructionsButton;
-    private JList instructionsList;
-
+    private JList<Instruction> instructionsList;
+    private JCheckBox isRunAfterRestrictionsCheckBox;
     // data to edit
     private InstructionList instructionListClone; // no need to clone - InstructionList isn't modified here
 
-    private static final String HOOK_EDITOR_TITLE = "Перехват";
-
-    public HookEditor(Window owner, @NotNull Hook hook, final boolean areObjectHooks, final Story.DataHelper storyDataHelper) throws IFML2EditorException
-    {
+    public HookEditor(Window owner, @NotNull Hook hook, final boolean areObjectHooks, final Story.DataHelper storyDataHelper) throws IFML2EditorException {
         super(owner);
         initializeEditor(HOOK_EDITOR_TITLE, contentPane, buttonOK, buttonCancel);
 
         // -- form actions init --
 
-        editInstructionsButton.setAction(new AbstractAction("Редактировать инструкции...", GUIUtils.EDIT_ELEMENT_ICON)
-        {
+        editInstructionsButton.setAction(new AbstractAction("Редактировать инструкции...", GUIUtils.EDIT_ELEMENT_ICON) {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 InstructionsEditor instructionsEditor = new InstructionsEditor(HookEditor.this, instructionListClone,
-                                                                               storyDataHelper);
-                if(instructionsEditor.showDialog())
-                {
+                        storyDataHelper);
+                if (instructionsEditor.showDialog()) {
                     instructionsEditor.updateData(instructionListClone);
                 }
             }
         });
 
         // -- data init --
-        try
-        {
+        try {
             instructionListClone = hook.getInstructionList().clone();
-        }
-        catch (CloneNotSupportedException e)
-        {
+        } catch (CloneNotSupportedException e) {
             GUIUtils.showErrorMessage(this, e);
         }
 
         //  -- form init --
 
         // check object hooks or not
-        if(!areObjectHooks)
-        {
+        if (!areObjectHooks) {
             parameterCombo.setVisible(false);
         }
 
         // load parameters and current parameter after action select
-        actionCombo.addActionListener(new ActionListener()
-        {
+        actionCombo.addActionListener(new ActionListener() {
             Action prevSelectedAction;
 
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 Action selectedAction = (Action) actionCombo.getSelectedItem();
-                if (prevSelectedAction != selectedAction)
-                {
+                if (prevSelectedAction != selectedAction) {
                     prevSelectedAction = selectedAction;
-                    if (parameterCombo.isVisible())
-                    {
-                        parameterCombo.setModel(new DefaultComboBoxModel(selectedAction.getAllObjectParameters()));
+                    if (parameterCombo.isVisible()) {
+                        parameterCombo.setModel(new DefaultComboBoxModel<>(selectedAction.getAllObjectParameters()));
                         if (parameterCombo.getItemCount() > 0) // if there are elements ...
                         {
                             parameterCombo.setSelectedIndex(0); // ... select first element
@@ -107,32 +92,23 @@ public class HookEditor extends AbstractEditor<Hook>
         });
 
         // filter actions due to areObjectHooks
-        actionCombo.setModel(new DefaultEventComboBoxModel<Action>(new FilterList<Action>(storyDataHelper.getAllActions(), new Matcher<Action>()
-        {
-            @Override
-            public boolean matches(Action item)
-            {
-                return areObjectHooks && item.getAllObjectParameters().length > 0 || !areObjectHooks;
-            }
-        })));
+        actionCombo.setModel(new DefaultEventComboBoxModel<>(new FilterList<>(
+            storyDataHelper.getAllActions(),
+            item -> !areObjectHooks || item.getAllObjectParameters().length > 0)));
 
-
-        if(hook.getAction() != null)
-        {
+        if (hook.getAction() != null) {
             actionCombo.setSelectedItem(hook.getAction()); // select hook's action
-            if(hook.getObjectElement() != null) // if hook has assigned objectElement
+            if (hook.getObjectElement() != null) // if hook has assigned objectElement
             {
                 parameterCombo.setSelectedItem(hook.getObjectElement());
             }
-        }
-        else if (actionCombo.getItemCount() > 0) // if hook's action is null (for new hook e.g.) ...
+        } else if (actionCombo.getItemCount() > 0) // if hook's action is null (for new hook e.g.) ...
         {
             actionCombo.setSelectedIndex(0); // ... select first
         }
 
         // set radio
-        switch (hook.getType())
-        {
+        switch (hook.getType()) {
             case BEFORE:
                 beforeRadio.setSelected(true);
                 break;
@@ -146,17 +122,15 @@ public class HookEditor extends AbstractEditor<Hook>
                 throw new IFML2EditorException(MessageFormat.format("Unknown hook type: {0}", hook.getType()));
         }
 
-        instructionsList.setModel(new DefaultEventListModel<Instruction>(instructionListClone.getInstructions()));
-        instructionsList.addMouseListener(new MouseAdapter()
-        {
+        isRunAfterRestrictionsCheckBox.setSelected(hook.isRunAfterRestrictions());
+
+        instructionsList.setModel(new DefaultEventListModel<>(instructionListClone.getInstructions()));
+        instructionsList.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e)
-            {
-                if(e.getClickCount() == 2)
-                {
-                    Instruction instruction = (Instruction) instructionsList.getSelectedValue();
-                    if (instruction != null)
-                    {
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    Instruction instruction = instructionsList.getSelectedValue();
+                    if (instruction != null) {
                         EditorUtils.showAssociatedEditor(HookEditor.this, instruction, storyDataHelper);
                     }
                 }
@@ -165,26 +139,20 @@ public class HookEditor extends AbstractEditor<Hook>
     }
 
     @Override
-    public void updateData(@NotNull Hook hook) throws IFML2EditorException
-    {
+    public void updateData(@NotNull Hook hook) throws IFML2EditorException {
         hook.setAction((Action) actionCombo.getSelectedItem());
         hook.setObjectElement((String) parameterCombo.getSelectedItem());
-        if(beforeRadio.isSelected())
-        {
+        if (beforeRadio.isSelected()) {
             hook.setType(BEFORE);
-        }
-        else if(afterRadio.isSelected())
-        {
+        } else if (afterRadio.isSelected()) {
             hook.setType(AFTER);
-        }
-        else if(insteadRadio.isSelected())
-        {
+        } else if (insteadRadio.isSelected()) {
             hook.setType(INSTEAD);
-        }
-        else
-        {
+        } else {
             throw new IFML2EditorException("No hook type selected!");
         }
+
+        hook.setRunAfterRestrictions(isRunAfterRestrictionsCheckBox.isSelected());
 
         hook.getInstructionList().replaceInstructions(instructionListClone);
     }
