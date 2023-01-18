@@ -301,7 +301,7 @@ public class Engine {
 
                 // fire object hooks
                 for (Hook hook : objectHooks.get(Hook.Type.INSTEAD)) {
-                    if (hook.getIsRunAfterRestrictions())
+                    if (hook.isRunAfterRestrictions())
                     {
                         // check restrictions
                         outEngDebug("Проверка ограничений действия...");
@@ -317,7 +317,7 @@ public class Engine {
 
                 // fire location hooks
                 for (Hook hook : locationHooks.get(Hook.Type.INSTEAD)) {
-                    if (hook.getIsRunAfterRestrictions())
+                    if (hook.isRunAfterRestrictions())
                     {
                         // check restrictions
                         outEngDebug("Проверка ограничений действия...");

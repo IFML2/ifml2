@@ -76,7 +76,11 @@ public class Hook extends IFMLEntity
         return String.format("%s: %s (%s)", action, objectElement != null ? objectElement : "", type.getRuName());
     }
 
-    public boolean getIsRunAfterRestrictions() {
+    public void setRunAfterRestrictions(boolean isRunAfterRestrictions) {
+        this.isRunAfterRestrictions = isRunAfterRestrictions;
+    }
+
+    public boolean isRunAfterRestrictions() {
         return isRunAfterRestrictions;
     }
 
