@@ -178,11 +178,11 @@ public abstract class Instruction implements Cloneable
         RETURN(ReturnInstruction.class, ReturnInstrEditor.class),
         SHOW_PICTURE(ShowPictureInstruction.class, ShowPictureInstrEditor.class),
         PLAY_MUSIC(PlayMusicInstruction.class, PlayMusicInstrEditor.class),
-        START_TIMER(StartTimerInstruction.class, null); //todo StartTimerInstruction Editor
+        START_TIMER(StartTimerInstruction.class, StartTimerInstEditor.class);
 
-        private Class<? extends Instruction> instrClass;
-        private String title;
-        private Class<? extends AbstractInstrEditor> editorClass;
+        private final Class<? extends Instruction> instrClass;
+        private final String title;
+        private final Class<? extends AbstractInstrEditor> editorClass;
 
         Type(@NotNull Class<? extends Instruction> instrClass, Class<? extends AbstractInstrEditor> editorClass)
         {

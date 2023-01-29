@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<story xmlns="http://toysoft.narod.ru/IFML2Schema" id="story">
+    <inheritedSystemProcedures/>
+    <storyOptions>
+        <startLocationOption location="КомнатаЛок" showStartLocDesc="true"/>
+        <startProcedureOption/>
+        <storyDescription name="" description="" version="" author=""/>
+        <globalVars/>
+        <systemCommandsDisableOption DisableHelp="false" DisableDebug="false"/>
+    </storyOptions>
+    <procedures>
+        <procedure name="Нажать">
+            <procedureVariables/>
+            <procedureBody>
+                <showMessage beginWithCap="false" carriageReturn="true" message="&quot;Вы нажали на &quot; + чтоНажать.ВП + &quot;...&quot;" type="expression"/>
+                <startTimer timerType="realTime" duration="PT5S" actionCount="2">
+                    <reaction>
+                        <showMessage beginWithCap="false" carriageReturn="true" message="&quot;    *** ОТЛАДКА *** [Должен играть звук горна] Прошло секунд от начала игры: &quot; + секунды" type="expression"/>
+                    </reaction>
+                </startTimer>
+                <showMessage beginWithCap="false" carriageReturn="true" message="Но, как будто ничего не произошло..." type="text"/>
+                <showMessage beginWithCap="false" carriageReturn="true" message="&quot;    *** ОТЛАДКА *** Прошло секунд от начала игры: &quot; + секунды" type="expression"/>
+            </procedureBody>
+            <parameters>
+                <parameter name="чтоНажать"/>
+            </parameters>
+        </procedure>
+    </procedures>
+    <libraries>
+        <library>standard/base.xml</library>
+    </libraries>
+    <dictionary>
+        <word>
+            <ip>кнопка</ip>
+            <rp>кнопки</rp>
+            <dp>кнопке</dp>
+            <vp>кнопку</vp>
+            <tp>кнопкой</tp>
+            <pp>кнопке</pp>
+        </word>
+    </dictionary>
+    <locations>
+        <location id="КомнатаЛок" name="Комната">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words/>
+            <description>Обычная комната без выходов.</description>
+            <attributes/>
+        </location>
+    </locations>
+    <items>
+        <item id="КнопкаТаймераПред" name="кнопка таймера">
+            <hooks/>
+            <roles/>
+            <properties/>
+            <words mainWord="кнопка">
+                <word>кнопка</word>
+            </words>
+            <description>На кнопке написано "Запустить таймер на 5 секунд"</description>
+            <attributes>
+                <attribute>прикреплён</attribute>
+            </attributes>
+            <startingPosition>
+                <inventory>false</inventory>
+                <locations>
+                    <location>КомнатаЛок</location>
+                </locations>
+            </startingPosition>
+        </item>
+    </items>
+    <actions>
+        <action name="нажать" description="">
+            <templates>
+                <template>
+                    <literalElement>
+                        <synonym>нажать</synonym>
+                    </literalElement>
+                    <objectElement case="vp" parameter="чтоНажать"/>
+                </template>
+            </templates>
+            <procedureCall procedure="Нажать"/>
+            <restrictions/>
+        </action>
+    </actions>
+</story>
