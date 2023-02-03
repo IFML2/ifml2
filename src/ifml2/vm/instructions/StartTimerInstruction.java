@@ -17,11 +17,11 @@ import static javax.xml.bind.annotation.XmlAccessType.NONE;
 @IFML2Instruction(title = "⏰ Запустить таймер")
 public class StartTimerInstruction extends Instruction {
     @XmlAttribute(name = "timerType")
-    private Type timerType;
+    private Type timerType = Type.REAL_TIME; // default type
 
     @XmlAttribute(name = "duration")
     @XmlJavaTypeAdapter(DurationXmlAdapter.class)
-    private Duration duration;
+    private Duration duration = Duration.ZERO;
 
     @XmlAttribute(name = "actionCount")
     private int actionCount;
