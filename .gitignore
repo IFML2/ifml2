@@ -6,3 +6,5 @@
 *.backup
 *.exe
 /bitrock/*.run
+/.idea/dictionaries/*.xml
+/Games/*.temp
