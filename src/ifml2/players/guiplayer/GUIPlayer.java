@@ -79,34 +79,30 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
                 int key = e.getKeyCode();
 
                 // command entry
-                if (KeyEvent.VK_ENTER == key)
-                {
-                    // test if just enter + scroll bar isn't at the bottom
-                    BoundedRangeModel scrollModel = scrollPane.getVerticalScrollBar().getModel();
-                    int value = scrollModel.getValue();
-                    int extent = scrollModel.getExtent();
-                    boolean isNotAtTheBottom = value + extent < scrollModel.getMaximum();
-                    if ("".equals(commandText.getText().trim()) && isNotAtTheBottom)
-                    {
-                        scrollModel.setValue(value + extent); // scroll to next page
-                    }
-                    else
-                    {
-                        processCommand(getCommandText());
-                    }
-                }
-                else
-                    // history prev callback
-                    if (KeyEvent.VK_UP == key || KeyEvent.VK_KP_UP == key)
-                    {
-                        commandText.setText(goHistoryPrev());
-                    }
-                    else
-                        // history next callback
-                        if (KeyEvent.VK_DOWN == key || KeyEvent.VK_KP_DOWN == key)
-                        {
-                            commandText.setText(goHistoryNext());
+                switch (key) {
+                    case KeyEvent.VK_ENTER:
+                        // test if just enter + scroll bar isn't at the bottom
+                        BoundedRangeModel scrollModel = scrollPane.getVerticalScrollBar().getModel();
+                        int value = scrollModel.getValue();
+                        int extent = scrollModel.getExtent();
+                        boolean isNotAtTheBottom = value + extent < scrollModel.getMaximum();
+                        if ("".equals(commandText.getText().trim()) && isNotAtTheBottom) {
+                            scrollModel.setValue(value + extent); // scroll to next page
+                        } else {
+                            processCommand(getCommandText());
                         }
+                        break;
+                    // history prev callback
+                    case KeyEvent.VK_UP:
+                    case KeyEvent.VK_KP_UP:
+                        commandText.setText(goHistoryPrev());
+                        break;
+                    // history next callback
+                    case KeyEvent.VK_DOWN:
+                    case KeyEvent.VK_KP_DOWN:
+                        commandText.setText(goHistoryNext());
+                        break;
+                }
             }
         });
 
@@ -227,6 +223,10 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
     private void processCommand(String gamerCommand)
     {
         echoCommand(gamerCommand);
+
+        if (gamerCommand.trim().startsWith("*")){
+            return;
+        }
 
         if ("".equals(gamerCommand.trim()))
         {
@@ -647,8 +647,14 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
             throw new RuntimeException(e);
         }
 
-        // echo command
-        outputPlainText("> " + command + "\n");
+        if (command.trim().startsWith("*")){
+            // echo player's memo
+            outputPlainText(command.trim().replaceFirst("\\*", "📝"));
+        }
+        else {
+            // echo command
+            outputPlainText("> " + command + "\n");
+        }
 
         // scroll to inputted command
         final Point viewPosition = new Point(startLocation.x, startLocation.y);
