@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="EntryPointsManager">
+    <writeAnnotations>
+      <writeAnnotation name="javax.xml.bind.annotation.XmlAttribute" />
+    </writeAnnotations>
+  </component>
   <component name="IdProvider" IDEtalkID="C05A107374ECF63878D260231A9660F6" />
   <component name="JavadocGenerationManager">
     <option name="OTHER_OPTIONS" value="" />
