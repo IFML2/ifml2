@@ -36,7 +36,7 @@
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text value="&amp;OK"/>
+                  <text value="Подтвердить"/>
                 </properties>
               </component>
               <component id="5723f" class="javax.swing.JButton" binding="buttonCancel">
@@ -44,7 +44,7 @@
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text value="&amp;Cancel"/>
+                  <text value="Отменить"/>
                 </properties>
               </component>
             </children>
@@ -89,13 +89,13 @@
               <component id="e9816" class="javax.swing.JButton" binding="upButton">
                 <constraints/>
                 <properties>
-                  <text value="&amp;Вверх"/>
+                  <text value="Вверх"/>
                 </properties>
               </component>
               <component id="ea3b" class="javax.swing.JButton" binding="downButton">
                 <constraints/>
                 <properties>
-                  <text value="В&amp;низ"/>
+                  <text value="Вниз"/>
                 </properties>
               </component>
             </children>
@@ -116,19 +116,19 @@
           <component id="a053f" class="javax.swing.JButton" binding="addInstrButton">
             <constraints/>
             <properties>
-              <text value="&amp;Добавить..."/>
+              <text value="Добавить..."/>
             </properties>
           </component>
           <component id="df2f5" class="javax.swing.JButton" binding="editInstrButton">
             <constraints/>
             <properties>
-              <text value="&amp;Изменить..."/>
+              <text value="Изменить..."/>
             </properties>
           </component>
           <component id="e48b6" class="javax.swing.JButton" binding="delInstrButton">
             <constraints/>
             <properties>
-              <text value="&amp;Удалить..."/>
+              <text value="Удалить..."/>
             </properties>
           </component>
         </children>
