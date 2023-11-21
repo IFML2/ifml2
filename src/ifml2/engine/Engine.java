@@ -42,7 +42,7 @@ public class Engine {
     private final ArrayList<Item> abyss = new ArrayList<>();
     private Story story = null;
     private ArrayList<Item> inventory = new ArrayList<>();
-    private HashMap<String, SystemCommand> SYSTEM_COMMANDS = new HashMap<String, SystemCommand>() {
+    private final HashMap<String, SystemCommand> SYSTEM_COMMANDS = new HashMap<String, SystemCommand>() {
         {
             put("помощь", HELP);
             put("помоги", HELP);
@@ -68,12 +68,12 @@ public class Engine {
             return super.put(key.toLowerCase(), value);
         }
     };
-    private DataHelper dataHelper = new DataHelper();
+    private final DataHelper dataHelper = new DataHelper();
     private String storyFileName;
     private boolean isDebugMode = false;
-    private IPlayerFeatureProvider playerFeatureProvider;
+    private final IPlayerFeatureProvider playerFeatureProvider;
     private Date starTime = new Date();
-    private HashMap<String, Callable<? extends Value>> ENGINE_SYMBOLS = new HashMap<String, Callable<? extends Value>>() {
+    private final HashMap<String, Callable<? extends Value>> ENGINE_SYMBOLS = new HashMap<String, Callable<? extends Value>>() {
         {
             Callable<CollectionValue> returnInv = () -> new CollectionValue(inventory);
 
@@ -242,12 +242,11 @@ public class Engine {
         // check system commands
         if (SYSTEM_COMMANDS.containsKey(trimmedCommand)) {
             SystemCommand systemCommand = SYSTEM_COMMANDS.get(trimmedCommand);
-            switch (systemCommand) {
-                case HELP:
-                    if (!systemCommandsDisableOption.isDisableHelp()) {
-                        outTextLn("Попробуйте одну из команд: " + story.getAllActions());
-                        return true;
-                    }
+            if (Objects.requireNonNull(systemCommand) == HELP) {
+                if (!systemCommandsDisableOption.isDisableHelp()) {
+                    outTextLn("Попробуйте одну из команд: " + story.getAllActions());
+                    return true;
+                }
             }
         }
 
@@ -300,12 +299,31 @@ public class Engine {
 
                 // fire object hooks
                 for (Hook hook : objectHooks.get(Hook.Type.INSTEAD)) {
+                    if (hook.isRunAfterRestrictions())
+                    {
+                        // check restrictions
+                        outEngDebug("Проверка ограничений действия...");
+                        if (checkActionRestrictions(action, arguments)) {
+                            outEngDebug("Сработало ограничение, команда завершается.");
+                            return true;
+                        }
+                    }
                     outEngDebug("Запуск перехвата \"{0}\" на предмете...", hook);
                     virtualMachine.runHook(hook, arguments);
                     outEngDebug("Перехват выполнен.");
                 }
+
                 // fire location hooks
                 for (Hook hook : locationHooks.get(Hook.Type.INSTEAD)) {
+                    if (hook.isRunAfterRestrictions())
+                    {
+                        // check restrictions
+                        outEngDebug("Проверка ограничений действия...");
+                        if (checkActionRestrictions(action, arguments)) {
+                            outEngDebug("Сработало ограничение, команда завершается.");
+                            return true;
+                        }
+                    }
                     outEngDebug("Запуск перехвата \"{0}\" в локации...", hook);
                     virtualMachine.runHook(hook, arguments);
                     outEngDebug("Перехват выполнен.");
@@ -380,7 +398,7 @@ public class Engine {
                 Value returnValue = virtualMachine.callProcedureWithParameters(parseErrorHandler, parameters);
 
                 // check return value
-                if (returnValue != null && returnValue instanceof BooleanValue) {
+                if (returnValue instanceof BooleanValue) {
                     Boolean isErrorHandled = ((BooleanValue) returnValue)
                             .getValue(); // error handler should return false if he can't handle error
                     if (!isErrorHandled) {
@@ -438,7 +456,7 @@ public class Engine {
         } else if (VirtualMachine.class.equals(reporter)) {
             reporterName = "ВиртуальнаяМашина";
         } else {
-            reporterName = reporter != null ? reporter.getClass().getSimpleName() : "";
+            reporterName = reporter != null ? reporter.getSimpleName() : "";
         }
         return '[' + reporterName + "] ";
     }
@@ -536,8 +554,8 @@ public class Engine {
 
                 EventList<Parameter> procParams = action.procedureCall.getProcedure().getParameters();
                 List<String> emptyArgs = procParams.stream()
-                        .filter(p -> !lowParNames.contains(p.getName().toLowerCase()))
                         .map(Parameter::getName)
+                        .filter(name -> !lowParNames.contains(name.toLowerCase()))
                         .collect(Collectors.toList());
 
                 // fill not set arguments as EmptyValue
@@ -694,9 +712,9 @@ public class Engine {
     }
 
     private void outDebug(int level, String message, Object... args) {
-        String tab = "";
+        StringBuilder tab = new StringBuilder();
         for (int i = 1; i <= level; i++) {
-            tab += "  ";
+            tab.append("  ");
         }
         outDebug(tab + message, args);
     }
@@ -770,7 +788,7 @@ public class Engine {
         }
     }
 
-    private class GlobalVariableProxy extends Variable {
+    private static class GlobalVariableProxy extends Variable {
         private final HashMap<String, Value> globalVariables;
 
         public GlobalVariableProxy(@NotNull HashMap<String, Value> globalVariables, @NotNull String name, Value value) {

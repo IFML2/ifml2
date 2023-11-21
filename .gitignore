@@ -6,9 +6,16 @@
 *.backup
 *.exe
 /bitrock/*.run
+# Temporal
+/Games/*.temp
+# Idea
+.idea/
+# Maven
 target/
 bin/
+# Eclipse
 .project
 .classpath
 .settings/
+# NetBeans
 nb-configuration.xml
