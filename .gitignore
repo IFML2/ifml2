@@ -6,7 +6,16 @@
 *.backup
 *.exe
 /bitrock/*.run
-/.idea/dictionaries/*.xml
+# Temporal
 /Games/*.temp
-/.idea/dictionaries/mbalanov.xml
-/Games/*.temp
+# Idea
+.idea/
+# Maven
+target/
+bin/
+# Eclipse
+.project
+.classpath
+.settings/
+# NetBeans
+nb-configuration.xml
