@@ -298,4 +298,16 @@ public class ExpressionCalculatorTest
         Value result = calculate(expression);
         assertTrue(extractBoolean(result));
     }
+
+    @Test
+    public void whenVariableHasUnderscore_thenItWorks() throws IFML2Exception {
+        //Arrange
+        when(mockSymbolResolver.resolveSymbol("переменная_с_подчёркиваниями")).thenReturn(new BooleanValue(true));
+
+        //Act
+        Value value = calculate("переменная_с_подчёркиваниями");
+
+        //Assert
+        assertTrue(extractBoolean(value));
+    }
 }

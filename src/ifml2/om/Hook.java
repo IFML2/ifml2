@@ -20,6 +20,9 @@ public class Hook extends IFMLEntity
     @XmlAttribute(name = "type")
     private Type type = Type.INSTEAD; // default value for new hook in editors
 
+    @XmlAttribute(name = "isRunAfterRestrictions")
+    private boolean isRunAfterRestrictions;
+
     @Override
     protected Hook clone() throws CloneNotSupportedException
     {
@@ -73,6 +76,14 @@ public class Hook extends IFMLEntity
         return String.format("%s: %s (%s)", action, objectElement != null ? objectElement : "", type.getRuName());
     }
 
+    public void setRunAfterRestrictions(boolean isRunAfterRestrictions) {
+        this.isRunAfterRestrictions = isRunAfterRestrictions;
+    }
+
+    public boolean isRunAfterRestrictions() {
+        return isRunAfterRestrictions;
+    }
+
     @XmlEnum
     @XmlType(namespace = "Hook")
     public enum Type
@@ -84,7 +95,7 @@ public class Hook extends IFMLEntity
         @XmlEnumValue(value = "instead")
         INSTEAD(2, "вместо");
         public final int sortValue;
-        private String ruName;
+        private final String ruName;
 
         Type(int sortValue, String ruName)
         {

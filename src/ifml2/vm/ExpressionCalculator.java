@@ -51,6 +51,7 @@ public class ExpressionCalculator {
         tokenizer.commentChar(0);
         tokenizer.quoteChar(QUOTE_CHAR);
         tokenizer.quoteChar(SINGLE_QUOTE_CHAR);
+        tokenizer.wordChars('_', '_');
         for (Operation operation : Operation.values()) {
             if (operation.operatorCharacter != 0) {
                 tokenizer.ordinaryChar(operation.operatorCharacter);

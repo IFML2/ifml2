@@ -8,6 +8,7 @@ import ifml2.engine.featureproviders.graphic.IOutputIconProvider;
 import ifml2.engine.featureproviders.text.IOutputPlainTextProvider;
 import ifml2.om.IFML2LoadXmlException;
 import org.apache.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -18,11 +19,12 @@ import javax.swing.text.StyledDocument;
 import javax.xml.bind.ValidationEvent;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.ListIterator;
 
 import static ifml2.CommonConstants.*;
@@ -41,10 +43,10 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
     private JTextField commandText;
     private JTextPane logTextPane;
     private JScrollPane scrollPane;
-    private Engine engine = new Engine(this);
+    private final Engine engine = new Engine(this);
     private ListIterator<String> historyIterator = commandHistory.listIterator();
     private String storyFile;
-    private boolean isFromTempFile;
+    private final boolean isFromTempFile;
     private PlayerTheme _playerTheme;
 
     static {
@@ -54,6 +56,8 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
         UIManager.put("Menu.font", derivedFont);
         UIManager.put("MenuItem.font", derivedFont);
     }
+
+    private PrintWriter transcriptPrintWriter;
 
     private GUIPlayer(boolean fromTempFile)
     {
@@ -75,34 +79,30 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
                 int key = e.getKeyCode();
 
                 // command entry
-                if (KeyEvent.VK_ENTER == key)
-                {
-                    // test if just enter + scroll bar isn't at the bottom
-                    BoundedRangeModel scrollModel = scrollPane.getVerticalScrollBar().getModel();
-                    int value = scrollModel.getValue();
-                    int extent = scrollModel.getExtent();
-                    boolean isNotAtTheBottom = value + extent < scrollModel.getMaximum();
-                    if ("".equals(commandText.getText().trim()) && isNotAtTheBottom)
-                    {
-                        scrollModel.setValue(value + extent); // scroll to next page
-                    }
-                    else
-                    {
-                        processCommand(getCommandText());
-                    }
-                }
-                else
-                    // history prev callback
-                    if (KeyEvent.VK_UP == key || KeyEvent.VK_KP_UP == key)
-                    {
-                        commandText.setText(goHistoryPrev());
-                    }
-                    else
-                        // history next callback
-                        if (KeyEvent.VK_DOWN == key || KeyEvent.VK_KP_DOWN == key)
-                        {
-                            commandText.setText(goHistoryNext());
+                switch (key) {
+                    case KeyEvent.VK_ENTER:
+                        // test if just enter + scroll bar isn't at the bottom
+                        BoundedRangeModel scrollModel = scrollPane.getVerticalScrollBar().getModel();
+                        int value = scrollModel.getValue();
+                        int extent = scrollModel.getExtent();
+                        boolean isNotAtTheBottom = value + extent < scrollModel.getMaximum();
+                        if ("".equals(commandText.getText().trim()) && isNotAtTheBottom) {
+                            scrollModel.setValue(value + extent); // scroll to next page
+                        } else {
+                            processCommand(getCommandText());
                         }
+                        break;
+                    // history prev callback
+                    case KeyEvent.VK_UP:
+                    case KeyEvent.VK_KP_UP:
+                        commandText.setText(goHistoryPrev());
+                        break;
+                    // history next callback
+                    case KeyEvent.VK_DOWN:
+                    case KeyEvent.VK_KP_DOWN:
+                        commandText.setText(goHistoryNext());
+                        break;
+                }
             }
         });
 
@@ -113,6 +113,7 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
             @Override
             public void windowClosing(WindowEvent e) {
                 savePreferences();
+                stopTranscript();
                 super.windowClosing(e);
             }
         });
@@ -222,6 +223,10 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
     private void processCommand(String gamerCommand)
     {
         echoCommand(gamerCommand);
+
+        if (gamerCommand.trim().startsWith("*")){
+            return;
+        }
 
         if ("".equals(gamerCommand.trim()))
         {
@@ -370,10 +375,16 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
         engine.initGame();
     }
 
-    private JMenuBar createMainMenu()
+    private @NotNull JMenuBar createMainMenu()
     {
         JMenuBar mainMenu = new JMenuBar();
+        mainMenu.add(createStoryMenu());
+        mainMenu.add(createPlayerMenu());
+        return mainMenu;
+    }
 
+    @NotNull
+    private JMenu createStoryMenu() {
         JMenu storyMenu = new JMenu("История");
         storyMenu.add(new AbstractAction("Начать новую историю...", NEW_ELEMENT_ICON)
         {
@@ -389,6 +400,7 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
                     String fileName = showOpenStoryFileDialog(GUIPlayer.this);
                     if (fileName != null)
                     {
+                        stopTranscript();
                         loadStory(fileName);
                     }
                 }
@@ -448,10 +460,13 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
                 }
             }
         });
-        mainMenu.add(storyMenu);
+        return storyMenu;
+    }
 
+    @NotNull
+    private JMenu createPlayerMenu() {
         JMenu playerMenu = new JMenu("Плеер");
-        playerMenu.add(new AbstractAction("Тема офомления...", GUIUtils.PALETTE_ICON) {
+        playerMenu.add(new AbstractAction("Тема оформления...", GUIUtils.PALETTE_ICON) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 PlayerThemeDialog playerThemeDialog = new PlayerThemeDialog(GUIPlayer.this);
@@ -459,9 +474,46 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
                 setPlayerTheme(playerTheme);
             }
         });
-        mainMenu.add(playerMenu);
+        playerMenu.addSeparator();
+        playerMenu.add(new AbstractAction("📜 Записывать транскрипт") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                startTranscript();
+            }
+        });
+        playerMenu.add(new AbstractAction("🚫 Остановить транскрипт") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                stopTranscript();
+            }
+        });
+        return playerMenu;
+    }
 
-        return mainMenu;
+    private void startTranscript() {
+        stopTranscript();
+        Path storyPath = Paths.get(storyFile);
+        Path storyFolderPath = storyPath.getParent();
+        String transcriptFileName = format("%s.%2$tY%2$tm%2$td-%2$tH%2$tM%2$tS.transcript", storyPath.getFileName(), new Date());
+        Path transcriptPath = Paths.get(storyFolderPath.toString(), transcriptFileName);
+        try {
+            transcriptPrintWriter = new PrintWriter(transcriptPath.toFile(), "UTF-8");
+            outputPlainText(format("\n🔴 Начата запись транскрипта истории %s в %tc в файл %s\n",
+                    engine.getStory().getStoryOptions().getStoryDescription().getName(),
+                    new Date(),
+                    transcriptPath));
+        } catch (FileNotFoundException | UnsupportedEncodingException e) {
+            GUIUtils.showErrorMessage(GUIPlayer.this, e);
+        }
+    }
+
+    private void stopTranscript() {
+        if (transcriptPrintWriter != null){
+            outputPlainText(format("\n🟥 Завершена запись транскрипта истории %s в %tc\n", engine.getStory().getStoryOptions().getStoryDescription().getName(), new Date()));
+            transcriptPrintWriter.flush();
+            transcriptPrintWriter.close();
+            transcriptPrintWriter = null;
+        }
     }
 
     private void setPlayerTheme(PlayerTheme playerTheme) {
@@ -520,7 +572,7 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
                 for (ValidationEvent validationEvent : ((IFML2LoadXmlException) exception).getEvents())
                 {
                     outputPlainText(MessageFormat
-                                    .format("\n\"{0}\" at {1},{2}", validationEvent.getMessage(), validationEvent.getLocator().getLineNumber(),
+                                    .format("\n - \"{0}\" at {1},{2}", validationEvent.getMessage(), validationEvent.getLocator().getLineNumber(),
                                             validationEvent.getLocator().getColumnNumber()));
                 }
             }
@@ -595,8 +647,14 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
             throw new RuntimeException(e);
         }
 
-        // echo command
-        outputPlainText("> " + command + "\n");
+        if (command.trim().startsWith("*")){
+            // echo player's memo
+            outputPlainText(command.trim().replaceFirst("\\*", "📝"));
+        }
+        else {
+            // echo command
+            outputPlainText("> " + command + "\n");
+        }
 
         // scroll to inputted command
         final Point viewPosition = new Point(startLocation.x, startLocation.y);
@@ -625,6 +683,10 @@ public class GUIPlayer extends JFrame implements IOutputPlainTextProvider, IOutp
         } catch (BadLocationException e) {
             LOG.error("Error while inserting string to JTextPane", e);
             throw new RuntimeException(e);
+        }
+        if (transcriptPrintWriter != null){
+            transcriptPrintWriter.write(text);
+            transcriptPrintWriter.flush();
         }
     }
 

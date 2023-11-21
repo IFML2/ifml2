@@ -11,7 +11,7 @@ public class Action
 {
     @XmlElementWrapper(name = "templates")
     @XmlElement(name = "template")
-    private final EventList<Template> templates = new BasicEventList<Template>();
+    private final EventList<Template> templates = new BasicEventList<>();
     public EventList<Template> getTemplates()
     {
         return templates;
@@ -26,7 +26,7 @@ public class Action
 
     @XmlElementWrapper(name = "restrictions")
     @XmlElement(name = "restriction")
-    private EventList<Restriction> restrictions = new BasicEventList<Restriction>();
+    private EventList<Restriction> restrictions = new BasicEventList<>();
     public EventList<Restriction> getRestrictions()
     {
         return restrictions;
@@ -65,9 +65,9 @@ public class Action
         return name;
     }
 
-    public Object[] getAllObjectParameters()
+    public String[] getAllObjectParameters()
     {
-        ArrayList<Object> parameters = new ArrayList<Object>();
+        ArrayList<String> parameters = new ArrayList<>();
 
         for (Template template : templates)
         {
@@ -80,7 +80,9 @@ public class Action
             }
         }
 
-        return parameters.toArray();
+        String[] array = new String[parameters.size()];
+        parameters.toArray(array);
+        return array;
     }
 
     @XmlAccessorType(XmlAccessType.NONE)
