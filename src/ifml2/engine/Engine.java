@@ -133,14 +133,14 @@ public class Engine {
         outputPlainText(resultText);
     }
 
+    public void outTextLn(String text, Object... args) {
+        outText(text + "\n", args);
+    }
+
     private void outputPlainText(String text) {
         if (playerFeatureProvider instanceof IOutputPlainTextProvider) {
             ((IOutputPlainTextProvider) playerFeatureProvider).outputPlainText(text);
         }
-    }
-
-    public void outTextLn(String text, Object... args) {
-        outText(text + "\n", args);
     }
 
     public void initGame() throws IFML2Exception {

@@ -223,7 +223,7 @@ public class VirtualMachine
 
     public void outText(String text)
     {
-        engine.outText(text);
+        engine.outText(text, false);
     }
 
     public Variable searchGlobalVariable(String name)
